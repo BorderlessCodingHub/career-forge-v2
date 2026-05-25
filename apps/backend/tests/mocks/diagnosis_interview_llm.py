@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from career_forge.ai.interview.script import (
+    build_round_questions,
+    round_index_for_count,
+)
 from career_forge.schemas.diagnosis import DiagnosisProfile, DiagnosisResponse
 from career_forge.schemas.diagnosis_interview import (
-    PROFILE_DIMENSION_LABELS,
-    MAX_QUESTIONS_PER_TURN,
     RubricDimensionKey,
     BeliefState,
     CvSignals,
@@ -16,35 +18,6 @@ from career_forge.schemas.diagnosis_interview import (
     RubricDimension,
     SATURATION_CONFIDENCE_THRESHOLD,
 )
-
-COMPOUND_ROUND_ONE = (
-    "Conte a coisa mais concreta que você já fez ou tentou nesse caminho — "
-    "o que construiu, com quem, quanto tempo dedica por semana e o que aprendeu.",
-    "Ex.: fiz um app em grupo na faculdade, uso Git básico, estudo 5h/semana com tutoriais.",
-)
-
-FOLLOW_UP_BANK: dict[RubricDimensionKey, tuple[str, str]] = {
-    "motivation_goal": (
-        "O que te motiva de verdade a seguir esse caminho agora?",
-        "Ex.: quero trabalhar com produto de IA e impacto global.",
-    ),
-    "background_transfer": (
-        "De onde você vem e o que do seu background ajuda nessa transição?",
-        "Ex.: venho de vendas, aprendi a explicar ideias complexas.",
-    ),
-    "learning_velocity": (
-        "Com que frequência você pratica e como mantém consistência?",
-        "Ex.: 1h por dia durante a semana, projetos no fim de semana.",
-    ),
-    "hands_on_proof": (
-        "Qual foi a entrega mais concreta que você já tentou?",
-        "Ex.: API simples no GitHub, dashboard, bot, pipeline.",
-    ),
-    "constraints": (
-        "Quais limitações reais você tem hoje (tempo, idioma, budget)?",
-        "Ex.: 8h/semana, inglês intermediário, sem bootcamp pago.",
-    ),
-}
 
 TRACK_BY_GOAL = {
     "fullstack": "fullstack-beginner",
@@ -217,38 +190,10 @@ class MockDiagnosisInterviewLlm:
         round_count: int,
     ) -> list[InterviewQuestion]:
         del intake
-        interviewable = belief.interviewable_keys()
-        if not interviewable:
+        round_index = round_index_for_count(round_count)
+        if round_index is None:
             return []
-
-        if "hands_on_proof" not in interviewable:
-            interviewable = [key for key in interviewable if key != "hands_on_proof"]
-
-        if round_count == 0 and len(belief.interviewable_keys()) >= 2:
-            prompt, example = COMPOUND_ROUND_ONE
-            return [
-                InterviewQuestion(
-                    id="q-r1-1",
-                    topic=PROFILE_DIMENSION_LABELS["hands_on_proof"],
-                    rubric_key="hands_on_proof",
-                    question=prompt,
-                    example_of_answer=example,
-                ),
-            ]
-
-        questions: list[InterviewQuestion] = []
-        for index, key in enumerate(interviewable[:MAX_QUESTIONS_PER_TURN]):
-            prompt, example = FOLLOW_UP_BANK[key]
-            questions.append(
-                InterviewQuestion(
-                    id=f"q-r{round_count + 1}-{index + 1}",
-                    topic=PROFILE_DIMENSION_LABELS[key],
-                    rubric_key=key,
-                    question=prompt,
-                    example_of_answer=example,
-                ),
-            )
-        return questions
+        return build_round_questions(round_index, belief=belief, transcript=transcript)
 
     async def finalize_diagnosis(
         self,

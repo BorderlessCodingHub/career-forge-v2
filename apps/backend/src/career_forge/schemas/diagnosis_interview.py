@@ -43,7 +43,7 @@ PROFILE_DIMENSION_DESCRIPTIONS: dict[RubricDimensionKey, str] = {
 }
 
 SATURATION_CONFIDENCE_THRESHOLD = 0.75
-MAX_INTERVIEW_ROUNDS = 3
+MAX_INTERVIEW_ROUNDS = 2
 MAX_QUESTIONS_PER_TURN = 2
 
 DiagnosisSessionStatus = Literal["asking", "complete"]
@@ -234,12 +234,9 @@ class DiagnosisSession(BaseModel):
     def should_finalize(
         self,
         *,
-        threshold: float = SATURATION_CONFIDENCE_THRESHOLD,
         max_rounds: int = MAX_INTERVIEW_ROUNDS,
     ) -> bool:
-        if self.round_count >= max_rounds:
-            return True
-        return self.belief.is_interview_complete(threshold)
+        return self.round_count >= max_rounds
 
 
 class InterviewStartRequest(DiagnosisIntake):
@@ -257,6 +254,7 @@ class InterviewTurnResponse(BaseModel):
 
     session_id: str
     status: DiagnosisSessionStatus
+    round_count: int = Field(default=0, ge=0, le=MAX_INTERVIEW_ROUNDS)
     questions: list[InterviewQuestion] = Field(default_factory=list, max_length=MAX_QUESTIONS_PER_TURN)
     mapping_progress: list[RubricMapItem] = Field(default_factory=list)
     diagnosis: DiagnosisResponse | None = None

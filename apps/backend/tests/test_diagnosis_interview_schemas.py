@@ -49,7 +49,7 @@ class TestProfileConstants:
 
     def test_saturation_threshold(self) -> None:
         assert SATURATION_CONFIDENCE_THRESHOLD == 0.75
-        assert MAX_INTERVIEW_ROUNDS == 3
+        assert MAX_INTERVIEW_ROUNDS == 2
         assert MAX_QUESTIONS_PER_TURN == 2
 
 
@@ -146,16 +146,15 @@ class TestDiagnosisIntake:
 
 
 class TestDiagnosisSession:
-    def test_should_finalize_on_saturation(self) -> None:
+    def test_should_not_finalize_on_mapped_dims_before_max_rounds(self) -> None:
         session = DiagnosisSession(
             session_id="sess-1",
             intake=DiagnosisIntake(
                 goal_id="fullstack",
                 motivation="Quero migrar de carreira para tecnologia.",
             ),
+            round_count=1,
         )
-        assert session.should_finalize() is False
-
         for key in PROFILE_DIMENSION_KEYS:
             session.belief.dimensions[key] = RubricDimension(
                 key=key,
@@ -165,7 +164,7 @@ class TestDiagnosisSession:
                 status="mapped",
                 note="Confirmado",
             )
-        assert session.should_finalize() is True
+        assert session.should_finalize() is False
 
     def test_should_finalize_on_max_rounds(self) -> None:
         session = DiagnosisSession(

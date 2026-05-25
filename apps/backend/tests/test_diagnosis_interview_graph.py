@@ -54,13 +54,40 @@ class TestDiagnosisInterviewGraph:
         assert runnable.graph_name == "diagnosis_interview"
 
     @pytest.mark.asyncio
-    async def test_start_returns_one_to_two_questions(self) -> None:
+    async def test_start_returns_round_one_compound_question(self) -> None:
         session = DiagnosisSession(session_id="sess-1", intake=SAMPLE_INTAKE)
         output = await run_interview_phase(phase="start", session=session)
         assert output["status"] == "asking"
         questions = output["questions"]
-        assert 1 <= len(questions) <= MAX_QUESTIONS_PER_TURN
+        assert len(questions) == 1
+        assert questions[0]["rubric_key"] == "hands_on_proof"
         assert output["mapping_progress"]
+
+    @pytest.mark.asyncio
+    async def test_round_two_returns_fixed_context_questions(self) -> None:
+        session = DiagnosisSession(session_id="sess-r2", intake=SAMPLE_INTAKE)
+        output = await run_interview_phase(phase="start", session=session)
+        session = DiagnosisSession.model_validate(output["session"])
+
+        answers = [
+            InterviewAnswer(
+                question_id=output["questions"][0]["id"],
+                text="Resposta detalhada com mais de oito caracteres sobre minha experiência.",
+            ),
+        ]
+        output = await run_interview_phase(
+            phase="turn",
+            session=session,
+            answers=answers,
+        )
+
+        assert output["status"] == "asking"
+        questions = output["questions"]
+        assert len(questions) == 2
+        assert [question["rubric_key"] for question in questions] == [
+            "constraints",
+            "background_transfer",
+        ]
 
     @pytest.mark.asyncio
     async def test_golden_path_completes_with_diagnosis(self) -> None:
@@ -175,7 +202,7 @@ class TestSaturationGuardrails:
         assert len(output["questions"]) >= 1
 
     @pytest.mark.asyncio
-    async def test_negative_hands_on_answer_skips_repeat_questions(self) -> None:
+    async def test_negative_hands_on_answer_still_gets_round_two(self) -> None:
         session = DiagnosisSession(session_id="sess-neg", intake=SAMPLE_INTAKE)
         output = await run_interview_phase(phase="start", session=session)
         session = DiagnosisSession.model_validate(output["session"])
@@ -183,7 +210,7 @@ class TestSaturationGuardrails:
         answers = [
             InterviewAnswer(
                 question_id=output["questions"][0]["id"],
-                text="Nunca fiz projetos práticos em AI/ML, só estudo teórico por enquanto.",
+                text="Nunca fiz nada prático nesse caminho, nadinha.",
             ),
         ]
         output = await run_interview_phase(
@@ -194,11 +221,35 @@ class TestSaturationGuardrails:
         session = DiagnosisSession.model_validate(output["session"])
         proof = session.belief.dimensions["hands_on_proof"]
         assert proof.status == "mapped"
-        assert "hands_on_proof" not in session.belief.interviewable_keys()
 
-        if output["status"] == "asking":
-            for question in output["questions"]:
-                assert question["rubric_key"] != "hands_on_proof"
+        assert output["status"] == "asking"
+        assert [question["rubric_key"] for question in output["questions"]] == [
+            "constraints",
+            "background_transfer",
+        ]
+
+    @pytest.mark.asyncio
+    async def test_skips_round_two_when_answer_already_covers_context(self) -> None:
+        session = DiagnosisSession(session_id="sess-skip-r2", intake=SAMPLE_INTAKE)
+        output = await run_interview_phase(phase="start", session=session)
+        session = DiagnosisSession.model_validate(output["session"])
+
+        answers = [
+            InterviewAnswer(
+                question_id=output["questions"][0]["id"],
+                text=(
+                    "Nunca fiz projetos práticos em AI/ML, só estudo teórico por enquanto."
+                ),
+            ),
+        ]
+        output = await run_interview_phase(
+            phase="turn",
+            session=session,
+            answers=answers,
+        )
+
+        assert output["status"] == "complete"
+        assert output["diagnosis"] is not None
 
     @pytest.mark.asyncio
     async def test_max_rounds_enforced(self) -> None:

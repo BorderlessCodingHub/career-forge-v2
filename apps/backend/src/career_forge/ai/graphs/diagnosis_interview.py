@@ -1,4 +1,4 @@
-"""Adaptive diagnosis interview graph — Judge + Interviewer (HAC-43)."""
+"""Adaptive diagnosis interview graph — Judge + deterministic script (HAC-43)."""
 
 from __future__ import annotations
 
@@ -6,13 +6,13 @@ import asyncio
 from collections.abc import AsyncIterator
 from typing import Any, Literal
 
+from career_forge.ai.interview.script import build_round_questions, round_index_for_count
 from career_forge.ai.llm.diagnosis_interview import (
     DiagnosisInterviewLlmError,
     get_diagnosis_interview_llm,
 )
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.diagnosis_interview import (
-    MAX_INTERVIEW_ROUNDS,
     MAX_QUESTIONS_PER_TURN,
     BeliefState,
     CvSignals,
@@ -45,6 +45,34 @@ def _extract_cv_text(intake: DiagnosisIntake) -> tuple[str | None, CvSignals | N
     return result.text, result.signals
 
 
+def _load_round_questions(
+    round_count: int,
+    *,
+    belief: BeliefState | None = None,
+    transcript: list[InterviewTurn] | None = None,
+) -> list[InterviewQuestion]:
+    round_index = round_index_for_count(round_count)
+    if round_index is None:
+        return []
+    return build_round_questions(
+        round_index,
+        belief=belief,
+        transcript=transcript,
+    )[:MAX_QUESTIONS_PER_TURN]
+
+
+async def _finalize_session(
+    session: DiagnosisSession,
+    intake: DiagnosisIntake,
+    llm: Any,
+) -> tuple[DiagnosisSession, DiagnosisResponse]:
+    diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+    updated = session.model_copy(
+        update={"status": "complete", "diagnosis": diagnosis},
+    )
+    return updated, diagnosis
+
+
 async def run_interview_phase(
     *,
     phase: GraphPhase,
@@ -75,31 +103,10 @@ async def run_interview_phase(
         )
 
         if session.should_finalize():
-            diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-            session = session.model_copy(
-                update={"status": "complete", "diagnosis": diagnosis},
-            )
+            session, diagnosis = await _finalize_session(session, intake, llm)
             return _build_output(session, questions=[], diagnosis=diagnosis)
 
-        questions = await llm.plan_questions(
-            session.belief,
-            intake,
-            session.transcript,
-            session.round_count,
-        )
-        questions = questions[:MAX_QUESTIONS_PER_TURN]
-        if not questions:
-            if session.belief.is_interview_complete():
-                diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-                session = session.model_copy(
-                    update={"status": "complete", "diagnosis": diagnosis},
-                )
-                return _build_output(session, questions=[], diagnosis=diagnosis)
-            msg = "interview start produced no questions while dimensions remain open"
-            raise DiagnosisInterviewLlmError(
-                "A IA não gerou perguntas para iniciar o diagnóstico. Tente novamente em alguns segundos.",
-            )
-
+        questions = _load_round_questions(session.round_count)
         turn = InterviewTurn(questions=questions, answers=[])
         session = session.model_copy(
             update={
@@ -134,38 +141,17 @@ async def run_interview_phase(
     session = session.model_copy(update={"belief": belief})
 
     if session.should_finalize():
-        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-        session = session.model_copy(
-            update={"status": "complete", "diagnosis": diagnosis},
-        )
+        session, diagnosis = await _finalize_session(session, intake, llm)
         return _build_output(session, questions=[], diagnosis=diagnosis)
 
-    if session.round_count >= MAX_INTERVIEW_ROUNDS:
-        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-        session = session.model_copy(
-            update={"status": "complete", "diagnosis": diagnosis},
-        )
-        return _build_output(session, questions=[], diagnosis=diagnosis)
-
-    questions = await llm.plan_questions(
-        session.belief,
-        intake,
-        session.transcript,
+    questions = _load_round_questions(
         session.round_count,
+        belief=session.belief,
+        transcript=session.transcript,
     )
-    questions = questions[:MAX_QUESTIONS_PER_TURN]
-
     if not questions:
-        if session.belief.is_interview_complete() or session.round_count >= MAX_INTERVIEW_ROUNDS:
-            diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-            session = session.model_copy(
-                update={"status": "complete", "diagnosis": diagnosis},
-            )
-            return _build_output(session, questions=[], diagnosis=diagnosis)
-        msg = "interview turn produced no questions while dimensions remain open"
-        raise DiagnosisInterviewLlmError(
-            "A IA não gerou perguntas para continuar. Tente novamente em alguns segundos.",
-        )
+        session, diagnosis = await _finalize_session(session, intake, llm)
+        return _build_output(session, questions=[], diagnosis=diagnosis)
 
     next_turn = InterviewTurn(questions=questions, answers=[])
     session = session.model_copy(
@@ -246,37 +232,12 @@ async def _run_start_phase_streaming(
 
     if session.should_finalize():
         yield {"type": "interview_status", "phase": "finalizing"}
-        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-        session = session.model_copy(
-            update={"status": "complete", "diagnosis": diagnosis},
-        )
+        session, diagnosis = await _finalize_session(session, intake, llm)
         yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
         return
 
-    yield {"type": "interview_status", "phase": "planning_questions"}
-    questions = await llm.plan_questions(
-        session.belief,
-        intake,
-        session.transcript,
-        session.round_count,
-    )
-    questions = questions[:MAX_QUESTIONS_PER_TURN]
-    if not questions:
-        if session.belief.is_interview_complete():
-            diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-            session = session.model_copy(
-                update={"status": "complete", "diagnosis": diagnosis},
-            )
-            yield {
-                "type": "_output",
-                "output": _build_output(session, questions=[], diagnosis=diagnosis),
-            }
-            return
-        msg = "interview start produced no questions while dimensions remain open"
-        raise DiagnosisInterviewLlmError(
-            "A IA não gerou perguntas para iniciar o diagnóstico. Tente novamente em alguns segundos.",
-        )
-
+    yield {"type": "interview_status", "phase": "loading_questions"}
+    questions = _load_round_questions(session.round_count)
     turn = InterviewTurn(questions=questions, answers=[])
     session = session.model_copy(
         update={
@@ -314,46 +275,21 @@ async def _run_turn_phase_streaming(
 
     if session.should_finalize():
         yield {"type": "interview_status", "phase": "finalizing"}
-        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-        session = session.model_copy(
-            update={"status": "complete", "diagnosis": diagnosis},
-        )
+        session, diagnosis = await _finalize_session(session, intake, llm)
         yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
         return
 
-    if session.round_count >= MAX_INTERVIEW_ROUNDS:
-        yield {"type": "interview_status", "phase": "finalizing"}
-        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-        session = session.model_copy(
-            update={"status": "complete", "diagnosis": diagnosis},
-        )
-        yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
-        return
-
-    yield {"type": "interview_status", "phase": "planning_questions"}
-    questions = await llm.plan_questions(
-        session.belief,
-        intake,
-        session.transcript,
+    yield {"type": "interview_status", "phase": "loading_questions"}
+    questions = _load_round_questions(
         session.round_count,
+        belief=session.belief,
+        transcript=session.transcript,
     )
-    questions = questions[:MAX_QUESTIONS_PER_TURN]
-
     if not questions:
-        if session.belief.is_interview_complete() or session.round_count >= MAX_INTERVIEW_ROUNDS:
-            diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-            session = session.model_copy(
-                update={"status": "complete", "diagnosis": diagnosis},
-            )
-            yield {
-                "type": "_output",
-                "output": _build_output(session, questions=[], diagnosis=diagnosis),
-            }
-            return
-        msg = "interview turn produced no questions while dimensions remain open"
-        raise DiagnosisInterviewLlmError(
-            "A IA não gerou perguntas para continuar. Tente novamente em alguns segundos.",
-        )
+        yield {"type": "interview_status", "phase": "finalizing"}
+        session, diagnosis = await _finalize_session(session, intake, llm)
+        yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
+        return
 
     next_turn = InterviewTurn(questions=questions, answers=[])
     session = session.model_copy(

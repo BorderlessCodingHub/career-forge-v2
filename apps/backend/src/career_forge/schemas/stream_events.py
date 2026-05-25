@@ -20,6 +20,7 @@ DiagnosisInterviewStatusPhase = Literal[
     "analyzing_intake",
     "analyzing_cv",
     "judging",
+    "loading_questions",
     "planning_questions",
     "processing_answers",
     "finalizing",
