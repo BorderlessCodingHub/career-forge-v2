@@ -1,4 +1,4 @@
-.PHONY: smoke agent-verify up down status test stack-smoke help
+.PHONY: smoke agent-verify up down status test stack-smoke seed help
 
 COMPOSE ?= docker compose
 
@@ -9,7 +9,7 @@ help:
 	@echo "  make status        Show compose status + URLs"
 	@echo "  make test          Backend pytest (apps/backend)"
 	@echo "  make smoke         Full harness + stack health"
-	@echo "  make agent-verify  Gate C — structure + optional /health"
+	@echo "  make seed           Seed skill catalog + demo Ana (requires DATABASE_URL)"
 	@echo "  make stack-smoke   Docker stack health only"
 
 # Full smoke — harness + monorepo + stack health (starts docker if needed)
@@ -50,3 +50,7 @@ status:
 test:
 	@echo "== Backend tests =="
 	@cd apps/backend && PYTHONPATH=src python -m pytest -q 2>/dev/null || (pip install -q -r requirements.txt pytest httpx && PYTHONPATH=src python -m pytest -q)
+
+seed:
+	@echo "== Seed catalog + demo Ana =="
+	@cd apps/backend && PYTHONPATH=src python -m scripts.seed --demo-ana

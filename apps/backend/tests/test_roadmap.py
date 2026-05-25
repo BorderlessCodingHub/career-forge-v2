@@ -15,11 +15,16 @@ class TestRoadmapCatalog:
         assert "http" in node_ids
         assert "final" in node_ids
 
-    def test_demo_state_marks_http_recommended(self) -> None:
+    def test_demo_state_marks_http_in_progress(self) -> None:
         roadmap = build_roadmap_from_catalog()
         http = next(n for n in roadmap.nodes if n.node_id == "http")
-        assert http.status == SkillStatus.RECOMENDADO
+        assert http.status == SkillStatus.EM_ESTUDO
         assert http.mastery_score == 42
+
+    def test_demo_state_marks_rest_ready_to_validate(self) -> None:
+        roadmap = build_roadmap_from_catalog()
+        rest = next(n for n in roadmap.nodes if n.node_id == "rest")
+        assert rest.status == SkillStatus.VALIDAR
 
 
 def test_get_roadmap_api(client) -> None:

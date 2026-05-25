@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { DemoModeToggle } from "@/components/layout/DemoModeToggle";
 import { Button } from "@/components/ui";
 import { CAREER_GOALS } from "@/lib/onboarding-data";
 import { setMotivation, setSelectedGoal } from "@/lib/onboarding-session";
@@ -28,6 +29,9 @@ export function GoalPicker() {
   return (
     <main className="min-h-screen grid-dots" data-testid="goal-picker">
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-16">
+        <div className="mb-6 flex justify-end">
+          <DemoModeToggle />
+        </div>
         <header className="mb-8">
           <span className="text-sm uppercase tracking-wide text-text-muted">
             Passo 1 de 3

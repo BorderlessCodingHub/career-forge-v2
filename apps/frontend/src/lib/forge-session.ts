@@ -64,3 +64,9 @@ export function diagnosisForForge(
 ): DiagnosisResponse {
   return diagnosis;
 }
+
+export function clearForgeSession() {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.removeItem(FORGE_GRAPH_KEY);
+  window.sessionStorage.removeItem(FORGE_RUN_KEY);
+}

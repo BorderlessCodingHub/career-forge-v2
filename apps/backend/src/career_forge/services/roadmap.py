@@ -22,19 +22,15 @@ from career_forge.schemas.roadmap import (
 
 ROADMAP_PATH = roadmap_json_path()
 
+from career_forge.demo.ana_state import DEMO_ANA_SKILL_STATE
+
 DEFAULT_DEMO_STATE: dict[str, dict[str, Any]] = {
-    "js": {"status": "aprovado", "mastery_score": 65, "priority": "low"},
-    "git": {"status": "aprovado", "mastery_score": 78, "priority": "low"},
-    "http": {
-        "status": "recomendado",
-        "mastery_score": 42,
-        "priority": "high",
-        "rationale": "Lacuna principal — foco do onboarding",
-    },
-    "db": {"status": "recomendado", "mastery_score": 35, "priority": "high"},
-    "rest": {"status": "bloqueado", "mastery_score": 0, "priority": None},
-    "auth": {"status": "bloqueado", "mastery_score": 0, "priority": None},
-    "final": {"status": "bloqueado", "mastery_score": 0, "priority": None},
+    node_id: {
+        key: value
+        for key, value in state.items()
+        if key != "evidence"
+    }
+    for node_id, state in DEMO_ANA_SKILL_STATE.items()
 }
 
 

@@ -13,7 +13,8 @@ COPY alembic.ini .
 COPY alembic ./alembic
 COPY src ./src
 COPY scripts ./scripts
+RUN chmod +x scripts/docker-entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["uvicorn", "career_forge.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["bash", "scripts/docker-entrypoint.sh"]

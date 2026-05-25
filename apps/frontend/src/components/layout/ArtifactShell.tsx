@@ -1,5 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
+import { DemoModeToggle } from "@/components/layout/DemoModeToggle";
+
 type ArtifactShellProps = HTMLAttributes<HTMLDivElement> & {
   trackName?: string;
   children: ReactNode;
@@ -26,11 +28,11 @@ export function ArtifactShell({
             <p className="text-xs text-text-muted">Trilha personalizada</p>
           </div>
         </div>
+        <DemoModeToggle compact />
         <div className="text-right">
           <p className="text-[10px] uppercase tracking-widest text-text-muted">Sua trilha</p>
           <p className="text-sm font-medium text-text-primary">{trackName}</p>
         </div>
-        <p className="hidden text-xs text-text-muted sm:block">trilha pronta · v0.1</p>
       </header>
       <div className="flex-1">{children}</div>
     </div>

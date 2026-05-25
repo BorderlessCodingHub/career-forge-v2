@@ -13,25 +13,17 @@ from career_forge.db.models.profile import Profile
 from career_forge.db.models.skill_node import SkillNode
 from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode
+from career_forge.db.models.validation import Validation
+from career_forge.demo.ana_state import (
+    DEMO_ANA_EXTERNAL_ID,
+    DEMO_ANA_PROFILE,
+    DEMO_ANA_SKILL_STATE,
+    DEMO_ANA_VALIDATIONS,
+    load_demo_diagnosis,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ROADMAP_PATH = REPO_ROOT / "data" / "roadmap.json"
-
-DEMO_ANA_EXTERNAL_ID = "demo-ana"
-DEMO_ANA_SKILL_STATE: dict[str, dict] = {
-    "js": {"status": "aprovado", "mastery_score": 65, "priority": "low"},
-    "git": {"status": "aprovado", "mastery_score": 78, "priority": "low"},
-    "http": {
-        "status": "recomendado",
-        "mastery_score": 42,
-        "priority": "high",
-        "rationale": "Lacuna principal — foco do onboarding",
-    },
-    "db": {"status": "recomendado", "mastery_score": 35, "priority": "high"},
-    "rest": {"status": "bloqueado", "mastery_score": 0, "priority": None},
-    "auth": {"status": "bloqueado", "mastery_score": 0, "priority": None},
-    "final": {"status": "bloqueado", "mastery_score": 0, "priority": None},
-}
 
 
 def load_roadmap(path: Path = ROADMAP_PATH) -> dict:
@@ -80,22 +72,25 @@ def seed_demo_ana(session) -> User:
         session.add(user)
         session.flush()
 
+    diagnosis = load_demo_diagnosis()
     profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
     if not profile:
         session.add(
             Profile(
                 user_id=user.id,
-                track_id="backend-beginner",
-                goal="Backend para APIs em space tech",
-                motivation="Quero construir serviços que alimentem missões espaciais.",
-                diagnosis={
-                    "fortes": ["JavaScript base", "Git"],
-                    "lacunas": ["HTTP", "Banco relacional"],
-                    "recomendacao": "Priorizar HTTP e SQL antes de REST.",
-                },
+                track_id=DEMO_ANA_PROFILE["track_id"],
+                goal=DEMO_ANA_PROFILE["goal"],
+                motivation=DEMO_ANA_PROFILE["motivation"],
+                diagnosis=diagnosis,
             )
         )
+    else:
+        profile.track_id = DEMO_ANA_PROFILE["track_id"]
+        profile.goal = DEMO_ANA_PROFILE["goal"]
+        profile.motivation = DEMO_ANA_PROFILE["motivation"]
+        profile.diagnosis = diagnosis
 
+    user_skill_by_node: dict[str, UserSkillNode] = {}
     for node_id, state in DEMO_ANA_SKILL_STATE.items():
         usn = session.scalar(
             select(UserSkillNode).where(
@@ -103,21 +98,44 @@ def seed_demo_ana(session) -> User:
                 UserSkillNode.skill_node_id == node_id,
             )
         )
+        evidence = state.get("evidence", [])
         if usn:
             usn.status = state["status"]
             usn.mastery_score = state["mastery_score"]
             usn.priority = state.get("priority")
             usn.rationale = state.get("rationale")
+            if evidence:
+                usn.evidence = evidence
         else:
+            usn = UserSkillNode(
+                user_id=user.id,
+                skill_node_id=node_id,
+                status=state["status"],
+                mastery_score=state["mastery_score"],
+                priority=state.get("priority"),
+                rationale=state.get("rationale"),
+                evidence=evidence if evidence else [],
+            )
+            session.add(usn)
+        session.flush()
+        user_skill_by_node[node_id] = usn
+
+    existing_validations = session.scalars(
+        select(Validation).where(Validation.user_id == user.id),
+    ).all()
+    if not existing_validations:
+        for payload in DEMO_ANA_VALIDATIONS:
+            node_id = payload["skill_node_id"]
             session.add(
-                UserSkillNode(
+                Validation(
                     user_id=user.id,
                     skill_node_id=node_id,
-                    status=state["status"],
-                    mastery_score=state["mastery_score"],
-                    priority=state.get("priority"),
-                    rationale=state.get("rationale"),
-                    evidence=[],
+                    user_skill_node_id=user_skill_by_node[node_id].id,
+                    score=payload["score"],
+                    passed=payload["passed"],
+                    feedback=payload["feedback"],
+                    questions=payload["questions"],
+                    answers=payload["answers"],
                 )
             )
 

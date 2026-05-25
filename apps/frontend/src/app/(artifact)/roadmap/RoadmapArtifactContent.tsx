@@ -8,6 +8,7 @@ import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session
 import { getRoadmap, syncRoadmap } from "@/lib/api-client";
 import { getForgeGraph } from "@/lib/forge-session";
 import { getStoredDiagnosis } from "@/lib/onboarding-session";
+import { isDemoMode } from "@/lib/user-session";
 import type { PlanUpdateResponse, RoadmapNode, RoadmapResponse } from "@/types/contracts";
 
 function forgeGraphToSyncNodes(graph: NonNullable<ReturnType<typeof getForgeGraph>>) {
@@ -24,6 +25,7 @@ function forgeGraphToSyncNodes(graph: NonNullable<ReturnType<typeof getForgeGrap
 export default function RoadmapArtifactPageContent() {
   const searchParams = useSearchParams();
   const adaptiveMode = searchParams.get("adaptive") === "1";
+  const nodeFromQuery = searchParams.get("node");
 
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
   const [planUpdate, setPlanUpdate] = useState<PlanUpdateResponse | null>(null);
@@ -51,19 +53,24 @@ export default function RoadmapArtifactPageContent() {
       }
 
       const forgeGraph = getForgeGraph();
-      if (forgeGraph?.length) {
+      if (!isDemoMode() && forgeGraph?.length) {
         await syncRoadmap(forgeGraphToSyncNodes(forgeGraph));
       }
       const data = await getRoadmap();
       setRoadmap(data);
       setPlanUpdate(null);
-      setHighlightNodeId(null);
+      if (nodeFromQuery) {
+        setHighlightNodeId(nodeFromQuery);
+        setSelectedNodeId(nodeFromQuery);
+      } else {
+        setHighlightNodeId(null);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao carregar trilha");
     } finally {
       setLoading(false);
     }
-  }, [adaptiveMode]);
+  }, [adaptiveMode, nodeFromQuery]);
 
   useEffect(() => {
     void loadRoadmap();

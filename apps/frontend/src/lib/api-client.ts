@@ -5,6 +5,7 @@ import type {
   ValidationQuestionsResponse,
   ValidationRunResponse,
 } from "@/types/contracts";
+import { getUserId } from "@/lib/user-session";
 
 const backendUrl =
   process.env.NEXT_PUBLIC_BACKEND_URL ??
@@ -39,7 +40,7 @@ export async function createDiagnosis(
 ): Promise<DiagnosisRunResponse> {
   return apiFetch<DiagnosisRunResponse>("/diagnosis", {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ user_id: getUserId(), ...payload }),
   });
 }
 
@@ -52,11 +53,12 @@ export type ForgeRunResponse = {
 
 export async function startForgeRun(
   diagnosis: DiagnosisResponse,
-  userId = "demo-ana",
+  userId?: string,
 ): Promise<ForgeRunResponse> {
+  const resolvedUserId = userId ?? getUserId();
   return apiFetch<ForgeRunResponse>("/forge", {
     method: "POST",
-    body: JSON.stringify({ user_id: userId, diagnosis }),
+    body: JSON.stringify({ user_id: resolvedUserId, diagnosis }),
   });
 }
 
@@ -64,17 +66,21 @@ export function forgeStreamUrl(runId: string): string {
   return `${backendUrl}/forge/${runId}/stream`;
 }
 
-export async function getRoadmap(userId = "demo-ana"): Promise<RoadmapResponse> {
-  return apiFetch<RoadmapResponse>(`/roadmap/?user_id=${encodeURIComponent(userId)}`);
+export async function getRoadmap(userId?: string): Promise<RoadmapResponse> {
+  const resolvedUserId = userId ?? getUserId();
+  return apiFetch<RoadmapResponse>(
+    `/roadmap/?user_id=${encodeURIComponent(resolvedUserId)}`,
+  );
 }
 
 export async function syncRoadmap(
   nodes: RoadmapSyncNode[],
-  userId = "demo-ana",
+  userId?: string,
 ): Promise<RoadmapResponse> {
+  const resolvedUserId = userId ?? getUserId();
   return apiFetch<RoadmapResponse>("/roadmap/sync", {
     method: "POST",
-    body: JSON.stringify({ user_id: userId, nodes }),
+    body: JSON.stringify({ user_id: resolvedUserId, nodes }),
   });
 }
 
@@ -96,12 +102,33 @@ export type SubmitValidationPayload = {
 
 export async function submitValidation(
   payload: SubmitValidationPayload,
-  userId = "demo-ana",
+  userId?: string,
 ): Promise<ValidationRunResponse> {
+  const resolvedUserId = userId ?? getUserId();
   return apiFetch<ValidationRunResponse>("/validation", {
     method: "POST",
-    body: JSON.stringify({ user_id: userId, ...payload }),
+    body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
   });
+}
+
+export type DemoValidationSummary = {
+  node_id: string;
+  score: number;
+  passed: boolean;
+  feedback?: string | null;
+};
+
+export type DemoAnaResponse = {
+  user_id: string;
+  display_name: string;
+  diagnosis: DiagnosisResponse;
+  roadmap: RoadmapResponse;
+  validations: DemoValidationSummary[];
+  pitch_node_id: string;
+};
+
+export async function getDemoAna(): Promise<DemoAnaResponse> {
+  return apiFetch<DemoAnaResponse>("/demo/ana");
 }
 
 export async function* streamForgeEvents(
