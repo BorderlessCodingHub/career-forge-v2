@@ -22,7 +22,14 @@ export type RoadmapForgeEvent =
   | { type: "step_complete"; step: string; iteration: number }
   | {
       type: "graph_ready";
-      graph: Array<{ node_id: string; status: SkillStatus; mastery_score: number }>;
+      graph: Array<{
+        node_id: string;
+        title?: string;
+        status: SkillStatus;
+        mastery_score: number;
+        priority?: string;
+        rationale?: string;
+      }>;
     }
   | { type: "error"; message: string };
 

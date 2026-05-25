@@ -1,8 +1,180 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import { ForgeEventLine, ForgeTimeline } from "@/components/forge";
+import { Button } from "@/components/ui";
+import { forgeStreamUrl, startForgeRun } from "@/lib/api-client";
+import {
+  extractGraphFromEvents,
+  setForgeGraph,
+  setForgeRunId,
+} from "@/lib/forge-session";
+import { getStoredDiagnosis } from "@/lib/onboarding-session";
+import type { RoadmapForgeEvent } from "@/types/contracts";
+
+function parseForgeEvent(raw: Record<string, unknown>): RoadmapForgeEvent | null {
+  if (typeof raw.type !== "string") return null;
+  return raw as RoadmapForgeEvent;
+}
+
 export default function ForgePage() {
+  const router = useRouter();
+  const [events, setEvents] = useState<RoadmapForgeEvent[]>([]);
+  const [status, setStatus] = useState<"idle" | "starting" | "streaming" | "done" | "error">(
+    "idle",
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [elapsedSec, setElapsedSec] = useState(0);
+  const startedRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const finishForge = useCallback(
+    (collected: RoadmapForgeEvent[]) => {
+      const graph = extractGraphFromEvents(collected);
+      if (graph) setForgeGraph(graph);
+      setStatus("done");
+      if (timerRef.current) clearInterval(timerRef.current);
+      router.push("/forge/complete");
+    },
+    [router],
+  );
+
+  const connectStream = useCallback(
+    async (runId: string) => {
+      setStatus("streaming");
+      const res = await fetch(forgeStreamUrl(runId), {
+        headers: { Accept: "text/event-stream" },
+      });
+      if (!res.ok || !res.body) {
+        setError(`Stream falhou: ${res.status}`);
+        setStatus("error");
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      const collected: RoadmapForgeEvent[] = [];
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split("\n\n");
+        buffer = parts.pop() ?? "";
+        for (const part of parts) {
+          const line = part.split("\n").find((row) => row.startsWith("data:"));
+          if (!line) continue;
+          const json = line.replace(/^data:\s*/, "");
+          try {
+            const raw = JSON.parse(json) as Record<string, unknown>;
+            const parsed = parseForgeEvent(raw);
+            if (!parsed) continue;
+            collected.push(parsed);
+            setEvents((prev) => [...prev, parsed]);
+            if (parsed.type === "graph_ready") {
+              finishForge(collected);
+              return;
+            }
+          } catch {
+            /* skip */
+          }
+        }
+      }
+
+      if (collected.length) finishForge(collected);
+    },
+    [finishForge],
+  );
+
+  const startForge = useCallback(async () => {
+    const diagnosis = getStoredDiagnosis();
+    if (!diagnosis) {
+      router.replace("/onboarding/edit");
+      return;
+    }
+
+    setStatus("starting");
+    setError(null);
+    setEvents([]);
+    timerRef.current = setInterval(() => setElapsedSec((s) => s + 1), 1000);
+
+    try {
+      const result = await startForgeRun(diagnosis);
+      setForgeRunId(result.run_id);
+      await connectStream(result.run_id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao iniciar forge");
+      setStatus("error");
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+  }, [connectStream, router]);
+
+  useEffect(() => {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    void startForge();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [startForge]);
+
+  const completedSteps = events.filter(
+    (e) => e.type === "step_complete" || e.type === "graph_ready",
+  ).length;
+
   return (
-    <main className="min-h-screen grid-dots p-8">
-      <h1 className="text-2xl font-semibold text-text-primary">Live Roadmap Forge</h1>
-      <p className="mt-2 text-text-secondary">Placeholder — HAC-18 streaming timeline</p>
+    <main
+      className="min-h-screen grid-dots px-4 py-10"
+      data-screen="forge-stream"
+    >
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-8">
+          <p className="text-xs uppercase tracking-widest text-text-muted">
+            Live Roadmap Forge
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold text-text-primary">
+            Forjando sua trilha personalizada
+          </h1>
+          <p className="mt-2 text-sm text-text-secondary">
+            Timeline ao vivo — sem preview de grafo durante o stream.
+          </p>
+          <div className="mt-4 flex gap-4 text-xs text-text-muted">
+            <span>{elapsedSec}s</span>
+            <span>{completedSteps} etapas concluídas</span>
+            <span className="capitalize">{status}</span>
+          </div>
+        </div>
+
+        {error && (
+          <p className="mb-4 rounded-lg border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
+            {error}
+          </p>
+        )}
+
+        <ForgeTimeline>
+          {events.map((event, index) => (
+            <ForgeEventLine key={`${event.type}-${index}`} event={event} index={index} />
+          ))}
+          {(status === "starting" || status === "streaming") && events.length === 0 && (
+            <li className="font-mono text-sm text-accent-mint animate-pulse">
+              Conectando ao stream SSE…
+            </li>
+          )}
+        </ForgeTimeline>
+
+        {status === "error" && (
+          <div className="mt-8 flex gap-4">
+            <Button onClick={() => void startForge()}>Tentar novamente</Button>
+            <Link href="/onboarding/edit">
+              <Button variant="ghost">Voltar ao diagnóstico</Button>
+            </Link>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
