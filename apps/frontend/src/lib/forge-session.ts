@@ -65,8 +65,13 @@ export function diagnosisForForge(
   return diagnosis;
 }
 
-export function clearForgeSession() {
+export function clearForgeGraph() {
   if (typeof window === "undefined") return;
   window.sessionStorage.removeItem(FORGE_GRAPH_KEY);
+}
+
+export function clearForgeSession() {
+  if (typeof window === "undefined") return;
+  clearForgeGraph();
   window.sessionStorage.removeItem(FORGE_RUN_KEY);
 }
