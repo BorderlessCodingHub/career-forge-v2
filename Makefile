@@ -1,41 +1,40 @@
-.PHONY: smoke agent-verify up down status test
+.PHONY: smoke agent-verify up down status test stack-smoke
 
-# Stub smoke — extend when apps/web + apps/api + docker-compose land (HAC-5)
+COMPOSE ?= docker compose
+
+# Full smoke — harness + monorepo + stack health (starts docker if needed)
 smoke:
-	@echo "== Career Forge smoke (bootstrap) =="
+	@echo "== Career Forge smoke =="
 	@test -f AGENTS.md
 	@test -f docs/STATUS.md
 	@test -f docs/ROADMAP.md
-	@test -f .cursor/rules/end-task-workflow.mdc
-	@test -f .cursor/rules/ui-product-sync.mdc
-	@test -f claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md
-	@test -f claude-design-docs/UX-FLOW.md
-	@test -f claude-design-docs/SCREEN-INTENT.md
-	@test -f claude-design-docs/references/roadmap-sh-vertical-ai-tutor.png
-	@test -f claude-design-docs/BORDERLESS-THEMING.md
-	@test -f claude-design-docs/references/borderless-code-breakers-dashboard.png
-	@test -f claude-design-docs/references/borderless-logo-brand.png
-	@test -f claude-design-docs/prototype/Career\ Forge.html
-	@test -f claude-design-docs/prototype/index.html
-	@test -f claude-design-docs/prototype/Career\ OS.html
-	@test -f claude-design-docs/prototype/README.md
-	@test -f data/roadmap.json
-	@test -f apps/api/app/models/skill_node.py
-	@test -f claude-design-docs/references/prototype-onboarding-current.png
+	@test -f apps/web/package.json
+	@test -f apps/api/requirements.txt
+	@test -f docker-compose.yml
+	@test -f .env.example
 	@bash scripts/agent-verify.sh
-	@echo "SMOKE OK (harness + stub verify)"
+	@bash scripts/smoke-stack.sh
+	@echo "SMOKE OK"
 
 agent-verify:
 	@bash scripts/agent-verify.sh
 
+stack-smoke:
+	@bash scripts/smoke-stack.sh
+
 up:
-	@echo "TODO HAC-5: docker compose up"
+	$(COMPOSE) up -d --build
 
 down:
-	@echo "TODO HAC-5: docker compose down"
+	$(COMPOSE) down
 
 status:
-	@echo "Harness bootstrap active — apps not yet scaffolded"
+	@$(COMPOSE) ps
+	@echo ""
+	@echo "Web:  http://localhost:$${WEB_HOST_PORT:-3000}"
+	@echo "API:  http://localhost:8000/docs"
+	@echo "Health: http://localhost:8000/health"
 
 test:
-	@echo "TODO: pytest + pnpm test when monorepo exists"
+	@echo "== API tests =="
+	@cd apps/api && python -m pytest -q 2>/dev/null || (pip install -q -r requirements.txt pytest httpx && python -m pytest -q)

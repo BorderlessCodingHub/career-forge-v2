@@ -45,11 +45,60 @@ python3 -m http.server 8765
 open http://localhost:8765/
 ```
 
-## Como rodar (em construção)
+## Como rodar localmente
+
+### Pré-requisitos
+
+- Docker + Docker Compose
+- Node 20+ e [pnpm](https://pnpm.io/) (opcional — dev fora do Docker)
+- Python 3.11+ (opcional — dev da API fora do Docker)
+
+### Stack completa (recomendado)
 
 ```bash
-make smoke   # stub até apps/web + apps/api existirem
+cp .env.example .env
+make up          # postgres + api + web
+make status      # URLs
+make smoke       # valida harness + health checks (sobe docker se necessário)
 ```
+
+| Serviço | URL |
+|---------|-----|
+| Web | http://localhost:3000 |
+| API OpenAPI | http://localhost:8000/docs |
+| Health | http://localhost:8000/health |
+
+Parar: `make down`
+
+Se a porta 3000 estiver ocupada: `WEB_HOST_PORT=3300 make up` (web em http://localhost:3300).
+
+### Dev sem Docker (API + Postgres local)
+
+```bash
+# Terminal 1 — Postgres via docker só do banco
+docker compose up -d postgres
+
+# Terminal 2 — API
+cd apps/api
+cp .env.example .env
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+
+# Terminal 3 — Web
+cd apps/web
+cp .env.example .env.local
+pnpm install && pnpm dev
+```
+
+### Deploy (skeleton)
+
+| App | Plataforma | Config |
+|-----|------------|--------|
+| `apps/web` | Vercel | `vercel.json` (root directory `apps/web`) |
+| `apps/api` | Railway | `railway.toml` + env `DATABASE_URL`, `CORS_ORIGINS` |
+
+Variáveis compartilhadas: ver `.env.example` (`OPENAI_API_KEY`, `LANGSMITH_*`).
 
 ## Equipe
 
