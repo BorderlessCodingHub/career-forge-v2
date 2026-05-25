@@ -13,6 +13,7 @@ import {
 import {
   getMotivation,
   getSelectedGoal,
+  getYearsXp,
   setAnswers,
   setStoredDiagnosis,
 } from "@/lib/onboarding-session";
@@ -23,7 +24,7 @@ function initialAnswers() {
   const init: Record<string, string> = {};
   DIAG_ROUNDS.forEach((round) =>
     round.questions.forEach((question) => {
-      init[question.id] = question.defaultValue;
+      init[question.id] = "";
     }),
   );
   return init;
@@ -38,11 +39,12 @@ export function DiagnosticPills() {
 
   const goalId = getSelectedGoal() ?? "backend";
   const motivation = getMotivation();
+  const yearsXp = getYearsXp();
   const goalTitle =
     CAREER_GOALS.find((goal) => goal.id === goalId)?.title ?? "Backend Developer";
 
   useEffect(() => {
-    if (!getSelectedGoal() || getMotivation().trim().length < 20) {
+    if (!getSelectedGoal() || getMotivation().trim().length < 20 || !getYearsXp()) {
       router.replace("/");
     }
   }, [router]);
@@ -89,6 +91,7 @@ export function DiagnosticPills() {
       const result = await createDiagnosis({
         goal_id: goalId,
         motivation,
+        years_xp: yearsXp ?? undefined,
         answers,
       });
       setStoredDiagnosis(result.diagnosis);

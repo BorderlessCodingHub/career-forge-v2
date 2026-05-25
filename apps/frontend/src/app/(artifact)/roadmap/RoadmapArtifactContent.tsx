@@ -8,7 +8,6 @@ import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session
 import { getRoadmap, syncRoadmap } from "@/lib/api-client";
 import { getForgeGraph } from "@/lib/forge-session";
 import { getStoredDiagnosis } from "@/lib/onboarding-session";
-import { isDemoMode } from "@/lib/user-session";
 import type { PlanUpdateResponse, RoadmapNode, RoadmapResponse } from "@/types/contracts";
 
 function forgeGraphToSyncNodes(graph: NonNullable<ReturnType<typeof getForgeGraph>>) {
@@ -54,7 +53,7 @@ export default function RoadmapArtifactPageContent() {
       }
 
       const forgeGraph = getForgeGraph();
-      if (!isDemoMode() && forgeGraph?.length) {
+      if (forgeGraph?.length) {
         await syncRoadmap(forgeGraphToSyncNodes(forgeGraph));
       }
       const data = await getRoadmap();

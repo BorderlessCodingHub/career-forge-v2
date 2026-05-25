@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -56,6 +58,10 @@ class DiagnosisRequest(BaseModel):
         min_length=20,
         max_length=280,
         description="Why the learner chose this path",
+    )
+    years_xp: Literal["0-1", "1-3", "3-5", "5+"] | None = Field(
+        default=None,
+        description="Self-reported years of professional experience",
     )
     answers: dict[str, str] = Field(
         min_length=1,

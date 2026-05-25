@@ -1,37 +1,58 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { DemoModeToggle } from "@/components/layout/DemoModeToggle";
 import { Button } from "@/components/ui";
 import { CAREER_GOALS } from "@/lib/onboarding-data";
-import { setMotivation, setSelectedGoal } from "@/lib/onboarding-session";
+import {
+  clearCvAttachment,
+  getCvAttachment,
+  setCvAttachment,
+  setMotivation,
+  setSelectedGoal,
+  setYearsXp,
+  type CvAttachment,
+  type YearsXpRange,
+} from "@/lib/onboarding-session";
+
+import { CvDropzone } from "./CvDropzone";
+
+const YEARS_XP_OPTIONS: Array<{ value: YearsXpRange; label: string }> = [
+  { value: "0-1", label: "0–1 ano" },
+  { value: "1-3", label: "1–3 anos" },
+  { value: "3-5", label: "3–5 anos" },
+  { value: "5+", label: "5+ anos" },
+];
 
 export function GoalPicker() {
   const router = useRouter();
   const [selected, setSelected] = useState("backend");
-  const [motivation, setMotivationValue] = useState(
-    "Quero trabalhar com APIs para space tech — sonho em escrever os sistemas que orquestram lançamentos de foguetes.",
-  );
+  const [motivation, setMotivationValue] = useState("");
+  const [yearsXp, setYearsXpValue] = useState<YearsXpRange | "">("");
+  const [cvAttachment, setCvAttachmentState] = useState<CvAttachment | null>(null);
   const [touched, setTouched] = useState(false);
 
-  const valid = selected.length > 0 && motivation.trim().length >= 20;
+  useEffect(() => {
+    setCvAttachmentState(getCvAttachment());
+  }, []);
+
+  const valid =
+    selected.length > 0 &&
+    motivation.trim().length >= 20 &&
+    yearsXp.length > 0;
 
   const handleContinue = () => {
-    if (!valid) return;
+    if (!valid || !yearsXp) return;
     setSelectedGoal(selected);
     setMotivation(motivation.trim());
+    setYearsXp(yearsXp);
     router.push("/onboarding");
   };
 
   return (
     <main className="min-h-screen grid-dots" data-testid="goal-picker">
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-16">
-        <div className="mb-6 flex justify-end">
-          <DemoModeToggle />
-        </div>
         <header className="mb-8">
           <span className="text-sm uppercase tracking-wide text-text-muted">
             Passo 1 de 3
@@ -77,7 +98,7 @@ export function GoalPicker() {
             id="motivation"
             data-testid="motivation-input"
             className="mt-2 min-h-[120px] w-full rounded-card border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
-            placeholder="Quero trabalhar com APIs para space tech..."
+            placeholder="Conte em suas palavras o que te motiva nesse caminho…"
             value={motivation}
             onChange={(event) => {
               setMotivationValue(event.target.value.slice(0, 280));
@@ -91,7 +112,55 @@ export function GoalPicker() {
           )}
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center gap-4">
+        <div className="mt-6">
+          <label
+            htmlFor="years-xp"
+            className="text-sm text-text-secondary"
+          >
+            Anos de XP (se aplicável)
+          </label>
+          <select
+            id="years-xp"
+            data-testid="years-xp-select"
+            value={yearsXp}
+            onChange={(event) => {
+              setYearsXpValue(event.target.value as YearsXpRange | "");
+              setTouched(true);
+            }}
+            className="mt-2 w-full rounded-card border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
+          >
+            <option value="">Selecione…</option>
+            {YEARS_XP_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {touched && !yearsXp && (
+            <p className="mt-2 text-sm text-warning">
+              Informe sua experiência para calibrar o diagnóstico.
+            </p>
+          )}
+        </div>
+
+        <div className="mt-6">
+          <label className="text-sm text-text-secondary">
+            Currículo (opcional)
+          </label>
+          <CvDropzone
+            attachment={cvAttachment}
+            onAttach={(attachment) => {
+              setCvAttachment(attachment);
+              setCvAttachmentState(attachment);
+            }}
+            onRemove={() => {
+              clearCvAttachment();
+              setCvAttachmentState(null);
+            }}
+          />
+        </div>
+
+        <div className="mt-10">
           <Button
             data-testid="start-diagnosis"
             disabled={!valid}
@@ -99,12 +168,6 @@ export function GoalPicker() {
           >
             Começar diagnóstico →
           </Button>
-          <Link
-            href="/forge"
-            className="text-sm text-text-muted hover:text-text-secondary"
-          >
-            Pular para forge (dev)
-          </Link>
         </div>
       </div>
     </main>

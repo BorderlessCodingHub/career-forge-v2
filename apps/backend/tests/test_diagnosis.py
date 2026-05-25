@@ -50,6 +50,13 @@ class TestDiagnosisEngine:
         )
         assert diagnosis.estimated_mastery["http"] >= baseline.estimated_mastery["http"]
 
+    def test_years_xp_boosts_mastery(self) -> None:
+        baseline = build_diagnosis_response(SAMPLE_PAYLOAD)
+        with_xp = build_diagnosis_response(
+            SAMPLE_PAYLOAD.model_copy(update={"years_xp": "5+"}),
+        )
+        assert with_xp.estimated_mastery["http"] > baseline.estimated_mastery["http"]
+
 
 @pytest.fixture
 def executor() -> GraphExecutor:

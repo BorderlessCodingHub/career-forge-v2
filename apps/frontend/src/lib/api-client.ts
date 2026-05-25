@@ -38,6 +38,7 @@ export type CreateDiagnosisPayload = {
   user_id?: string;
   goal_id: string;
   motivation: string;
+  years_xp?: string;
   answers: Record<string, string>;
 };
 

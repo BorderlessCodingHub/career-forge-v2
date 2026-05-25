@@ -9,7 +9,6 @@ export type DiagQuestion = {
   tag: string;
   prompt: string;
   placeholder: string;
-  defaultValue: string;
 };
 
 export type DiagRound = {
@@ -38,15 +37,12 @@ export const DIAG_ROUNDS: DiagRound[] = [
         tag: "Senioridade",
         prompt: "Qual seu nível hoje com programação?",
         placeholder: "Ex.: estou começando, já sei JS básico, estudo há 6 meses…",
-        defaultValue:
-          "Já programo em JavaScript há alguns meses, mas ainda me sinto iniciante em backend.",
       },
       {
         id: "prior",
         tag: "Contexto",
         prompt: "Já estudou ou trabalhou com desenvolvimento antes?",
         placeholder: "Cursos, bootcamp, projetos pessoais, estágio…",
-        defaultValue: "Fiz um curso online de JS e subi um projeto no GitHub.",
       },
     ],
   },
@@ -61,15 +57,12 @@ export const DIAG_ROUNDS: DiagRound[] = [
         tag: "Git",
         prompt: "Você já usou Git em algum projeto?",
         placeholder: "Clone, commit, push, branches…",
-        defaultValue: "Sim, subi um projeto no GitHub mas não domino branches.",
       },
       {
         id: "client_server",
         tag: "Domínio",
         prompt: "Consegue explicar a diferença entre frontend e backend?",
         placeholder: "Com suas palavras — o que cada um faz?",
-        defaultValue:
-          "Frontend é o que o usuário vê. Backend processa dados no servidor.",
       },
     ],
   },
@@ -84,16 +77,12 @@ export const DIAG_ROUNDS: DiagRound[] = [
         tag: "HTTP",
         prompt: "Você já fez alguma requisição HTTP ou chamou uma API?",
         placeholder: "GET, POST, status codes, JSON…",
-        defaultValue:
-          "Acho que sim, mas nunca prestei atenção em métodos ou status codes.",
       },
       {
         id: "db",
         tag: "DB",
         prompt: 'Ao pensar em "criar um usuário", o que vem primeiro — tela, banco ou requisição?',
         placeholder: "Descreva seu modelo mental…",
-        defaultValue:
-          "Acho que uma tela com formulário… mas o backend salva no banco.",
       },
     ],
   },

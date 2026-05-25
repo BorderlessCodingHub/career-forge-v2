@@ -28,18 +28,19 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
   const [askLoading, setAskLoading] = useState(false);
   const [askError, setAskError] = useState<string | null>(null);
 
-  if (!node) return null;
+  const activeNode = node;
+  if (!activeNode) return null;
 
   async function handleAskAi() {
     const text = askDraft.trim();
-    if (!text || askLoading) return;
+    if (!text || askLoading || !activeNode) return;
     setAskLoading(true);
     setAskError(null);
     try {
       const response = await sendMentorMessage({
         message: text,
-        node_id: node.node_id,
-        node_title: node.title,
+        node_id: activeNode.node_id,
+        node_title: activeNode.title,
       });
       setAskReply(response.mentor.reply);
       setAskDraft("");

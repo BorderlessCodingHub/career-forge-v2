@@ -1,8 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
 
-import { DemoModeToggle } from "@/components/layout/DemoModeToggle";
-
 type ArtifactShellProps = HTMLAttributes<HTMLDivElement> & {
   trackName?: string;
   children: ReactNode;
@@ -29,7 +27,6 @@ export function ArtifactShell({
             <p className="text-xs text-text-muted">Trilha personalizada</p>
           </div>
         </div>
-        <DemoModeToggle compact />
         <Link
           href="/report"
           className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-accent hover:text-accent"

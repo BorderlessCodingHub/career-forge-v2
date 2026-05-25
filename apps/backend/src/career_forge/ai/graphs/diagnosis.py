@@ -78,6 +78,13 @@ DEFAULT_MASTERY: dict[str, int] = {
 
 PRIORITY_ORDER = ("http", "git", "db", "js", "rest", "auth")
 
+YEARS_XP_BOOST: dict[str, int] = {
+    "0-1": 0,
+    "1-3": 4,
+    "3-5": 8,
+    "5+": 12,
+}
+
 
 def _lc_event(
     event: str,
@@ -134,6 +141,11 @@ def build_diagnosis_response(payload: DiagnosisRequest) -> DiagnosisResponse:
 
     for domain, keywords in DOMAIN_SIGNALS.items():
         mastery[domain] = _score_text(merged, keywords)
+
+    xp_boost = YEARS_XP_BOOST.get(payload.years_xp or "", 0)
+    if xp_boost:
+        for domain in mastery:
+            mastery[domain] = min(100, mastery[domain] + xp_boost)
 
     if re.search(r"space|foguet|orbit|satél|satel", payload.motivation.lower()):
         mastery["http"] = min(100, mastery["http"] + 8)
