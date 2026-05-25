@@ -247,6 +247,64 @@ export type DiagnosisRunResponse = {
   diagnosis: DiagnosisResponse;
 };
 
+/** CTRR rubric dimension keys — mirrors backend diagnosis_interview.py */
+export type RubricDimensionKey =
+  | "learning_stage"
+  | "project_scope"
+  | "background_context"
+  | "hands_on_evidence"
+  | "git"
+  | "client_server"
+  | "http_apis"
+  | "database";
+
+export type InterviewQuestion = {
+  id: string;
+  topic: string;
+  rubric_key: RubricDimensionKey;
+  question: string;
+  example_of_answer: string;
+};
+
+export type InterviewAnswer = {
+  question_id: string;
+  text: string;
+};
+
+export type RubricMapItem = {
+  rubric_key: RubricDimensionKey;
+  label: string;
+  confidence: number;
+  saturated: boolean;
+};
+
+export type DiagnosisInterviewCvAttachment = {
+  filename: string;
+  mime_type: "application/pdf";
+  content_base64: string;
+  extracted_text?: string | null;
+};
+
+export type DiagnosisIntake = {
+  user_id?: string;
+  goal_id: string;
+  motivation: string;
+  years_xp?: YearsXpRange;
+  cv?: DiagnosisInterviewCvAttachment;
+};
+
+export type InterviewTurnRequest = {
+  answers: InterviewAnswer[];
+};
+
+export type InterviewTurnResponse = {
+  session_id: string;
+  status: "asking" | "complete";
+  questions: InterviewQuestion[];
+  mapping_progress: RubricMapItem[];
+  diagnosis?: DiagnosisResponse;
+};
+
 export type ForgeRunResponse = {
   run_id: string;
   status: string;
