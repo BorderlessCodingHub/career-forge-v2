@@ -54,6 +54,16 @@ async def start_diagnosis_interview_stream(
     return StreamingResponse(sse_body(), media_type="text/event-stream")
 
 
+@router.get("/interview/{session_id}", response_model=InterviewTurnResponse)
+async def get_diagnosis_session(session_id: str) -> InterviewTurnResponse:
+    """Resume an in-progress or completed diagnosis interview session."""
+    service = get_diagnosis_session_service()
+    try:
+        return service.get_session(session_id)
+    except DiagnosisSessionNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Sessão não encontrada.") from exc
+
+
 @router.post("/interview/{session_id}/turn", response_model=InterviewTurnResponse)
 async def submit_diagnosis_turn(
     session_id: str,

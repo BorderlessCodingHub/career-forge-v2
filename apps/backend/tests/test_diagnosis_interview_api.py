@@ -42,7 +42,22 @@ def test_post_interview_start_returns_questions(client) -> None:
     payload = response.json()
     assert payload["status"] == "asking"
     assert payload["session_id"]
+    assert payload["round_count"] == 1
     assert 1 <= len(payload["questions"]) <= 2
+    assert len(payload["mapping_progress"]) == len(PROFILE_DIMENSION_KEYS)
+
+
+def test_get_interview_session_resumes_open_turn(client) -> None:
+    start = client.post("/diagnosis/interview/start", json=START_BODY)
+    session_id = start.json()["session_id"]
+
+    resume = client.get(f"/diagnosis/interview/{session_id}")
+    assert resume.status_code == 200
+    payload = resume.json()
+    assert payload["session_id"] == session_id
+    assert payload["status"] == "asking"
+    assert payload["round_count"] == 1
+    assert len(payload["questions"]) >= 1
     assert len(payload["mapping_progress"]) == len(PROFILE_DIMENSION_KEYS)
 
 

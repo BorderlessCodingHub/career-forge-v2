@@ -162,15 +162,32 @@ def _extract_graph_output(result: GraphRunResult) -> dict:
     raise DiagnosisInterviewLlmError(msg)
 
 
+def _session_to_turn_response(session: DiagnosisSession) -> InterviewTurnResponse:
+    questions: list[InterviewQuestion] = []
+    if session.status == "asking" and session.transcript:
+        open_turn = session.transcript[-1]
+        if not open_turn.answers:
+            questions = open_turn.questions[:MAX_QUESTIONS_PER_TURN]
+
+    return InterviewTurnResponse(
+        session_id=session.session_id,
+        status=session.status,
+        round_count=session.round_count,
+        questions=questions,
+        mapping_progress=build_rubric_map(session.belief),
+        diagnosis=session.diagnosis,
+    )
+
+
 def _graph_output_to_response(graph_output: dict) -> InterviewTurnResponse:
-    return InterviewTurnResponse.model_validate(
-        {
-            "session_id": graph_output["session_id"],
-            "status": graph_output["status"],
-            "questions": graph_output.get("questions") or [],
-            "mapping_progress": graph_output.get("mapping_progress") or [],
-            "diagnosis": graph_output.get("diagnosis"),
-        },
+    session = DiagnosisSession.model_validate(graph_output["session"])
+    return InterviewTurnResponse(
+        session_id=graph_output["session_id"],
+        status=graph_output["status"],
+        round_count=session.round_count,
+        questions=graph_output.get("questions") or [],
+        mapping_progress=graph_output.get("mapping_progress") or [],
+        diagnosis=graph_output.get("diagnosis"),
     )
 
 
@@ -282,6 +299,12 @@ class DiagnosisSessionService:
 
         async for line in events_to_sse(_events()):
             yield line
+
+    def get_session(self, session_id: str) -> InterviewTurnResponse:
+        session = self._sessions.get(session_id)
+        if session is None:
+            raise DiagnosisSessionNotFoundError(session_id)
+        return _session_to_turn_response(session)
 
     async def submit_turn(
         self,
