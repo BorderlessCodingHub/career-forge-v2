@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   getDiagnosisInterviewSession,
@@ -86,7 +86,6 @@ function hydrateInterviewResponse(response: InterviewTurnResponse): {
 export function useDiagnosisInterview() {
   const router = useRouter();
   const intake = useMemo(() => readOnboardingIntake(), []);
-  const bootstrapStarted = useRef(false);
 
   const [sessionId, setSessionId] = useState<string | null>(() =>
     getDiagnosisSessionId(),
@@ -153,8 +152,7 @@ export function useDiagnosisInterview() {
   );
 
   useEffect(() => {
-    if (!intake || bootstrapStarted.current) return;
-    bootstrapStarted.current = true;
+    if (!intake) return;
 
     const readyIntake = intake;
     let cancelled = false;
