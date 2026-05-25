@@ -1,0 +1,46 @@
+---
+description: AI/LangGraph work must use GraphExecutor + AgentFactory — no per-graph streaming. Apply when editing apps/backend AI layer or graph API routes.
+globs:
+  - apps/backend/src/career_forge/ai/**
+  - apps/backend/src/career_forge/api/**
+alwaysApply: false
+---
+
+# AI execution (GraphExecutor)
+
+All graph/agent execution goes through the unified AI layer (HAC-32).
+
+---
+
+## Golden rules
+
+1. **Single path:** `api/` creates `GraphRun` → `GraphExecutor.execute(run, stream=False|True)`
+2. **No duplicate streaming:** `astream_events` v2 lives **only** in `ai/executor.py`
+3. **Factory only:** resolve runnables via `AgentFactory.get(graph_name)` — never import graph builders directly from `api/`
+4. **Persistence:** Postgres `GraphRunRecord` + LangGraph Postgres checkpointer are **canonical**; `InMemoryGraphRunStore` is dev/test fallback only
+
+---
+
+## Read before coding
+
+1. [EXECUTION-FLOW.md](../../docs/engineering/EXECUTION-FLOW.md) — E2E tree, dispatch order
+2. [AI-EXECUTION.md](../../docs/engineering/AI-EXECUTION.md) — GraphRun, stream vs collect
+3. [REPO-STRUCTURE.md](../../docs/engineering/REPO-STRUCTURE.md) § AI layer
+
+---
+
+## Adding a graph
+
+1. Builder in `ai/graphs/<name>.py` (returns `GraphRunnable`)
+2. Register in `ai/registry.py`
+3. Thin route in `api/` — create `GraphRun`, call executor
+4. **Do not** add SSE or event normalization outside `ai/streaming/`
+
+---
+
+## Anti-patterns
+
+- ❌ Calling `runnable.astream_events` from `api/` or `services/`
+- ❌ Per-graph SSE formatters
+- ❌ Defaulting to InMemory store in production paths
+- ❌ Skipping `GraphRun` recording for new agent flows

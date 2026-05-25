@@ -52,8 +52,20 @@ async def test_execute_stream_yields_normalized_events(
 
 @pytest.mark.asyncio
 async def test_execute_collect_diagnosis_graph(executor: GraphExecutor) -> None:
-    run = GraphRun(graph_name="diagnosis", user_id="test-user")
+    run = GraphRun(
+        graph_name="diagnosis",
+        user_id="test-user",
+        input={
+            "goal_id": "backend",
+            "motivation": "Quero trabalhar com APIs para space tech no futuro.",
+            "answers": {
+                "level": "Já programo em JavaScript há alguns meses.",
+                "git": "Subi um projeto no GitHub.",
+            },
+        },
+    )
     result = await executor.execute(run, stream=False)
     assert result.run.status == "completed"
     assert result.run.output is not None
     assert result.run.output["graph_name"] == "diagnosis"
+    assert result.run.output["output"]["profile"]["track_id"] == "backend-beginner"

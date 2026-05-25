@@ -13,8 +13,8 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 | Task | Read in order | Then do |
 |------|---------------|---------|
 | **Implement a Linear issue** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Branch `HAC-XX-title-slug` · implement · triple gate · merge · **end-task** |
-| **AI / LangGraph work** | [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) → [REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) § AI layer | Use `GraphExecutor` + `AgentFactory` — no per-graph streaming |
-| **Bootstrap / first session** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | `make smoke` when apps exist |
+| **AI / LangGraph work** | [EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) → [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) → [REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) § AI layer | Use `GraphExecutor` + `AgentFactory` — no per-graph streaming |
+| **Bootstrap / first session** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | Paste block below · `make smoke` when apps exist |
 | **Agent lifecycle / sprint planning** | [AGENT-LIFECYCLE](./docs/engineering/AGENT-LIFECYCLE.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) | Classify P/S/B · parallel dispatch for [P] batches |
 | **UI from Claude Design** | [PRODUCT-SOURCE-OF-TRUTH](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) → [claude-design-docs/README.md](./claude-design-docs/README.md) | Map prototype → Next.js; sync docs after paradigm change |
 | **Delivery / merge** | [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) → [end-task-workflow](./.cursor/rules/end-task-workflow.mdc) | `SHIP + PASS + VERIFIED` then **manual Done in Linear** |
@@ -27,10 +27,10 @@ Paste as first agent message if hooks unavailable:
 
 ```
 Repo: HB01-2026_soft-push (Career Forge hackathon).
-Read AGENTS.md → docs/ROADMAP.md → docs/STATUS.md → docs/CHECKPOINT.md.
+Read AGENTS.md → ROADMAP → SPRINT-BOARD → STATUS → CHECKPOINT → EXECUTION-FLOW (AI work).
 Pick current ROADMAP batch only. Branch: HAC-XX-title-slug.
-Before merge: triple gate (docs/AGENT-DELIVERY.md).
-After merge: end-task rule — manually set Linear issue to Done (no GitHub↔Linear automation).
+Before merge: triple gate (docs/AGENT-DELIVERY.md). make test && make smoke when runtime touched.
+After merge: end-task — manually set Linear issue to Done (no GitHub↔Linear automation).
 Update docs/STATUS.md + ROADMAP checkboxes.
 ```
 
@@ -78,7 +78,9 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 
 | Resource | Purpose |
 |----------|---------|
+| [EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) | E2E tree, parallel dispatch, Postgres checkpointer |
 | [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) | GraphRun, GraphExecutor, AgentFactory, stream vs collect |
+| [ai-execution](./.cursor/rules/ai-execution.mdc) | GraphExecutor-only path for AI/LangGraph changes |
 | [AGENT-LIFECYCLE](./docs/engineering/AGENT-LIFECYCLE.md) | Session entry → planning → impl → QA → exit |
 | [SPRINT-BOARD](./docs/SPRINT-BOARD.md) | Sprint goals, [P] groups, fit/no-fit table |
 | [linear-delivery-workflow](./.cursor/rules/linear-delivery-workflow.mdc) | Branch, micro-PR, P/S/B classification |
@@ -98,9 +100,10 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 
 | Command | When |
 |---------|------|
-| `make smoke` | After web/api/infra changes (stub until stack exists) |
-| `make agent-verify` | Gate C — API + DB E2E |
-| `pnpm test` / `pytest` | Before merge (when configured) |
+| `make up` / `make down` / `make status` | Local docker stack |
+| `make test` | Backend pytest — before merge |
+| `make smoke` | Full harness + stack health |
+| `make agent-verify` | Gate C — structure + optional runtime `/health` |
 
 ---
 

@@ -45,3 +45,28 @@ class DiagnosisResponse(BaseModel):
                     f"estimated_mastery[{node_id!r}] must be 0–100, got {score}",
                 )
         return v
+
+
+class DiagnosisRequest(BaseModel):
+    """Onboarding payload consumed by the diagnosis graph."""
+
+    user_id: str = Field(default="demo-ana")
+    goal_id: str = Field(default="backend", description="Selected career goal slug")
+    motivation: str = Field(
+        min_length=20,
+        max_length=280,
+        description="Why the learner chose this path",
+    )
+    answers: dict[str, str] = Field(
+        min_length=1,
+        description="question_id → free-text answer from pill rounds",
+    )
+
+    @field_validator("answers")
+    @classmethod
+    def validate_answers(cls, v: dict[str, str]) -> dict[str, str]:
+        cleaned = {key: value.strip() for key, value in v.items() if value.strip()}
+        if not cleaned:
+            msg = "answers must include at least one non-empty response"
+            raise ValueError(msg)
+        return cleaned

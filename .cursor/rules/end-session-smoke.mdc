@@ -28,7 +28,7 @@ Run [end-task-workflow](./end-task-workflow.mdc):
 
 | Command | Purpose |
 |---------|---------|
-| `make smoke` | Stack + tests (stub grows with monorepo) |
+| `make smoke` | Stack + harness health (docker if needed) |
 | `make agent-verify` | Gate C |
 | `make up` / `make down` | Start/stop (when configured) |
 

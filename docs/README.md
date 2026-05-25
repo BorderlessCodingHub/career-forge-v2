@@ -6,6 +6,7 @@
 
 | Doc | Purpose |
 |-----|---------|
+| [SPRINT-BOARD.md](./SPRINT-BOARD.md) | Sprint goals · [P]/[S] classification · parallel groups |
 | [STATUS.md](./STATUS.md) | Parity matrix · current batch · last merge |
 | [ROADMAP.md](./ROADMAP.md) | Batches · Linear issues · deps |
 
@@ -29,6 +30,8 @@
 
 | Resource | Purpose |
 |----------|---------|
-| [.cursor/rules/](../.cursor/rules/) | Delivery + end-task |
+| [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) | E2E execution tree |
+| [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md) | GraphExecutor internals |
+| [.cursor/rules/](../.cursor/rules/) | Delivery + end-task + ai-execution |
 | [.cursor/skills/](../.cursor/skills/) | Gate procedures |
 | [.cursor/hooks.json](../.cursor/hooks.json) | Session lifecycle |

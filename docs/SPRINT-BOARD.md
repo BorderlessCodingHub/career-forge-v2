@@ -27,19 +27,21 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 ---
 
-## Sprint 1 — Foundation
+## Sprint 1 — Foundation ✅
 
 **Goal:** Monorepo deployável + skill graph seed + contratos IA.  
 **Target:** 2026-05-27  
-**Parallel group [P]:** HAC-5, HAC-6, HAC-7
+**Parallel group [P]:** HAC-5, HAC-6, HAC-7 — **done**
 
-| Issue | Title | Class | Deps |
-|-------|-------|-------|------|
-| **HAC-5** [P] | Monorepo Next.js + FastAPI + Postgres + deploy | P | HAC-19 ✅ |
-| **HAC-6** [P] | Skill graph schema + roadmap.json seed | P | HAC-19 ✅ |
-| **HAC-7** [P] | Pydantic + LangGraph state contracts | P | HAC-19 ✅ |
+| Issue | Title | Class | Deps | Status |
+|-------|-------|-------|------|--------|
+| **HAC-5** [P] | Monorepo Next.js + FastAPI + Postgres + deploy | P | HAC-19 ✅ | ✅ |
+| **HAC-6** [P] | Skill graph schema + roadmap.json seed | P | HAC-19 ✅ | ✅ |
+| **HAC-7** [P] | Pydantic + LangGraph state contracts | P | HAC-19 ✅ | ✅ |
+| HAC-31 | Professional scaffold restructure | — | HAC-5 | ✅ |
+| HAC-32 | AI layer — GraphRun, GraphExecutor, AgentFactory | — | HAC-7 | ✅ |
 
-> **Dispatch rule:** Launch 3 Task subagents in ONE message ([parallel-dispatch](../.cursor/rules/parallel-dispatch.mdc))
+> **Dispatch rule:** Launch 3 Task subagents in ONE message ([parallel-dispatch](../.cursor/rules/parallel-dispatch.mdc)) — **completed**
 
 **Team note (Arthur sync):** Arthur → frontend TS; backend Python shared.
 
