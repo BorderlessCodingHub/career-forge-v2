@@ -10,9 +10,11 @@ from career_forge.schemas.stream_events import StreamEvent, dump_stream_event
 
 
 def format_sse(event: StreamEvent | dict[str, Any]) -> str:
-    """Format a domain event as a single SSE data line."""
+    """Format a domain event as SSE with explicit event name + JSON payload."""
     payload = dump_stream_event(event) if not isinstance(event, dict) else event
-    return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
+    event_name = str(payload.get("type", "message"))
+    data = json.dumps(payload, ensure_ascii=False)
+    return f"event: {event_name}\ndata: {data}\n\n"
 
 
 async def events_to_sse(

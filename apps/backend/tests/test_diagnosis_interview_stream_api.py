@@ -40,9 +40,21 @@ def interview_stream_env() -> None:
 
 def _parse_sse_events(body: str) -> list[dict]:
     events: list[dict] = []
-    for line in body.split("\n"):
-        if line.startswith("data: "):
-            events.append(json.loads(line[6:]))
+    for block in body.split("\n\n"):
+        if not block.strip():
+            continue
+        event_name = "message"
+        data: str | None = None
+        for line in block.split("\n"):
+            if line.startswith("event: "):
+                event_name = line[7:]
+            elif line.startswith("data: "):
+                data = line[6:]
+        if data is None:
+            continue
+        payload = json.loads(data)
+        assert payload.get("type", event_name) == event_name or payload.get("type")
+        events.append(payload)
     return events
 
 
