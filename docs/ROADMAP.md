@@ -1,6 +1,6 @@
 # ROADMAP — Career Forge
 
-> **Navigation:** [STATUS](./STATUS.md) · [CHECKPOINT](./CHECKPOINT.md) · [Linear project](https://linear.app/hackas-borderless/project/career-os-soft-push-b0fb1f68c110)
+> **Navigation:** [STATUS](./STATUS.md) · [CHECKPOINT](./CHECKPOINT.md) · [Linear project — Career Forge](https://linear.app/hackas-borderless/project/career-os-soft-push-b0fb1f68c110) *(slug legacy: career-os)*
 
 Execution order for hackathon week. **One issue = one branch = one merge.**
 
@@ -17,7 +17,7 @@ Branch format: `HAC-XX-title-slug` (git hygiene). Linear status: **manual** via 
 - [x] **HAC-23** — Borderless UI theming guidance (docs, references, prototype CSS Phase 1)
 - [x] **HAC-24** — Prototype onboarding pills, minimal goal, vertical graph, 404 fix
 - [x] **HAC-25** — Prototype artifact mode: steady trail canvas, node drawer, uniform forge nodes
-- [x] **HAC-20** — UI product source of truth + sync rule/hook
+- [x] **HAC-26** — Backlog compliance audit (docs + Linear HAC-5–18 alignment)
 - [ ] **HAC-5** — Monorepo Next.js + FastAPI + Postgres + deploy
 - [ ] **HAC-6** — Skill graph schema + roadmap.json seed
 - [ ] **HAC-7** — Pydantic + LangGraph state contracts

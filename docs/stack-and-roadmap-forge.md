@@ -24,7 +24,7 @@ data/roadmap.json  # catálogo base de skills
 
 ## Live Roadmap Forge — spec técnica
 
-**Posição no fluxo:** Onboarding diagnóstico (HAC-8) → **Forge stream (HAC-18)** → Skill Graph reveal (HAC-9)
+**Posição no fluxo:** Onboarding pill rounds + editable diagnosis (HAC-8) → **Forge stream timeline-only (HAC-18)** → Animation reveal → **artifact mode** vertical roadmap (HAC-9)
 
 **Por que é o primeiro wow:** mostra IA como motor visível — não black box, não chatbot decorativo.
 
@@ -93,17 +93,21 @@ type RoadmapForgeEvent =
 
 Implementação: `langgraph.stream()` + adapter para SSE, ou `astream_events` filtrando tags.
 
-### Frontend — UX
+### Frontend — UX (HAC-21 + HAC-25)
 
 **Fase 1 — Forge (live):**
-- Timeline vertical à esquerda (reasoning + artifacts chegando)
-- Centro: skeleton do grafo vazio ou nós aparecendo parcialmente (`node_updated`)
-- Loading pulse suave, sem spinner genérico
+- **Timeline only** — full-width numbered steps (`reasoning_delta`, `artifact_found`, `decision`)
+- **No graph/map preview** during stream — `node_updated` updates backend state only
+- Loading pulse suave, sem spinner genérico como UX primária
 
 **Fase 2 — Reveal:**
 - Stream encerra com `graph_ready`
-- Animação: nós "snap" nas posições finais (Framer Motion / CSS)
-- Banner: "Sua trilha está pronta"
+- Animação: itens do stream **voam** para posições no layout vertical roadmap (spine left/right)
+- Transição para `/roadmap` em **`artifact` mode** (sem stepper, sem sidebar de progresso)
+
+**Fase 3 — Steady state (HAC-9):**
+- Canvas vertical uniforme; click node → drawer (referências + Ask AI + validar)
+- Status/mastery no drawer, não poluindo cards do canvas
 
 **Fallback demo:** replay JSON de eventos gravados (seed Ana) se LLM falhar ao vivo.
 

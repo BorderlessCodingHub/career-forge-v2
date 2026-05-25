@@ -21,7 +21,7 @@ Agents compare all three before coding UI. After sessions that change layout, to
 ## Canonical UX flow (HAC-21 + HAC-25)
 
 ```
-Goal → Onboarding chat → Editable diagnosis → [Gerar roadmap] → Forge stream → Animation reveal → Vertical roadmap (artifact mode)
+Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
 ```
 
 **App modes (prototype + target app):**
@@ -192,4 +192,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: HAC-23 — Borderless theming (visual language, reference images, token palette)*
+*Last updated: HAC-26 — backlog compliance audit (flow labels, forge timeline-only, artifact mode refs)*

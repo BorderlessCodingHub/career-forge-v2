@@ -8,7 +8,7 @@
 ## Flow summary (source of truth)
 
 ```
-Goal → Onboarding chat → Editable diagnosis → [Gerar roadmap] → Forge stream (steps only) → Animation reveal → Vertical roadmap (roadmap.sh) + optional AI sidebar
+Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
 ```
 
 **Breadcrumb mental:** Objetivo → Diagnóstico → Revisar diagnóstico → Forjar trilha → Explorar trilha
@@ -46,14 +46,14 @@ Goal → Onboarding chat → Editable diagnosis → [Gerar roadmap] → Forge st
 
 ---
 
-### 2. Onboarding chat (`/onboarding`)
+### 2. Onboarding diagnostic (`/onboarding`)
 
-**Unchanged.** Chat diagnóstico 4–6 perguntas; IA mapeia sinais.
+**Redesigned (HAC-24).** Pill/balloon rounds — 3 batches, 2 questions per round; not linear chat bubbles.
 
 | | |
 |---|---|
-| **Old** | Chat → gera diagnóstico → vai para tela de resultado |
-| **New** | Chat → gera diagnóstico → vai para **diagnóstico editável** (não confirmação passiva) |
+| **Old** | Linear chat bubbles — one Q at a time |
+| **New** | Pill rounds → gera diagnóstico → **diagnóstico editável** (não confirmação passiva) |
 | **Route** | `/onboarding` · `data-screen="diagnostic"` |
 
 ---

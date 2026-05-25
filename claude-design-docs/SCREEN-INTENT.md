@@ -152,4 +152,4 @@
 
 ---
 
-*Last updated: HAC-21*
+*Last updated: HAC-25 — artifact mode steady state; HAC-26 backlog audit*

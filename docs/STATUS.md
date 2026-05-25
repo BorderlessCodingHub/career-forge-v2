@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-25** (prototype artifact mode, node drawer, uniform forge nodes)
+Last updated: **2026-05-25** · Last merge: **HAC-26** (backlog compliance audit — docs + Linear scope alignment)
 
 ---
 
@@ -11,18 +11,33 @@ Last updated: **2026-05-25** · Last merge: **HAC-25** (prototype artifact mode,
 | Area | Status | Notes |
 |------|--------|-------|
 | Agent harness | ✅ Done | AGENTS.md, rules, hooks, triple gate docs |
-| Claude Design prototype | ⚠️ Partial sync | Artifact mode on `#roadmap` (HAC-25); pill diagnostic; uniform forge nodes; editable diagnosis still pending |
-| UX documentation (HAC-21) | ✅ Done | UX-FLOW, SCREEN-INTENT, vertical roadmap reference |
+| Claude Design prototype | ⚠️ Partial sync | Artifact mode on `#roadmap` (HAC-25); pill diagnostic; uniform forge nodes; **drift:** split forge during stream, editable diagnosis `#result` |
+| UX documentation (HAC-21 + HAC-25) | ✅ Done | UX-FLOW, SCREEN-INTENT, artifact mode, timeline-only forge spec |
 | Borderless theming (HAC-23) | ✅ Done | BORDERLESS-THEMING, reference images, prototype CSS vars Phase 1 |
 | Prototype server entry (HAC-24) | ✅ Done | `index.html` + legacy redirect; `prototype/README.md` |
+| Backlog compliance (HAC-26) | ✅ Done | Docs + Linear HAC-5–18 aligned to Career Forge / HAC-21 UX |
 | Monorepo apps/web + apps/api | ⬜ Todo | HAC-5 |
 | Postgres schema + seed | ⬜ Todo | HAC-6 |
 | AI JSON contracts | ⬜ Todo | HAC-7 |
 | Identity onboarding + editable diagnosis | ⬜ Todo | HAC-8 |
 | Live Roadmap Forge (timeline-only SSE) | ⬜ Todo | HAC-18 |
-| Vertical roadmap UI + AI sidebar | ⬜ Todo | HAC-9 |
+| Vertical roadmap UI — artifact mode | ⬜ Todo | HAC-9 |
 | Mastery Validation | ⬜ Todo | HAC-10 |
 | Adaptive Planning | ⬜ Todo | HAC-11 |
+
+---
+
+## Compliance audit summary (HAC-26)
+
+| Area | Status |
+|------|--------|
+| Product name **Career Forge** in docs | ✅ |
+| Stack Next.js + FastAPI + Postgres + LangGraph + LangSmith | ✅ (HAC-5 title fixed: was Supabase) |
+| UX flow Goal → pills → editable diagnosis → forge → reveal → artifact | ✅ docs; ⚠️ prototype partial |
+| Borderless theming + artifact steady state | ✅ docs + prototype partial |
+| Linear HAC-5–18 scope vs canonical UX | ✅ updated |
+| Linear project display name | ⚠️ still "Career OS" slug (rename optional) |
+| Implementation (apps/web, apps/api) | ⬜ unchanged — out of audit scope |
 
 ---
 

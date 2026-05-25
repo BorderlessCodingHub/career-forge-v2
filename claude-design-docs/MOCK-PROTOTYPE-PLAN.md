@@ -16,6 +16,7 @@ How [`prototype/`](./prototype/) evolves from legacy indigo chrome toward Border
 | Steady state | Artifact mode — full-width vertical roadmap, click-to-drawer | Code Breakers + roadmap.sh (HAC-25 ✅ partial) |
 | Flow | `setup` vs `artifact` modes in `app.jsx` | HAC-21 + HAC-25 |
 | Forge nodes | Status-colored during build | Uniform purple during build (HAC-25 ✅) |
+| Forge layout during stream | Split timeline + graph (legacy) | **Timeline only** per UX-FLOW — split is documented drift until Phase 4 |
 
 Entry: `cd claude-design-docs/prototype && python3 -m http.server 8765` → `http://localhost:8765/`
 
