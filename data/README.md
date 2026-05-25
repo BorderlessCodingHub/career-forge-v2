@@ -43,7 +43,7 @@ Prototype reference: [`claude-design-docs/prototype/skill-graph.jsx`](../claude-
 ## Seed
 
 ```bash
-cd apps/api
+cd apps/backend
 pip install -r requirements.txt
 export DATABASE_URL=postgresql+psycopg://careerforge:careerforge@localhost:5432/careerforge
 alembic upgrade head
@@ -51,4 +51,4 @@ python -m scripts.seed
 python -m scripts.seed --demo-ana   # optional demo user
 ```
 
-See [`apps/api/app/models/`](../apps/api/app/models/) for SQLAlchemy definitions.
+See [`apps/backend/src/career_forge/db/models/`](../apps/backend/src/career_forge/db/models/) for SQLAlchemy definitions.

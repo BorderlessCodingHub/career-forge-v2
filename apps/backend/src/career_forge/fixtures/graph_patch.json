@@ -1,0 +1,20 @@
+{
+  "patches": [
+    {
+      "node_id": "http",
+      "status": "recomendado",
+      "mastery_estimated": 42,
+      "priority": "high",
+      "rationale": "Lacuna crítica na cadeia HTTP → REST → Auth"
+    },
+    {
+      "node_id": "git",
+      "status": "aprovado",
+      "mastery_estimated": 78,
+      "priority": "low",
+      "rationale": "Evidência de versionamento OK no diagnóstico"
+    }
+  ],
+  "continue_research": true,
+  "summary": "Priorizar HTTP antes de REST; Git pré-validado."
+}

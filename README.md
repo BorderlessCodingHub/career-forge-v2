@@ -21,11 +21,13 @@ Skill graph adaptativo inspirado em [roadmap.sh](https://roadmap.sh), com IA com
 
 | Camada | Tech |
 |--------|------|
-| Frontend | Next.js + TypeScript + Tailwind |
-| Backend | FastAPI + Pydantic + SQLAlchemy |
+| Frontend | Next.js + TypeScript + Tailwind (`apps/frontend`) |
+| Backend | FastAPI + Pydantic + SQLAlchemy (`apps/backend`) |
 | DB | PostgreSQL |
 | AI | LangGraph + LangChain + LangSmith |
-| Deploy | Vercel (web) + Railway/Render (api) |
+| Deploy | Vercel (frontend) + Railway/Render (backend) |
+
+Structure reference: [docs/engineering/REPO-STRUCTURE.md](./docs/engineering/REPO-STRUCTURE.md)
 
 ## Docs
 
@@ -51,42 +53,42 @@ open http://localhost:8765/
 
 - Docker + Docker Compose
 - Node 20+ e [pnpm](https://pnpm.io/) (opcional — dev fora do Docker)
-- Python 3.11+ (opcional — dev da API fora do Docker)
+- Python 3.11+ (opcional — dev do backend fora do Docker)
 
 ### Stack completa (recomendado)
 
 ```bash
 cp .env.example .env
-make up          # postgres + api + web
+make up          # postgres + backend + frontend
 make status      # URLs
 make smoke       # valida harness + health checks (sobe docker se necessário)
 ```
 
 | Serviço | URL |
 |---------|-----|
-| Web | http://localhost:3000 |
-| API OpenAPI | http://localhost:8000/docs |
+| Frontend | http://localhost:3000 |
+| Backend OpenAPI | http://localhost:8000/docs |
 | Health | http://localhost:8000/health |
 
 Parar: `make down`
 
-Se a porta 3000 estiver ocupada: `WEB_HOST_PORT=3300 make up` (web em http://localhost:3300).
+Se a porta 3000 estiver ocupada: `WEB_HOST_PORT=3300 make up` (frontend em http://localhost:3300).
 
-### Dev sem Docker (API + Postgres local)
+### Dev sem Docker (backend + Postgres local)
 
 ```bash
 # Terminal 1 — Postgres via docker só do banco
 docker compose up -d postgres
 
-# Terminal 2 — API
-cd apps/api
+# Terminal 2 — Backend
+cd apps/backend
 cp .env.example .env
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+PYTHONPATH=src uvicorn career_forge.main:app --reload --port 8000
 
-# Terminal 3 — Web
-cd apps/web
+# Terminal 3 — Frontend
+cd apps/frontend
 cp .env.example .env.local
 pnpm install && pnpm dev
 ```
@@ -95,10 +97,10 @@ pnpm install && pnpm dev
 
 | App | Plataforma | Config |
 |-----|------------|--------|
-| `apps/web` | Vercel | `vercel.json` (root directory `apps/web`) |
-| `apps/api` | Railway | `railway.toml` + env `DATABASE_URL`, `CORS_ORIGINS` |
+| `apps/frontend` | Vercel | `vercel.json` (root directory `apps/frontend`) |
+| `apps/backend` | Railway | `railway.toml` + env `DATABASE_URL`, `CORS_ORIGINS` |
 
-Variáveis compartilhadas: ver `.env.example` (`OPENAI_API_KEY`, `LANGSMITH_*`).
+Variáveis compartilhadas: ver `.env.example` (`BACKEND_URL`, `FRONTEND_URL`, `OPENAI_API_KEY`, `LANGSMITH_*`).
 
 ## Equipe
 

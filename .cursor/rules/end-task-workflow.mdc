@@ -57,7 +57,17 @@ save_issue({ id: "HAC-XX", state: "In Progress" })
 | `docs/STATUS.md` | Parity matrix row, current batch, last merge = HAC-XX |
 | `docs/ROADMAP.md` | Check off `- [x] HAC-XX` |
 
-### 4. Report to user
+### 4. Self-critique before merge
+
+Before reporting end-task complete, scan the diff for structural drift:
+
+- [ ] No duplicate DB/schema/utils modules (single `db/session.py` entry)
+- [ ] Layout matches [REPO-STRUCTURE.md](../docs/engineering/REPO-STRUCTURE.md)
+- [ ] No orphan files outside domain folders
+- [ ] No references to legacy `apps/api` or `apps/web`
+- [ ] `make smoke` passes
+
+### 5. Report to user
 
 ```
 End-task complete: HAC-XX

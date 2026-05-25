@@ -11,7 +11,7 @@
 Single place to resolve conflicts between:
 
 1. **Claude Design prototype** — [`prototype/`](./prototype/) (visual + component reference; **flow may lag** — see UX-FLOW)
-2. **Implemented UI** — `apps/web/` when it exists (runtime truth for behavior)
+2. **Implemented UI** — `apps/frontend/` when it exists (runtime truth for behavior)
 3. **Hackathon product goals** — [CHECKPOINT](../docs/CHECKPOINT.md), [handoff context](../docs/handoff_chat_gpt.txt)
 
 Agents compare all three before coding UI. After sessions that change layout, tokens, flows, or component patterns, **update this doc** (and linked docs) so the next agent does not drift.
@@ -44,7 +44,7 @@ When sources conflict, apply this order **unless** an active Linear issue explic
 | **1** | **Hackathon goals** — [CHECKPOINT](../docs/CHECKPOINT.md) P0 wow features, demo script, out-of-scope | Prototype or code adds scope, weakens AI-as-motor, or breaks 5-min demo | Cut or defer; do not ship |
 | **2** | **Screen intent** — [SCREEN-INTENT.md](./SCREEN-INTENT.md) + [UX-FLOW.md](./UX-FLOW.md) | Prototype detail contradicts wow moment or route purpose | Match intent; prototype is reference not law |
 | **3** | **Claude Design prototype** — [`prototype/`](./prototype/), [design-tokens.md](./design-tokens.md) | No implemented UI yet, or implementation diverges without documented reason | Tokens/components from prototype; **flow from UX-FLOW** |
-| **4** | **Implemented UI** — `apps/web/` | Deliberate evolution documented in **Implementation notes** below | Code wins; update docs same session |
+| **4** | **Implemented UI** — `apps/frontend/` | Deliberate evolution documented in **Implementation notes** below | Code wins; update docs same session |
 | **5** | **Brief history** — [brief-v1.md](./brief-v1.md) | Prototype already evolved past an old prompt | Prefer UX-FLOW + this doc over brief |
 
 ### Tie-breakers
@@ -158,7 +158,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 
 ## Implementation notes (living)
 
-*Update this section when `apps/web/` diverges from docs on purpose.*
+*Update this section when `apps/frontend/` diverges from docs on purpose.*
 
 | Topic | Docs (HAC-21) | Prototype (legacy) | Implemented | Decision | Date |
 |-------|-----------------|-------------------|-------------|----------|------|
@@ -177,7 +177,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 2. Open [references/borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) for steady-state shell + canvas
 3. Open prototype via [`prototype/README.md`](./prototype/README.md) (`http://localhost:8765/`) for tokens/components
 4. Read [CHECKPOINT](../docs/CHECKPOINT.md) for P0 scope
-5. If `apps/web/` exists, diff against SCREEN-INTENT — do not blindly diff pixels
+5. If `apps/frontend/` exists, diff against SCREEN-INTENT — do not blindly diff pixels
 
 ## Agent workflow — after UI paradigm change
 

@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0d0b14;
+  --bg-sidebar: #0a0812;
+  --surface: #15121f;
+  --surface-elevated: #1c1828;
+  --surface-node: #6b4ce6;
+  --border: #2a2540;
+  --border-soft: #1f1a30;
+  --text: #ffffff;
+  --text-2: #9ca3af;
+  --text-3: #6b7280;
+  --accent: #7c3aed;
+  --accent-mint: #2dd4bf;
+  --accent-mint-bright: #00e5c0;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --locked: #4b5563;
+  --evidence: #2dd4bf;
+  --accent-glow: rgba(124, 58, 237, 0.22);
+  --mint-glow: rgba(45, 212, 191, 0.18);
+}
+
+body {
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+.grid-dots {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}

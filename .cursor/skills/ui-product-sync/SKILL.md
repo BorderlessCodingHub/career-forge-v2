@@ -5,7 +5,7 @@ description: Sync claude-design-docs with implemented UI after paradigm changes.
 
 # UI product sync
 
-Keep [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) aligned with `apps/web/` and the Claude Design prototype.
+Keep [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) aligned with `apps/frontend/` and the Claude Design prototype.
 
 Rule: [.cursor/rules/ui-product-sync.mdc](../../.cursor/rules/ui-product-sync.mdc)
 
@@ -13,7 +13,7 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../../.cursor/rules/ui-product-sync.md
 
 ## When to run
 
-- End of any session that touched `apps/web/`, `claude-design-docs/`, Tailwind, or global CSS
+- End of any session that touched `apps/frontend/`, `claude-design-docs/`, Tailwind, or global CSS
 - User says: *sync UI product docs*, *update source of truth*, *document UI drift*
 - Stop hook flagged UI file changes
 
@@ -29,7 +29,7 @@ Read:
 2. [UX-FLOW.md](../../claude-design-docs/UX-FLOW.md)
 3. [SCREEN-INTENT.md](../../claude-design-docs/SCREEN-INTENT.md)
 4. Relevant screen in [`prototype/Career Forge.html`](../../claude-design-docs/prototype/Career%20Forge.html) (tokens/components — flow may lag)
-5. Changed files: `git diff origin/main...HEAD -- apps/web claude-design-docs`
+5. Changed files: `git diff origin/main...HEAD -- apps/frontend claude-design-docs`
 
 ### 2. Compare trilogy
 

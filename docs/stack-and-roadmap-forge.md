@@ -14,8 +14,8 @@
 
 Monorepo sugerido:
 ```
-apps/web/          # Next.js
-apps/api/          # FastAPI
+apps/frontend/          # Next.js
+apps/backend/          # FastAPI
 packages/schemas/  # Pydantic models (opcional shared)
 data/roadmap.json  # catálogo base de skills
 ```

@@ -67,8 +67,9 @@ git checkout -b HAC-XX-title-slug
 
 | Area | Path |
 |------|------|
-| Frontend | `apps/web/` — Next.js + TypeScript + Tailwind |
-| Backend | `apps/api/` — FastAPI + LangGraph + Pydantic |
+| Frontend | `apps/frontend/src/` — Next.js + TypeScript + Tailwind |
+| Backend | `apps/backend/src/career_forge/` — FastAPI + LangGraph + Pydantic |
+| Structure reference | [REPO-STRUCTURE.md](./REPO-STRUCTURE.md) |
 | Shared contracts | Pydantic models, OpenAPI |
 
 **Discipline:** One issue = one branch = one merge (200–500 LOC target).
@@ -110,6 +111,20 @@ After merge:
 2. Update [STATUS.md](../STATUS.md) — parity matrix, last merge
 3. Update [ROADMAP.md](../ROADMAP.md) — checkbox
 4. Merge to `main` and push
+
+---
+
+## 6. Self-critique before merge
+
+Before marking an issue Done, agents MUST run a structural self-critique (HAC-31+):
+
+1. **Duplicate scan** — no parallel `database.py` vs `db/session.py`; no duplicate schema/utils modules
+2. **Structure compliance** — tree matches [REPO-STRUCTURE.md](./REPO-STRUCTURE.md)
+3. **No orphan files** — new code lives under domain folders (`api/`, `schemas/`, `graphs/`, `components/`, etc.)
+4. **No legacy paths** — zero references to `apps/api` or `apps/web`
+5. **Smoke green** — `make smoke` passes
+
+Document any intentional deviations in the PR/commit message.
 
 ---
 

@@ -29,8 +29,8 @@ Sub-eixo: **Aprender com validação prática** (Alpha School: mastery before pr
 ## Stack (closed)
 
 ```
-apps/web/     Next.js + TS + Tailwind
-apps/api/     FastAPI + Pydantic + SQLAlchemy
+apps/frontend/     Next.js + TS + Tailwind
+apps/backend/     FastAPI + Pydantic + SQLAlchemy
 PostgreSQL    skill graph state, validations, profiles
 LangGraph     diagnosis_graph, roadmap_forge_graph, validation_graph
 LangSmith     traces per run

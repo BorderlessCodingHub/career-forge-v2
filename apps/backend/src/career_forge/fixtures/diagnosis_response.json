@@ -1,0 +1,26 @@
+{
+  "profile": {
+    "label": "Iniciante com base em JavaScript",
+    "track_id": "backend-beginner",
+    "persona_slug": "iniciante_js"
+  },
+  "strengths": [
+    "Já entende lógica básica e sintaxe JavaScript",
+    "Já usou GitHub superficialmente para versionar projetos"
+  ],
+  "gaps": [
+    "HTTP e APIs REST",
+    "Autenticação JWT",
+    "Banco relacional e modelagem SQL"
+  ],
+  "starting_priorities": ["http", "git", "db"],
+  "estimated_mastery": {
+    "js": 65,
+    "git": 78,
+    "http": 42,
+    "db": 35,
+    "rest": 0,
+    "auth": 0,
+    "final": 0
+  }
+}
