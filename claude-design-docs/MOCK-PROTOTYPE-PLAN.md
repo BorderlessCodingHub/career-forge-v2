@@ -13,8 +13,9 @@ How [`prototype/`](./prototype/) evolves from legacy indigo chrome toward Border
 |--------|-----------------|--------|
 | Colors | Legacy indigo/navy (`#6366F1`, `#0B0F19`) | Borderless purple-black + mint (HAC-23) |
 | Shell | Top breadcrumb nav only | Sidebar + top bar + canvas |
-| Steady state | SVG skill graph dashboard | Code Breakers node canvas |
-| Flow | Pre-HAC-21 hash routes | Docs win — update screens incrementally |
+| Steady state | Artifact mode — full-width vertical roadmap, click-to-drawer | Code Breakers + roadmap.sh (HAC-25 ✅ partial) |
+| Flow | `setup` vs `artifact` modes in `app.jsx` | HAC-21 + HAC-25 |
+| Forge nodes | Status-colored during build | Uniform purple during build (HAC-25 ✅) |
 
 Entry: `cd claude-design-docs/prototype && python3 -m http.server 8765` → `http://localhost:8765/`
 
@@ -58,24 +59,25 @@ Entry: `cd claude-design-docs/prototype && python3 -m http.server 8765` → `htt
 
 ---
 
-## Phase 3 — Steady state canvas (Code Breakers)
+## Phase 3 — Steady state canvas (artifact mode) — partial HAC-25
 
-**Goal:** Replace legacy skill-graph dashboard with node-based roadmap canvas.
+**Goal:** Finished-trail artifact — roadmap.sh focus, not setup dashboard.
 
-**Files:** `prototype/screens-dashboard.jsx`, `prototype/skill-graph.jsx` (refactor or replace), `styles.css` (node cards, dashed edges, minimap stub)
+**Files:** `app.jsx`, `screens-dashboard.jsx`, `skill-graph.jsx`, `components.jsx` (`NodeDetailSidebar`), `styles.css`
 
 **Tasks:**
 
-- [ ] Purple rounded nodes with title + cyan progress bar
-- [ ] Dashed grey connections with arrows
-- [ ] Dot grid background on canvas
-- [ ] Floating zoom controls (bottom-left) + minimap placeholder (bottom-right)
-- [ ] Optional AI sidebar panel (right) — collapsible
-- [ ] Align with HAC-21 vertical/canvas roadmap intent (nodes = skill topics)
+- [x] `setup` vs `artifact` app modes — hide stepper in artifact
+- [x] Remove default sidebar clutter (progress, evidence, mentor) from artifact canvas
+- [x] Uniform purple nodes on canvas (`uniform` prop)
+- [x] Click node → right drawer (description, references, Ask AI, validate CTA)
+- [ ] Cyan progress bar on nodes (deferred — status lives in drawer per HAC-25)
+- [ ] Dot grid background + zoom/minimap stubs
+- [ ] Full Borderless app shell (Phase 2)
 
-**Done when:** `/roadmap` steady state matches BORDERLESS-THEMING component specs.
+**Done when:** `/roadmap` feels like opening your personalized roadmap.sh page.
 
-**Issue link:** HAC-9 (Next.js) may supersede; prototype leads visual proof.
+**Issue link:** HAC-25 (prototype) · HAC-9 (Next.js)
 
 ---
 

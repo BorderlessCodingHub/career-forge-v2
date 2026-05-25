@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-24** (prototype onboarding pills, vertical graph, 404 fix)
+Last updated: **2026-05-25** · Last merge: **HAC-25** (prototype artifact mode, node drawer, uniform forge nodes)
 
 ---
 
@@ -11,7 +11,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-24** (prototype onboarding pil
 | Area | Status | Notes |
 |------|--------|-------|
 | Agent harness | ✅ Done | AGENTS.md, rules, hooks, triple gate docs |
-| Claude Design prototype | ⚠️ Partial sync | Pill-round diagnostic, minimal goal, vertical spine graph; forge flow still pre-HAC-21 |
+| Claude Design prototype | ⚠️ Partial sync | Artifact mode on `#roadmap` (HAC-25); pill diagnostic; uniform forge nodes; editable diagnosis still pending |
 | UX documentation (HAC-21) | ✅ Done | UX-FLOW, SCREEN-INTENT, vertical roadmap reference |
 | Borderless theming (HAC-23) | ✅ Done | BORDERLESS-THEMING, reference images, prototype CSS vars Phase 1 |
 | Prototype server entry (HAC-24) | ✅ Done | `index.html` + legacy redirect; `prototype/README.md` |
@@ -46,7 +46,7 @@ HAC-8 → HAC-18 → HAC-9
 
 | Scene | Ready |
 |-------|-------|
-| UI prototype (static, partial HAC-24 sync) | ⚠️ |
+| UI prototype (artifact mode + onboarding pills) | ⚠️ |
 | UX docs + steady-state reference | ✅ |
 | Live forge SSE (timeline-only) | ⬜ |
 | Validation interview | ⬜ |

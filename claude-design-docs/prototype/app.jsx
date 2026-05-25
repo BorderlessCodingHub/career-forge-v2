@@ -1,13 +1,19 @@
 // Career Forge — App shell with navigation
+// Modes: setup (onboarding + forge) vs artifact (finished trail / roadmap.sh view)
+const ARTIFACT_SCREENS = ['roadmap', 'adaptive'];
+const SETUP_SCREENS = ['goal', 'diag', 'result', 'forge', 'validate'];
+
 const App = () => {
   const [screen, setScreen] = React.useState('goal');
   const [mentorOpen, setMentorOpen] = React.useState(false);
+
+  const appMode = ARTIFACT_SCREENS.includes(screen) ? 'artifact' : 'setup';
 
   // Allow URL hash for deep-linking individual screens during review
   React.useEffect(() => {
     const fromHash = () => {
       const h = window.location.hash.replace('#', '');
-      if (['goal', 'diag', 'result', 'forge', 'roadmap', 'validate', 'adaptive'].includes(h)) setScreen(h);
+      if ([...SETUP_SCREENS, ...ARTIFACT_SCREENS].includes(h)) setScreen(h);
     };
     fromHash();
     window.addEventListener('hashchange', fromHash);
@@ -22,8 +28,8 @@ const App = () => {
   };
 
   return (
-    <div className="app">
-      <TopNav current={screen} onNav={nav} />
+    <div className={`app mode-${appMode}`}>
+      <TopNav current={screen} onNav={nav} mode={appMode} trackName="Backend Developer" />
 
       <div className={`screen ${screen === 'goal' ? 'active' : ''}`}>
         <GoalPickerScreen onNext={() => nav('diag')} />
@@ -44,6 +50,7 @@ const App = () => {
       <div className={`screen ${screen === 'roadmap' ? 'active' : ''}`}>
         {screen === 'roadmap' && (
           <RoadmapScreen
+            mode="artifact"
             adaptive={false}
             onValidate={() => nav('validate')}
             onMentor={() => setMentorOpen(true)}
@@ -66,6 +73,7 @@ const App = () => {
       <div className={`screen ${screen === 'adaptive' ? 'active' : ''}`}>
         {screen === 'adaptive' && (
           <RoadmapScreen
+            mode="artifact"
             adaptive={true}
             onValidate={() => nav('validate')}
             onMentor={() => setMentorOpen(true)}

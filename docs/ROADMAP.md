@@ -16,6 +16,7 @@ Branch format: `HAC-XX-title-slug` (git hygiene). Linear status: **manual** via 
 - [x] **HAC-22** — Rename product to Career Forge (docs, prototype, harness)
 - [x] **HAC-23** — Borderless UI theming guidance (docs, references, prototype CSS Phase 1)
 - [x] **HAC-24** — Prototype onboarding pills, minimal goal, vertical graph, 404 fix
+- [x] **HAC-25** — Prototype artifact mode: steady trail canvas, node drawer, uniform forge nodes
 - [x] **HAC-20** — UI product source of truth + sync rule/hook
 - [ ] **HAC-5** — Monorepo Next.js + FastAPI + Postgres + deploy
 - [ ] **HAC-6** — Skill graph schema + roadmap.json seed

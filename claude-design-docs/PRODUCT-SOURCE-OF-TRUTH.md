@@ -18,11 +18,18 @@ Agents compare all three before coding UI. After sessions that change layout, to
 
 ---
 
-## Canonical UX flow (HAC-21)
+## Canonical UX flow (HAC-21 + HAC-25)
 
 ```
-Goal → Onboarding chat → Editable diagnosis → [Gerar roadmap] → Forge stream (steps only) → Animation reveal → Vertical roadmap (roadmap.sh) + optional AI sidebar
+Goal → Onboarding chat → Editable diagnosis → [Gerar roadmap] → Forge stream → Animation reveal → Vertical roadmap (artifact mode)
 ```
+
+**App modes (prototype + target app):**
+
+| Mode | Screens | Chrome |
+|------|---------|--------|
+| `setup` | Goal, diagnostic, diagnosis edit, forge, validation | Onboarding stepper (01–07) optional/minimal |
+| `artifact` | Steady `/roadmap`, adaptive recalibration | Logo + track name only; **no** stepper; **no** fixed progress sidebar |
 
 Full screen-by-screen: [UX-FLOW.md](./UX-FLOW.md) · Must-match: [SCREEN-INTENT.md](./SCREEN-INTENT.md)
 
@@ -77,8 +84,8 @@ Career Forge uses **Borderless Community** visual language within the Borderless
 |--------|------|
 | Palette | Deep purple-black bg, purple nodes, cyan/mint progress, logo purple accent |
 | Shell | Fixed sidebar + top search bar + full-width canvas |
-| Steady state | Code Breakers–style node canvas on dot grid (not legacy indigo skill graph) |
-| Flow | Unchanged HAC-21 — forge timeline-only → reveal → canvas steady state |
+| Steady state | Code Breakers–style node canvas — **uniform purple nodes** on artifact canvas; status in node drawer |
+| Flow | HAC-21 forge → reveal → **HAC-25 artifact mode** (roadmap.sh finished page) |
 
 **Reference images:**
 
@@ -87,6 +94,9 @@ Career Forge uses **Borderless Community** visual language within the Borderless
 | [references/borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) | Shell, sidebar, canvas, nodes, connections |
 | [references/borderless-logo-brand.png](./references/borderless-logo-brand.png) | Brand colors (mint + purple) |
 | [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) | AI sidebar layout only (secondary) |
+| [references/roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) | Full roadmap.sh steady-state layout |
+| [references/trail-dashboard-polluted-current.png](./references/trail-dashboard-polluted-current.png) | Anti-pattern — cluttered dashboard (pre HAC-25) |
+| [references/forge-screen-current.png](./references/forge-screen-current.png) | Forge split layout (approved) + uniform node target |
 
 Prototype plan: [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) · Feedback: [UI-SUGGESTIONS-BACKLOG.md](./UI-SUGGESTIONS-BACKLOG.md)
 

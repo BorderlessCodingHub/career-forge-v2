@@ -42,34 +42,45 @@ const edgeState = (fromId, toId, edges) => {
   return e?.state || 'pending';
 };
 
-const SkillNode = ({ node, selected, onClick, extraClass = '' }) => {
+const SkillNode = ({ node, selected, onClick, extraClass = '', uniform = false }) => {
   const x = nodeX(node);
   const sel = selected === node.id ? 'selected' : '';
-  const curr = node.current ? 'active-current' : '';
+  const curr = !uniform && node.current ? 'active-current' : '';
+  const statusClass = uniform ? 'uniform' : node.status;
   return (
     <g
-      className={`skill-node ${node.status} ${sel} ${curr} ${extraClass}`}
+      className={`skill-node ${statusClass} ${sel} ${curr} ${extraClass}`}
       transform={`translate(${x},${node.y})`}
       onClick={() => onClick && onClick(node.id)}
       style={{ cursor: onClick ? 'pointer' : 'default' }}
     >
       <rect className="skill-node-bg" width={NODE_W} height={NODE_H} rx="12" />
-      <rect
-        x={node.side === 'left' ? NODE_W - 3 : 0} y={0} width={3} height={NODE_H}
-        fill={
-          node.status === 'approved' ? 'var(--success)' :
-          node.status === 'recommended' ? 'var(--accent)' :
-          node.status === 'review' ? 'var(--warning)' :
-          'var(--locked)'
-        }
-        opacity={node.status === 'locked' ? 0.3 : 0.9}
-      />
+      {!uniform && (
+        <rect
+          x={node.side === 'left' ? NODE_W - 3 : 0} y={0} width={3} height={NODE_H}
+          fill={
+            node.status === 'approved' ? 'var(--success)' :
+            node.status === 'recommended' ? 'var(--accent)' :
+            node.status === 'review' ? 'var(--warning)' :
+            'var(--locked)'
+          }
+          opacity={node.status === 'locked' ? 0.3 : 0.9}
+        />
+      )}
+      {uniform && (
+        <rect
+          x={node.side === 'left' ? NODE_W - 3 : 0} y={0} width={3} height={NODE_H}
+          fill="var(--accent)" opacity={0.55}
+        />
+      )}
       <foreignObject x={14} y={12} width={32} height={32}>
-        <div style={{
+        <div className={uniform ? 'skill-node-icon uniform' : 'skill-node-icon'} style={{
           width: 32, height: 32, borderRadius: 8,
-          background: 'var(--bg)', border: '1px solid var(--border)',
+          background: uniform ? 'rgba(107,76,230,0.12)' : 'var(--bg)',
+          border: uniform ? '1px solid rgba(107,76,230,0.35)' : '1px solid var(--border)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: node.status === 'locked' ? 'var(--text-3)' :
+          color: uniform ? 'var(--accent-2)' :
+                 node.status === 'locked' ? 'var(--text-3)' :
                  node.status === 'approved' ? 'var(--success)' :
                  node.status === 'review' ? 'var(--warning)' : 'var(--accent-2)'
         }}>
@@ -82,29 +93,31 @@ const SkillNode = ({ node, selected, onClick, extraClass = '' }) => {
       <text x={56} y={42} fill="var(--text-3)" fontSize="11" fontFamily="Inter">
         {node.desc}
       </text>
-      <foreignObject x={12} y={58} width={NODE_W - 24} height={36}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-          <StatusPill status={node.status} />
-          {node.status !== 'locked' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, maxWidth: 100 }}>
-              <div style={{ flex: 1, height: 3, background: 'var(--surface-3)', borderRadius: 999, overflow: 'hidden' }}>
-                <div style={{
-                  height: '100%', width: `${node.pct}%`,
-                  background: node.status === 'approved' ? 'var(--success)' :
-                              node.status === 'review' ? 'var(--warning)' : 'var(--accent)',
-                  borderRadius: 999
-                }} />
+      {!uniform && (
+        <foreignObject x={12} y={58} width={NODE_W - 24} height={36}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+            <StatusPill status={node.status} />
+            {node.status !== 'locked' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, maxWidth: 100 }}>
+                <div style={{ flex: 1, height: 3, background: 'var(--surface-3)', borderRadius: 999, overflow: 'hidden' }}>
+                  <div style={{
+                    height: '100%', width: `${node.pct}%`,
+                    background: node.status === 'approved' ? 'var(--success)' :
+                                node.status === 'review' ? 'var(--warning)' : 'var(--accent)',
+                    borderRadius: 999
+                  }} />
+                </div>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)' }}>{node.pct}%</span>
               </div>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-3)' }}>{node.pct}%</span>
-            </div>
-          )}
-        </div>
-      </foreignObject>
+            )}
+          </div>
+        </foreignObject>
+      )}
     </g>
   );
 };
 
-const VerticalSpine = ({ nodes, edges }) => {
+const VerticalSpine = ({ nodes, edges, uniform = false }) => {
   const sorted = [...nodes].sort((a, b) => a.y - b.y);
   const topY = sorted[0]?.y - 20 || 40;
   const bottomY = sorted[sorted.length - 1]?.y + NODE_H + 20 || 900;
@@ -135,7 +148,8 @@ const VerticalSpine = ({ nodes, edges }) => {
       {/* Spine segments between nodes + branch connectors */}
       {sorted.map((node, i) => {
         const cx = nodeCenter(node);
-        const branchClass = node.status === 'approved' ? 'done' :
+        const branchClass = uniform ? '' :
+          node.status === 'approved' ? 'done' :
           node.current ? 'active' : node.status === 'review' ? 'active' : '';
         const next = sorted[i + 1];
         const spineY = node.y + NODE_H / 2;
@@ -143,7 +157,7 @@ const VerticalSpine = ({ nodes, edges }) => {
         const state = i < sorted.length - 1
           ? edgeState(node.id, next.id, edges)
           : 'pending';
-        const segClass = state === 'done' ? 'done' : state === 'active' ? 'active' : '';
+        const segClass = uniform ? '' : state === 'done' ? 'done' : state === 'active' ? 'active' : '';
         return (
           <g key={node.id}>
             <line
@@ -164,13 +178,13 @@ const VerticalSpine = ({ nodes, edges }) => {
   );
 };
 
-const SkillGraph = ({ nodes, edges, selected, onSelect }) => {
+const SkillGraph = ({ nodes, edges, selected, onSelect, uniform = false }) => {
   const viewH = Math.max(980, ...nodes.map(n => n.y + NODE_H + 60));
   return (
-    <svg className="graph-svg graph-svg-vertical" viewBox={`0 0 1040 ${viewH}`} preserveAspectRatio="xMidYMid meet">
-      <VerticalSpine nodes={nodes} edges={edges} />
+    <svg className={`graph-svg graph-svg-vertical ${uniform ? 'graph-uniform' : ''}`} viewBox={`0 0 1040 ${viewH}`} preserveAspectRatio="xMidYMid meet">
+      <VerticalSpine nodes={nodes} edges={edges} uniform={uniform} />
       {nodes.map(n => (
-        <SkillNode key={n.id} node={n} selected={selected} onClick={onSelect} />
+        <SkillNode key={n.id} node={n} selected={selected} onClick={onSelect} uniform={uniform} />
       ))}
     </svg>
   );
@@ -307,20 +321,20 @@ const SkeletonNode = ({ node, idx }) => {
   );
 };
 
-const ForgeGraph = ({ nodes, edges, revealed, revealClass = '' }) => {
+const ForgeGraph = ({ nodes, edges, revealed, revealClass = '', uniform = true }) => {
   const viewH = Math.max(980, ...nodes.map(n => n.y + NODE_H + 60));
   const visibleNodes = nodes.filter(n => revealed.has(n.id));
   const visibleEdges = edges.filter(e => revealed.has(e.from) && revealed.has(e.to));
 
   return (
-    <svg className="graph-svg graph-svg-vertical forge-graph-svg" viewBox={`0 0 1040 ${viewH}`} preserveAspectRatio="xMidYMid meet">
-      {visibleNodes.length > 0 && <VerticalSpine nodes={visibleNodes} edges={visibleEdges} />}
+    <svg className="graph-svg graph-svg-vertical forge-graph-svg graph-uniform" viewBox={`0 0 1040 ${viewH}`} preserveAspectRatio="xMidYMid meet">
+      {visibleNodes.length > 0 && <VerticalSpine nodes={visibleNodes} edges={visibleEdges} uniform={uniform} />}
       {nodes.map((n, i) => !revealed.has(n.id) && (
         <SkeletonNode key={`s-${n.id}`} node={n} idx={i} />
       ))}
       {nodes.map((n, i) => revealed.has(n.id) && (
         <g key={n.id} className="node-materialize">
-          <SkillNode node={n} selected={null} extraClass={revealClass ? `${revealClass}-${i}` : ''} />
+          <SkillNode node={n} selected={null} onClick={null} uniform={uniform} extraClass={revealClass ? `${revealClass}-${i}` : ''} />
         </g>
       ))}
     </svg>

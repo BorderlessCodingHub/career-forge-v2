@@ -1,15 +1,12 @@
-// Career Forge — Screens 4 (Skill Graph dashboard) and 6 (Adaptive + Mentor)
+// Career Forge — Artifact mode roadmap (steady state) + adaptive variant
 
-// === Screen 4: Skill Graph Dashboard ===
-const RoadmapScreen = ({ adaptive = false, onValidate, onMentor, mentorOpen, onCloseMentor }) => {
+const RoadmapScreen = ({ mode = 'artifact', adaptive = false, onValidate, onMentor, mentorOpen, onCloseMentor }) => {
   const [selectedNode, setSelectedNode] = React.useState(null);
 
-  // Build node/edge state from base, applying adaptive overrides
   const { nodes, edges } = React.useMemo(() => {
     let nodes = SKILL_NODES_BASE.map(n => ({ ...n }));
     let edges = SKILL_EDGES_BASE.map(e => ({ ...e }));
     if (adaptive) {
-      // After failed REST validation:
       const rest = nodes.find(n => n.id === 'rest');
       if (rest) { rest.status = 'review'; rest.pct = 48; rest.current = false; }
       const http = nodes.find(n => n.id === 'http');
@@ -29,12 +26,52 @@ const RoadmapScreen = ({ adaptive = false, onValidate, onMentor, mentorOpen, onC
     return { nodes, edges };
   }, [adaptive]);
 
+  const isArtifact = mode === 'artifact';
+
+  if (isArtifact) {
+    return (
+      <div className="artifact-layout" data-screen={adaptive ? 'adaptive-state' : 'vertical-roadmap'} data-mode="artifact">
+        <div className="artifact-canvas">
+          <div className="artifact-canvas-head">
+            <h1 className="artifact-canvas-title">Backend Developer</h1>
+            <p className="artifact-canvas-hint">Clique em um domínio para ver referências e falar com a IA</p>
+          </div>
+          <div className="graph-wrap artifact-graph-wrap">
+            <SkillGraph
+              nodes={nodes}
+              edges={edges}
+              selected={selectedNode}
+              onSelect={setSelectedNode}
+              uniform
+            />
+          </div>
+        </div>
+
+        <div className={`slideover-backdrop ${selectedNode ? 'open' : ''}`} onClick={() => setSelectedNode(null)}></div>
+        <div className={`slideover node-detail-slideover ${selectedNode ? 'open' : ''}`}>
+          <NodeDetailSidebar
+            nodeId={selectedNode}
+            nodes={nodes}
+            onClose={() => setSelectedNode(null)}
+            onValidate={(id) => { setSelectedNode(null); onValidate(id); }}
+          />
+        </div>
+
+        {/* Mentor drawer — optional, not in default canvas */}
+        <div className={`slideover-backdrop ${mentorOpen ? 'open' : ''}`} onClick={onCloseMentor}></div>
+        <div className={`slideover ${mentorOpen ? 'open' : ''}`}>
+          <MentorDrawer onClose={onCloseMentor} adaptive={adaptive} />
+        </div>
+      </div>
+    );
+  }
+
+  // Legacy setup-style dashboard (fallback if mode !== artifact)
+  const validated = nodes.filter(n => n.status === 'approved').length;
+  const total = nodes.length;
   const summary = adaptive
     ? { eyebrow: 'Trilha recalibrada', title: 'Foque em HTTP — sua validação em REST mostrou gaps', meta: '20 min · revisão guiada', variant: 'warning' }
     : { eyebrow: 'Próxima missão', title: 'HTTP básico — métodos e status codes', meta: '30 min · seção 1 de 3', variant: 'default' };
-
-  const validated = nodes.filter(n => n.status === 'approved').length;
-  const total = nodes.length;
 
   return (
     <div className="dash-layout" data-screen={adaptive ? 'adaptive-state' : 'skill-graph'}>
@@ -50,118 +87,27 @@ const RoadmapScreen = ({ adaptive = false, onValidate, onMentor, mentorOpen, onC
             </button>
           }
         />
-
         <div className="graph-wrap">
-          <div className="graph-header">
-            <div className="graph-title">
-              Sua trilha · Backend Developer
-              <span className="meta">{validated} validado · {total - validated} pendentes</span>
-            </div>
-            <div className="graph-legend">
-              <div className="legend-item"><span className="legend-dot" style={{ background: 'var(--success)' }}></span>aprovado</div>
-              <div className="legend-item"><span className="legend-dot" style={{ background: 'var(--accent)' }}></span>recomendado</div>
-              {adaptive && <div className="legend-item"><span className="legend-dot" style={{ background: 'var(--warning)' }}></span>revisar</div>}
-              <div className="legend-item"><span className="legend-dot" style={{ background: 'var(--locked)' }}></span>bloqueado</div>
-            </div>
-          </div>
           <SkillGraph nodes={nodes} edges={edges} selected={selectedNode} onSelect={setSelectedNode} />
         </div>
       </div>
-
       <aside className="dash-side">
         <div className="card side-card">
           <div className="side-card-head">
             <span className="side-card-title">Progresso</span>
-            <span className="side-card-meta">backend</span>
-          </div>
-          <div className="progress-summary">
-            <span className="progress-big">{validated}</span>
-            <span className="progress-total">/{total}</span>
-            <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>+1 esta semana</span>
-          </div>
-          <div className="progress-label-row">domínios validados pela IA</div>
-          <div className="mini-bars">
-            {nodes.map((n, i) => (
-              <div key={i} className={`mini-bar ${n.status === 'approved' ? 'done' : n.status === 'review' ? 'warn' : n.status === 'recommended' ? 'partial' : ''}`}></div>
-            ))}
-          </div>
-        </div>
-
-        <div className="card side-card">
-          <div className="side-card-head">
-            <span className="side-card-title">Evidências recentes</span>
-            <span className="side-card-meta">últimos 7 dias</span>
-          </div>
-          <div className="evidence-list">
-            {adaptive && (
-              <div className="evidence-item">
-                <div className="ic" style={{ background: 'var(--warning-soft)', color: 'var(--warning)' }}>
-                  <Icon name="alert" size={13} />
-                </div>
-                <div className="evidence-item-body">
-                  <div className="evidence-item-title">APIs REST · score 48</div>
-                  <div className="evidence-item-meta">marcou revisar · há 2 min</div>
-                </div>
-              </div>
-            )}
-            <div className="evidence-item success">
-              <div className="ic"><Icon name="check" size={13} stroke={3} /></div>
-              <div className="evidence-item-body">
-                <div className="evidence-item-title">Git e GitHub · score 82</div>
-                <div className="evidence-item-meta">validado · ontem · 18:42</div>
-              </div>
-            </div>
-            <div className="evidence-item">
-              <div className="ic"><Icon name="file" size={13} /></div>
-              <div className="evidence-item-body">
-                <div className="evidence-item-title">JavaScript base · score 71</div>
-                <div className="evidence-item-meta">validado · 3 dias atrás</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <button className="card mentor-cta" onClick={onMentor}>
-          <div className="avatar">RT</div>
-          <div className="mentor-cta-body">
-            <div className="mentor-cta-name">Rafael · Mentor Borderless</div>
-            <div className="mentor-cta-meta">Falar com mentor agora</div>
-          </div>
-          <div className="mentor-status"></div>
-        </button>
-
-        <div className="card side-card" style={{ background: 'transparent', borderStyle: 'dashed' }}>
-          <div className="row" style={{ gap: 10, marginBottom: 8, color: 'var(--accent-2)' }}>
-            <Icon name="sparkles" size={14} />
-            <span style={{ fontSize: 12, fontWeight: 600 }}>Por que ainda não destravou?</span>
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.55 }}>
-            Career Forge não progride por tempo gasto. Cada domínio só vira <b style={{ color: 'var(--text)' }}>aprovado</b> depois que você prova entendimento em uma entrevista curta com a IA.
+            <span className="side-card-meta">{validated}/{total}</span>
           </div>
         </div>
       </aside>
-
-      {/* Node detail slide-over */}
       <div className={`slideover-backdrop ${selectedNode ? 'open' : ''}`} onClick={() => setSelectedNode(null)}></div>
       <div className={`slideover ${selectedNode ? 'open' : ''}`}>
-        <NodeDetail
-          nodeId={selectedNode}
-          nodes={nodes}
-          onClose={() => setSelectedNode(null)}
-          onValidate={(id) => { setSelectedNode(null); onValidate(id); }}
-        />
-      </div>
-
-      {/* Mentor drawer */}
-      <div className={`slideover-backdrop ${mentorOpen ? 'open' : ''}`} onClick={onCloseMentor}></div>
-      <div className={`slideover ${mentorOpen ? 'open' : ''}`}>
-        <MentorDrawer onClose={onCloseMentor} adaptive={adaptive} />
+        <NodeDetail nodeId={selectedNode} nodes={nodes} onClose={() => setSelectedNode(null)} onValidate={onValidate} />
       </div>
     </div>
   );
 };
 
-// === Mentor Drawer ===
+// === Mentor Drawer (optional — not default artifact chrome) ===
 const MentorDrawer = ({ onClose, adaptive }) => {
   const [draft, setDraft] = React.useState('');
   const [messages, setMessages] = React.useState([

@@ -89,6 +89,19 @@ body::before {
 .brand-name { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
 .brand-tag { font-size: 12px; color: var(--text-3); }
 
+/* Artifact mode — minimal top bar (no onboarding stepper) */
+.topnav-artifact { padding: 12px 32px; }
+.artifact-track {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  flex: 1; text-align: center;
+}
+.artifact-track-eyebrow {
+  font-size: 10px; font-family: var(--font-mono); text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-3);
+}
+.artifact-track-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.app.mode-artifact .screen.active { padding-top: 0; }
+
 .breadcrumb {
   display: flex; align-items: center; gap: 6px;
   font-size: 12px; color: var(--text-3);
@@ -539,6 +552,37 @@ body::before {
 @keyframes node-pulse-warn {
   0%, 100% { filter: drop-shadow(0 0 12px rgba(245,158,11,0.4)); }
   50% { filter: drop-shadow(0 0 22px rgba(245,158,11,0.7)); }
+}
+
+/* Uniform nodes — forge build + artifact canvas (Borderless purple cards) */
+.skill-node.uniform .skill-node-bg {
+  fill: rgba(107, 76, 230, 0.08);
+  stroke: rgba(107, 76, 230, 0.45);
+  stroke-width: 1;
+  opacity: 1;
+}
+.skill-node.uniform { opacity: 1; }
+.skill-node.uniform:hover .skill-node-bg {
+  stroke: rgba(107, 76, 230, 0.7);
+  filter: drop-shadow(0 0 14px rgba(107, 76, 230, 0.25));
+}
+.skill-node.uniform.selected .skill-node-bg {
+  stroke-width: 2;
+  stroke: var(--accent);
+  filter: drop-shadow(0 0 18px rgba(107, 76, 230, 0.45));
+}
+.graph-uniform .roadmap-spine,
+.graph-uniform .roadmap-spine-seg,
+.graph-uniform .roadmap-spine-seg.done,
+.graph-uniform .roadmap-spine-seg.active,
+.graph-uniform .roadmap-branch.done,
+.graph-uniform .roadmap-branch.active {
+  stroke: var(--border);
+  stroke-opacity: 0.55;
+}
+.graph-uniform .roadmap-branch {
+  stroke: var(--border);
+  stroke-opacity: 0.55;
 }
 
 .skill-link { stroke: var(--border); stroke-width: 1.5; fill: none; }
@@ -1092,6 +1136,107 @@ body::before {
   40% { filter: drop-shadow(0 0 16px rgba(99,102,241,0.6)); }
   100% { filter: drop-shadow(0 0 0 transparent); }
 }
+
+/* ===== Artifact layout (steady trail — roadmap.sh focus) ===== */
+.artifact-layout {
+  flex: 1; display: flex; flex-direction: column;
+  max-width: 100%; margin: 0; padding: 0;
+  min-height: calc(100vh - 56px);
+}
+.artifact-canvas {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 20px 24px 32px;
+  max-width: 1200px; margin: 0 auto; width: 100%;
+}
+.artifact-canvas-head {
+  margin-bottom: 16px; padding: 0 8px;
+}
+.artifact-canvas-title {
+  font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px;
+}
+.artifact-canvas-hint {
+  font-size: 13px; color: var(--text-3); margin: 0;
+}
+.artifact-graph-wrap {
+  flex: 1; min-height: 640px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+}
+.artifact-graph-wrap .graph-svg-vertical {
+  min-height: 720px; max-height: none;
+}
+
+/* Node detail sidebar (artifact) */
+.node-detail-slideover { width: 420px; }
+.node-sidebar-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: rgba(107, 76, 230, 0.12);
+  border: 1px solid rgba(107, 76, 230, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent-2);
+}
+.node-sidebar-eyebrow {
+  font-size: 10px; font-family: var(--font-mono);
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3);
+}
+.node-sidebar-title { font-size: 16px; font-weight: 600; }
+.node-sidebar-desc {
+  font-size: 13px; color: var(--text-2); line-height: 1.55; margin: 0 0 16px;
+}
+.node-sidebar-meta {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+}
+.node-sidebar-pct {
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-3);
+}
+.ref-links-list {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ref-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: var(--r-sm);
+  background: var(--bg); border: 1px solid var(--border-soft);
+  text-decoration: none; color: var(--text);
+  transition: border-color .15s, background .15s;
+}
+.ref-link:hover {
+  border-color: rgba(107, 76, 230, 0.4);
+  background: rgba(107, 76, 230, 0.06);
+}
+.ref-link-type {
+  font-size: 10px; font-family: var(--font-mono);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--accent-2); flex-shrink: 0;
+}
+.ref-link-title { flex: 1; font-size: 13px; font-weight: 500; }
+.node-ai-section { margin-top: 8px; }
+.node-ai-toggle { width: 100%; justify-content: center; gap: 8px; }
+.node-ai-toggle.open { border-color: var(--accent); background: rgba(107, 76, 230, 0.08); }
+.node-ai-chat {
+  margin-top: 12px; padding: 14px;
+  background: var(--bg); border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+}
+.node-ai-stream {
+  max-height: 180px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;
+}
+.node-ai-hint { font-size: 12px; color: var(--text-3); margin: 0; line-height: 1.5; }
+.node-ai-msg {
+  font-size: 13px; line-height: 1.45; padding: 10px 12px;
+  border-radius: var(--r-sm);
+}
+.node-ai-msg.user {
+  background: var(--surface-2); color: var(--text); align-self: flex-end;
+  max-width: 92%;
+}
+.node-ai-msg.ai {
+  background: rgba(107, 76, 230, 0.08); color: var(--text-2);
+  border: 1px solid rgba(107, 76, 230, 0.2);
+}
+.node-ai-input-row { display: flex; gap: 8px; }
 
 /* ===== Utility ===== */
 .muted { color: var(--text-3); }

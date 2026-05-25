@@ -53,8 +53,31 @@ const StatusPill = ({ status, size = 'sm' }) => {
   );
 };
 
-// === Top Nav with breadcrumb ===
-const TopNav = ({ current, onNav }) => {
+// === Top Nav — setup stepper vs artifact minimal bar ===
+const TopNav = ({ current, onNav, mode = 'setup', trackName = 'Backend Developer' }) => {
+  const brand = (
+    <div className="brand">
+      <div className="brand-mark"><span className="conn"></span></div>
+      <div>
+        <div className="brand-name">Career Forge</div>
+        {mode === 'setup' && <div className="brand-tag">Aprender com validação prática</div>}
+      </div>
+    </div>
+  );
+
+  if (mode === 'artifact') {
+    return (
+      <div className="topnav topnav-artifact">
+        {brand}
+        <div className="artifact-track">
+          <span className="artifact-track-eyebrow">Sua trilha</span>
+          <span className="artifact-track-name">{trackName}</span>
+        </div>
+        <div className="nav-meta">trilha pronta · v0.1</div>
+      </div>
+    );
+  }
+
   const steps = [
     { id: 'goal',      label: 'Objetivo',    short: '01' },
     { id: 'diag',      label: 'Diagnóstico', short: '02' },
@@ -66,14 +89,8 @@ const TopNav = ({ current, onNav }) => {
   ];
   const currentIdx = steps.findIndex(s => s.id === current);
   return (
-    <div className="topnav">
-      <div className="brand">
-        <div className="brand-mark"><span className="conn"></span></div>
-        <div>
-          <div className="brand-name">Career Forge</div>
-          <div className="brand-tag">Aprender com validação prática</div>
-        </div>
-      </div>
+    <div className="topnav topnav-setup">
+      {brand}
       <div className="breadcrumb">
         {steps.map((s, i) => (
           <React.Fragment key={s.id}>
@@ -90,6 +107,165 @@ const TopNav = ({ current, onNav }) => {
       </div>
       <div className="nav-meta">v0.1 · prototype</div>
     </div>
+  );
+};
+
+// Mock references per node (roadmap.sh-style resources)
+const NODE_REFERENCES = {
+  js: [
+    { title: 'JavaScript.info — Fundamentos', url: 'https://javascript.info/', type: 'curso' },
+    { title: 'MDN — Guia JavaScript', url: 'https://developer.mozilla.org/pt-BR/docs/Web/JavaScript', type: 'docs' },
+  ],
+  git: [
+    { title: 'Pro Git — Capítulos 1–3', url: 'https://git-scm.com/book/pt-br/v2', type: 'livro' },
+    { title: 'GitHub Skills — Hello World', url: 'https://skills.github.com/', type: 'lab' },
+  ],
+  http: [
+    { title: 'MDN — Visão geral HTTP', url: 'https://developer.mozilla.org/pt-BR/docs/Web/HTTP', type: 'docs' },
+    { title: 'HTTP em 100 segundos', url: 'https://www.youtube.com/watch?v=iYM2HzPD4oY', type: 'vídeo' },
+  ],
+  db: [
+    { title: 'SQLBolt — Introdução', url: 'https://sqlbolt.com/', type: 'lab' },
+    { title: 'PostgreSQL Tutorial', url: 'https://www.postgresqltutorial.com/', type: 'curso' },
+  ],
+  rest: [
+    { title: 'REST API Tutorial', url: 'https://restfulapi.net/', type: 'docs' },
+    { title: 'roadmap.sh — Node.js APIs', url: 'https://roadmap.sh/nodejs', type: 'roadmap' },
+  ],
+  auth: [
+    { title: 'JWT.io — Intro', url: 'https://jwt.io/introduction', type: 'docs' },
+    { title: 'OAuth 2.0 Simplified', url: 'https://aaronparecki.com/oauth-2-simplified/', type: 'artigo' },
+  ],
+  final: [
+    { title: 'FastAPI CRUD tutorial', url: 'https://fastapi.tiangolo.com/tutorial/', type: 'docs' },
+    { title: 'Projeto referência — API REST', url: 'https://github.com/tiangolo/full-stack-fastapi-template', type: 'repo' },
+  ],
+};
+
+// === Node detail sidebar (artifact mode — click node on canvas) ===
+const NodeDetailSidebar = ({ nodeId, nodes, onClose, onValidate }) => {
+  const [aiOpen, setAiOpen] = React.useState(false);
+  const [draft, setDraft] = React.useState('');
+  const [messages, setMessages] = React.useState([]);
+
+  React.useEffect(() => {
+    setAiOpen(false);
+    setDraft('');
+    setMessages([]);
+  }, [nodeId]);
+
+  if (!nodeId) return null;
+  const node = nodes.find(n => n.id === nodeId);
+  if (!node) return null;
+
+  const refs = NODE_REFERENCES[nodeId] || [];
+  const statusText = {
+    locked: 'Aguardando pré-requisitos. Conclua os domínios anteriores para destravar.',
+    recommended: 'Recomendado para sua próxima sessão de estudo.',
+    approved: 'Validado pela IA. Disponível para revisão a qualquer momento.',
+    review: 'Sua última validação mostrou lacunas — revise antes de avançar.',
+  }[node.status] || '';
+
+  const askAi = () => {
+    if (!draft.trim()) return;
+    const q = draft.trim();
+    setMessages(m => [...m, { from: 'user', text: q }]);
+    setDraft('');
+    setTimeout(() => {
+      setMessages(m => [...m, {
+        from: 'ai',
+        text: `Sobre ${node.title}: foque em exemplos práticos antes da teoria. Posso sugerir um plano de 30 min se quiser.`,
+      }]);
+    }, 700);
+  };
+
+  return (
+    <>
+      <div className="slideover-head">
+        <div className="row" style={{ gap: 12 }}>
+          <div className="node-sidebar-icon">
+            <Icon name={node.icon} size={18} />
+          </div>
+          <div>
+            <div className="node-sidebar-eyebrow">Domínio</div>
+            <div className="node-sidebar-title">{node.title}</div>
+          </div>
+        </div>
+        <button className="slideover-close" onClick={onClose} aria-label="Fechar"><Icon name="x" size={18} /></button>
+      </div>
+
+      <div className="slideover-body">
+        <p className="node-sidebar-desc">{node.desc}. {statusText}</p>
+        {node.status !== 'locked' && (
+          <div className="node-sidebar-meta">
+            <StatusPill status={node.status} />
+            <span className="node-sidebar-pct">{node.pct}% mastery</span>
+          </div>
+        )}
+
+        <div className="node-section">
+          <div className="node-section-title">Referências</div>
+          <ul className="ref-links-list">
+            {refs.map((r, i) => (
+              <li key={i}>
+                <a href={r.url} target="_blank" rel="noopener noreferrer" className="ref-link">
+                  <span className="ref-link-type">{r.type}</span>
+                  <span className="ref-link-title">{r.title}</span>
+                  <Icon name="arrowRight" size={12} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="node-section node-ai-section">
+          <button
+            type="button"
+            className={`btn btn-soft node-ai-toggle ${aiOpen ? 'open' : ''}`}
+            onClick={() => setAiOpen(v => !v)}
+          >
+            <Icon name="sparkles" size={14} />
+            {aiOpen ? 'Fechar tutor IA' : 'Perguntar à IA'}
+          </button>
+          {aiOpen && (
+            <div className="node-ai-chat">
+              <div className="node-ai-stream">
+                {messages.length === 0 && (
+                  <p className="node-ai-hint">Estilo roadmap.sh AI tutor — pergunte sobre este tópico.</p>
+                )}
+                {messages.map((m, i) => (
+                  <div key={i} className={`node-ai-msg ${m.from}`}>{m.text}</div>
+                ))}
+              </div>
+              <div className="node-ai-input-row">
+                <input
+                  className="chat-input"
+                  placeholder={`Dúvida sobre ${node.title}…`}
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') askAi(); }}
+                />
+                <button className="send-btn" onClick={askAi} disabled={!draft.trim()}>
+                  <Icon name="send" size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="slideover-foot">
+        <button className="btn btn-soft" style={{ flex: 1 }} onClick={onClose}>Fechar</button>
+        <button
+          className="btn btn-primary"
+          style={{ flex: 1 }}
+          disabled={node.status === 'locked'}
+          onClick={() => onValidate(nodeId)}
+        >
+          {node.status === 'review' ? 'Refazer validação' : 'Validar com IA'} <Icon name="arrowRight" size={14} />
+        </button>
+      </div>
+    </>
   );
 };
 
@@ -144,4 +320,4 @@ const Bubble = ({ from, time, children }) => (
   </div>
 );
 
-Object.assign(window, { Icon, StatusPill, TopNav, ScoreRing, MissionBanner, Bubble });
+Object.assign(window, { Icon, StatusPill, TopNav, ScoreRing, MissionBanner, Bubble, NodeDetailSidebar, NODE_REFERENCES });

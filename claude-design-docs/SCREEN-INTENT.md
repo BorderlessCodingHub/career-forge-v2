@@ -95,19 +95,21 @@
 
 ---
 
-## 6. Vertical roadmap (steady state) — MUST match ⭐ REDESIGNED
+## 6. Vertical roadmap (steady state) — MUST match ⭐ ARTIFACT MODE (HAC-25)
 
 | Constraint | Detail |
 |------------|--------|
-| Layout | Vertical spine, nodes alternating left/right, category headers |
-| Reference | [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) — layout inspiration |
-| Personalization | Adaptive skill graph state — not static checklist |
-| Node status | Pills + mastery % when known; locked dimmed |
-| Mission | Next action visible (MissionBanner or equivalent) |
-| AI sidebar | **Optional** — user opens/closes. Explain / Test / Chat |
-| Forbidden | Forge streaming view as steady state; step numbers 1–N on nodes |
+| App mode | **`artifact`** — finished personalized roadmap.sh page; distinct from **`setup`** (onboarding + forge) |
+| Layout | Full-width vertical spine; nodes alternating left/right; category headers |
+| Reference | [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) |
+| Chrome | **No** onboarding stepper (01 Objetivo … 07 Adaptação); **no** fixed progress/evidence/mentor sidebar |
+| Top bar | Career Forge logo + track name only |
+| Canvas nodes | **Uniform** Borderless purple cards on graph — status/mastery in **node drawer**, not on cards |
+| Interaction | **Click node** → right drawer: title, description, **References** (links), **Ask AI** mini chat, CTA validar |
+| Personalization | Graph state still adaptive (backend recalibrates) — visible in drawer, not canvas pollution |
+| Forbidden | Forge streaming as steady state; MissionBanner hero on artifact canvas; status-colored node grid |
 
-**Can evolve:** node click → detail panel, graph library, sidebar width
+**Can evolve:** drawer width, reference API, full AI tutor panel vs mini chat
 
 ---
 

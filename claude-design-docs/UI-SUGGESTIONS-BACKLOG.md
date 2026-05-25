@@ -14,6 +14,7 @@ Structured log for user-provided UI feedback (images, descriptions) before imple
 |------|--------|---------|----------------|
 | 2026-05-25 | User reference images | Borderless Community theming (Code Breakers + logo) | Docs: BORDERLESS-THEMING, design-tokens, UI-PRINCIPLES, PRODUCT-SOT; prototype `styles.css` CSS vars (Phase 1 partial) |
 | 2026-05-25 | `references/prototype-onboarding-current.png` | Onboarding: chat bubbles → **pill rounds** (batch questions with inputs); goal picker minimal; vertical roadmap spine; prototype 404 fix | HAC-24: `screens-flow.jsx`, `skill-graph.jsx`, `index.html`, docs |
+| 2026-05-25 | Batch 2026-05-25 (forge + trail steady state) | Uniform forge nodes; **artifact mode** on `/roadmap` — no stepper/sidebar clutter; click node → detail drawer with references + Ask AI | HAC-25: `app.jsx`, `screens-dashboard.jsx`, `skill-graph.jsx`, `components.jsx`, `styles.css`, docs |
 
 ---
 
@@ -61,7 +62,23 @@ _Add new items below. Format:_
 
 ---
 
-## This batch (2026-05-25)
+## Resolved (2026-05-25 — HAC-25)
+
+### Forge — uniform node colors during build
+- **Source:** `references/forge-screen-current.png`
+- **Screen/area:** Forge graph panel (`#forge`)
+- **Request:** All nodes same purple/card style while constructing — no green/grey status differentiation until trail ready
+- **Status:** ✅ Applied — `uniform` prop on `SkillNode` / `ForgeGraph`
+
+### Steady trail — artifact mode (roadmap.sh artifact)
+- **Source:** `references/trail-dashboard-polluted-current.png`, `references/roadmap-sh-reference-full.png`
+- **Screen/area:** Trilha pronta (`#roadmap`, `#adaptive`)
+- **Request:** Hide stepper 01–07; remove progress/evidence/mentor sidebar clutter; full-width vertical roadmap; click node → right drawer (title, description, references, Ask AI)
+- **Status:** ✅ Applied — `setup` vs `artifact` app mode, `NodeDetailSidebar`, `artifact-layout`
+
+---
+
+## This batch (2026-05-25 — HAC-23 theming)
 
 Captured from HAC-23 Borderless theming task:
 

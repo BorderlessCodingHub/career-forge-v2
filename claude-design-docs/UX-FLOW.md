@@ -25,9 +25,10 @@ Goal → Onboarding chat → Editable diagnosis → [Gerar roadmap] → Forge st
 | Entrada no forge | Auto-jump ou CTA passivo após confirmação | **Explícito** — só após "Gerar roadmap" |
 | Forge durante stream | Split 40/60: timeline + skill graph skeleton enchendo | **Só timeline** — passos numerados 1, 2, 3, 4… (reasoning stream). **Sem grafo visível** |
 | Fim do forge | Reveal inline com grafo completo + MissionBanner | **Animação** — cada frase/item do stream **voa para lugar** no layout vertical |
-| Steady state pós-forge | Skill graph dashboard (nós conectados, sidebar fixa) | **Roadmap vertical** estilo [roadmap.sh](https://roadmap.sh) — spine central, nós esquerda/direita, categorias. **Sidebar IA opcional** (Explain, Test knowledge, Chat) |
+| Steady state pós-forge | Skill graph dashboard (nós conectados, sidebar fixa) | **`artifact` mode** — roadmap vertical full-width estilo [roadmap.sh](https://roadmap.sh); **click node → drawer** (referências + Ask AI); sem stepper nem sidebar de progresso |
 | Numeração de passos | Implícita na timeline | **1–N só durante geração** — não aparece no steady state |
-| IA no dashboard | Mentor drawer contextual (P1) | **AI Tutor sidebar opcional** — usuário escolhe falar com IA ou não |
+| App modes | Single chrome | **`setup`** (goal → forge) vs **`artifact`** (trilha pronta) |
+| IA no dashboard | Mentor drawer contextual (P1) | **Ask AI** no drawer do nó (roadmap.sh tutor style); mentor full drawer = P1 opcional |
 
 ---
 
@@ -113,24 +114,25 @@ Após animação → navega para steady state (`/roadmap`).
 
 ---
 
-### 6. Vertical roadmap — steady state (`/roadmap`) ⭐ REDESIGNED
+### 6. Vertical roadmap — steady state (`/roadmap`) ⭐ ARTIFACT MODE (HAC-25)
 
-**User job:** Orientar o dia a dia — explorar trilha personalizada adaptativa.
+**User job:** Explorar **artefato final** — trilha personalizada como página roadmap.sh, não tela de setup.
 
 | | |
 |---|---|
-| **Old** | Skill graph hero (~7 nós conectados), sidebar fixa com progresso/evidence |
-| **New** | **Roadmap vertical** inspirado em roadmap.sh — spine central, categorias (ex. Introduction, Version Control), nós alternando esquerda/direita, status por nó. **Sidebar IA opcional** (colapsável): Explain, Test knowledge, Chat |
-| **Route** | `/roadmap` · `data-screen="vertical-roadmap"` |
+| **Old** | Stepper 01–07 + sidebar progresso/evidências/mentor + nós coloridos por status |
+| **New** | **`artifact` mode:** top bar mínima (logo + trilha); canvas full-width; nós **uniformes** (roxo Borderless); **click → drawer direita** com descrição, referências, Ask AI, validar |
+| **Route** | `/roadmap` · `data-screen="vertical-roadmap"` · `data-mode="artifact"` |
 
-**Reference layout:** [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png)
+**References:** [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [trail-dashboard-polluted-current.png](./references/trail-dashboard-polluted-current.png) (anti-pattern)
 
-**Career Forge difference:** Trilha é **adaptativa e personalizada** — não checklist estático. Status enums, mastery %, validação e replanejamento continuam.
+**Career Forge difference:** Trilha adaptativa — status/mastery aparecem no **drawer do nó**, não poluindo o canvas.
 
-**AI sidebar (optional):**
-- Usuário **escolhe** abrir/fechar — não é chat full-screen obrigatório
-- Contexto: tópico selecionado no roadmap
-- Ações: Explicar, Testar conhecimento, Chat livre
+**Node drawer:**
+- Título + descrição do domínio
+- Seção **Referências** (links mock)
+- **Perguntar à IA** — mini chat estilo roadmap.sh tutor
+- CTA **Validar com IA** (quando aplicável)
 
 ---
 
@@ -168,12 +170,15 @@ Após animação → navega para steady state (`/roadmap`).
 
 ## Prototype drift
 
-Current HTML prototype (`prototype/`) still reflects **old** paradigm (split forge, read-only diagnosis result, graph dashboard). Treat as **visual reference for tokens/components**, not flow truth.
+| Area | Status |
+|------|--------|
+| Artifact steady state (`#roadmap`) | ✅ HAC-25 — setup vs artifact modes, click-to-drawer |
+| Forge uniform nodes | ✅ HAC-25 |
+| Editable diagnosis screen | ⬜ Still hash `#result` placeholder |
+| Forge timeline-only (no graph during stream) | ⬜ Prototype keeps split forge layout (user approved layout HAC-25) |
 
-Implementation target: this doc + [SCREEN-INTENT.md](./SCREEN-INTENT.md). Update prototype in a future UI issue (HAC-9 / HAC-18).
-
-See [README § Prototype drift](./README.md#prototype-drift).
+Implementation target: this doc + [SCREEN-INTENT.md](./SCREEN-INTENT.md).
 
 ---
 
-*Last updated: HAC-21 — UX paradigm shift*
+*Last updated: HAC-25 — artifact mode paradigm*
