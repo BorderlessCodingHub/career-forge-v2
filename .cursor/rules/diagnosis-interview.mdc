@@ -1,0 +1,40 @@
+---
+description: Adaptive diagnosis interview — CTRR rubric, multi-turn LLM, UI is dumb renderer. Read ADR-001 before editing diagnosis onboarding.
+globs:
+  - apps/backend/src/career_forge/ai/graphs/diagnosis*
+  - apps/backend/src/career_forge/services/diagnosis*
+  - apps/backend/src/career_forge/services/cv*
+  - apps/backend/src/career_forge/api/diagnosis*
+  - apps/backend/src/career_forge/schemas/diagnosis*
+  - apps/frontend/src/components/diagnosis/**
+  - apps/frontend/src/lib/onboarding*
+  - docs/product/DIAGNOSIS-INTERVIEW.md
+  - docs/decisions/ADR-001*
+alwaysApply: false
+---
+
+# Diagnosis interview (CTRR)
+
+## Read first (mandatory)
+
+1. [ADR-001](../../docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md) — business decisions
+2. [DIAGNOSIS-INTERVIEW.md](../../docs/product/DIAGNOSIS-INTERVIEW.md) — API, schemas, sequence
+
+## Golden rules
+
+1. **AI-first:** production onboarding uses `diagnosis_interview` graph — not keyword `build_diagnosis_response()` alone
+2. **Interviewer ≤2 questions** per turn; **Judge** updates `belief_state`
+3. **Frontend dumb:** render API `questions[]`; no `DIAG_ROUNDS` in prod path
+4. **GraphExecutor + AgentFactory** — register `diagnosis_interview` in `registry.py`
+5. **CV optional** — PDF-only ingest; skip saturated dimensions from intake/CV
+6. **Audience:** career transition beginners — no enterprise hiring rubric
+
+## Linear
+
+HAC-42 → HAC-46 · CV: HAC-33
+
+## Anti-patterns
+
+- ❌ Static pill rounds in `onboarding-data.ts` for production
+- ❌ Mock diagnosis without LLM on user path
+- ❌ Demo Ana toggle on onboarding screens

@@ -33,6 +33,11 @@ check test -f apps/backend/src/career_forge/ai/run.py
 check test -f .cursor/rules/ai-execution.mdc
 check test -f docs/engineering/EXECUTION-FLOW.md
 check test -f docs/engineering/AI-EXECUTION.md
+check test -f docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md
+check test -f docs/product/DIAGNOSIS-INTERVIEW.md
+check test -f .cursor/rules/diagnosis-interview.mdc
+check test -f .cursor/rules/cv-ingest.mdc
+check test -f apps/frontend/src/components/diagnosis/AGENTS.md
 check test -f apps/backend/src/career_forge/api/mentor.py
 check test -f apps/backend/src/career_forge/ai/agents/mentor.py
 check test -f apps/backend/src/career_forge/db/session.py

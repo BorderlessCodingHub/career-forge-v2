@@ -12,6 +12,10 @@ Authoritative product + architecture reference for agents.
 
 Sub-eixo: **Aprender com validação prática** (Alpha School: mastery before progression).
 
+**Audience:** career transition to tech (often zero or early study) — not senior hiring.
+
+**AI-first rule:** remove AI → app stops. Identity/diagnosis **must** be LLM-driven ([ADR-001](./decisions/ADR-001-adaptive-diagnosis-ctrr.md)).
+
 ---
 
 ## Wow features (priority)
@@ -86,10 +90,18 @@ Claude Design prototype: [claude-design-docs/prototype/](../claude-design-docs/p
 
 ---
 
+## Adaptive diagnosis (ADR-001 — in progress HAC-42–46)
+
+Screen 2: **CTRR** rubric + Interviewer/Judge loop — max 2 questions/turn, optional PDF CV, accumulative transcript → `DiagnosisResponse`.
+
+Spec: [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md)
+
+---
+
 ## Demo script (5 min)
 
-1. Goal + motivation
-2. Onboarding chat → diagnóstico
+1. Goal + motivation (+ optional CV)
+2. AI diagnosis interview → diagnóstico editável
 3. **Editable diagnosis** — ajustar lacuna, clicar **"Gerar roadmap"**
 4. **Forge stream** (timeline passos 1–N, sem grafo) → **animation reveal** → vertical roadmap
 5. Validar REST → resposta ruim → score

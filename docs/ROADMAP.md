@@ -87,6 +87,23 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 ---
 
+## Sprint 6 — AI diagnosis interview (P0 post-MVP) ⭐
+
+**Authority:** [ADR-001](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) · [DIAGNOSIS-INTERVIEW](./product/DIAGNOSIS-INTERVIEW.md)
+
+**Why:** Hackathon rule — remove AI, app stops. Screen 2 must be LLM-driven (CTRR + Interviewer/Judge).
+
+- [ ] **HAC-33** — CV ingest MVP (PDF extract + optional CvSignals) — supports skip logic
+- [ ] **HAC-42** — Rubric schemas + CTRR contracts
+- [ ] **HAC-43** — `diagnosis_interview` graph (Judge + Interviewer)
+- [ ] **HAC-44** — Multi-turn session API + Postgres
+- [ ] **HAC-45** — Frontend adaptive UI (dumb renderer)
+- [ ] **HAC-46** — Saturation guardrails + LLM fallback
+
+**Sequential:** HAC-42 → HAC-43 → HAC-44 → HAC-45 → HAC-46 · HAC-33 parallel with HAC-42–44
+
+---
+
 ## Tech debt cleanup
 
 - [x] **HAC-35** — Consolidate fragmented session stores (`lib/session/storage.ts`)
@@ -103,7 +120,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 | HAC-29 | Auto-posts de progresso | Cancelled |
 | HAC-30 | Onboarding horas/dia pacing | Cancelled |
 
-Decisions: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arthur.md)
+Decisions: [decisions/README.md](./decisions/README.md) · [ADR-001](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) · [2026-05-25 sync Arthur](./decisions/2026-05-25-sync-arthur.md)
 
 ---
 

@@ -21,6 +21,14 @@
 | 5 | [CURSOR-CLOUD.md](./CURSOR-CLOUD.md) | Cloud agent bootstrap · Linear MCP secrets |
 | 6 | [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md) | Forge LangGraph spec |
 
+## Product decisions (ADRs)
+
+| Doc | Purpose |
+|-----|---------|
+| [decisions/README.md](./decisions/README.md) | ADR index |
+| [ADR-001 adaptive diagnosis](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) | CTRR · Interviewer/Judge · CV policy |
+| [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) | Engineering spec · API · sequence |
+
 ## Design
 
 | Doc | Purpose |

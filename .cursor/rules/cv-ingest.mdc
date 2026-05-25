@@ -1,0 +1,33 @@
+---
+description: CV ingest for diagnosis — PDF-only extract, optional CvSignals. Read ADR-001 § CV policy.
+globs:
+  - apps/backend/src/career_forge/services/cv*
+  - apps/backend/src/career_forge/schemas/cv*
+  - apps/frontend/src/components/diagnosis/CvDropzone*
+  - docs/backlog/CV-PARSING.md
+alwaysApply: false
+---
+
+# CV ingest (diagnosis)
+
+## Read first
+
+- [ADR-001 § CV policy](../../docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md)
+- [CV-PARSING backlog](../../docs/backlog/CV-PARSING.md)
+
+## MVP scope
+
+- **PDF only** (`application/pdf`)
+- Text extract via library — **no LLM in extract step**
+- Optional one-shot LLM → `CvSignals` (skills, roles, years_hint)
+- Fail open: missing/invalid CV → diagnosis continues from intake + interview
+
+## Anti-patterns
+
+- ❌ Require CV to start diagnosis
+- ❌ LinkedIn scrape in hackathon MVP
+- ❌ Store raw PDF in sessionStorage for production (move to backend on start)
+
+## Linear
+
+HAC-33 (epic) · blocks enriched skip logic in HAC-43
