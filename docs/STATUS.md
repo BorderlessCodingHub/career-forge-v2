@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-8** (pending merge: **HAC-18**)
+Last updated: **2026-05-25** · Last merge: **HAC-7**
 
 ---
 
@@ -23,7 +23,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-8** (pending merge: **HAC-18**
 | AI JSON contracts | ✅ Done | HAC-7 — Pydantic schemas + fixtures migrated to `career_forge/schemas/` |
 | AI execution layer scaffold | ✅ Done | HAC-32 — `career_forge/ai/`, GraphRun, GraphExecutor, AgentFactory |
 | Identity onboarding + editable diagnosis | ✅ Done | HAC-8 — goal picker, pill rounds, POST /diagnosis via GraphExecutor |
-| Live Roadmap Forge (timeline-only SSE) | ✅ Done | HAC-18 — forge graph + SSE timeline + reveal (await merge) |
+| Live Roadmap Forge (timeline-only SSE) | ✅ Done | HAC-18 — forge graph + SSE timeline + reveal |
 | Vertical roadmap UI — artifact mode | ⬜ Todo | HAC-9 |
 | Mastery Validation | ⬜ Todo | HAC-10 — pitch focus mock interview |
 | Adaptive Planning | ⬜ Todo | HAC-11 |
@@ -37,7 +37,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-8** (pending merge: **HAC-18**
 | Issue | Title | Class | State |
 |-------|-------|-------|-------|
 | **HAC-8** | Identity Engine — editable diagnosis | S | **Done** |
-| **HAC-18** | Live Roadmap Forge — SSE timeline | S | **Done** (await merge) |
+| **HAC-18** | Live Roadmap Forge — SSE timeline | S | **Done** |
 | HAC-9 | Vertical roadmap UI — artifact mode | S | **Next** |
 
 Sprint 1 complete (HAC-5/6/7/31/32). **Dispatch:** HAC-18 merge → HAC-9 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
