@@ -27,9 +27,16 @@ export type RoadmapForgeEvent =
   | { type: "error"; message: string };
 
 export type DiagnosisResponse = {
-  profile: { label: string; track_id: string };
+  profile: { label: string; track_id: string; persona_slug?: string | null };
   strengths: string[];
   gaps: string[];
   starting_priorities: string[];
   estimated_mastery: Record<string, number>;
+};
+
+export type OnboardingSession = {
+  goalId: string;
+  motivation: string;
+  answers: Record<string, string>;
+  diagnosis?: DiagnosisResponse;
 };

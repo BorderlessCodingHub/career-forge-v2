@@ -11,7 +11,11 @@ from career_forge.schemas.common import (
     UserSkillNodePartial,
     ValidationStatus,
 )
-from career_forge.schemas.diagnosis import DiagnosisProfile, DiagnosisResponse
+from career_forge.schemas.diagnosis import (
+    DiagnosisProfile,
+    DiagnosisRequest,
+    DiagnosisResponse,
+)
 from career_forge.schemas.forge import (
     ArtifactFoundEvent,
     ForgeErrorEvent,
@@ -31,6 +35,7 @@ __all__ = [
     "Artifact",
     "ArtifactFoundEvent",
     "DiagnosisProfile",
+    "DiagnosisRequest",
     "DiagnosisResponse",
     "ForgeErrorEvent",
     "ForgeRunStatus",

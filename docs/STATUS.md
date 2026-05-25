@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-32** (AI layer — GraphRun, GraphExecutor, AgentFactory)
+Last updated: **2026-05-25** · Last merge: **HAC-32** (pending merge: **HAC-8**)
 
 ---
 
@@ -22,7 +22,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-32** (AI layer — GraphRun, G
 | Postgres schema + seed | ✅ Done | HAC-6 — models, Alembic, roadmap.json, seed Ana |
 | AI JSON contracts | ✅ Done | HAC-7 — Pydantic schemas + fixtures migrated to `career_forge/schemas/` |
 | AI execution layer scaffold | ✅ Done | HAC-32 — `career_forge/ai/`, GraphRun, GraphExecutor, AgentFactory |
-| Identity onboarding + editable diagnosis | ⬜ Todo | HAC-8 — wire via AgentFactory |
+| Identity onboarding + editable diagnosis | ✅ Done | HAC-8 — goal picker, pill rounds, POST /diagnosis via GraphExecutor |
 | Live Roadmap Forge (timeline-only SSE) | ⬜ Todo | HAC-18 — GraphExecutor stream mode, MVP target quinta 2026-05-29 |
 | Vertical roadmap UI — artifact mode | ⬜ Todo | HAC-9 |
 | Mastery Validation | ⬜ Todo | HAC-10 — pitch focus mock interview |
@@ -32,17 +32,14 @@ Last updated: **2026-05-25** · Last merge: **HAC-32** (AI layer — GraphRun, G
 
 ## Current sprint
 
-**Sprint 1 — Foundation** (parallel **[P]**)
+**Sprint 2 — Identity + Forge** (sequential **[S]**)
 
-| Issue | Title | Owner | State |
+| Issue | Title | Class | State |
 |-------|-------|-------|-------|
-| HAC-5 [P] | Monorepo + deploy skeleton | Arthur (FE) / shared | Done |
-| HAC-6 [P] | Skill graph schema + seed | — | Done |
-| HAC-7 [P] | AI JSON contracts | — | Done |
-| HAC-31 | Professional scaffold restructure | — | Done |
-| HAC-30 | Arthur sync — sprint roadmap + lifecycle | Matheus | Done |
+| **HAC-8** | Identity Engine — editable diagnosis | S | **Done** (await merge) |
+| HAC-18 | Live Roadmap Forge — SSE timeline | S | **Next** |
 
-**Dispatch:** Launch HAC-5/6/7 in ONE message when HAC-30 merges ([parallel-dispatch](../.cursor/rules/parallel-dispatch.mdc))
+Sprint 1 complete (HAC-5/6/7/31/32). **Dispatch:** HAC-18 next — sequential after HAC-8 merge ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
 
 ---
 
@@ -65,6 +62,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 | Scene | Ready |
 |-------|-------|
 | UI prototype (artifact mode + onboarding pills) | ⚠️ |
+| Onboarding flow wired to API | ✅ |
 | UX docs + steady-state reference | ✅ |
 | Sprint board + agent lifecycle | ✅ |
 | Professional monorepo scaffold | ✅ |
