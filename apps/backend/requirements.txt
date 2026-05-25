@@ -5,6 +5,7 @@ alembic>=1.14.0
 psycopg[binary]>=3.2.3
 pydantic>=2.10.0
 pydantic-settings>=2.6.0
+pypdf>=5.1.0
 pytest>=8.3.0
 pytest-asyncio>=0.24.0
 httpx>=0.28.0
