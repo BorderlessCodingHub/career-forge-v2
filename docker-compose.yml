@@ -20,7 +20,7 @@ services:
       context: ./apps/backend
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-careerforge}:${POSTGRES_PASSWORD:-careerforge}@postgres:5432/${POSTGRES_DB:-careerforge}
-      CORS_ORIGINS: ${FRONTEND_URL:-http://localhost:3000},http://127.0.0.1:3000
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:3300,http://127.0.0.1:3300}
       ROADMAP_JSON_PATH: /data/roadmap.json
       API_HOST: 0.0.0.0
       API_PORT: 8000
