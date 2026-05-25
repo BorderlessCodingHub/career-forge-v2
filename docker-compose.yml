@@ -28,6 +28,10 @@ services:
       API_HOST: 0.0.0.0
       API_PORT: 8000
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DIAGNOSIS_INTERVIEW_MODEL: ${DIAGNOSIS_INTERVIEW_MODEL:-gpt-4.1-nano}
+      LANGCHAIN_TRACING_V2: ${LANGCHAIN_TRACING_V2:-true}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+      LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-career-forge}
     volumes:
       - ./data:/data:ro
       - ./logs:/app/logs
