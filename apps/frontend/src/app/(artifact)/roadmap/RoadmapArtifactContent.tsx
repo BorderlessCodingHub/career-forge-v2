@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { MissionBanner, MentorDrawer, NodeDrawer, VerticalSpine, VerticalSpineShell } from "@/components/roadmap";
 import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session";
 import { getRoadmap, syncRoadmap } from "@/lib/api-client";
-import { getForgeGraph } from "@/lib/forge-session";
+import { clearForgeGraph, getForgeGraph } from "@/lib/forge-session";
 import { getStoredDiagnosis } from "@/lib/onboarding-session";
 import type {
   ForgeGraphNode,
@@ -65,6 +65,7 @@ export default function RoadmapArtifactPageContent() {
       const forgeGraph = getForgeGraph();
       if (forgeGraph?.length) {
         await syncRoadmap(forgeGraphToSyncNodes(forgeGraph));
+        clearForgeGraph();
       }
       const data = await getRoadmap();
       setRoadmap(data);
