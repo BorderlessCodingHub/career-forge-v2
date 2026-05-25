@@ -1,0 +1,20 @@
+---
+description: Mandatory triple QA gate before merge — evaluator + Playwright + agent verify.
+alwaysApply: true
+---
+
+# Triple QA gate
+
+Three gates before merge. Skipping blocks merge.
+
+1. Code evaluator — `SHIP | FIX | SPLIT`
+2. Playwright MCP — `PASS | FAIL`
+3. `make agent-verify` — `VERIFIED | FAILED`
+
+Run 1+2 parallel, then 3. Merge only: **SHIP + PASS + VERIFIED**
+
+After merge: [end-task-workflow](./end-task-workflow.mdc)
+
+Full criteria: [docs/AGENT-DELIVERY.md](../../docs/AGENT-DELIVERY.md)
+
+Skills: [dual-qa-gate](../skills/dual-qa-gate/SKILL.md), [agent-verify](../skills/agent-verify/SKILL.md)

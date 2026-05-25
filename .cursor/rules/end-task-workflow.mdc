@@ -1,0 +1,105 @@
+---
+description: Mandatory end-of-task workflow when Linear has NO GitHub integration. Apply after every successful merge or when completing a Linear issue.
+alwaysApply: true
+---
+
+# End-task workflow (mandatory)
+
+**Context:** This hackathon Linear workspace has **no GitHub app integration**. Merging a branch named `HAC-XX-...` does **NOT** auto-move issues to Done.
+
+Agents MUST run this checklist **after every completed issue**.
+
+---
+
+## When to trigger
+
+- Local merge to `main` succeeded
+- Triple gate passed (`SHIP + PASS + VERIFIED`) when code changed
+- Docs-only harness changes: update Linear + STATUS at minimum
+
+---
+
+## Checklist (in order)
+
+### 1. Verify merge landed
+
+```bash
+git checkout main
+git pull origin main
+git log -1 --oneline
+```
+
+Confirm the merge commit references `HAC-XX` in message or branch.
+
+### 2. Move Linear issue → Done (manual)
+
+Use Linear MCP:
+
+```
+save_issue({
+  id: "HAC-XX",
+  state: "Done"
+})
+```
+
+Or ask the user to drag to Done if MCP unavailable.
+
+**Also verify:** issue was `In Progress` while working. Set at start:
+
+```
+save_issue({ id: "HAC-XX", state: "In Progress" })
+```
+
+### 3. Update living docs
+
+| File | Update |
+|------|--------|
+| `docs/STATUS.md` | Parity matrix row, current batch, last merge = HAC-XX |
+| `docs/ROADMAP.md` | Check off `- [x] HAC-XX` |
+
+### 4. Report to user
+
+```
+End-task complete: HAC-XX
+- Merge: <commit sha / summary>
+- Linear: Done
+- STATUS + ROADMAP updated
+- Gates: SHIP + PASS + VERIFIED (or N/A for docs)
+```
+
+---
+
+## Start-task (pair with end-task)
+
+Before coding on an issue:
+
+1. `get_issue` — read acceptance criteria
+2. `save_issue` state **`In Progress`**
+3. Branch: `HAC-XX-title-slug`
+4. Read ROADMAP → STATUS → CHECKPOINT
+
+---
+
+## What does NOT happen automatically
+
+| Action | Auto? | Agent must |
+|--------|-------|------------|
+| Issue → In Progress on branch create | ❌ | Set at start-task |
+| Issue → Done on merge | ❌ | Set at end-task |
+| PR linked to Linear | ❌ | Optional comment with commit SHA |
+
+---
+
+## Docs-only / harness changes
+
+Still run end-task: Linear Done + STATUS + ROADMAP checkbox.
+
+Triple gate: evaluator only (skip Playwright/agent-verify if no runtime impact).
+
+---
+
+## Related
+
+- [linear-delivery-workflow.mdc](./linear-delivery-workflow.mdc) — branch + merge discipline
+- [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md) — triple gate
+- [AGENTS.md](../AGENTS.md) — index

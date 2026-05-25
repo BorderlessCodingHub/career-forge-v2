@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": ".cursor/hooks/session-context.sh"
+      }
+    ],
+    "subagentStart": [
+      {
+        "command": ".cursor/hooks/session-context.sh"
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": ".cursor/hooks/subagent-stop.sh",
+        "loop_limit": 1
+      }
+    ],
+    "stop": [
+      {
+        "command": ".cursor/hooks/update-status-reminder.sh",
+        "loop_limit": 1
+      }
+    ]
+  }
+}

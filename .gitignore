@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.local
+
+# Node
+node_modules/
+.next/
+dist/
+.turbo/
+
+# Runtime
+.runtime/
+*.log
+
+# OS
+.DS_Store
+.thumbnail
+
+# IDE
+.idea/
+.vscode/
+
+# Docker
+postgres-data/

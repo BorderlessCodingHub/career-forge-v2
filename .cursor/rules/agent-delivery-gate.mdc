@@ -1,0 +1,12 @@
+---
+description: Agent delivery gate summary — triple gate before merge, end-task after.
+alwaysApply: true
+---
+
+# Agent delivery gate
+
+Gates A+B+C before merge. Extend `scripts/agent-verify.sh` for new API/DB behavior.
+
+Canonical: [docs/AGENT-DELIVERY.md](../../docs/AGENT-DELIVERY.md)
+
+After merge: [end-task-workflow](./end-task-workflow.mdc)

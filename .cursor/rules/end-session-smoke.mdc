@@ -1,0 +1,37 @@
+---
+description: Run make smoke before ending a coding session that touched apps, api, infra, or scripts.
+alwaysApply: true
+---
+
+# End-of-session smoke
+
+Before finishing any session that touched `apps/`, `scripts/`, infra, or Makefile:
+
+```bash
+make smoke
+```
+
+## Context
+
+1. [AGENTS.md](../../AGENTS.md)
+2. [docs/STATUS.md](../../docs/STATUS.md)
+3. [docs/ROADMAP.md](../../docs/ROADMAP.md)
+
+## After completing an issue
+
+Run [end-task-workflow](./end-task-workflow.mdc):
+
+- Linear → Done
+- Update STATUS.md + ROADMAP.md
+
+## Commands
+
+| Command | Purpose |
+|---------|---------|
+| `make smoke` | Stack + tests (stub grows with monorepo) |
+| `make agent-verify` | Gate C |
+| `make up` / `make down` | Start/stop (when configured) |
+
+## On failure
+
+Fix and re-run. Check logs under `.runtime/logs/` when stack exists.

@@ -1,0 +1,112 @@
+---
+description: Linear branch format, micro-PR workflow, parallel planning, triple QA gate. Apply when implementing any Linear issue or batch.
+alwaysApply: true
+---
+
+# Linear delivery workflow
+
+Trigger for every implementation block (issue, milestone, multi-task feature).
+
+**Important:** Linear status is **manual** — see [end-task-workflow.mdc](./end-task-workflow.mdc).
+
+---
+
+## Context gathering
+
+1. [AGENTS.md](../../AGENTS.md)
+2. [docs/ROADMAP.md](../../docs/ROADMAP.md)
+3. [docs/STATUS.md](../../docs/STATUS.md)
+4. [docs/CHECKPOINT.md](../../docs/CHECKPOINT.md)
+5. Linear MCP `get_issue`
+6. [docs/AGENT-DELIVERY.md](../../docs/AGENT-DELIVERY.md)
+
+---
+
+## 1. Branch naming
+
+```
+HAC-XX-title-slug
+```
+
+- Lowercase, hyphens only
+- Match Linear **Copy git branch name**
+- No `username/` prefix
+
+Branch name is for **git traceability** — not Linear automation.
+
+---
+
+## 2. Git workflow per issue
+
+**One issue = one branch = one merge** (200–500 LOC target).
+
+Start:
+
+```bash
+git checkout main && git pull origin main
+# start-task: Linear → In Progress
+git checkout -b HAC-XX-short-slug
+```
+
+Before merge:
+
+1. Tests (`pytest` / `pnpm test`)
+2. `make smoke` if web/api touched
+3. Triple gate (AGENT-DELIVERY.md)
+
+Merge:
+
+```bash
+git checkout main
+git merge --no-ff HAC-XX-short-slug -m "HAC-XX: concise title"
+git push origin main
+```
+
+Then: **[end-task-workflow](./end-task-workflow.mdc)** — Linear Done + STATUS + ROADMAP.
+
+No mega-branches. No batching unrelated issues.
+
+---
+
+## 3. PLAN — parallelize batches
+
+| Class | Meaning | Action |
+|-------|---------|--------|
+| **P** | Parallel-safe | Subagent |
+| **S** | Sequential | Queue after dep |
+| **B** | Blocker | First |
+
+Launch parallel Task subagents in one message for all **P** issues with satisfied deps.
+
+Parent consolidates STATUS.md once after batch.
+
+---
+
+## 4. REVIEW — triple QA gate
+
+| Gate | Output |
+|------|--------|
+| A Evaluator | `SHIP \| FIX \| SPLIT` |
+| B Playwright | `PASS \| FAIL` |
+| C agent-verify | `VERIFIED \| FAILED` |
+
+Merge only: **SHIP + PASS + VERIFIED**
+
+---
+
+## 5. Linear hygiene (manual)
+
+- **Start:** `In Progress` via MCP
+- **End:** `Done` via [end-task-workflow](./end-task-workflow.mdc)
+- Commit message: `HAC-XX: title`
+- Refactor findings → new Linear issue
+
+---
+
+## Anti-patterns
+
+- ❌ Assuming merge auto-closes Linear
+- ❌ Skipping end-task checklist
+- ❌ Wrong branch format
+- ❌ Skipping triple gate on code PRs
+- ❌ Serializing parallel-safe work
