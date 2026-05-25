@@ -57,7 +57,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 **Target:** 2026-05-30
 
-- [ ] **HAC-9** — Vertical roadmap UI (steady state + optional AI sidebar)
+- [x] **HAC-9** — Vertical roadmap UI (steady state + optional AI sidebar)
 
 **Sequential:** HAC-18 → HAC-9
 

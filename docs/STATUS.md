@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-7**
+Last updated: **2026-05-25** · Last merge: **HAC-9**
 
 ---
 
@@ -24,7 +24,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-7**
 | AI execution layer scaffold | ✅ Done | HAC-32 — `career_forge/ai/`, GraphRun, GraphExecutor, AgentFactory |
 | Identity onboarding + editable diagnosis | ✅ Done | HAC-8 — goal picker, pill rounds, POST /diagnosis via GraphExecutor |
 | Live Roadmap Forge (timeline-only SSE) | ✅ Done | HAC-18 — forge graph + SSE timeline + reveal |
-| Vertical roadmap UI — artifact mode | ⬜ Todo | HAC-9 |
+| Vertical roadmap UI — artifact mode | ✅ Done | HAC-9 — GET /roadmap, vertical spine, node drawer |
 | Mastery Validation | ⬜ Todo | HAC-10 — pitch focus mock interview |
 | Adaptive Planning | ⬜ Todo | HAC-11 |
 
@@ -32,15 +32,14 @@ Last updated: **2026-05-25** · Last merge: **HAC-7**
 
 ## Current sprint
 
-**Sprint 2 — Identity + Forge** (sequential **[S]**)
+**Sprint 3 — Artifact UI** (sequential **[S]**)
 
 | Issue | Title | Class | State |
 |-------|-------|-------|-------|
-| **HAC-8** | Identity Engine — editable diagnosis | S | **Done** |
-| **HAC-18** | Live Roadmap Forge — SSE timeline | S | **Done** |
-| HAC-9 | Vertical roadmap UI — artifact mode | S | **Next** |
+| **HAC-9** | Vertical roadmap UI — artifact mode | S | **Done** |
+| HAC-10 | Mastery Validation | S | **Next** |
 
-Sprint 1 complete (HAC-5/6/7/31/32). **Dispatch:** HAC-18 merge → HAC-9 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
+Sprint 2 complete (HAC-8/18). **Dispatch:** HAC-10 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
 
 ---
 
@@ -68,7 +67,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 | Sprint board + agent lifecycle | ✅ |
 | Professional monorepo scaffold | ✅ |
 | Live forge SSE (timeline-only) | ✅ |
-| Validation interview | ⬜ |
+| Vertical roadmap steady state | ✅ |
 | End-to-end pitch | ⬜ |
 
 ---
