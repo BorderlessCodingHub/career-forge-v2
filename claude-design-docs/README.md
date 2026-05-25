@@ -1,6 +1,23 @@
 # Claude Design — Career OS
 
-Documentação da UI gerada no Claude Design e do intent de produto por tela.
+Documentação da UI gerada no Claude Design, intent de produto por tela, e **fonte de verdade** para agentes que implementam front-end.
+
+---
+
+## Start here (agents)
+
+| Doc | Purpose |
+|-----|---------|
+| **[PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md)** | **Canonical** — hierarchy, links, implementation notes |
+| [PRODUCT-VISION.md](./PRODUCT-VISION.md) | North star, pillars, demo narrative |
+| [UI-PRINCIPLES.md](./UI-PRINCIPLES.md) | Visual DNA, tokens, component patterns |
+| [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) | Routes, wow moments, must-match vs can-evolve |
+
+**Before UI work:** read PRODUCT-SOURCE-OF-TRUTH → open prototype → read [docs/CHECKPOINT.md](../docs/CHECKPOINT.md).
+
+**After UI paradigm change:** update PRODUCT-SOURCE-OF-TRUTH (rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc), skill: [.cursor/skills/ui-product-sync/SKILL.md](../.cursor/skills/ui-product-sync/SKILL.md)).
+
+---
 
 ## Prototype
 
@@ -21,11 +38,17 @@ Arquivos exportados do Claude Design (React standalone via Babel):
 open "claude-design-docs/prototype/Career OS.html"
 ```
 
+---
+
 ## Posicionamento visual
 
 - **Inspirado em** [roadmap.sh](https://roadmap.sh) — minimalismo, dev-friendly, dark mode
 - **Evoluído para** skill graph vivo — nós com status, dependências, mastery %
 - **Não é** LMS genérico, gamificação ou clone 1:1
+
+Detalhes: [UI-PRINCIPLES.md](./UI-PRINCIPLES.md)
+
+---
 
 ## Telas (fluxo demo)
 
@@ -38,6 +61,10 @@ open "claude-design-docs/prototype/Career OS.html"
 | 4 | `/roadmap` | Skill Graph Dashboard | Missão + grafo steady |
 | 5 | `/validate/:topic` | Mastery Validation | Entrevista + score |
 | 6 | `/roadmap` (updated) | Adaptive + Mentor | Trilha reagiu pós-validação |
+
+Intent completo: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md)
+
+---
 
 ## Live Roadmap Forge (hero UX)
 
@@ -54,13 +81,21 @@ Pós-onboarding, o usuário **vê a IA trabalhar**:
 
 Script de demo mockado em `screens-forge.jsx` (`FORGE_SCRIPT`) — implementação real usa SSE do FastAPI + LangGraph.
 
+Spec: [docs/stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md)
+
+---
+
 ## Design tokens
 
 Ver [design-tokens.md](./design-tokens.md) e `prototype/styles.css`.
 
+---
+
 ## Brief original
 
 Ver [brief-v1.md](./brief-v1.md) — prompts usados no Claude Design.
+
+---
 
 ## Handoff → Next.js
 
@@ -72,6 +107,10 @@ Ao implementar:
 4. Forge timeline → consome `EventSource` SSE
 5. Graph reveal → Framer Motion
 
+Registrar divergências em [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) → Implementation notes.
+
+---
+
 ## Stack de implementação
 
-Front consome API FastAPI. Ver [docs/stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md).
+Front consome API FastAPI. Ver [docs/stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md) · Produto: [docs/CHECKPOINT.md](../docs/CHECKPOINT.md)

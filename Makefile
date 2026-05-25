@@ -7,6 +7,8 @@ smoke:
 	@test -f docs/STATUS.md
 	@test -f docs/ROADMAP.md
 	@test -f .cursor/rules/end-task-workflow.mdc
+	@test -f .cursor/rules/ui-product-sync.mdc
+	@test -f claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md
 	@test -f claude-design-docs/prototype/Career\ OS.html
 	@bash scripts/agent-verify.sh
 	@echo "SMOKE OK (harness + stub verify)"

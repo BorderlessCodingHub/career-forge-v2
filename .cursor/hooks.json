@@ -21,6 +21,10 @@
       {
         "command": ".cursor/hooks/update-status-reminder.sh",
         "loop_limit": 1
+      },
+      {
+        "command": ".cursor/hooks/ui-product-sync-reminder.sh",
+        "loop_limit": 1
       }
     ]
   }

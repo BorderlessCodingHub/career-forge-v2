@@ -11,6 +11,7 @@ Branch format: `HAC-XX-title-slug` (git hygiene). Linear status: **manual** via 
 ## Batch 0 — Foundation ✅ partial
 
 - [x] **HAC-19** — Engineering lifecycle + agent harness
+- [x] **HAC-20** — UI product source of truth + sync rule/hook
 - [ ] **HAC-5** — Monorepo Next.js + FastAPI + Postgres + deploy
 - [ ] **HAC-6** — Skill graph schema + roadmap.json seed
 - [ ] **HAC-7** — Pydantic + LangGraph state contracts

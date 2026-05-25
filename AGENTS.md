@@ -14,7 +14,7 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 |------|---------------|---------|
 | **Implement a Linear issue** | [ROADMAP](./docs/ROADMAP.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Branch `HAC-XX-title-slug` · implement · triple gate · merge · **end-task** |
 | **Bootstrap / first session** | [ROADMAP](./docs/ROADMAP.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | `make smoke` when apps exist |
-| **UI from Claude Design** | [claude-design-docs/README.md](./claude-design-docs/README.md) | Map prototype → Next.js components |
+| **UI from Claude Design** | [PRODUCT-SOURCE-OF-TRUTH](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) → [claude-design-docs/README.md](./claude-design-docs/README.md) | Map prototype → Next.js; sync docs after paradigm change |
 | **Delivery / merge** | [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) → [end-task-workflow](./.cursor/rules/end-task-workflow.mdc) | `SHIP + PASS + VERIFIED` then **manual Done in Linear** |
 
 ---
@@ -61,6 +61,7 @@ AGENTS.md
   → CHECKPOINT.md        product, stack, wow features
   → issue scope          Linear MCP
   → claude-design-docs/  UI intent (when front-end)
+      PRODUCT-SOURCE-OF-TRUTH.md first
   → AGENT-DELIVERY.md    triple QA gate
   → end-task-workflow    manual Linear Done
 ```
@@ -76,8 +77,10 @@ AGENTS.md
 | [dual-qa-gate](./.cursor/rules/dual-qa-gate.mdc) | Triple gate summary |
 | [agent-delivery-gate](./.cursor/rules/agent-delivery-gate.mdc) | SHIP + PASS + VERIFIED |
 | [end-session-smoke](./.cursor/rules/end-session-smoke.mdc) | `make smoke` before ending session |
+| [ui-product-sync](./.cursor/rules/ui-product-sync.mdc) | Read/sync claude-design-docs for UI work |
 | [dual-qa-gate skill](./.cursor/skills/dual-qa-gate/SKILL.md) | Gate A + B |
 | [agent-verify skill](./.cursor/skills/agent-verify/SKILL.md) | Gate C |
+| [ui-product-sync skill](./.cursor/skills/ui-product-sync/SKILL.md) | Sync PRODUCT-SOURCE-OF-TRUTH after UI changes |
 
 ---
 
@@ -108,3 +111,5 @@ Use Linear **Copy git branch name** when available. Branch name is for **git hyg
 > Onboarding → **Live Roadmap Forge (stream)** → skill graph reveal → **Validar com IA** → trilha reage.
 
 Design reference: [`claude-design-docs/prototype/Career OS.html`](./claude-design-docs/prototype/Career%20OS.html)
+
+UI source of truth: [`claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md`](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md)

@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-19** (engineering lifecycle bootstrap)
+Last updated: **2026-05-25** · Last merge: **HAC-20** (UI product source of truth + sync harness)
 
 ---
 
@@ -11,6 +11,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-19** (engineering lifecycle bo
 | Area | Status | Notes |
 |------|--------|-------|
 | Agent harness | ✅ Done | AGENTS.md, rules, hooks, triple gate docs |
+| UI product source of truth | ✅ Done | `claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md`, ui-product-sync rule/hook/skill |
 | Claude Design prototype | ✅ Done | `claude-design-docs/prototype/` |
 | Monorepo apps/web + apps/api | ⬜ Todo | HAC-5 |
 | Postgres schema + seed | ⬜ Todo | HAC-6 |

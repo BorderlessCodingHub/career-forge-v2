@@ -1,0 +1,72 @@
+---
+description: Read claude-design-docs before UI work; update PRODUCT-SOURCE-OF-TRUTH when UI paradigm changes.
+globs:
+  - apps/web/**
+  - claude-design-docs/**
+  - "**/tailwind.config.*"
+  - "**/*.css"
+alwaysApply: false
+---
+
+# UI product sync
+
+Apply when editing front-end UI, design docs, or Tailwind/theme tokens.
+
+---
+
+## Before any UI work
+
+Read in order:
+
+1. [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md)
+2. [PRODUCT-VISION.md](../../claude-design-docs/PRODUCT-VISION.md)
+3. [UI-PRINCIPLES.md](../../claude-design-docs/UI-PRINCIPLES.md)
+4. [SCREEN-INTENT-MAP.md](../../claude-design-docs/SCREEN-INTENT-MAP.md)
+5. Target screen in [`claude-design-docs/prototype/Career OS.html`](../../claude-design-docs/prototype/Career%20OS.html)
+6. [docs/CHECKPOINT.md](../../docs/CHECKPOINT.md) — P0 scope + demo script
+
+Compare three views:
+
+- **Prototype intent** — layout, copy, wow moments
+- **Implemented UI** — `apps/web/` when present
+- **Product goals** — CHECKPOINT wow features
+
+Resolve conflicts using the hierarchy in PRODUCT-SOURCE-OF-TRUTH (goals → screen intent → prototype → code).
+
+---
+
+## After UI sessions — update canonical docs
+
+If the session changed **UI paradigm**, update docs in the **same session** (before ending):
+
+| Change type | Update |
+|-------------|--------|
+| New/changed route or flow | [SCREEN-INTENT-MAP.md](../../claude-design-docs/SCREEN-INTENT-MAP.md) |
+| Token / color / typography | [design-tokens.md](../../claude-design-docs/design-tokens.md) |
+| Deliberate prototype divergence | [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) → Implementation notes |
+| New shared component pattern | PRODUCT-SOURCE-OF-TRUTH Implementation notes + UI-PRINCIPLES component table |
+
+**UI paradigm change** means any of:
+
+- New reusable component pattern
+- Layout shift (split ratios, hero placement)
+- Design token change
+- New screen or altered navigation flow
+- Status UX or graph interaction change
+
+Skill for explicit sync: [.cursor/skills/ui-product-sync/SKILL.md](../skills/ui-product-sync/SKILL.md)
+
+---
+
+## Do not
+
+- Ship UI that weakens P0 wow (Forge stream, validation, adaptive graph) without CHECKPOINT update
+- Introduce gamification / LMS patterns rejected in UI-PRINCIPLES
+- Rename skill status enums without API + CHECKPOINT alignment
+
+---
+
+## Related
+
+- [end-task-workflow](./end-task-workflow.mdc) — Linear Done after merge
+- [end-session-smoke](./end-session-smoke.mdc) — `make smoke`
