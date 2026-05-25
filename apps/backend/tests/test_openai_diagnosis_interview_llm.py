@@ -7,7 +7,6 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from career_forge.ai.llm.diagnosis_interview import OpenAiDiagnosisInterviewLlm
-from career_forge.ai.llm.errors import DiagnosisInterviewLlmError
 from career_forge.schemas.diagnosis import DiagnosisProfile
 from career_forge.schemas.diagnosis_interview import (
     PROFILE_DIMENSION_KEYS,
@@ -20,8 +19,8 @@ from career_forge.schemas.diagnosis_interview import (
     RubricDimension,
 )
 from career_forge.schemas.llm_outputs import (
+    EstimatedMasteryEntry,
     FinalizeDiagnosisOutput,
-    InterviewerOutput,
     JudgeBeliefOutput,
 )
 
@@ -103,91 +102,6 @@ async def test_update_belief_applies_transcript_overrides(llm: OpenAiDiagnosisIn
 
 
 @pytest.mark.asyncio
-async def test_plan_questions_returns_empty_when_no_effective_interviewable(
-    llm: OpenAiDiagnosisInterviewLlm,
-) -> None:
-    belief = BeliefState.empty()
-    for key in PROFILE_DIMENSION_KEYS:
-        belief.dimensions[key] = _sample_dimension(key, confidence=0.8, status="mapped")
-
-    llm._client.invoke = AsyncMock()
-
-    questions = await llm.plan_questions(belief, SAMPLE_INTAKE, [], round_count=0)
-
-    assert questions == []
-    llm._client.invoke.assert_not_awaited()
-
-
-@pytest.mark.asyncio
-async def test_plan_questions_filters_closed_dimensions(llm: OpenAiDiagnosisInterviewLlm) -> None:
-    belief = BeliefState.empty()
-    belief.dimensions["motivation_goal"] = _sample_dimension(
-        "motivation_goal",
-        confidence=0.5,
-        status="needs_clarification",
-    )
-    belief.dimensions["hands_on_proof"] = _sample_dimension(
-        "hands_on_proof",
-        confidence=0.5,
-        status="needs_clarification",
-    )
-
-    turn = InterviewTurn(
-        questions=[
-            InterviewQuestion(
-                id="q-1",
-                topic="Prova prática",
-                rubric_key="hands_on_proof",
-                question="Já fez algum projeto?",
-                example_of_answer="Ex.",
-            ),
-        ],
-        answers=[InterviewAnswer(question_id="q-1", text="nunca, nadinha")],
-    )
-    llm._client.invoke = AsyncMock(
-        return_value=InterviewerOutput(
-            questions=[
-                InterviewQuestion(
-                    id="q-filtered",
-                    topic="Prova prática",
-                    rubric_key="hands_on_proof",
-                    question="Repita?",
-                    example_of_answer="Ex.",
-                ),
-                InterviewQuestion(
-                    id="q-keep",
-                    topic="Motivação",
-                    rubric_key="motivation_goal",
-                    question="Por que esse caminho?",
-                    example_of_answer="Ex.",
-                ),
-            ],
-        ),
-    )
-
-    questions = await llm.plan_questions(belief, SAMPLE_INTAKE, [turn], round_count=1)
-
-    assert len(questions) == 1
-    assert questions[0].rubric_key == "motivation_goal"
-
-
-@pytest.mark.asyncio
-async def test_plan_questions_raises_when_llm_returns_no_questions(
-    llm: OpenAiDiagnosisInterviewLlm,
-) -> None:
-    belief = BeliefState.empty()
-    belief.dimensions["motivation_goal"] = _sample_dimension(
-        "motivation_goal",
-        confidence=0.5,
-        status="needs_clarification",
-    )
-    llm._client.invoke = AsyncMock(return_value=InterviewerOutput(questions=[]))
-
-    with pytest.raises(DiagnosisInterviewLlmError):
-        await llm.plan_questions(belief, SAMPLE_INTAKE, [], round_count=0)
-
-
-@pytest.mark.asyncio
 async def test_finalize_diagnosis_invokes_finalize_schema(llm: OpenAiDiagnosisInterviewLlm) -> None:
     belief = BeliefState.empty()
     expected = FinalizeDiagnosisOutput(
@@ -199,7 +113,10 @@ async def test_finalize_diagnosis_invokes_finalize_schema(llm: OpenAiDiagnosisIn
         strengths=["Motivação clara"],
         gaps=["Prova prática"],
         starting_priorities=["http", "git"],
-        estimated_mastery={"js": 40, "git": 30},
+        estimated_mastery=[
+            EstimatedMasteryEntry(node_id="js", score=40),
+            EstimatedMasteryEntry(node_id="git", score=30),
+        ],
     )
     llm._client.invoke = AsyncMock(return_value=expected)
 

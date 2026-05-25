@@ -24,6 +24,11 @@ _CONSTRAINTS_RE = re.compile(
     re.IGNORECASE,
 )
 
+_CONSTRAINTS_CLEAR_RE = re.compile(
+    r"\b(tudo ok|tudo certo|sem restri|n[aã]o tenho restri|nao tenho restri|livre|flex[ií]vel|ta ok|t[aá] ok)\b",
+    re.IGNORECASE,
+)
+
 
 def detect_negative_hands_on(text: str) -> bool:
     return bool(_NEGATIVE_PROOF_RE.search(text))
@@ -122,8 +127,53 @@ def apply_negative_proof_overrides(belief: BeliefState, transcript: list[Intervi
     return updated
 
 
+def apply_constraints_clear_overrides(
+    belief: BeliefState,
+    transcript: list[InterviewTurn],
+) -> BeliefState:
+    """Map constraints when user explicitly says there are no blockers."""
+    updated = belief.model_copy(deep=True)
+    for turn in transcript:
+        answer_by_qid = {answer.question_id: answer.text for answer in turn.answers}
+        for question in turn.questions:
+            text = answer_by_qid.get(question.id, "")
+            if not text or not _CONSTRAINTS_CLEAR_RE.search(text):
+                continue
+            dim = updated.dimensions["constraints"]
+            updated.dimensions["constraints"] = dim.model_copy(
+                update={
+                    "status": "mapped",
+                    "confidence": max(dim.confidence, 0.78),
+                    "note": "Sem restrições relevantes — usuário confirmou",
+                    "evidence": [*dim.evidence, text[:120]][:5],
+                },
+            )
+    return updated
+
+
+def apply_baseline_proof_override(belief: BeliefState) -> BeliefState:
+    """Close hands_on when baseline was already confirmed (even below saturation threshold)."""
+    updated = belief.model_copy(deep=True)
+    dim = updated.dimensions["hands_on_proof"]
+    baseline_note = "sem prática" in dim.note.lower() or "baseline" in dim.note.lower()
+    if dim.status != "mapped" and (baseline_note or dim.confidence >= 0.65):
+        if baseline_note or detect_negative_hands_on(" ".join(dim.evidence)):
+            updated.dimensions["hands_on_proof"] = dim.model_copy(
+                update={
+                    "status": "mapped",
+                    "confidence": max(dim.confidence, 0.68),
+                    "note": dim.note or "Sem prática hands-on ainda — baseline confirmado",
+                },
+            )
+    return updated
+
+
 def apply_transcript_overrides(belief: BeliefState, transcript: list[InterviewTurn]) -> BeliefState:
-    return apply_schedule_overrides(apply_negative_proof_overrides(belief, transcript), transcript)
+    updated = apply_constraints_clear_overrides(
+        apply_schedule_overrides(apply_negative_proof_overrides(belief, transcript), transcript),
+        transcript,
+    )
+    return apply_baseline_proof_override(updated)
 
 
 def build_judge_user_message(

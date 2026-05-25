@@ -204,7 +204,7 @@ class OpenAiDiagnosisInterviewLlm:
             schema=FinalizeDiagnosisOutput,
             error_type=DiagnosisInterviewLlmError,
         )
-        return DiagnosisResponse.model_validate(output.model_dump())
+        return output.to_diagnosis_response()
 
 
 _override_llm: DiagnosisInterviewLlm | None = None

@@ -54,5 +54,5 @@ Derive gaps técnicos (git, http, db) do goal_id e estágio inferido — não ch
 
 track_id: fullstack→fullstack-beginner, data→data-beginner, ai-ml→ai-ml-beginner, web3→web3-beginner
 
-Preencha profile, strengths, gaps, starting_priorities e estimated_mastery.
+Preencha profile, strengths, gaps, starting_priorities e estimated_mastery como lista de {node_id, score}.
 """

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from career_forge.schemas.diagnosis import DiagnosisResponse
+from career_forge.schemas.diagnosis import DiagnosisProfile, DiagnosisResponse
 from career_forge.schemas.diagnosis_interview import (
     PROFILE_DIMENSION_KEYS,
     PROFILE_DIMENSION_LABELS,
@@ -84,5 +84,27 @@ class InterviewerOutput(BaseModel):
     questions: list[InterviewQuestion] = Field(default_factory=list, max_length=MAX_QUESTIONS_PER_TURN)
 
 
-class FinalizeDiagnosisOutput(DiagnosisResponse):
-    """Structured finalize output — same contract as API diagnosis."""
+class EstimatedMasteryEntry(BaseModel):
+    """OpenAI strict JSON schema friendly alternative to dict[str, int]."""
+
+    node_id: str = Field(min_length=1)
+    score: int = Field(ge=0, le=100)
+
+
+class FinalizeDiagnosisOutput(BaseModel):
+    """Structured finalize output — converted to DiagnosisResponse after LLM call."""
+
+    profile: DiagnosisProfile
+    strengths: list[str] = Field(min_length=1)
+    gaps: list[str] = Field(min_length=1)
+    starting_priorities: list[str] = Field(min_length=1)
+    estimated_mastery: list[EstimatedMasteryEntry] = Field(min_length=1)
+
+    def to_diagnosis_response(self) -> DiagnosisResponse:
+        return DiagnosisResponse(
+            profile=self.profile,
+            strengths=self.strengths,
+            gaps=self.gaps,
+            starting_priorities=self.starting_priorities,
+            estimated_mastery={entry.node_id: entry.score for entry in self.estimated_mastery},
+        )
