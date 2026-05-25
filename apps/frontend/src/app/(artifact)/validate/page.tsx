@@ -3,18 +3,28 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { MockInterviewLoop, ValidationInterview } from "@/components/validation";
+import { InterviewLoop, type InterviewMode } from "@/components/validation";
+
+function parseMode(value: string | null): InterviewMode {
+  return value === "quick" ? "quick" : "loop";
+}
 
 function ValidatePageContent() {
   const searchParams = useSearchParams();
-  const nodeId = searchParams.get("node") ?? "http";
-  const mode = searchParams.get("mode") ?? "loop";
+  const nodeId = searchParams.get("node");
+  const mode = parseMode(searchParams.get("mode"));
 
-  if (mode === "quick") {
-    return <ValidationInterview nodeId={nodeId} />;
+  if (!nodeId) {
+    return (
+      <div className="mx-auto max-w-lg py-20 text-center">
+        <p className="text-sm text-text-secondary">
+          Selecione um tópico na trilha para iniciar a validação.
+        </p>
+      </div>
+    );
   }
 
-  return <MockInterviewLoop nodeId={nodeId} />;
+  return <InterviewLoop nodeId={nodeId} mode={mode} />;
 }
 
 export default function ValidatePage() {

@@ -158,7 +158,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
         </div>
 
         <div className="border-t border-border px-6 py-4">
-          <Link href={`/validate?node=${node.node_id}`}>
+          <Link href={`/validate?node=${node.node_id}&mode=loop`}>
             <Button className="w-full" data-testid="validate-node-cta">
               Mock interview — validar mastery →
             </Button>
