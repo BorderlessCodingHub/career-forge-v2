@@ -18,6 +18,9 @@ def normalize_langchain_event(
     if graph_name == "roadmap_forge":
         return _normalize_forge_event(lc_event, event_type, data)
 
+    if graph_name == "diagnosis_interview":
+        return _normalize_diagnosis_interview_event(lc_event, event_type, data)
+
     if event_type == "on_chain_end":
         output = data.get("output")
         if output is not None:
@@ -31,6 +34,34 @@ def normalize_langchain_event(
         chunk = data.get("chunk")
         if isinstance(chunk, dict) and chunk.get("type"):
             return chunk
+
+    return None
+
+
+def _normalize_diagnosis_interview_event(
+    lc_event: dict[str, Any],
+    event_type: str | None,
+    data: dict[str, Any],
+) -> dict[str, Any] | None:
+    if event_type == "on_chain_stream":
+        chunk = data.get("chunk")
+        if isinstance(chunk, dict) and chunk.get("type"):
+            return chunk
+
+    if event_type == "on_chain_end":
+        output = data.get("output")
+        if output is not None:
+            return {
+                "type": "graph_complete",
+                "graph_name": "diagnosis_interview",
+                "output": output,
+            }
+
+    if event_type == "on_chain_error":
+        return {
+            "type": "error",
+            "message": str(data.get("error") or lc_event.get("name") or "graph error"),
+        }
 
     return None
 

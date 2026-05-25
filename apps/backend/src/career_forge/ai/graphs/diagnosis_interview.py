@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import AsyncIterator
 from typing import Any, Literal
 from uuid import uuid4
@@ -95,11 +96,16 @@ async def run_interview_phase(
         )
         questions = questions[:MAX_QUESTIONS_PER_TURN]
         if not questions:
-            diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-            session = session.model_copy(
-                update={"status": "complete", "diagnosis": diagnosis},
+            if session.belief.is_interview_complete():
+                diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+                session = session.model_copy(
+                    update={"status": "complete", "diagnosis": diagnosis},
+                )
+                return _build_output(session, questions=[], diagnosis=diagnosis)
+            msg = "interview start produced no questions while dimensions remain open"
+            raise DiagnosisInterviewLlmError(
+                "A IA não gerou perguntas para iniciar o diagnóstico. Tente novamente em alguns segundos.",
             )
-            return _build_output(session, questions=[], diagnosis=diagnosis)
 
         turn = InterviewTurn(questions=questions, answers=[])
         session = session.model_copy(
@@ -157,11 +163,16 @@ async def run_interview_phase(
     questions = questions[:MAX_QUESTIONS_PER_TURN]
 
     if not questions:
-        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
-        session = session.model_copy(
-            update={"status": "complete", "diagnosis": diagnosis},
+        if session.belief.is_interview_complete() or session.round_count >= MAX_INTERVIEW_ROUNDS:
+            diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+            session = session.model_copy(
+                update={"status": "complete", "diagnosis": diagnosis},
+            )
+            return _build_output(session, questions=[], diagnosis=diagnosis)
+        msg = "interview turn produced no questions while dimensions remain open"
+        raise DiagnosisInterviewLlmError(
+            "A IA não gerou perguntas para continuar. Tente novamente em alguns segundos.",
         )
-        return _build_output(session, questions=[], diagnosis=diagnosis)
 
     next_turn = InterviewTurn(questions=questions, answers=[])
     session = session.model_copy(
@@ -192,6 +203,175 @@ def _build_output(
     }
 
 
+async def _yield_mapping_progress(
+    belief: BeliefState,
+) -> AsyncIterator[dict[str, Any]]:
+    """Stream rubric dimensions one-by-one for live UI updates."""
+    mapping = build_rubric_map(belief)
+    for index, item in enumerate(mapping):
+        yield {
+            "type": "mapping_dimension",
+            "item": item.model_dump(),
+            "index": index,
+            "total": len(mapping),
+        }
+        if index < len(mapping) - 1:
+            await asyncio.sleep(0.12)
+
+
+async def _run_start_phase_streaming(
+    session: DiagnosisSession,
+) -> AsyncIterator[dict[str, Any]]:
+    """Start phase with SSE chunks; final yield is `_output` sentinel."""
+    llm = get_diagnosis_interview_llm()
+    intake = session.intake
+
+    yield {"type": "interview_status", "phase": "analyzing_intake"}
+
+    cv_text, cv_signals = _extract_cv_text(intake)
+    if intake.cv and cv_text:
+        yield {"type": "interview_status", "phase": "analyzing_cv"}
+        intake = intake.model_copy(
+            update={
+                "cv": intake.cv.model_copy(update={"extracted_text": cv_text}),
+            },
+        )
+        session = session.model_copy(update={"intake": intake})
+
+    yield {"type": "interview_status", "phase": "judging"}
+    belief = await llm.initialize_belief(intake, cv_signals, cv_text)
+    session = session.model_copy(
+        update={
+            "belief": belief,
+            "cv_signals": cv_signals,
+            "round_count": 0,
+        },
+    )
+
+    async for chunk in _yield_mapping_progress(session.belief):
+        yield chunk
+
+    if session.should_finalize():
+        yield {"type": "interview_status", "phase": "finalizing"}
+        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+        session = session.model_copy(
+            update={"status": "complete", "diagnosis": diagnosis},
+        )
+        yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
+        return
+
+    yield {"type": "interview_status", "phase": "planning_questions"}
+    questions = await llm.plan_questions(
+        session.belief,
+        intake,
+        session.transcript,
+        session.round_count,
+    )
+    questions = questions[:MAX_QUESTIONS_PER_TURN]
+    if not questions:
+        if session.belief.is_interview_complete():
+            diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+            session = session.model_copy(
+                update={"status": "complete", "diagnosis": diagnosis},
+            )
+            yield {
+                "type": "_output",
+                "output": _build_output(session, questions=[], diagnosis=diagnosis),
+            }
+            return
+        msg = "interview start produced no questions while dimensions remain open"
+        raise DiagnosisInterviewLlmError(
+            "A IA não gerou perguntas para iniciar o diagnóstico. Tente novamente em alguns segundos.",
+        )
+
+    turn = InterviewTurn(questions=questions, answers=[])
+    session = session.model_copy(
+        update={
+            "transcript": [*session.transcript, turn],
+            "round_count": 1,
+        },
+    )
+    yield {"type": "_output", "output": _build_output(session, questions=questions)}
+
+
+async def _run_turn_phase_streaming(
+    session: DiagnosisSession,
+    answers: list[InterviewAnswer],
+) -> AsyncIterator[dict[str, Any]]:
+    llm = get_diagnosis_interview_llm()
+    intake = session.intake
+
+    if not session.transcript:
+        msg = "session has no open question turn"
+        raise ValueError(msg)
+
+    yield {"type": "interview_status", "phase": "processing_answers"}
+
+    transcript = list(session.transcript)
+    current_turn = transcript[-1].model_copy(update={"answers": answers})
+    transcript[-1] = current_turn
+    session = session.model_copy(update={"transcript": transcript})
+
+    yield {"type": "interview_status", "phase": "judging"}
+    belief = await llm.update_belief(session.belief, intake, transcript, answers)
+    session = session.model_copy(update={"belief": belief})
+
+    async for chunk in _yield_mapping_progress(session.belief):
+        yield chunk
+
+    if session.should_finalize():
+        yield {"type": "interview_status", "phase": "finalizing"}
+        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+        session = session.model_copy(
+            update={"status": "complete", "diagnosis": diagnosis},
+        )
+        yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
+        return
+
+    if session.round_count >= MAX_INTERVIEW_ROUNDS:
+        yield {"type": "interview_status", "phase": "finalizing"}
+        diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+        session = session.model_copy(
+            update={"status": "complete", "diagnosis": diagnosis},
+        )
+        yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
+        return
+
+    yield {"type": "interview_status", "phase": "planning_questions"}
+    questions = await llm.plan_questions(
+        session.belief,
+        intake,
+        session.transcript,
+        session.round_count,
+    )
+    questions = questions[:MAX_QUESTIONS_PER_TURN]
+
+    if not questions:
+        if session.belief.is_interview_complete() or session.round_count >= MAX_INTERVIEW_ROUNDS:
+            diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+            session = session.model_copy(
+                update={"status": "complete", "diagnosis": diagnosis},
+            )
+            yield {
+                "type": "_output",
+                "output": _build_output(session, questions=[], diagnosis=diagnosis),
+            }
+            return
+        msg = "interview turn produced no questions while dimensions remain open"
+        raise DiagnosisInterviewLlmError(
+            "A IA não gerou perguntas para continuar. Tente novamente em alguns segundos.",
+        )
+
+    next_turn = InterviewTurn(questions=questions, answers=[])
+    session = session.model_copy(
+        update={
+            "transcript": [*session.transcript, next_turn],
+            "round_count": session.round_count + 1,
+        },
+    )
+    yield {"type": "_output", "output": _build_output(session, questions=questions)}
+
+
 class DiagnosisInterviewGraphRunnable:
     """GraphRunnable for CTRR multi-turn diagnosis interview."""
 
@@ -213,37 +393,27 @@ class DiagnosisInterviewGraphRunnable:
         yield _lc_event("on_chain_start", self.graph_name, run_id, {})
 
         try:
-            yield _lc_event(
-                "on_chain_stream",
-                "ingest_intake",
-                run_id,
-                {
-                    "chunk": {
-                        "type": "progress",
-                        "step": "ingest_intake",
-                        "message": "Processando intake e CV",
-                    },
-                },
-            )
+            output: dict[str, Any] | None = None
 
-            output = await run_interview_phase(
-                phase=phase,
-                session=session,
-                answers=answers if phase == "turn" else None,
-            )
+            if phase == "start":
+                stream = _run_start_phase_streaming(session)
+            else:
+                stream = _run_turn_phase_streaming(session, answers)
 
-            yield _lc_event(
-                "on_chain_stream",
-                "plan_questions" if output["status"] == "asking" else "finalize_diagnosis",
-                run_id,
-                {
-                    "chunk": {
-                        "type": "progress",
-                        "step": "complete" if output["status"] == "complete" else "asking",
-                        "questions_count": len(output.get("questions") or []),
-                    },
-                },
-            )
+            async for chunk in stream:
+                if chunk.get("type") == "_output":
+                    output = chunk["output"]
+                    continue
+                yield _lc_event(
+                    "on_chain_stream",
+                    chunk.get("phase", "diagnosis_interview"),
+                    run_id,
+                    {"chunk": chunk},
+                )
+
+            if output is None:
+                msg = "diagnosis interview graph completed without output"
+                raise DiagnosisInterviewLlmError(msg)
 
             yield _lc_event(
                 "on_chain_end",
