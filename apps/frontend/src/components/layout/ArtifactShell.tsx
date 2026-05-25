@@ -7,7 +7,7 @@ type ArtifactShellProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 export function ArtifactShell({
-  trackName = "Backend Developer",
+  trackName,
   className = "",
   children,
   ...props
@@ -36,7 +36,9 @@ export function ArtifactShell({
         </Link>
         <div className="text-right">
           <p className="text-[10px] uppercase tracking-widest text-text-muted">Sua trilha</p>
-          <p className="text-sm font-medium text-text-primary">{trackName}</p>
+          <p className="text-sm font-medium text-text-primary">
+            {trackName ?? "Carregando trilha…"}
+          </p>
         </div>
       </header>
       <div className="flex-1">{children}</div>
