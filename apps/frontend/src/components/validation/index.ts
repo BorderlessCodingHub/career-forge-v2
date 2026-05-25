@@ -1,4 +1,3 @@
-export { MockInterviewLoop } from "./MockInterviewLoop";
+export { InterviewLoop, type InterviewMode } from "./InterviewLoop";
 export { ScoreRing } from "./ScoreRing";
-export { ValidationInterview } from "./ValidationInterview";
 export { ValidationResult } from "./ValidationResult";

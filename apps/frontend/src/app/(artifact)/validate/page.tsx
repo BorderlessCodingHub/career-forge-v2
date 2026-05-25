@@ -4,12 +4,16 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { MockInterviewLoop, ValidationInterview } from "@/components/validation";
+import { InterviewLoop, type InterviewMode } from "@/components/validation";
+
+function parseMode(value: string | null): InterviewMode {
+  return value === "quick" ? "quick" : "loop";
+}
 
 function ValidatePageContent() {
   const searchParams = useSearchParams();
   const nodeId = searchParams.get("node");
-  const mode = searchParams.get("mode") ?? "loop";
+  const mode = parseMode(searchParams.get("mode"));
 
   if (!nodeId) {
     return (
@@ -27,11 +31,7 @@ function ValidatePageContent() {
     );
   }
 
-  if (mode === "quick") {
-    return <ValidationInterview nodeId={nodeId} />;
-  }
-
-  return <MockInterviewLoop nodeId={nodeId} />;
+  return <InterviewLoop nodeId={nodeId} mode={mode} />;
 }
 
 export default function ValidatePage() {
