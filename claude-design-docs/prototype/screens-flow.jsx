@@ -1,92 +1,60 @@
 // Career Forge — Screens 1, 2, 3, 5
 
-// === Screen 1: Goal Picker ===
+// === Screen 1: Goal Picker (minimal) ===
 const GoalPickerScreen = ({ onNext }) => {
   const [selected, setSelected] = React.useState('backend');
   const [motivation, setMotivation] = React.useState('Quero trabalhar com APIs para space tech — sonho em escrever os sistemas que orquestram lançamentos de foguetes.');
   const [touched, setTouched] = React.useState(false);
 
   const goals = [
-    {
-      id: 'backend', title: 'Backend Developer', icon: 'server', active: true,
-      desc: 'Construir APIs, bancos e a lógica que move produtos.',
-      meta: '~9 domínios · 6–8 meses',
-    },
-    {
-      id: 'data', title: 'Data Engineer', icon: 'database', active: false,
-      desc: 'Pipelines, modelagem e infraestrutura de dados.',
-      meta: 'Em breve',
-    },
-    {
-      id: 'frontend', title: 'Frontend Developer', icon: 'code', active: false,
-      desc: 'Interfaces, performance e experiência do usuário.',
-      meta: 'Em breve',
-    },
+    { id: 'backend', title: 'Backend Developer', active: true },
+    { id: 'data', title: 'Data Engineer', active: false },
+    { id: 'frontend', title: 'Frontend Developer', active: false },
   ];
 
   const valid = selected && motivation.trim().length >= 20;
 
   return (
-    <div className="container" data-screen="goal-picker">
-      <div className="goal-hero">
-        <div className="goal-eyebrow"><span className="dot"></span>Passo 1 de 3 · Sonho profissional</div>
-        <h1 className="goal-title">Para onde você quer ir?</h1>
-        <p className="goal-subtitle">Antes de te dar um plano, precisamos entender seu sonho. Cada trilha é viva e se adapta ao seu ponto de partida.</p>
-      </div>
+    <div className="container goal-minimal" data-screen="goal-picker">
+      <header className="goal-minimal-head">
+        <span className="goal-minimal-step">Passo 1 de 3</span>
+        <h1 className="goal-minimal-title">Para onde você quer ir?</h1>
+      </header>
 
-      <div className="goal-grid">
+      <div className="goal-minimal-grid">
         {goals.map(g => (
           <button
             key={g.id}
-            className={`goal-card ${selected === g.id ? 'selected' : ''} ${!g.active ? 'disabled' : ''}`}
+            type="button"
+            className={`goal-minimal-card ${selected === g.id ? 'selected' : ''} ${!g.active ? 'disabled' : ''}`}
             onClick={() => g.active && setSelected(g.id)}
             disabled={!g.active}
           >
-            <div className="goal-check"><Icon name="check" size={12} stroke={3} /></div>
-            <div className="goal-card-icon">
-              <Icon name={g.icon} size={18} />
-            </div>
-            <div>
-              <h3 className="goal-card-title">{g.title}</h3>
-              <p className="goal-card-desc">{g.desc}</p>
-            </div>
-            <div className="goal-card-meta">
-              {g.active ? (
-                <>
-                  <Icon name="sprout" size={11} /> {g.meta}
-                </>
-              ) : (
-                <><Icon name="lock" size={11} /> {g.meta}</>
-              )}
-            </div>
+            <span className="goal-minimal-card-title">{g.title}</span>
+            {!g.active && <span className="goal-minimal-lock">Em breve</span>}
           </button>
         ))}
       </div>
 
-      <div className="goal-motivation">
-        <div className="field-label">
-          <span>Por que esse caminho?</span>
-          <span className="field-hint">{motivation.length}/280 · mín. 20 caracteres</span>
-        </div>
+      <div className="goal-minimal-motivation">
+        <label className="goal-minimal-label" htmlFor="motivation">
+          Por que esse caminho?
+          <span className="field-hint">{motivation.length}/280</span>
+        </label>
         <textarea
-          className="textarea"
+          id="motivation"
+          className="textarea goal-minimal-textarea"
           placeholder="Quero trabalhar com APIs para space tech..."
           value={motivation}
           onChange={(e) => { setMotivation(e.target.value.slice(0, 280)); setTouched(true); }}
         />
         {touched && motivation.trim().length < 20 && (
-          <div style={{ fontSize: 12, color: 'var(--warning)', marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Icon name="alert" size={12} /> Conte um pouco mais — isso ajuda a IA a personalizar sua trilha.
-          </div>
+          <p className="goal-minimal-hint">Mínimo 20 caracteres para personalizar sua trilha.</p>
         )}
       </div>
 
-      <div className="goal-footer">
-        <div className="goal-footer-note">
-          <Icon name="sparkles" size={14} />
-          A IA usa sua motivação para personalizar exemplos e projetos.
-        </div>
-        <button className="btn btn-primary btn-lg" disabled={!valid} onClick={onNext}>
+      <div className="goal-minimal-actions">
+        <button className="btn btn-primary" disabled={!valid} onClick={onNext}>
           Começar diagnóstico <Icon name="arrowRight" size={14} />
         </button>
       </div>
@@ -94,47 +62,113 @@ const GoalPickerScreen = ({ onNext }) => {
   );
 };
 
-// === Screen 2: Diagnostic Chat ===
+// === Screen 2: Diagnostic — pill rounds (batch questions) ===
+const DIAG_ROUNDS = [
+  {
+    id: 'seniority',
+    title: 'Nível e contexto',
+    intro: 'Sem certo ou errado — quanto mais honesto, mais útil sua trilha.',
+    maps: ['Senioridade', 'Experiência prévia'],
+    questions: [
+      {
+        id: 'level',
+        tag: 'Senioridade',
+        prompt: 'Qual seu nível hoje com programação?',
+        placeholder: 'Ex.: estou começando, já sei JS básico, estudo há 6 meses…',
+        defaultValue: 'Já programo em JavaScript há alguns meses, mas ainda me sinto iniciante em backend.',
+      },
+      {
+        id: 'prior',
+        tag: 'Contexto',
+        prompt: 'Já estudou ou trabalhou com desenvolvimento antes?',
+        placeholder: 'Cursos, bootcamp, projetos pessoais, estágio…',
+        defaultValue: 'Fiz um curso online de JS e subi um projeto no GitHub.',
+      },
+    ],
+  },
+  {
+    id: 'stack',
+    title: 'Stack e domínios',
+    intro: 'Mapeamos familiaridade com conceitos que aparecem na trilha backend.',
+    maps: ['Git', 'Cliente/servidor'],
+    questions: [
+      {
+        id: 'git',
+        tag: 'Git',
+        prompt: 'Você já usou Git em algum projeto?',
+        placeholder: 'Clone, commit, push, branches…',
+        defaultValue: 'Sim, subi um projeto no GitHub mas não domino branches.',
+      },
+      {
+        id: 'client_server',
+        tag: 'Domínio',
+        prompt: 'Consegue explicar a diferença entre frontend e backend?',
+        placeholder: 'Com suas palavras — o que cada um faz?',
+        defaultValue: 'Frontend é o que o usuário vê. Backend processa dados no servidor.',
+      },
+    ],
+  },
+  {
+    id: 'gaps',
+    title: 'Lacunas técnicas',
+    intro: 'Última rodada — HTTP, APIs e persistência.',
+    maps: ['HTTP & APIs', 'Banco de dados'],
+    questions: [
+      {
+        id: 'http',
+        tag: 'HTTP',
+        prompt: 'Você já fez alguma requisição HTTP ou chamou uma API?',
+        placeholder: 'GET, POST, status codes, JSON…',
+        defaultValue: 'Acho que sim, mas nunca prestei atenção em métodos ou status codes.',
+      },
+      {
+        id: 'db',
+        tag: 'DB',
+        prompt: 'Ao pensar em "criar um usuário", o que vem primeiro — tela, banco ou requisição?',
+        placeholder: 'Descreva seu modelo mental…',
+        defaultValue: 'Acho que uma tela com formulário… mas o backend salva no banco.',
+      },
+    ],
+  },
+];
+
 const DiagnosticScreen = ({ onNext }) => {
-  const initial = [
-    { from: 'ai',   t: '14:02', text: 'Oi! Sou o Career Forge. Vou te fazer algumas perguntas para entender de onde você está partindo. Sem certo ou errado — quanto mais honesto, mais útil sua trilha.' },
-    { from: 'ai',   t: '14:02', text: 'Você já usou Git em algum projeto?' },
-    { from: 'user', t: '14:03', text: 'Sim, subi um projeto no GitHub mas não domino branches.' },
-    { from: 'ai',   t: '14:03', text: 'Beleza. Consegue explicar com suas palavras a diferença entre frontend e backend?' },
-    { from: 'user', t: '14:04', text: 'Frontend é o que o usuário vê (botões, telas). Backend é o que processa os dados e fica no servidor.' },
-    { from: 'ai',   t: '14:04', text: 'Perfeito. Você já fez alguma requisição HTTP — chamou uma API, mesmo que pelo navegador?' },
-    { from: 'user', t: '14:05', text: 'Acho que sim, mas nunca prestei atenção em métodos ou status codes.' },
-    { from: 'ai',   t: '14:06', text: 'Última: quando você pensa em "criar um usuário", o que vem primeiro à sua mente — uma tela, um banco de dados, ou uma requisição?' },
-  ];
-  const [messages, setMessages] = React.useState(initial);
-  const [draft, setDraft] = React.useState('Acho que uma tela com formulário... mas o backend salva no banco.');
-  const [isTyping, setIsTyping] = React.useState(false);
+  const [roundIdx, setRoundIdx] = React.useState(0);
+  const [answers, setAnswers] = React.useState(() => {
+    const init = {};
+    DIAG_ROUNDS.forEach(r => r.questions.forEach(q => { init[q.id] = q.defaultValue; }));
+    return init;
+  });
   const [generating, setGenerating] = React.useState(false);
-  const streamRef = React.useRef(null);
 
-  React.useEffect(() => {
-    if (streamRef.current) streamRef.current.scrollTop = streamRef.current.scrollHeight;
-  }, [messages, isTyping, generating]);
+  const round = DIAG_ROUNDS[roundIdx];
+  const totalQuestions = DIAG_ROUNDS.reduce((n, r) => n + r.questions.length, 0);
+  const answeredCount = roundIdx * 2 + round.questions.filter(q => answers[q.id]?.trim()).length;
+  const pct = Math.min(100, Math.round((answeredCount / totalQuestions) * 100));
 
-  const send = () => {
-    if (!draft.trim()) return;
-    setMessages(m => [...m, { from: 'user', t: '14:07', text: draft.trim() }]);
-    setDraft('');
-    setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages(m => [...m, { from: 'ai', t: '14:07', text: 'Ótimo. Tenho contexto suficiente para gerar seu diagnóstico inicial.' }]);
-      setTimeout(() => setGenerating(true), 600);
-      setTimeout(() => onNext(), 2400);
-    }, 1400);
+  const roundComplete = round.questions.every(q => answers[q.id]?.trim().length >= 8);
+  const isLastRound = roundIdx === DIAG_ROUNDS.length - 1;
+
+  const mapStatus = (label) => {
+    const done = ['Senioridade', 'Experiência prévia', 'Git', 'Cliente/servidor'].includes(label);
+    const active = round.maps.includes(label);
+    if (done && roundIdx > 0) return 'done';
+    if (active) return 'active';
+    return 'pending';
   };
 
-  const answered = messages.filter(m => m.from === 'user').length;
-  const total = 4;
-  const pct = Math.min(100, Math.round((answered / total) * 100));
+  const submitRound = () => {
+    if (!roundComplete) return;
+    if (isLastRound) {
+      setGenerating(true);
+      setTimeout(() => onNext(), 2200);
+      return;
+    }
+    setRoundIdx(i => i + 1);
+  };
 
   return (
-    <div className="diag-layout" data-screen="diagnostic">
+    <div className="diag-layout diag-pills" data-screen="diagnostic">
       <aside className="diag-recap">
         <div className="card recap-card">
           <div className="recap-eyebrow">Seu sonho</div>
@@ -143,79 +177,77 @@ const DiagnosticScreen = ({ onNext }) => {
             Backend Developer
           </div>
           <div className="recap-motiv">
-            <Icon name="quote" size={10} /> Quero trabalhar com APIs para space tech — sonho em escrever os sistemas que orquestram lançamentos de foguetes.
+            Quero trabalhar com APIs para space tech — sonho em escrever os sistemas que orquestram lançamentos de foguetes.
           </div>
           <div className="recap-progress">
             <div className="progress-label">
               <span>Diagnóstico</span>
-              <span>{answered}/{total}</span>
+              <span>Rodada {roundIdx + 1}/{DIAG_ROUNDS.length}</span>
             </div>
             <div className="progress-rail"><div className="progress-fill" style={{ width: `${pct}%` }}></div></div>
           </div>
 
-          <div style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--border-soft)' }}>
+          <div className="diag-map-section">
             <div className="recap-eyebrow">O que a IA está mapeando</div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12, color: 'var(--text-2)' }}>
-              <li style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--success)' }}></span>
-                Familiaridade com Git
-              </li>
-              <li style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--success)' }}></span>
-                Modelo mental cliente/servidor
-              </li>
-              <li style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--warning)' }}></span>
-                Camada HTTP e APIs
-              </li>
-              <li style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--text-3)' }}></span>
-                Persistência (em análise)
-              </li>
+            <ul className="diag-map-list">
+              {['Senioridade', 'Git', 'HTTP & APIs', 'Banco de dados'].map(label => (
+                <li key={label} className={`diag-map-item ${mapStatus(label)}`}>
+                  <span className="diag-map-dot"></span>
+                  {label}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
       </aside>
 
-      <div className="card chat-panel">
-        <div className="chat-header">
-          <div className="chat-step">Passo <b>2/3</b> · Diagnóstico inicial</div>
-          <div className="row" style={{ gap: 6, fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>
-            <span className="pill-dot" style={{ background: 'var(--success)' }}></span>
-            IA conectada
-          </div>
+      <div className="card diag-pills-panel">
+        <div className="diag-pills-header">
+          <div className="chat-step">Passo <b>2/3</b> · Diagnóstico · Rodada {roundIdx + 1} de {DIAG_ROUNDS.length}</div>
+          <span className="diag-pills-round-tag">{round.title}</span>
         </div>
-        <div className="chat-stream" ref={streamRef}>
-          {messages.map((m, i) => (
-            <Bubble key={i} from={m.from} time={m.t}>{m.text}</Bubble>
-          ))}
-          {isTyping && (
-            <Bubble from="ai" time="14:07">
-              <div className="typing"><span></span><span></span><span></span></div>
-            </Bubble>
-          )}
-          {generating && (
-            <div className="gen-skeleton">
-              <div className="spinner"></div>
-              <div className="gen-skeleton-text">
-                <b>Gerando diagnóstico…</b> mapeando 4 sinais nas suas respostas.
+
+        <div className="diag-pills-intro">
+          <Icon name="sparkles" size={14} />
+          {round.intro}
+        </div>
+
+        <div className="diag-pills-grid">
+          {round.questions.map(q => (
+            <div key={q.id} className="diag-pill">
+              <div className="diag-pill-head">
+                <span className="diag-pill-tag">{q.tag}</span>
+                <p className="diag-pill-prompt">{q.prompt}</p>
               </div>
+              <textarea
+                className="diag-pill-input"
+                placeholder={q.placeholder}
+                value={answers[q.id] || ''}
+                onChange={(e) => setAnswers(a => ({ ...a, [q.id]: e.target.value }))}
+                disabled={generating}
+                rows={3}
+              />
             </div>
-          )}
+          ))}
         </div>
-        <div className="chat-input-row">
-          <input
-            className="chat-input"
-            placeholder="Escreva sua resposta..."
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') send(); }}
-            disabled={generating}
-          />
-          <button className="send-btn" onClick={send} disabled={!draft.trim() || generating}>
-            <Icon name="send" size={16} />
-          </button>
-        </div>
+
+        {generating ? (
+          <div className="gen-skeleton diag-pills-generating">
+            <div className="spinner"></div>
+            <div className="gen-skeleton-text">
+              <b>Gerando diagnóstico…</b> mapeando {totalQuestions} sinais nas suas respostas.
+            </div>
+          </div>
+        ) : (
+          <div className="diag-pills-footer">
+            <span className="diag-pills-hint">
+              {round.questions.length} perguntas nesta rodada · responda todas para continuar
+            </span>
+            <button className="btn btn-primary" disabled={!roundComplete} onClick={submitRound}>
+              {isLastRound ? 'Gerar diagnóstico' : 'Próxima rodada'} <Icon name="arrowRight" size={14} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

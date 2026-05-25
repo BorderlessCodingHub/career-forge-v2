@@ -41,7 +41,9 @@ Arquivos exportados do Claude Design (React standalone via Babel):
 
 | Arquivo | Conteúdo |
 |---------|----------|
-| [prototype/Career Forge.html](./prototype/Career%20Forge.html) | Entry point — abrir no browser |
+| [prototype/index.html](./prototype/index.html) | Redirect entry — use with local server |
+| [prototype/README.md](./prototype/README.md) | **How to run** — `python3 -m http.server 8765` |
+| [prototype/Career Forge.html](./prototype/Career%20Forge.html) | Main app entry |
 | [prototype/app.jsx](./prototype/app.jsx) | Router / shell |
 | [prototype/screens-flow.jsx](./prototype/screens-flow.jsx) | Onboarding + goal picker + diagnosis result (legacy) |
 | [prototype/screens-forge.jsx](./prototype/screens-forge.jsx) | Live Roadmap Forge + reveal (legacy split layout) |
@@ -51,8 +53,12 @@ Arquivos exportados do Claude Design (React standalone via Babel):
 | [prototype/styles.css](./prototype/styles.css) | Tokens + layout |
 
 ```bash
-open "claude-design-docs/prototype/Career Forge.html"
+cd claude-design-docs/prototype
+python3 -m http.server 8765
+open http://localhost:8765/
 ```
+
+Legacy URL `Career OS.html` redirects automatically.
 
 ### Prototype drift
 
@@ -86,7 +92,7 @@ Detalhes: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · [UI-PRINCIPLES.md]
 | # | Rota | Nome | Wow |
 |---|------|------|-----|
 | 1 | `/` | Goal Picker | Objetivo + motivação |
-| 2 | `/onboarding` | Diagnóstico IA | Chat 4–6 perguntas |
+| 2 | `/onboarding` | Diagnóstico IA | Pill rounds — 2 perguntas/rodada, 3 rodadas |
 | 3 | `/onboarding/edit` | **Diagnóstico editável** | User corrige fortes/lacunas |
 | 4 | `/roadmap/forge` | **Live Roadmap Forge** | Timeline streaming (passos 1–N) — sem grafo |
 | 4b | `/roadmap/forge/complete` | **Animation reveal** | Items voam para layout vertical |

@@ -19,8 +19,9 @@
 | Constraint | Detail |
 |------------|--------|
 | Headline | *"Para onde você quer ir?"* |
-| Subhead | *"Antes de te dar um plano…"* |
+| Subhead | Optional — keep minimal; no long explanatory paragraph required |
 | Cards | Backend active; Data / Frontend disabled "Em breve" |
+| Layout | **Minimal** — compact row cards, no heavy chrome (icons, meta badges, footer notes) |
 | Motivation | Required in happy path — feeds downstream AI |
 | CTA | Single primary action to onboarding |
 
@@ -28,16 +29,21 @@
 
 ---
 
-## 2. Onboarding chat — MUST match
+## 2. Onboarding diagnostic — MUST match
 
 | Constraint | Detail |
 |------------|--------|
 | Feel | Focused diagnostic — **not** open-ended ChatGPT |
-| Progress | Step indicator visible (e.g. Passo 2/3) |
-| Recap | Goal + motivation from step 1 visible |
+| Layout | **Pill/balloon rounds** — multiple questions shown together per round |
+| Rounds | 3 batches: seniority/context → stack/domain → gaps (Git, HTTP, APIs, DB) |
+| Input | Each pill has its own textarea — **not** one-at-a-time chat bubbles |
+| Progress | Step indicator + round counter (e.g. Rodada 2/3) |
+| Recap | Goal + motivation from step 1 visible in sidebar |
 | Exit | Transitions to **editable diagnosis** — not forge directly |
 
-**Can evolve:** streaming vs batch API, exact question count (4–6)
+**Can evolve:** streaming vs batch API, exact question count (4–6 total)
+
+**Forbidden:** Linear chat bubble UX (one question → one reply → next question)
 
 ---
 

@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-23** (Borderless UI theming guidance)
+Last updated: **2026-05-25** · Last merge: **HAC-24** (prototype onboarding pills, vertical graph, 404 fix)
 
 ---
 
@@ -11,9 +11,10 @@ Last updated: **2026-05-25** · Last merge: **HAC-23** (Borderless UI theming gu
 | Area | Status | Notes |
 |------|--------|-------|
 | Agent harness | ✅ Done | AGENTS.md, rules, hooks, triple gate docs |
-| Claude Design prototype | ⚠️ Legacy flow | `claude-design-docs/prototype/` — tokens OK, flow pre-HAC-21 |
+| Claude Design prototype | ⚠️ Partial sync | Pill-round diagnostic, minimal goal, vertical spine graph; forge flow still pre-HAC-21 |
 | UX documentation (HAC-21) | ✅ Done | UX-FLOW, SCREEN-INTENT, vertical roadmap reference |
 | Borderless theming (HAC-23) | ✅ Done | BORDERLESS-THEMING, reference images, prototype CSS vars Phase 1 |
+| Prototype server entry (HAC-24) | ✅ Done | `index.html` + legacy redirect; `prototype/README.md` |
 | Monorepo apps/web + apps/api | ⬜ Todo | HAC-5 |
 | Postgres schema + seed | ⬜ Todo | HAC-6 |
 | AI JSON contracts | ⬜ Todo | HAC-7 |
@@ -45,7 +46,7 @@ HAC-8 → HAC-18 → HAC-9
 
 | Scene | Ready |
 |-------|-------|
-| UI prototype (static, legacy flow) | ⚠️ |
+| UI prototype (static, partial HAC-24 sync) | ⚠️ |
 | UX docs + steady-state reference | ✅ |
 | Live forge SSE (timeline-only) | ⬜ |
 | Validation interview | ⬜ |

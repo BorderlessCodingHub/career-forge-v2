@@ -16,6 +16,10 @@ smoke:
 	@test -f claude-design-docs/references/borderless-code-breakers-dashboard.png
 	@test -f claude-design-docs/references/borderless-logo-brand.png
 	@test -f claude-design-docs/prototype/Career\ Forge.html
+	@test -f claude-design-docs/prototype/index.html
+	@test -f claude-design-docs/prototype/Career\ OS.html
+	@test -f claude-design-docs/prototype/README.md
+	@test -f claude-design-docs/references/prototype-onboarding-current.png
 	@bash scripts/agent-verify.sh
 	@echo "SMOKE OK (harness + stub verify)"
 

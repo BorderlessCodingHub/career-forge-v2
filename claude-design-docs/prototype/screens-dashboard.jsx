@@ -14,11 +14,17 @@ const RoadmapScreen = ({ adaptive = false, onValidate, onMentor, mentorOpen, onC
       if (rest) { rest.status = 'review'; rest.pct = 48; rest.current = false; }
       const http = nodes.find(n => n.id === 'http');
       if (http) { http.current = true; http.pct = 58; }
-      // Make REST→HTTP a review loop (active dashed)
       edges = edges.map(e => {
         if (e.from === 'http' && e.to === 'rest') return { ...e, state: 'active' };
-        return e;
+        if (e.from === 'js' && e.to === 'git') return { ...e, state: 'done' };
+        if (e.from === 'git' && e.to === 'http') return { ...e, state: 'done' };
+        return { ...e, state: e.state || 'pending' };
       });
+    } else {
+      edges = edges.map((e, i) => ({
+        ...e,
+        state: i < 2 ? 'done' : i === 2 ? 'active' : 'pending',
+      }));
     }
     return { nodes, edges };
   }, [adaptive]);

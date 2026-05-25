@@ -1,43 +1,61 @@
-// Career Forge — SkillGraph hero component
-const { useState: useStateG } = React;
+// Career Forge — SkillGraph (vertical roadmap.sh-style spine)
+
+const SPINE_X = 520;
+const NODE_W = 220;
+const NODE_H = 96;
+const ROW_H = 130;
+
+const SKILL_CATEGORIES = [
+  { id: 'fundamentos', label: 'Fundamentos', y: 48 },
+  { id: 'backend', label: 'Backend Core', y: 318 },
+  { id: 'integracao', label: 'Integração', y: 748 },
+];
 
 const SKILL_NODES_BASE = [
-  { id: 'git',    title: 'Git e GitHub',           icon: 'git',      pct: 78, status: 'approved',    x: 120, y: 90,  desc: 'Versionamento e fluxo colaborativo' },
-  { id: 'http',   title: 'HTTP básico',            icon: 'server',   pct: 42, status: 'recommended', x: 380, y: 90,  desc: 'Métodos, status codes, headers', current: true },
-  { id: 'rest',   title: 'APIs REST',              icon: 'code',     pct: 0,  status: 'locked',      x: 640, y: 90,  desc: 'Design de endpoints, JSON' },
-  { id: 'auth',   title: 'Autenticação JWT',       icon: 'key',      pct: 0,  status: 'locked',      x: 900, y: 90,  desc: 'Tokens, sessões, OAuth' },
-  { id: 'js',     title: 'JavaScript base',        icon: 'code',     pct: 65, status: 'approved',    x: 120, y: 280, desc: 'Sintaxe, tipos, assincronia' },
-  { id: 'db',     title: 'Banco relacional',       icon: 'database', pct: 35, status: 'recommended', x: 380, y: 280, desc: 'SQL, modelagem, joins' },
-  { id: 'final',  title: 'Projeto: API CRUD',      icon: 'boxes',    pct: 0,  status: 'locked',      x: 770, y: 280, desc: 'Aplicação final integrando tudo' },
+  { id: 'js',     title: 'JavaScript base',   icon: 'code',     pct: 65, status: 'approved',    side: 'left',  y: 90,  category: 'fundamentos', desc: 'Sintaxe, tipos, assincronia' },
+  { id: 'git',    title: 'Git e GitHub',      icon: 'git',      pct: 78, status: 'approved',    side: 'right', y: 210, category: 'fundamentos', desc: 'Versionamento colaborativo' },
+  { id: 'http',   title: 'HTTP básico',       icon: 'server',   pct: 42, status: 'recommended', side: 'left',  y: 360, category: 'backend',     desc: 'Métodos, status codes', current: true },
+  { id: 'db',     title: 'Banco relacional',  icon: 'database', pct: 35, status: 'recommended', side: 'right', y: 480, category: 'backend',     desc: 'SQL, modelagem, joins' },
+  { id: 'rest',   title: 'APIs REST',         icon: 'code',     pct: 0,  status: 'locked',      side: 'left',  y: 600, category: 'backend',     desc: 'Endpoints, JSON' },
+  { id: 'auth',   title: 'Autenticação JWT',  icon: 'key',      pct: 0,  status: 'locked',      side: 'right', y: 720, category: 'backend',     desc: 'Tokens, OAuth' },
+  { id: 'final',  title: 'Projeto: API CRUD', icon: 'boxes',    pct: 0,  status: 'locked',      side: 'left',  y: 860, category: 'integracao',  desc: 'Aplicação final integrada' },
 ];
 
 const SKILL_EDGES_BASE = [
-  { from: 'git', to: 'http', state: 'done' },
-  { from: 'http', to: 'rest', state: 'active' },
-  { from: 'rest', to: 'auth', state: 'pending' },
-  { from: 'js', to: 'http', state: 'done' },
-  { from: 'js', to: 'db', state: 'active' },
-  { from: 'db', to: 'final', state: 'pending' },
-  { from: 'rest', to: 'final', state: 'pending' },
-  { from: 'auth', to: 'final', state: 'pending' },
+  { from: 'js', to: 'git' },
+  { from: 'git', to: 'http' },
+  { from: 'http', to: 'db' },
+  { from: 'db', to: 'rest' },
+  { from: 'rest', to: 'auth' },
+  { from: 'auth', to: 'final' },
 ];
 
-const NODE_W = 200, NODE_H = 110;
+const nodeX = (node) => node.side === 'left' ? SPINE_X - NODE_W - 48 : SPINE_X + 48;
+
+const nodeCenter = (node) => ({
+  x: nodeX(node) + (node.side === 'left' ? NODE_W : 0),
+  y: node.y + NODE_H / 2,
+});
+
+const edgeState = (fromId, toId, edges) => {
+  const e = edges.find(x => x.from === fromId && x.to === toId);
+  return e?.state || 'pending';
+};
 
 const SkillNode = ({ node, selected, onClick, extraClass = '' }) => {
+  const x = nodeX(node);
   const sel = selected === node.id ? 'selected' : '';
   const curr = node.current ? 'active-current' : '';
   return (
     <g
       className={`skill-node ${node.status} ${sel} ${curr} ${extraClass}`}
-      transform={`translate(${node.x},${node.y})`}
+      transform={`translate(${x},${node.y})`}
       onClick={() => onClick && onClick(node.id)}
       style={{ cursor: onClick ? 'pointer' : 'default' }}
     >
-      <rect className="skill-node-bg" width={NODE_W} height={NODE_H} rx="10" />
-      {/* status accent stripe */}
+      <rect className="skill-node-bg" width={NODE_W} height={NODE_H} rx="12" />
       <rect
-        x={0} y={0} width={3} height={NODE_H}
+        x={node.side === 'left' ? NODE_W - 3 : 0} y={0} width={3} height={NODE_H}
         fill={
           node.status === 'approved' ? 'var(--success)' :
           node.status === 'recommended' ? 'var(--accent)' :
@@ -46,8 +64,7 @@ const SkillNode = ({ node, selected, onClick, extraClass = '' }) => {
         }
         opacity={node.status === 'locked' ? 0.3 : 0.9}
       />
-      {/* icon box */}
-      <foreignObject x={14} y={14} width={32} height={32}>
+      <foreignObject x={14} y={12} width={32} height={32}>
         <div style={{
           width: 32, height: 32, borderRadius: 8,
           background: 'var(--bg)', border: '1px solid var(--border)',
@@ -59,23 +76,20 @@ const SkillNode = ({ node, selected, onClick, extraClass = '' }) => {
           <Icon name={node.icon} size={16} />
         </div>
       </foreignObject>
-      {/* title */}
-      <text x={56} y={28} fill="var(--text)" fontSize="13" fontWeight="600" fontFamily="Inter">
+      <text x={56} y={26} fill="var(--text)" fontSize="13" fontWeight="600" fontFamily="Inter">
         {node.title}
       </text>
-      <text x={56} y={44} fill="var(--text-3)" fontSize="11" fontFamily="Inter">
+      <text x={56} y={42} fill="var(--text-3)" fontSize="11" fontFamily="Inter">
         {node.desc}
       </text>
-      {/* status pill via foreignObject */}
-      <foreignObject x={12} y={64} width={NODE_W - 24} height={36}>
+      <foreignObject x={12} y={58} width={NODE_W - 24} height={36}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
           <StatusPill status={node.status} />
           {node.status !== 'locked' && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, maxWidth: 100 }}>
               <div style={{ flex: 1, height: 3, background: 'var(--surface-3)', borderRadius: 999, overflow: 'hidden' }}>
                 <div style={{
-                  height: '100%',
-                  width: `${node.pct}%`,
+                  height: '100%', width: `${node.pct}%`,
                   background: node.status === 'approved' ? 'var(--success)' :
                               node.status === 'review' ? 'var(--warning)' : 'var(--accent)',
                   borderRadius: 999
@@ -90,49 +104,71 @@ const SkillNode = ({ node, selected, onClick, extraClass = '' }) => {
   );
 };
 
-const SkillGraph = ({ nodes, edges, selected, onSelect }) => {
-  // Bezier path between two nodes (right edge of A -> left edge of B)
-  const path = (from, to) => {
-    const fx = from.x + NODE_W;
-    const fy = from.y + NODE_H / 2;
-    const tx = to.x;
-    const ty = to.y + NODE_H / 2;
-    const dx = (tx - fx) / 2;
-    // If on same row use simple curve, else use S curve
-    if (from.y === to.y) {
-      return `M ${fx} ${fy} C ${fx + dx} ${fy}, ${tx - dx} ${ty}, ${tx} ${ty}`;
-    }
-    // Cross-row: route through a vertical segment near middle
-    const midX = fx + (tx - fx) / 2;
-    return `M ${fx} ${fy} C ${midX} ${fy}, ${midX} ${ty}, ${tx} ${ty}`;
-  };
-  const nodeMap = Object.fromEntries(nodes.map(n => [n.id, n]));
+const VerticalSpine = ({ nodes, edges }) => {
+  const sorted = [...nodes].sort((a, b) => a.y - b.y);
+  const topY = sorted[0]?.y - 20 || 40;
+  const bottomY = sorted[sorted.length - 1]?.y + NODE_H + 20 || 900;
+
   return (
-    <svg className="graph-svg" viewBox="0 0 1100 440" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <marker id="arrow-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--border)" />
-        </marker>
-        <marker id="arrow-done" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--success)" opacity="0.5" />
-        </marker>
-        <marker id="arrow-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)" opacity="0.7" />
-        </marker>
-      </defs>
-      {edges.map((e, i) => {
-        const from = nodeMap[e.from];
-        const to = nodeMap[e.to];
-        if (!from || !to) return null;
-        return (
-          <path
-            key={i}
-            className={`skill-link ${e.state === 'done' ? 'done' : ''} ${e.state === 'active' ? 'active' : ''}`}
-            d={path(from, to)}
-            markerEnd={`url(#arrow-${e.state === 'done' ? 'done' : e.state === 'active' ? 'active' : 'default'})`}
+    <>
+      {/* Main vertical spine */}
+      <line
+        className="roadmap-spine"
+        x1={SPINE_X} y1={topY} x2={SPINE_X} y2={bottomY}
+      />
+      {/* Category labels on spine */}
+      {SKILL_CATEGORIES.map(cat => (
+        <g key={cat.id} className="roadmap-category">
+          <rect
+            x={SPINE_X - 52} y={cat.y - 12} width={104} height={24} rx={12}
+            fill="var(--surface-2)" stroke="var(--border-soft)" strokeWidth="1"
           />
+          <text
+            x={SPINE_X} y={cat.y + 4} textAnchor="middle"
+            fill="var(--text-3)" fontSize="10" fontWeight="600"
+            fontFamily="var(--font-mono)" letterSpacing="0.08em"
+          >
+            {cat.label.toUpperCase()}
+          </text>
+        </g>
+      ))}
+      {/* Spine segments between nodes + branch connectors */}
+      {sorted.map((node, i) => {
+        const cx = nodeCenter(node);
+        const branchClass = node.status === 'approved' ? 'done' :
+          node.current ? 'active' : node.status === 'review' ? 'active' : '';
+        const next = sorted[i + 1];
+        const spineY = node.y + NODE_H / 2;
+        const nextSpineY = next ? next.y + NODE_H / 2 : null;
+        const state = i < sorted.length - 1
+          ? edgeState(node.id, next.id, edges)
+          : 'pending';
+        const segClass = state === 'done' ? 'done' : state === 'active' ? 'active' : '';
+        return (
+          <g key={node.id}>
+            <line
+              className={`roadmap-branch ${branchClass}`}
+              x1={cx.x} y1={cx.y} x2={SPINE_X} y2={cx.y}
+            />
+            {nextSpineY && (
+              <line
+                className={`roadmap-spine-seg ${segClass}`}
+                x1={SPINE_X} y1={spineY + NODE_H / 2 - 10}
+                x2={SPINE_X} y2={nextSpineY - NODE_H / 2 + 10}
+              />
+            )}
+          </g>
         );
       })}
+    </>
+  );
+};
+
+const SkillGraph = ({ nodes, edges, selected, onSelect }) => {
+  const viewH = Math.max(980, ...nodes.map(n => n.y + NODE_H + 60));
+  return (
+    <svg className="graph-svg graph-svg-vertical" viewBox={`0 0 1040 ${viewH}`} preserveAspectRatio="xMidYMid meet">
+      <VerticalSpine nodes={nodes} edges={edges} />
       {nodes.map(n => (
         <SkillNode key={n.id} node={n} selected={selected} onClick={onSelect} />
       ))}
@@ -254,71 +290,34 @@ const NodeDetail = ({ nodeId, nodes, onClose, onValidate }) => {
   );
 };
 
-// === Skeleton node (forge phase) ===
-const SkeletonNode = ({ x, y, idx }) => (
-  <g transform={`translate(${x},${y})`} style={{ opacity: 0.6 }}>
-    <rect className="skel-node-bg" width={NODE_W} height={NODE_H} rx="10" />
-    <rect className="skel-icon-box" x="14" y="14" width="32" height="32" rx="8" />
-    <text x={56} y={28} fill="var(--text-3)" fontSize="10" fontFamily="var(--font-mono)" opacity="0.7">
-      slot · {String(idx + 1).padStart(2, '0')}
-    </text>
-    <text x={56} y={44} fill="var(--text-3)" fontSize="9" fontFamily="var(--font-mono)" opacity="0.5">
-      aguardando análise…
-    </text>
-    <rect className="skel-bar" x="14" y="82" width="60" height="6" rx="3" />
-    <rect className="skel-bar" x="82" y="82" width="40" height="6" rx="3" opacity="0.5" />
-  </g>
-);
+const SkeletonNode = ({ node, idx }) => {
+  const x = nodeX(node);
+  return (
+    <g transform={`translate(${x},${node.y})`} style={{ opacity: 0.6 }}>
+      <rect className="skel-node-bg" width={NODE_W} height={NODE_H} rx="12" />
+      <rect className="skel-icon-box" x="14" y="12" width="32" height="32" rx="8" />
+      <text x={56} y={26} fill="var(--text-3)" fontSize="10" fontFamily="var(--font-mono)" opacity="0.7">
+        slot · {String(idx + 1).padStart(2, '0')}
+      </text>
+      <text x={56} y={42} fill="var(--text-3)" fontSize="9" fontFamily="var(--font-mono)" opacity="0.5">
+        aguardando análise…
+      </text>
+      <rect className="skel-bar" x="14" y="74" width="60" height="6" rx="3" />
+    </g>
+  );
+};
 
-// === Forge Graph: progressive reveal ===
 const ForgeGraph = ({ nodes, edges, revealed, revealClass = '' }) => {
-  const path = (from, to) => {
-    const fx = from.x + NODE_W;
-    const fy = from.y + NODE_H / 2;
-    const tx = to.x;
-    const ty = to.y + NODE_H / 2;
-    const dx = (tx - fx) / 2;
-    if (from.y === to.y) {
-      return `M ${fx} ${fy} C ${fx + dx} ${fy}, ${tx - dx} ${ty}, ${tx} ${ty}`;
-    }
-    const midX = fx + (tx - fx) / 2;
-    return `M ${fx} ${fy} C ${midX} ${fy}, ${midX} ${ty}, ${tx} ${ty}`;
-  };
-  const nodeMap = Object.fromEntries(nodes.map(n => [n.id, n]));
+  const viewH = Math.max(980, ...nodes.map(n => n.y + NODE_H + 60));
+  const visibleNodes = nodes.filter(n => revealed.has(n.id));
+  const visibleEdges = edges.filter(e => revealed.has(e.from) && revealed.has(e.to));
 
   return (
-    <svg className="graph-svg forge-graph-svg" viewBox="0 0 1100 440" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <marker id="farrow-default" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--border)" />
-        </marker>
-        <marker id="farrow-done" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--success)" opacity="0.5" />
-        </marker>
-        <marker id="farrow-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)" opacity="0.7" />
-        </marker>
-      </defs>
-      {/* Skeleton nodes (not yet revealed) */}
+    <svg className="graph-svg graph-svg-vertical forge-graph-svg" viewBox={`0 0 1040 ${viewH}`} preserveAspectRatio="xMidYMid meet">
+      {visibleNodes.length > 0 && <VerticalSpine nodes={visibleNodes} edges={visibleEdges} />}
       {nodes.map((n, i) => !revealed.has(n.id) && (
-        <SkeletonNode key={`s-${n.id}`} x={n.x} y={n.y} idx={i} />
+        <SkeletonNode key={`s-${n.id}`} node={n} idx={i} />
       ))}
-      {/* Edges: only when both endpoints are revealed */}
-      {edges.map((e, i) => {
-        const from = nodeMap[e.from];
-        const to = nodeMap[e.to];
-        if (!from || !to) return null;
-        if (!revealed.has(e.from) || !revealed.has(e.to)) return null;
-        return (
-          <path
-            key={i}
-            className={`skill-link edge-materialize ${e.state === 'done' ? 'done' : ''} ${e.state === 'active' ? 'active' : ''}`}
-            d={path(from, to)}
-            markerEnd={`url(#farrow-${e.state === 'done' ? 'done' : e.state === 'active' ? 'active' : 'default'})`}
-          />
-        );
-      })}
-      {/* Revealed nodes */}
       {nodes.map((n, i) => revealed.has(n.id) && (
         <g key={n.id} className="node-materialize">
           <SkillNode node={n} selected={null} extraClass={revealClass ? `${revealClass}-${i}` : ''} />

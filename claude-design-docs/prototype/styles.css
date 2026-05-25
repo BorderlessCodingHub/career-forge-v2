@@ -430,7 +430,94 @@ body::before {
 .legend-item { display: flex; align-items: center; gap: 5px; }
 .legend-dot { width: 8px; height: 8px; border-radius: 999px; }
 
-.graph-svg { display: block; width: 100%; height: 480px; position: relative; z-index: 1; }
+.graph-svg { display: block; width: 100%; min-height: 480px; position: relative; z-index: 1; }
+.graph-svg-vertical { height: auto; min-height: 640px; max-height: 920px; overflow: visible; }
+
+/* Vertical roadmap.sh spine */
+.roadmap-spine { stroke: var(--border); stroke-width: 2; stroke-dasharray: 6 6; fill: none; opacity: 0.6; }
+.roadmap-spine-seg { stroke: var(--border); stroke-width: 2; stroke-dasharray: 6 6; fill: none; }
+.roadmap-spine-seg.done { stroke: var(--success); stroke-opacity: 0.55; }
+.roadmap-spine-seg.active { stroke: var(--accent); stroke-opacity: 0.7; stroke-dasharray: 4 4; animation: dash 1.5s linear infinite; }
+.roadmap-branch { stroke: var(--border); stroke-width: 1.5; stroke-dasharray: 5 5; fill: none; opacity: 0.7; }
+.roadmap-branch.done { stroke: var(--success); stroke-opacity: 0.5; }
+.roadmap-branch.active { stroke: var(--accent); stroke-opacity: 0.65; }
+
+/* ===== Goal Picker — minimal (HAC-24) ===== */
+.goal-minimal { max-width: 560px; padding-top: 48px; padding-bottom: 64px; }
+.goal-minimal-head { margin-bottom: 32px; }
+.goal-minimal-step { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; }
+.goal-minimal-title { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 8px 0 0; line-height: 1.15; }
+.goal-minimal-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+.goal-minimal-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border-radius: var(--r);
+  background: transparent; border: 1px solid var(--border-soft);
+  text-align: left; cursor: pointer; transition: border-color .15s, background .15s;
+  font-size: 15px; font-weight: 500; color: var(--text);
+}
+.goal-minimal-card:hover:not(.disabled) { border-color: var(--surface-3); background: var(--surface); }
+.goal-minimal-card.selected { border-color: var(--accent); background: rgba(124,58,237,0.06); }
+.goal-minimal-card.disabled { opacity: 0.45; cursor: not-allowed; }
+.goal-minimal-lock { font-size: 11px; color: var(--text-3); font-family: var(--font-mono); }
+.goal-minimal-motivation { margin-bottom: 24px; }
+.goal-minimal-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); margin-bottom: 8px; }
+.goal-minimal-textarea { min-height: 80px; }
+.goal-minimal-hint { font-size: 12px; color: var(--warning); margin-top: 8px; }
+.goal-minimal-actions { display: flex; justify-content: flex-end; }
+
+/* ===== Diagnostic — pill rounds (HAC-24) ===== */
+.diag-pills-panel { display: flex; flex-direction: column; min-height: 560px; padding: 0; overflow: hidden; }
+.diag-pills-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 24px; border-bottom: 1px solid var(--border-soft);
+}
+.diag-pills-round-tag {
+  font-size: 11px; font-family: var(--font-mono); color: var(--accent-2);
+  padding: 4px 10px; border-radius: 999px; background: var(--accent-glow);
+}
+.diag-pills-intro {
+  display: flex; align-items: center; gap: 8px;
+  padding: 16px 24px; font-size: 13px; color: var(--text-2);
+  border-bottom: 1px solid var(--border-soft);
+}
+.diag-pills-grid {
+  flex: 1; padding: 24px; display: grid;
+  grid-template-columns: repeat(2, 1fr); gap: 16px;
+  overflow-y: auto;
+}
+.diag-pill {
+  border-radius: var(--r-lg); border: 1px solid var(--border-soft);
+  background: var(--surface-2); padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.diag-pill-head { display: flex; flex-direction: column; gap: 6px; }
+.diag-pill-tag {
+  align-self: flex-start; font-size: 10px; font-family: var(--font-mono);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 3px 8px; border-radius: 999px;
+  background: var(--bg); color: var(--accent-2); border: 1px solid var(--border-soft);
+}
+.diag-pill-prompt { font-size: 14px; font-weight: 500; margin: 0; line-height: 1.45; color: var(--text); }
+.diag-pill-input {
+  width: 100%; min-height: 72px; resize: vertical;
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--r);
+  padding: 12px 14px; font-size: 13px; line-height: 1.5;
+  font-family: inherit;
+}
+.diag-pill-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.diag-pills-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 24px; border-top: 1px solid var(--border-soft);
+}
+.diag-pills-hint { font-size: 12px; color: var(--text-3); }
+.diag-pills-generating { margin: 24px; }
+.diag-map-section { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-soft); }
+.diag-map-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: var(--text-2); }
+.diag-map-item { display: flex; gap: 8px; align-items: center; }
+.diag-map-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--text-3); flex-shrink: 0; }
+.diag-map-item.done .diag-map-dot { background: var(--success); }
+.diag-map-item.active .diag-map-dot { background: var(--warning); }
 
 .skill-node {
   cursor: pointer; transition: transform .2s;

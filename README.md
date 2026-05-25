@@ -40,7 +40,9 @@ Skill graph adaptativo inspirado em [roadmap.sh](https://roadmap.sh), com IA com
 Abrir localmente:
 
 ```bash
-open "claude-design-docs/prototype/Career Forge.html"
+cd claude-design-docs/prototype
+python3 -m http.server 8765
+open http://localhost:8765/
 ```
 
 ## Como rodar (em construção)

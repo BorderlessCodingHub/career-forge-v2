@@ -122,7 +122,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |
 | `/roadmap` (adaptive) | Roadmap state change + mentor/AI context | Drawer vs sidebar |
 
-Prototype entry: [`prototype/Career Forge.html`](./prototype/Career%20Forge.html) — **note:** prototype flow is pre-HAC-21; see [UX-FLOW § Prototype drift](./UX-FLOW.md#prototype-drift)
+Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype/README.md`](./prototype/README.md) — run `python3 -m http.server 8765` in `prototype/` → `http://localhost:8765/`
 
 ---
 
@@ -165,7 +165,7 @@ Prototype entry: [`prototype/Career Forge.html`](./prototype/Career%20Forge.html
 
 1. Read this file → [UX-FLOW](./UX-FLOW.md) → [SCREEN-INTENT](./SCREEN-INTENT.md) → [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) → [UI-PRINCIPLES](./UI-PRINCIPLES.md)
 2. Open [references/borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) for steady-state shell + canvas
-3. Open [`prototype/Career Forge.html`](./prototype/Career%20Forge.html) for tokens/components (ignore old flow)
+3. Open prototype via [`prototype/README.md`](./prototype/README.md) (`http://localhost:8765/`) for tokens/components
 4. Read [CHECKPOINT](../docs/CHECKPOINT.md) for P0 scope
 5. If `apps/web/` exists, diff against SCREEN-INTENT — do not blindly diff pixels
 

@@ -16,7 +16,7 @@ How [`prototype/`](./prototype/) evolves from legacy indigo chrome toward Border
 | Steady state | SVG skill graph dashboard | Code Breakers node canvas |
 | Flow | Pre-HAC-21 hash routes | Docs win — update screens incrementally |
 
-Entry: `open "claude-design-docs/prototype/Career Forge.html"`
+Entry: `cd claude-design-docs/prototype && python3 -m http.server 8765` → `http://localhost:8765/`
 
 ---
 

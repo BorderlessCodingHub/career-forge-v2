@@ -13,6 +13,7 @@ Structured log for user-provided UI feedback (images, descriptions) before imple
 | Date | Source | Summary | Implemented in |
 |------|--------|---------|----------------|
 | 2026-05-25 | User reference images | Borderless Community theming (Code Breakers + logo) | Docs: BORDERLESS-THEMING, design-tokens, UI-PRINCIPLES, PRODUCT-SOT; prototype `styles.css` CSS vars (Phase 1 partial) |
+| 2026-05-25 | `references/prototype-onboarding-current.png` | Onboarding: chat bubbles → **pill rounds** (batch questions with inputs); goal picker minimal; vertical roadmap spine; prototype 404 fix | HAC-24: `screens-flow.jsx`, `skill-graph.jsx`, `index.html`, docs |
 
 ---
 
@@ -29,6 +30,34 @@ _Add new items below. Format:_
 ```
 
 *(empty — add user feedback here)*
+
+---
+
+## Resolved (2026-05-25 — HAC-24)
+
+### Onboarding — chat bubbles → pill rounds
+- **Source:** `references/prototype-onboarding-current.png`
+- **Screen/area:** Diagnostic (`#diag`)
+- **Was wrong:** Linear chat bubbles — one question at a time, feels like ChatGPT
+- **Desired:** Pill/balloon cards with embedded inputs; **2 questions per round**, 3 rounds (seniority → stack → gaps)
+- **Status:** ✅ Applied in prototype + SCREEN-INTENT §2
+
+### Goal picker — too much chrome
+- **Source:** User feedback (HAC-24 batch)
+- **Was wrong:** Large hero, icons, meta badges, sparkles footer note
+- **Desired:** Minimal Borderless layout — compact cards, single CTA, narrow column
+- **Status:** ✅ Applied in prototype + UI-PRINCIPLES
+
+### Skill graph — horizontal grid → vertical spine
+- **Source:** `references/roadmap-sh-vertical-ai-tutor.png`, Borderless Code Breakers canvas
+- **Was wrong:** Horizontal 2-row node grid with bezier edges
+- **Desired:** Vertical spine, nodes alternating left/right, category groupings, dashed connections (roadmap.sh-like)
+- **Status:** ✅ Applied in `skill-graph.jsx` + SCREEN-INTENT §6
+
+### Prototype 404 — Career OS.html
+- **Source:** HAC-22 rename broke old URL
+- **Fix:** `index.html` + `Career OS.html` redirect stubs; docs point to `http://localhost:8765/`
+- **Status:** ✅ Applied
 
 ---
 

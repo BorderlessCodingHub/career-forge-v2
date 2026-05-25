@@ -110,6 +110,6 @@ Use Linear **Copy git branch name** when available. Branch name is for **git hyg
 
 > Onboarding → **Live Roadmap Forge (stream)** → skill graph reveal → **Validar com IA** → trilha reage.
 
-Design reference: [`claude-design-docs/prototype/Career Forge.html`](./claude-design-docs/prototype/Career%20Forge.html)
+Design reference: [`claude-design-docs/prototype/README.md`](./claude-design-docs/prototype/README.md) — `http://localhost:8765/`
 
 UI source of truth: [`claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md`](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md)

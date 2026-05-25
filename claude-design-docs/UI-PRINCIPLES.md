@@ -29,10 +29,26 @@ Full token table + component specs: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING
 - Dev-friendly — feels like a tool, not a course marketplace
 - Reference mood: [roadmap.sh](https://roadmap.sh) backend beginner — **layout inspiration only**
 
-### Steady-state roadmap canvas (HAC-21 + Borderless)
+### Goal picker — minimal first screen (HAC-24)
+
+- **Layout:** Narrow column (~560px), no centered hero block
+- **Cards:** Text-only row buttons — title + "Em breve" for disabled tracks
+- **No chrome:** Skip icons, domain counts, sprout meta, sparkles footer
+- **Motivation:** Single textarea + inline char count; CTA right-aligned
+- **Typography:** 32px headline (not 44px); step label in mono uppercase
+
+### Onboarding diagnostic — pill rounds (HAC-24)
+
+- **Not chat bubbles** — batch 2 questions per round in pill cards
+- Each pill: tag label + prompt + textarea
+- 3 rounds: seniority/context → stack/domain → gaps mapping
+- Sidebar shows live "O que a IA está mapeando" checklist
+
+### Steady-state roadmap canvas (HAC-21 + Borderless + HAC-24)
 
 - **Code Breakers–style canvas** — purple rounded topic nodes, progress bar at bottom, dashed dependency lines
-- Layout may combine roadmap.sh spine concepts with **horizontal/flow canvas** (React Flow style in production)
+- **Vertical spine layout (HAC-24)** — central dashed spine, nodes alternate left/right, category headers on spine (Fundamentos → Backend Core → Integração)
+- Layout combines roadmap.sh spine with Borderless node styling
 - Each node: title, status pill, mastery % / progress bar when known
 - Locked nodes dimmed; current focus highlighted (purple glow + mint accent)
 - Roadmap is the **hero** on `/roadmap` — full canvas area inside Borderless app shell
