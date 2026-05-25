@@ -1,6 +1,5 @@
 import { readJson, removeItem, removeItems, readString, writeJson, writeString } from "@/lib/session/storage";
 import type {
-  DiagnosisResponse,
   ForgeGraphNode,
   RoadmapForgeEvent,
 } from "@/types/contracts";
@@ -32,12 +31,6 @@ export function extractGraphFromEvents(
   const ready = events.find((e) => e.type === "graph_ready");
   if (!ready || ready.type !== "graph_ready") return null;
   return ready.graph;
-}
-
-export function diagnosisForForge(
-  diagnosis: DiagnosisResponse,
-): DiagnosisResponse {
-  return diagnosis;
 }
 
 export function clearForgeGraph() {
