@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Accepted |
+| **Status** | Superseded (dimensions) — see [ADR-002](./ADR-002-universal-profile-framework.md) |
 | **Date** | 2026-05-25 |
 | **Deciders** | Career Forge team (hackathon) |
 | **Linear** | HAC-42 … HAC-46 · parent context HAC-33 (CV) |
