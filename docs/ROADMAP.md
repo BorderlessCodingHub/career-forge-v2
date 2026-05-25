@@ -79,7 +79,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 **Target:** 2026-06-01
 
-- [ ] **HAC-13** [P] — Contextual Mentor
+- [x] **HAC-13** [P] — Contextual Mentor
 - [ ] **HAC-14** [P] — Mock Interview Loop
 - [ ] **HAC-15** [P] — Relatório mentor
 
