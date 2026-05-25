@@ -47,3 +47,46 @@ export type OnboardingSession = {
   answers: Record<string, string>;
   diagnosis?: DiagnosisResponse;
 };
+
+export type RoadmapTrack = {
+  id: string;
+  title: string;
+  description?: string;
+};
+
+export type RoadmapCategory = {
+  id: string;
+  label: string;
+};
+
+export type RoadmapNode = {
+  node_id: string;
+  title: string;
+  category: string;
+  description: string;
+  icon: string;
+  side: "left" | "right";
+  sort_order: number;
+  prerequisites: string[];
+  outcomes: string[];
+  rubric: string[];
+  status: SkillStatus;
+  mastery_score: number;
+  priority?: string | null;
+  rationale?: string | null;
+};
+
+export type RoadmapResponse = {
+  track: RoadmapTrack;
+  categories: RoadmapCategory[];
+  nodes: RoadmapNode[];
+};
+
+export type RoadmapSyncNode = {
+  node_id: string;
+  title: string;
+  status: SkillStatus | string;
+  mastery_score: number;
+  priority?: string | null;
+  rationale?: string | null;
+};
