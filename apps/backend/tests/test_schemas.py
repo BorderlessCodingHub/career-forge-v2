@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from career_forge.graphs.state import SkillGraphState, new_skill_graph_state
+from career_forge.ai.graphs.state import SkillGraphState, new_skill_graph_state
 from career_forge.schemas import (
     DiagnosisResponse,
     GraphPatch,

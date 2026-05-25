@@ -34,6 +34,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-6** [P] — Skill graph schema + roadmap.json seed
 - [x] **HAC-7** [P] — Pydantic + LangGraph state contracts
 - [x] **HAC-31** — Professional scaffold (`apps/backend` + `apps/frontend`)
+- [x] **HAC-32** — AI execution layer (`GraphRun`, `GraphExecutor`, `AgentFactory`)
 
 **Parallel:** HAC-5, HAC-6, HAC-7 after HAC-19 (no cross-deps)
 

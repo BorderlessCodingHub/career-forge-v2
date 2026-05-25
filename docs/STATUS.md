@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-31** (professional scaffold — backend/frontend restructure)
+Last updated: **2026-05-25** · Last merge: **HAC-32** (AI layer — GraphRun, GraphExecutor, AgentFactory)
 
 ---
 
@@ -21,8 +21,9 @@ Last updated: **2026-05-25** · Last merge: **HAC-31** (professional scaffold �
 | Monorepo apps/frontend + apps/backend | ✅ Done | HAC-5 + HAC-31 — domain-oriented layers |
 | Postgres schema + seed | ✅ Done | HAC-6 — models, Alembic, roadmap.json, seed Ana |
 | AI JSON contracts | ✅ Done | HAC-7 — Pydantic schemas + fixtures migrated to `career_forge/schemas/` |
-| Identity onboarding + editable diagnosis | ⬜ Todo | HAC-8 |
-| Live Roadmap Forge (timeline-only SSE) | ⬜ Todo | HAC-18 — MVP target quinta 2026-05-29 |
+| AI execution layer scaffold | ✅ Done | HAC-32 — `career_forge/ai/`, GraphRun, GraphExecutor, AgentFactory |
+| Identity onboarding + editable diagnosis | ⬜ Todo | HAC-8 — wire via AgentFactory |
+| Live Roadmap Forge (timeline-only SSE) | ⬜ Todo | HAC-18 — GraphExecutor stream mode, MVP target quinta 2026-05-29 |
 | Vertical roadmap UI — artifact mode | ⬜ Todo | HAC-9 |
 | Mastery Validation | ⬜ Todo | HAC-10 — pitch focus mock interview |
 | Adaptive Planning | ⬜ Todo | HAC-11 |

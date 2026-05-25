@@ -31,10 +31,21 @@ Sub-eixo: **Aprender com validação prática** (Alpha School: mastery before pr
 ```
 apps/frontend/     Next.js + TS + Tailwind
 apps/backend/     FastAPI + Pydantic + SQLAlchemy
-PostgreSQL    skill graph state, validations, profiles
+PostgreSQL    skill graph state, validations, profiles, graph_runs
 LangGraph     diagnosis_graph, roadmap_forge_graph, validation_graph
-LangSmith     traces per run
+LangChain     astream_events v2 via GraphExecutor (HAC-32)
+LangSmith     traces per GraphRun
 ```
+
+## AI execution layer (HAC-32)
+
+Unified under `career_forge/ai/`:
+
+- **GraphRun** — one execution record (id, graph_name, user_id, status, I/O, events)
+- **AgentFactory** — `factory.get("roadmap_forge")` → configured runnable
+- **GraphExecutor** — always `astream_events` v2; `stream=False` collects, `stream=True` → SSE
+
+Canonical doc: [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md)
 
 ---
 
