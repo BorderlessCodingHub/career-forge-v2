@@ -1,7 +1,9 @@
+import { readJson, readString, removeItems, writeJson, writeString } from "@/lib/session/storage";
 import type { PlanUpdateResponse, RoadmapResponse } from "@/types/contracts";
 
 const PLAN_KEY = "career-forge:adaptive-plan";
 const ROADMAP_KEY = "career-forge:adaptive-roadmap";
+const NODE_KEY = "career-forge:adaptive-node";
 
 export type AdaptiveSession = {
   plan: PlanUpdateResponse;
@@ -10,32 +12,19 @@ export type AdaptiveSession = {
 };
 
 export function storeAdaptiveSession(session: AdaptiveSession): void {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.setItem(PLAN_KEY, JSON.stringify(session.plan));
-  window.sessionStorage.setItem(ROADMAP_KEY, JSON.stringify(session.roadmap));
-  window.sessionStorage.setItem("career-forge:adaptive-node", session.nodeId);
+  writeJson(PLAN_KEY, session.plan);
+  writeJson(ROADMAP_KEY, session.roadmap);
+  writeString(NODE_KEY, session.nodeId);
 }
 
 export function getAdaptiveSession(): AdaptiveSession | null {
-  if (typeof window === "undefined") return null;
-  const planRaw = window.sessionStorage.getItem(PLAN_KEY);
-  const roadmapRaw = window.sessionStorage.getItem(ROADMAP_KEY);
-  const nodeId = window.sessionStorage.getItem("career-forge:adaptive-node");
-  if (!planRaw || !roadmapRaw || !nodeId) return null;
-  try {
-    return {
-      plan: JSON.parse(planRaw) as PlanUpdateResponse,
-      roadmap: JSON.parse(roadmapRaw) as RoadmapResponse,
-      nodeId,
-    };
-  } catch {
-    return null;
-  }
+  const plan = readJson<PlanUpdateResponse>(PLAN_KEY);
+  const roadmap = readJson<RoadmapResponse>(ROADMAP_KEY);
+  const nodeId = readString(NODE_KEY);
+  if (!plan || !roadmap || !nodeId) return null;
+  return { plan, roadmap, nodeId };
 }
 
 export function clearAdaptiveSession(): void {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.removeItem(PLAN_KEY);
-  window.sessionStorage.removeItem(ROADMAP_KEY);
-  window.sessionStorage.removeItem("career-forge:adaptive-node");
+  removeItems([PLAN_KEY, ROADMAP_KEY, NODE_KEY]);
 }

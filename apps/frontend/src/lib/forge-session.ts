@@ -1,3 +1,4 @@
+import { readJson, removeItem, removeItems, readString, writeJson, writeString } from "@/lib/session/storage";
 import type {
   DiagnosisResponse,
   ForgeGraphNode,
@@ -9,30 +10,12 @@ export type { ForgeGraphNode };
 const FORGE_GRAPH_KEY = "career-forge.forge-graph";
 const FORGE_RUN_KEY = "career-forge.forge-run-id";
 
-function readJson<T>(key: string): T | null {
-  if (typeof window === "undefined") return null;
-  const raw = window.sessionStorage.getItem(key);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.setItem(key, JSON.stringify(value));
-}
-
 export function setForgeRunId(runId: string) {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.setItem(FORGE_RUN_KEY, runId);
+  writeString(FORGE_RUN_KEY, runId);
 }
 
 export function getForgeRunId(): string | null {
-  if (typeof window === "undefined") return null;
-  return window.sessionStorage.getItem(FORGE_RUN_KEY);
+  return readString(FORGE_RUN_KEY);
 }
 
 export function setForgeGraph(graph: ForgeGraphNode[]) {
@@ -58,12 +41,9 @@ export function diagnosisForForge(
 }
 
 export function clearForgeGraph() {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.removeItem(FORGE_GRAPH_KEY);
+  removeItem(FORGE_GRAPH_KEY);
 }
 
 export function clearForgeSession() {
-  if (typeof window === "undefined") return;
-  clearForgeGraph();
-  window.sessionStorage.removeItem(FORGE_RUN_KEY);
+  removeItems([FORGE_GRAPH_KEY, FORGE_RUN_KEY]);
 }
