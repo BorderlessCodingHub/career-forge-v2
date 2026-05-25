@@ -4,6 +4,8 @@ import type {
   RubricMapItem,
 } from "@/types/contracts";
 
+import { isMappingItemDone } from "@/lib/diagnosis-stream";
+
 const STATUS_STYLES: Record<
   RubricDimensionStatus | "active" | "analyzing",
   { dot: string; label: string; description: string }
@@ -41,10 +43,10 @@ function resolveStatus(
   analyzingKey: RubricDimensionKey | null,
   streaming: boolean,
 ): RubricDimensionStatus | "active" | "analyzing" {
+  if (isMappingItemDone(item)) return "mapped";
   if (activeKeys.has(item.rubric_key)) return "active";
   if (streaming && analyzingKey === item.rubric_key) return "analyzing";
   if (item.status !== "pending" || item.note.trim().length > 0) return item.status;
-  if (streaming) return "pending";
   return item.status;
 }
 

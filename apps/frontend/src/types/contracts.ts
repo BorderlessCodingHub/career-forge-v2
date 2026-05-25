@@ -311,6 +311,7 @@ export type InterviewTurnRequest = {
 export type InterviewTurnResponse = {
   session_id: string;
   status: "asking" | "complete";
+  round_count: number;
   questions: InterviewQuestion[];
   mapping_progress: RubricMapItem[];
   diagnosis?: DiagnosisResponse;
@@ -320,6 +321,7 @@ export type DiagnosisInterviewStatusPhase =
   | "analyzing_intake"
   | "analyzing_cv"
   | "judging"
+  | "loading_questions"
   | "planning_questions"
   | "processing_answers"
   | "finalizing";

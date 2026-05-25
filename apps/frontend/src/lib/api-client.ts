@@ -21,6 +21,7 @@ import type {
   ValidationRequest,
   ValidationRunResponse,
 } from "@/types/contracts";
+import { consumeFetchEventStream } from "@/lib/sse/consume";
 import { getUserId } from "@/lib/user-session";
 
 const backendUrl =
@@ -102,10 +103,19 @@ function graphOutputToTurnResponse(
   return {
     session_id: output.session_id,
     status: output.status,
+    round_count: output.round_count ?? 0,
     questions: output.questions ?? [],
     mapping_progress: output.mapping_progress ?? [],
     diagnosis: output.diagnosis,
   };
+}
+
+export async function getDiagnosisInterviewSession(
+  sessionId: string,
+): Promise<InterviewTurnResponse> {
+  return apiFetch<InterviewTurnResponse>(
+    `/diagnosis/interview/${encodeURIComponent(sessionId)}`,
+  );
 }
 
 async function consumeDiagnosisInterviewStream(
@@ -113,62 +123,36 @@ async function consumeDiagnosisInterviewStream(
   body: unknown,
   onEvent?: (event: DiagnosisStreamEvent) => void,
 ): Promise<InterviewTurnResponse> {
-  let res: Response;
+  let finalResponse: InterviewTurnResponse | null = null;
+  let streamError: Error | null = null;
+
   try {
-    res = await fetch(`${backendUrl}${path}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "text/event-stream",
+    await consumeFetchEventStream<DiagnosisStreamEvent>(
+      `${backendUrl}${path}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       },
-      body: JSON.stringify(body),
-    });
+      (_eventName, payload) => {
+        onEvent?.(payload);
+        if (payload.type === "error") {
+          streamError = new Error(payload.message);
+          return;
+        }
+        if (payload.type === "graph_complete") {
+          finalResponse = graphOutputToTurnResponse(payload.output);
+        }
+      },
+      (raw) => parseDiagnosisStreamEvent(raw as Record<string, unknown>),
+    );
   } catch (cause) {
     const message =
       cause instanceof Error ? cause.message : "Network request failed";
     throw new Error(`Cannot reach API ${backendUrl}${path}: ${message}.`);
   }
 
-  if (!res.ok || !res.body) {
-    const message = await readApiErrorMessage(res);
-    throw new Error(`API ${path} failed: ${message}`);
-  }
-
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let finalResponse: InterviewTurnResponse | null = null;
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const parts = buffer.split("\n\n");
-    buffer = parts.pop() ?? "";
-
-    for (const part of parts) {
-      const line = part.split("\n").find((row) => row.startsWith("data:"));
-      if (!line) continue;
-      const json = line.replace(/^data:\s*/, "");
-      try {
-        const raw = JSON.parse(json) as Record<string, unknown>;
-        const event = parseDiagnosisStreamEvent(raw);
-        if (!event) continue;
-        onEvent?.(event);
-        if (event.type === "error") {
-          throw new Error(event.message);
-        }
-        if (event.type === "graph_complete") {
-          finalResponse = graphOutputToTurnResponse(event.output);
-        }
-      } catch (cause) {
-        if (cause instanceof Error && cause.message !== "Unexpected token") {
-          throw cause;
-        }
-      }
-    }
-  }
-
+  if (streamError) throw streamError;
   if (!finalResponse) {
     throw new Error("Stream terminou sem resposta final do diagnóstico.");
   }

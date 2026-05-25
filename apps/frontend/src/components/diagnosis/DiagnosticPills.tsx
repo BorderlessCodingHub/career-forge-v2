@@ -4,12 +4,13 @@ import { Button } from "@/components/ui";
 import { OnboardingRecapSidebar } from "@/components/diagnosis/OnboardingRecapSidebar";
 import { CAREER_GOALS } from "@/lib/onboarding-data";
 import { getCvAttachment } from "@/lib/onboarding-session";
+import { interviewRoundLabel } from "@/lib/diagnosis-interview";
 import { useDiagnosisInterview } from "@/lib/hooks/useDiagnosisInterview";
 
 import { PillRound } from "./PillRound";
 
 const ROUND_INTRO =
-  "Sem certo ou errado — quanto mais concreto, menos perguntas. A IA extrai o máximo de cada resposta.";
+  "Sem certo ou errado — são 2 etapas fixas. Quanto mais concreto, melhor a IA mapeia seu perfil.";
 
 export function DiagnosticPills() {
   const {
@@ -39,10 +40,7 @@ export function DiagnosticPills() {
     intake.goalId;
   const cvAttachment = getCvAttachment();
 
-  const roundTitle =
-    questions.length === 1
-      ? (questions[0]?.topic ?? "Diagnóstico adaptativo")
-      : "Diagnóstico adaptativo";
+  const roundTitle = interviewRoundLabel(roundCount);
 
   return (
     <main
@@ -66,7 +64,14 @@ export function DiagnosticPills() {
         />
 
         <section className="rounded-card border border-border bg-surface p-6">
-          {bootstrapping ? null : (
+          {bootstrapping ? (
+            <div className="space-y-4" data-testid="diagnosis-bootstrapping">
+              <div className="h-6 w-40 animate-pulse rounded bg-surface-elevated" />
+              <div className="h-4 w-full max-w-md animate-pulse rounded bg-surface-elevated" />
+              <div className="mt-6 h-32 animate-pulse rounded-card bg-surface-elevated" />
+              <p className="text-sm text-text-muted">{streamPhaseLabel}</p>
+            </div>
+          ) : (
             <>
               <div className="flex flex-wrap items-center gap-3">
                 <PillRound label={roundTitle} />
