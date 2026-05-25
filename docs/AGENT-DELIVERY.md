@@ -60,7 +60,7 @@ Output: `SHIP | FIX | SPLIT`
 
 Stack running. Verify demo flows with `data-testid` selectors (add as you build).
 
-Career OS smoke paths (extend as UI lands):
+Career Forge smoke paths (extend as UI lands):
 
 1. Goal picker → onboarding
 2. Forge timeline renders
@@ -95,4 +95,4 @@ Checks (grow over time): health, diagnosis, forge SSE, validation, skill graph s
 
 ---
 
-*Career OS · HB01-2026*
+*Career Forge · HB01-2026*

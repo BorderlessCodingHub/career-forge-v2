@@ -1,8 +1,8 @@
-# STATUS — Career OS
+# STATUS — Career Forge
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-21** (UX paradigm doc update)
+Last updated: **2026-05-25** · Last merge: **HAC-22** (rename product to Career Forge)
 
 ---
 

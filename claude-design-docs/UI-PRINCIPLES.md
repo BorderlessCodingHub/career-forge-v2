@@ -1,4 +1,4 @@
-# UI Principles — Career OS
+# UI Principles — Career Forge
 
 > How the product should *feel*. Tokens: [design-tokens.md](./design-tokens.md) · Prototype: [`prototype/`](./prototype/)
 

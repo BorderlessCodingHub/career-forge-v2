@@ -1,4 +1,4 @@
-// Career OS — Screens 1, 2, 3, 5
+// Career Forge — Screens 1, 2, 3, 5
 
 // === Screen 1: Goal Picker ===
 const GoalPickerScreen = ({ onNext }) => {
@@ -97,7 +97,7 @@ const GoalPickerScreen = ({ onNext }) => {
 // === Screen 2: Diagnostic Chat ===
 const DiagnosticScreen = ({ onNext }) => {
   const initial = [
-    { from: 'ai',   t: '14:02', text: 'Oi! Sou o Career OS. Vou te fazer algumas perguntas para entender de onde você está partindo. Sem certo ou errado — quanto mais honesto, mais útil sua trilha.' },
+    { from: 'ai',   t: '14:02', text: 'Oi! Sou o Career Forge. Vou te fazer algumas perguntas para entender de onde você está partindo. Sem certo ou errado — quanto mais honesto, mais útil sua trilha.' },
     { from: 'ai',   t: '14:02', text: 'Você já usou Git em algum projeto?' },
     { from: 'user', t: '14:03', text: 'Sim, subi um projeto no GitHub mas não domino branches.' },
     { from: 'ai',   t: '14:03', text: 'Beleza. Consegue explicar com suas palavras a diferença entre frontend e backend?' },
@@ -289,7 +289,7 @@ const DiagnosisResultScreen = ({ onNext }) => {
         <div className="diag-evidence">
           <div className="evidence-icon"><Icon name="file" size={16} /></div>
           <div className="diag-evidence-text">
-            <b>Avaliação por evidência.</b> Career OS não te deixa marcar tópicos como "concluído". Cada domínio só destrava quando você prova entendimento numa entrevista com a IA — e seu mentor da Borderless recebe o histórico das suas evidências.
+            <b>Avaliação por evidência.</b> Career Forge não te deixa marcar tópicos como "concluído". Cada domínio só destrava quando você prova entendimento numa entrevista com a IA — e seu mentor da Borderless recebe o histórico das suas evidências.
           </div>
         </div>
 

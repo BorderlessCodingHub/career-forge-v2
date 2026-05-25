@@ -28,7 +28,7 @@ Read:
 1. [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md)
 2. [UX-FLOW.md](../../claude-design-docs/UX-FLOW.md)
 3. [SCREEN-INTENT.md](../../claude-design-docs/SCREEN-INTENT.md)
-4. Relevant screen in [`prototype/Career OS.html`](../../claude-design-docs/prototype/Career%20OS.html) (tokens/components — flow may lag)
+4. Relevant screen in [`prototype/Career Forge.html`](../../claude-design-docs/prototype/Career%20Forge.html) (tokens/components — flow may lag)
 5. Changed files: `git diff origin/main...HEAD -- apps/web claude-design-docs`
 
 ### 2. Compare trilogy

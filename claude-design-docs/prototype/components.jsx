@@ -1,4 +1,4 @@
-// Career OS — shared icons & components
+// Career Forge — shared icons & components
 const { useState, useEffect, useRef, useMemo } = React;
 
 // === Icons (minimal stroke set) ===
@@ -70,7 +70,7 @@ const TopNav = ({ current, onNav }) => {
       <div className="brand">
         <div className="brand-mark"><span className="conn"></span></div>
         <div>
-          <div className="brand-name">Career OS</div>
+          <div className="brand-name">Career Forge</div>
           <div className="brand-tag">Aprender com validação prática</div>
         </div>
       </div>
@@ -138,7 +138,7 @@ const Bubble = ({ from, time, children }) => (
   <div className={`bubble ${from}`}>
     <div className="bubble-avatar">{from === 'ai' ? <Icon name="sparkles" size={14} /> : 'V'}</div>
     <div className="bubble-body">
-      <div className="bubble-meta">{from === 'ai' ? 'Career OS' : 'Você'} · {time}</div>
+      <div className="bubble-meta">{from === 'ai' ? 'Career Forge' : 'Você'} · {time}</div>
       <div className="bubble-content">{children}</div>
     </div>
   </div>

@@ -1,6 +1,6 @@
-# Career OS — Agent harness (index)
+# Career Forge — Agent harness (index)
 
-**Career OS** (Soft Push) — AI-native learning system: skill graph adaptativo, Live Roadmap Forge com streaming, validação de mastery por IA.
+**Career Forge** (Soft Push) — AI-native learning system: skill graph adaptativo, Live Roadmap Forge com streaming, validação de mastery por IA.
 
 **Stack:** Next.js (web) · FastAPI (api) · PostgreSQL · LangGraph + LangChain + LangSmith
 
@@ -24,7 +24,7 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 Paste as first agent message if hooks unavailable:
 
 ```
-Repo: HB01-2026_soft-push (Career OS hackathon).
+Repo: HB01-2026_soft-push (Career Forge hackathon).
 Read AGENTS.md → docs/ROADMAP.md → docs/STATUS.md → docs/CHECKPOINT.md.
 Pick current ROADMAP batch only. Branch: HAC-XX-title-slug.
 Before merge: triple gate (docs/AGENT-DELIVERY.md).
@@ -110,6 +110,6 @@ Use Linear **Copy git branch name** when available. Branch name is for **git hyg
 
 > Onboarding → **Live Roadmap Forge (stream)** → skill graph reveal → **Validar com IA** → trilha reage.
 
-Design reference: [`claude-design-docs/prototype/Career OS.html`](./claude-design-docs/prototype/Career%20OS.html)
+Design reference: [`claude-design-docs/prototype/Career Forge.html`](./claude-design-docs/prototype/Career%20Forge.html)
 
 UI source of truth: [`claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md`](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md)

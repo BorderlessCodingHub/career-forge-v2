@@ -1,4 +1,4 @@
-# CHECKPOINT — Career OS product
+# CHECKPOINT — Career Forge product
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [STATUS](./STATUS.md) · [claude-design-docs](../claude-design-docs/)
 
@@ -8,7 +8,7 @@ Authoritative product + architecture reference for agents.
 
 ## One-liner
 
-**AI Career Operating System** — skill graph adaptativo que diagnostica, forja trilha ao vivo, valida mastery e gera evidências para mentores.
+**Career Forge** — skill graph adaptativo que diagnostica, forja trilha ao vivo, valida mastery e gera evidências para mentores.
 
 Sub-eixo: **Aprender com validação prática** (Alpha School: mastery before progression).
 

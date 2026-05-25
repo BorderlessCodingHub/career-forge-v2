@@ -1,6 +1,6 @@
 ---
 name: dual-qa-gate
-description: Mandatory pre-merge triple gate for Career OS — code evaluator, Playwright MCP, agent verify. Use before every merge.
+description: Mandatory pre-merge triple gate for Career Forge — code evaluator, Playwright MCP, agent verify. Use before every merge.
 ---
 
 # Triple QA Gate
@@ -24,7 +24,7 @@ Output: `SHIP | FIX | SPLIT`
 
 ## Gate B — Playwright MCP
 
-Verify Career OS flows with `data-testid` (extend as UI ships):
+Verify Career Forge flows with `data-testid` (extend as UI ships):
 
 1. Goal picker loads
 2. Forge timeline streams (or mock replay)

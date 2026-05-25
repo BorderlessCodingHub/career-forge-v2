@@ -1,4 +1,4 @@
-// Career OS — Live Roadmap Forge screen + Reveal frame
+// Career Forge — Live Roadmap Forge screen + Reveal frame
 
 const FORGE_SCRIPT = [
   { delay: 0,    kind: 'thought',  label: 'Lendo seu diagn\u00f3stico inicial',

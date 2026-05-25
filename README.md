@@ -1,6 +1,8 @@
-# HB01-2026_soft-push — Career OS
+# Career Forge
 
-Hackathon Borderless BASE 01/2026 — **AI Career Operating System** para quem está virando dev.
+**Aprender com validação prática** — trilha viva para quem está virando dev.
+
+Hackathon Borderless BASE 01/2026 · repo `HB01-2026_soft-push` (Soft Push)
 
 ## Problema
 
@@ -38,7 +40,7 @@ Skill graph adaptativo inspirado em [roadmap.sh](https://roadmap.sh), com IA com
 Abrir localmente:
 
 ```bash
-open "claude-design-docs/prototype/Career OS.html"
+open "claude-design-docs/prototype/Career Forge.html"
 ```
 
 ## Como rodar (em construção)

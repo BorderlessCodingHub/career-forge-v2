@@ -1,4 +1,4 @@
-# ROADMAP — Career OS
+# ROADMAP — Career Forge
 
 > **Navigation:** [STATUS](./STATUS.md) · [CHECKPOINT](./CHECKPOINT.md) · [Linear project](https://linear.app/hackas-borderless/project/career-os-soft-push-b0fb1f68c110)
 
@@ -13,6 +13,7 @@ Branch format: `HAC-XX-title-slug` (git hygiene). Linear status: **manual** via 
 - [x] **HAC-19** — Engineering lifecycle + agent harness
 - [x] **HAC-20** — UI product source of truth docs + sync rule/hook
 - [x] **HAC-21** — UX paradigm doc update (editable diagnosis + forge redesign)
+- [x] **HAC-22** — Rename product to Career Forge (docs, prototype, harness)
 - [x] **HAC-20** — UI product source of truth + sync rule/hook
 - [ ] **HAC-5** — Monorepo Next.js + FastAPI + Postgres + deploy
 - [ ] **HAC-6** — Skill graph schema + roadmap.json seed

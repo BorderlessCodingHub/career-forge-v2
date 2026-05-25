@@ -1,4 +1,4 @@
-# PRODUCT SOURCE OF TRUTH — Career OS
+# PRODUCT SOURCE OF TRUTH — Career Forge
 
 > **Canonical doc for agents.** Read this before any UI work. Update this when the UI paradigm changes.
 
@@ -53,7 +53,7 @@ When sources conflict, apply this order **unless** an active Linear issue explic
 
 Full narrative: [PRODUCT-VISION](./PRODUCT-VISION.md)
 
-**Career OS** = AI-native learning operating system for career changers entering tech.
+**Career Forge** = AI-native learning operating system for career changers entering tech.
 
 | Pillar | One line |
 |--------|----------|
@@ -97,7 +97,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |
 | `/roadmap` (adaptive) | Roadmap state change + mentor/AI context | Drawer vs sidebar |
 
-Prototype entry: [`prototype/Career OS.html`](./prototype/Career%20OS.html) — **note:** prototype flow is pre-HAC-21; see [UX-FLOW § Prototype drift](./UX-FLOW.md#prototype-drift)
+Prototype entry: [`prototype/Career Forge.html`](./prototype/Career%20Forge.html) — **note:** prototype flow is pre-HAC-21; see [UX-FLOW § Prototype drift](./UX-FLOW.md#prototype-drift)
 
 ---
 
@@ -135,7 +135,7 @@ Prototype entry: [`prototype/Career OS.html`](./prototype/Career%20OS.html) — 
 
 1. Read this file → [UX-FLOW](./UX-FLOW.md) → [SCREEN-INTENT](./SCREEN-INTENT.md) → [UI-PRINCIPLES](./UI-PRINCIPLES.md)
 2. Open [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) for steady-state target
-3. Open [`prototype/Career OS.html`](./prototype/Career%20OS.html) for tokens/components (ignore old flow)
+3. Open [`prototype/Career Forge.html`](./prototype/Career%20Forge.html) for tokens/components (ignore old flow)
 4. Read [CHECKPOINT](../docs/CHECKPOINT.md) for P0 scope
 5. If `apps/web/` exists, diff against SCREEN-INTENT — do not blindly diff pixels
 

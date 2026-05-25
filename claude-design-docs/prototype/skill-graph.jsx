@@ -1,4 +1,4 @@
-// Career OS — SkillGraph hero component
+// Career Forge — SkillGraph hero component
 const { useState: useStateG } = React;
 
 const SKILL_NODES_BASE = [

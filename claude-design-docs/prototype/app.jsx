@@ -1,4 +1,4 @@
-// Career OS — App shell with navigation
+// Career Forge — App shell with navigation
 const App = () => {
   const [screen, setScreen] = React.useState('goal');
   const [mentorOpen, setMentorOpen] = React.useState(false);

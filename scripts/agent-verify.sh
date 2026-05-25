@@ -16,7 +16,7 @@ check() {
   fi
 }
 
-echo "agent-verify: Career OS harness"
+echo "agent-verify: Career Forge harness"
 
 check test -f AGENTS.md
 check test -f docs/CHECKPOINT.md

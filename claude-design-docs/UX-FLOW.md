@@ -1,4 +1,4 @@
-# UX Flow — Career OS
+# UX Flow — Career Forge
 
 > **Canonical flow (HAC-21).** Screen-by-screen narrative with old vs new paradigm.  
 > Must-match constraints: [SCREEN-INTENT.md](./SCREEN-INTENT.md) · Hierarchy: [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md)
@@ -125,7 +125,7 @@ Após animação → navega para steady state (`/roadmap`).
 
 **Reference layout:** [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png)
 
-**Career OS difference:** Trilha é **adaptativa e personalizada** — não checklist estático. Status enums, mastery %, validação e replanejamento continuam.
+**Career Forge difference:** Trilha é **adaptativa e personalizada** — não checklist estático. Status enums, mastery %, validação e replanejamento continuam.
 
 **AI sidebar (optional):**
 - Usuário **escolhe** abrir/fechar — não é chat full-screen obrigatório

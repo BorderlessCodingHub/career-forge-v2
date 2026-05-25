@@ -1,4 +1,4 @@
-# Claude Design Brief — Career OS (Soft Push)
+# Claude Design Brief — Career Forge (Soft Push)
 
 > **Como usar este doc:** cole no chat do Claude Design (`claude.ai/design`).  
 > **Estratégia:** gerar **1 tela por prompt** (não peça 6 telas de uma vez). Depois peça navegação entre elas. Exporte como **standalone HTML** e traga de volta para implementação no Next.js.
@@ -7,7 +7,7 @@
 
 ## 0. Contexto do produto (cole no início de TODO prompt)
 
-Design a web app called **Career OS** — an AI-native learning system for people transitioning into tech careers.
+Design a web app called **Career Forge** — an AI-native learning system for people transitioning into tech careers.
 
 **Positioning:** Inspired by [roadmap.sh](https://roadmap.sh) minimalism, but evolved into a **living skill graph** that adapts to each person's dream career and starting point — not a generic static checklist.
 
@@ -74,7 +74,7 @@ Components to reuse across all screens:
 **Prompt:**
 
 ```
-Create screen 1 of 6 for Career OS.
+Create screen 1 of 6 for Career Forge.
 
 Goal: user selects who they want to become.
 
@@ -87,7 +87,7 @@ Layout:
   3. Frontend Developer (disabled)
 - Below cards: text area "Por que esse caminho?" placeholder: "Quero trabalhar com APIs para space tech..."
 - Primary CTA: "Começar diagnóstico →"
-- Minimal top nav: logo "Career OS" + tagline "Aprender com validação prática"
+- Minimal top nav: logo "Career Forge" + tagline "Aprender com validação prática"
 
 Style: dark, roadmap.sh-inspired minimalism, skill-graph product feel.
 Desktop 1280px. Portuguese BR copy.
@@ -114,7 +114,7 @@ Layout:
 - Split view OR full chat with sticky progress bar (Step 2/3 — Diagnóstico)
 - Left/top: small recap card showing goal + motivation
 - Main: chat interface, 4–6 AI questions already visible in thread
-- AI avatar label: "Career OS"
+- AI avatar label: "Career Forge"
 - User can type free-text answers
 - Bottom: input + send button
 - After last answer, show inline "Gerando diagnóstico..." skeleton
@@ -348,7 +348,7 @@ Portuguese BR. Dark theme.
 **Prompt final de ligação:**
 
 ```
-Connect all 7 Career OS screens into a clickable prototype flow:
+Connect all 7 Career Forge screens into a clickable prototype flow:
 
 / → /onboarding → /roadmap/forge → /roadmap/forge/complete → /roadmap → /validate/rest → /roadmap (updated)
 
@@ -387,7 +387,7 @@ Quando trouxer o HTML de volta para implementação:
 ## 6. Prompt meta (opcional — peça feedback ao Claude Design)
 
 ```
-Review this Career OS prototype for:
+Review this Career Forge prototype for:
 1. Information hierarchy on the skill graph screen
 2. Accessibility contrast on dark theme
 3. Whether the validation flow feels like the hero moment

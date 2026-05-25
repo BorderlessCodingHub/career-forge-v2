@@ -1,4 +1,4 @@
-# Claude Design — Career OS
+# Claude Design — Career Forge
 
 Documentação da UI gerada no Claude Design, intent de produto por tela, e **fonte de verdade** para agentes que implementam front-end.
 
@@ -37,7 +37,7 @@ Arquivos exportados do Claude Design (React standalone via Babel):
 
 | Arquivo | Conteúdo |
 |---------|----------|
-| [prototype/Career OS.html](./prototype/Career%20OS.html) | Entry point — abrir no browser |
+| [prototype/Career Forge.html](./prototype/Career%20Forge.html) | Entry point — abrir no browser |
 | [prototype/app.jsx](./prototype/app.jsx) | Router / shell |
 | [prototype/screens-flow.jsx](./prototype/screens-flow.jsx) | Onboarding + goal picker + diagnosis result (legacy) |
 | [prototype/screens-forge.jsx](./prototype/screens-forge.jsx) | Live Roadmap Forge + reveal (legacy split layout) |
@@ -47,7 +47,7 @@ Arquivos exportados do Claude Design (React standalone via Babel):
 | [prototype/styles.css](./prototype/styles.css) | Tokens + layout |
 
 ```bash
-open "claude-design-docs/prototype/Career OS.html"
+open "claude-design-docs/prototype/Career Forge.html"
 ```
 
 ### Prototype drift

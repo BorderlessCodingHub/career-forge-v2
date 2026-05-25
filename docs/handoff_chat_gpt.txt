@@ -1108,7 +1108,7 @@ ou
 
 ou
 
-“Career OS”
+“Career Forge”
 
 Porque o que vocês estão criando é:
 
@@ -1264,7 +1264,7 @@ Esquece CRUD app de roadmap.
 
 Façam:
 
-“AI Career Operating System”
+“Career Forge”
 
 Mesmo que o MVP seja pequeno.
 

@@ -1,4 +1,4 @@
-# Product Vision — Career OS
+# Product Vision — Career Forge
 
 > North star for UI and demo narrative. Authority: [PRODUCT-SOURCE-OF-TRUTH](./PRODUCT-SOURCE-OF-TRUTH.md) · [CHECKPOINT](../docs/CHECKPOINT.md)
 
@@ -6,7 +6,7 @@
 
 ## One sentence
 
-**Career OS** modela continuamente a evolução profissional de quem está virando dev — diagnóstico, trilha viva, validação de mastery e evidências para mentores.
+**Career Forge** modela continuamente a evolução profissional de quem está virando dev — diagnóstico, trilha viva, validação de mastery e evidências para mentores.
 
 ---
 
@@ -25,7 +25,7 @@ Sub-eixo oficial: **Aprender com validação prática** (Alpha School: domínio 
 
 ## Five pillars (demo must show)
 
-### 1. Career OS — identity engine
+### 1. Career Forge — identity engine
 
 Usuário declara **quem quer ser** e **por quê** (motivação). Objetivo alimenta diagnóstico, forge e priorização — não é dropdown decorativo.
 

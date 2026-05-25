@@ -2,7 +2,7 @@
 
 # Stub smoke — extend when apps/web + apps/api + docker-compose land (HAC-5)
 smoke:
-	@echo "== Career OS smoke (bootstrap) =="
+	@echo "== Career Forge smoke (bootstrap) =="
 	@test -f AGENTS.md
 	@test -f docs/STATUS.md
 	@test -f docs/ROADMAP.md
@@ -12,7 +12,7 @@ smoke:
 	@test -f claude-design-docs/UX-FLOW.md
 	@test -f claude-design-docs/SCREEN-INTENT.md
 	@test -f claude-design-docs/references/roadmap-sh-vertical-ai-tutor.png
-	@test -f claude-design-docs/prototype/Career\ OS.html
+	@test -f claude-design-docs/prototype/Career\ Forge.html
 	@bash scripts/agent-verify.sh
 	@echo "SMOKE OK (harness + stub verify)"
 

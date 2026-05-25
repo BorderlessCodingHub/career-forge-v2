@@ -1,4 +1,4 @@
-// Career OS — Screens 4 (Skill Graph dashboard) and 6 (Adaptive + Mentor)
+// Career Forge — Screens 4 (Skill Graph dashboard) and 6 (Adaptive + Mentor)
 
 // === Screen 4: Skill Graph Dashboard ===
 const RoadmapScreen = ({ adaptive = false, onValidate, onMentor, mentorOpen, onCloseMentor }) => {
@@ -130,7 +130,7 @@ const RoadmapScreen = ({ adaptive = false, onValidate, onMentor, mentorOpen, onC
             <span style={{ fontSize: 12, fontWeight: 600 }}>Por que ainda não destravou?</span>
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.55 }}>
-            Career OS não progride por tempo gasto. Cada domínio só vira <b style={{ color: 'var(--text)' }}>aprovado</b> depois que você prova entendimento em uma entrevista curta com a IA.
+            Career Forge não progride por tempo gasto. Cada domínio só vira <b style={{ color: 'var(--text)' }}>aprovado</b> depois que você prova entendimento em uma entrevista curta com a IA.
           </div>
         </div>
       </aside>

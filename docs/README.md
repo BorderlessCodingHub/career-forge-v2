@@ -1,4 +1,4 @@
-# Career OS docs — index
+# Career Forge docs — index
 
 **Entry:** [AGENTS.md](../AGENTS.md)
 

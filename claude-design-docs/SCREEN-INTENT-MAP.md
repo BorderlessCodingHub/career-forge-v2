@@ -1,4 +1,4 @@
-# Screen Intent Map — Career OS
+# Screen Intent Map — Career Forge
 
 > Route table + quick reference. Must-match detail: [SCREEN-INTENT.md](./SCREEN-INTENT.md) · Flow: [UX-FLOW.md](./UX-FLOW.md)
 

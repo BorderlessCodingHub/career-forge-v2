@@ -1,4 +1,4 @@
-# Design tokens — Career OS
+# Design tokens — Career Forge
 
 Extraídos do prototype Claude Design (`prototype/styles.css`).
 

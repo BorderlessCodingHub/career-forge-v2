@@ -1,4 +1,4 @@
-# Screen Intent — Career OS
+# Screen Intent — Career Forge
 
 > **Per-screen must-match for agents.** Non-negotiable UX constraints.  
 > Flow narrative: [UX-FLOW.md](./UX-FLOW.md) · Route table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md)
