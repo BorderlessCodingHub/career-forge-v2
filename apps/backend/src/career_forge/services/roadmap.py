@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 from typing import Any
 
 from sqlalchemy import select
@@ -13,6 +12,7 @@ from career_forge.db.models.skill_node import SkillNode
 from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
+from career_forge.paths import roadmap_json_path
 from career_forge.schemas.roadmap import (
     RoadmapCategory,
     RoadmapNode,
@@ -20,8 +20,7 @@ from career_forge.schemas.roadmap import (
     RoadmapTrack,
 )
 
-REPO_ROOT = Path(__file__).resolve().parents[5]
-ROADMAP_PATH = REPO_ROOT / "data" / "roadmap.json"
+ROADMAP_PATH = roadmap_json_path()
 
 DEFAULT_DEMO_STATE: dict[str, dict[str, Any]] = {
     "js": {"status": "aprovado", "mastery_score": 65, "priority": "low"},

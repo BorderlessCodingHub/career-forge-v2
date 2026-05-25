@@ -5,15 +5,14 @@ from __future__ import annotations
 import asyncio
 import json
 from collections.abc import AsyncIterator
-from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
+from career_forge.paths import roadmap_json_path
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
 
-REPO_ROOT = Path(__file__).resolve().parents[6]
-ROADMAP_PATH = REPO_ROOT / "data" / "roadmap.json"
+ROADMAP_PATH = roadmap_json_path()
 
 STREAM_DELAY_SEC = 0.12
 
