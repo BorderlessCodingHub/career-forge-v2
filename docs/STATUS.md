@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-32** (pending merge: **HAC-8**)
+Last updated: **2026-05-25** · Last merge: **HAC-8** (pending merge: **HAC-18**)
 
 ---
 
@@ -36,10 +36,11 @@ Last updated: **2026-05-25** · Last merge: **HAC-32** (pending merge: **HAC-8**
 
 | Issue | Title | Class | State |
 |-------|-------|-------|-------|
-| **HAC-8** | Identity Engine — editable diagnosis | S | **Done** (await merge) |
-| HAC-18 | Live Roadmap Forge — SSE timeline | S | **Next** |
+| **HAC-8** | Identity Engine — editable diagnosis | S | **Done** |
+| **HAC-18** | Live Roadmap Forge — SSE timeline | S | **Done** (await merge) |
+| HAC-9 | Vertical roadmap UI — artifact mode | S | **Next** |
 
-Sprint 1 complete (HAC-5/6/7/31/32). **Dispatch:** HAC-18 next — sequential after HAC-8 merge ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
+Sprint 1 complete (HAC-5/6/7/31/32). **Dispatch:** HAC-18 merge → HAC-9 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
 
 ---
 
