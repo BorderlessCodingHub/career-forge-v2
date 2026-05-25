@@ -11,12 +11,14 @@ from pydantic import BaseModel, Field
 from career_forge.ai.executor import get_graph_executor
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
 from career_forge.ai.streaming.sse import events_to_sse
+from career_forge.schemas.diagnosis import DiagnosisResponse
 
 router = APIRouter()
 
 
 class ForgeRunRequest(BaseModel):
     user_id: str = Field(default="demo-ana")
+    diagnosis: DiagnosisResponse
     input: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -29,31 +31,48 @@ class ForgeRunResponse(BaseModel):
 
 @router.post("", response_model=ForgeRunResponse)
 async def forge_run(body: ForgeRunRequest) -> ForgeRunResponse:
-    """Start roadmap forge — collect full result (no SSE to client)."""
+    """Enqueue roadmap forge run — client streams via GET /forge/{run_id}/stream."""
     store = get_graph_run_store()
     run = GraphRun(
         graph_name="roadmap_forge",
         user_id=body.user_id,
-        input=body.input,
+        input={
+            "diagnosis": body.diagnosis.model_dump(),
+            **body.input,
+        },
     )
     store.save(run)
 
-    executor = get_graph_executor()
-    result = await executor.execute(run, stream=False)
-    assert isinstance(result.run, GraphRun)
-
     return ForgeRunResponse(
-        run_id=result.run.id,
-        status=result.run.status,
-        events=result.events,
-        output=result.run.output,
+        run_id=run.id,
+        status=run.status,
+        events=[],
+        output=None,
     )
 
 
 @router.get("/stream")
 async def forge_stream_demo() -> StreamingResponse:
-    """Demo SSE endpoint — creates ephemeral run and streams mock forge events."""
-    run = GraphRun(graph_name="roadmap_forge", user_id="demo-ana")
+    """Demo SSE endpoint — streams forge with default Ana-like diagnosis."""
+    from career_forge.ai.graphs.diagnosis import build_diagnosis_response
+    from career_forge.schemas.diagnosis import DiagnosisRequest
+
+    demo_diagnosis = build_diagnosis_response(
+        DiagnosisRequest(
+            goal_id="backend",
+            motivation="APIs para space tech",
+            answers={
+                "level": "Já programo em JavaScript há alguns meses.",
+                "git": "Subi um projeto no GitHub.",
+            },
+        ),
+    )
+    run = GraphRun(
+        graph_name="roadmap_forge",
+        user_id="demo-ana",
+        input={"diagnosis": demo_diagnosis.model_dump()},
+    )
+    get_graph_run_store().save(run)
     executor = get_graph_executor()
     event_iter = await executor.execute(run, stream=True)
     assert not isinstance(event_iter, GraphRunResult)

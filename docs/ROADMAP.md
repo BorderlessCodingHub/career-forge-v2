@@ -45,7 +45,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 **Target:** 2026-05-29 (MVP)
 
 - [x] **HAC-8** — Identity Engine (onboarding diagnóstico + **editable diagnosis** screen)
-- [ ] **HAC-18** — Live Roadmap Forge (LangGraph SSE + animation reveal) ⭐
+- [x] **HAC-18** — Live Roadmap Forge (LangGraph SSE + animation reveal) ⭐
 
 **Sequential:** HAC-8 → HAC-18
 

@@ -23,7 +23,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-8** (pending merge: **HAC-18**
 | AI JSON contracts | ✅ Done | HAC-7 — Pydantic schemas + fixtures migrated to `career_forge/schemas/` |
 | AI execution layer scaffold | ✅ Done | HAC-32 — `career_forge/ai/`, GraphRun, GraphExecutor, AgentFactory |
 | Identity onboarding + editable diagnosis | ✅ Done | HAC-8 — goal picker, pill rounds, POST /diagnosis via GraphExecutor |
-| Live Roadmap Forge (timeline-only SSE) | ⬜ Todo | HAC-18 — GraphExecutor stream mode, MVP target quinta 2026-05-29 |
+| Live Roadmap Forge (timeline-only SSE) | ✅ Done | HAC-18 — forge graph + SSE timeline + reveal (await merge) |
 | Vertical roadmap UI — artifact mode | ⬜ Todo | HAC-9 |
 | Mastery Validation | ⬜ Todo | HAC-10 — pitch focus mock interview |
 | Adaptive Planning | ⬜ Todo | HAC-11 |
@@ -67,7 +67,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 | UX docs + steady-state reference | ✅ |
 | Sprint board + agent lifecycle | ✅ |
 | Professional monorepo scaffold | ✅ |
-| Live forge SSE (timeline-only) | ⬜ |
+| Live forge SSE (timeline-only) | ✅ |
 | Validation interview | ⬜ |
 | End-to-end pitch | ⬜ |
 

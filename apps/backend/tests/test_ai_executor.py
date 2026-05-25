@@ -6,7 +6,20 @@ import pytest
 
 from career_forge.ai.executor import GraphExecutor
 from career_forge.ai.factory import AgentFactory
+from career_forge.ai.graphs.diagnosis import build_diagnosis_response
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
+from career_forge.schemas.diagnosis import DiagnosisRequest
+
+_FORGE_DIAGNOSIS = build_diagnosis_response(
+    DiagnosisRequest(
+        goal_id="backend",
+        motivation="APIs para space tech",
+        answers={
+            "level": "Já programo em JavaScript há alguns meses.",
+            "git": "Subi um projeto no GitHub.",
+        },
+    ),
+).model_dump()
 
 
 @pytest.fixture
@@ -19,7 +32,7 @@ async def test_execute_collect_records_events(executor: GraphExecutor) -> None:
     run = GraphRun(
         graph_name="roadmap_forge",
         user_id="test-user",
-        input={"profile_id": "demo"},
+        input={"diagnosis": _FORGE_DIAGNOSIS},
     )
     result = await executor.execute(run, stream=False)
     assert isinstance(result, GraphRunResult)
@@ -35,7 +48,11 @@ async def test_execute_collect_records_events(executor: GraphExecutor) -> None:
 async def test_execute_stream_yields_normalized_events(
     executor: GraphExecutor,
 ) -> None:
-    run = GraphRun(graph_name="roadmap_forge", user_id="test-user")
+    run = GraphRun(
+        graph_name="roadmap_forge",
+        user_id="test-user",
+        input={"diagnosis": _FORGE_DIAGNOSIS},
+    )
     event_iter = await executor.execute(run, stream=True)
     assert not isinstance(event_iter, GraphRunResult)
 
