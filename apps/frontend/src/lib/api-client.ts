@@ -1,14 +1,20 @@
 import type {
+  DemoAnaResponse,
+  DiagnosisRequest,
   DiagnosisResponse,
+  DiagnosisRunResponse,
+  ForgeRunResponse,
   MentorContextSnapshot,
-  MentorMessage,
   MentorReportResponse,
+  MentorRequest,
   MentorRunResponse,
   MockInterviewQuestionsResponse,
+  MockInterviewRequest,
   MockInterviewRunResponse,
   RoadmapResponse,
   RoadmapSyncNode,
   ValidationQuestionsResponse,
+  ValidationRequest,
   ValidationRunResponse,
 } from "@/types/contracts";
 import { getUserId } from "@/lib/user-session";
@@ -27,36 +33,14 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
   return res.json() as Promise<T>;
 }
 
-export type DiagnosisRunResponse = {
-  run_id: string;
-  status: string;
-  events: Array<Record<string, unknown>>;
-  diagnosis: DiagnosisResponse;
-};
-
-export type CreateDiagnosisPayload = {
-  user_id?: string;
-  goal_id: string;
-  motivation: string;
-  years_xp?: string;
-  answers: Record<string, string>;
-};
-
 export async function createDiagnosis(
-  payload: CreateDiagnosisPayload,
+  payload: DiagnosisRequest,
 ): Promise<DiagnosisRunResponse> {
   return apiFetch<DiagnosisRunResponse>("/diagnosis", {
     method: "POST",
     body: JSON.stringify({ user_id: getUserId(), ...payload }),
   });
 }
-
-export type ForgeRunResponse = {
-  run_id: string;
-  status: string;
-  events: Array<Record<string, unknown>>;
-  output: Record<string, unknown> | null;
-};
 
 export async function startForgeRun(
   diagnosis: DiagnosisResponse,
@@ -99,16 +83,8 @@ export async function getValidationQuestions(
   );
 }
 
-export type SubmitValidationPayload = {
-  user_id?: string;
-  node_id: string;
-  node_title: string;
-  rubric: string[];
-  answers: Array<{ question_id: string; answer: string }>;
-};
-
 export async function submitValidation(
-  payload: SubmitValidationPayload,
+  payload: ValidationRequest,
   userId?: string,
 ): Promise<ValidationRunResponse> {
   const resolvedUserId = userId ?? getUserId();
@@ -126,16 +102,8 @@ export async function getMockInterviewQuestions(
   );
 }
 
-export type SubmitMockInterviewPayload = {
-  user_id?: string;
-  node_id: string;
-  node_title: string;
-  rubric: string[];
-  answers: Array<{ question_id: string; answer: string }>;
-};
-
 export async function submitMockInterview(
-  payload: SubmitMockInterviewPayload,
+  payload: MockInterviewRequest,
   userId?: string,
 ): Promise<MockInterviewRunResponse> {
   const resolvedUserId = userId ?? getUserId();
@@ -145,33 +113,9 @@ export async function submitMockInterview(
   });
 }
 
-export type DemoValidationSummary = {
-  node_id: string;
-  score: number;
-  passed: boolean;
-  feedback?: string | null;
-};
-
-export type DemoAnaResponse = {
-  user_id: string;
-  display_name: string;
-  diagnosis: DiagnosisResponse;
-  roadmap: RoadmapResponse;
-  validations: DemoValidationSummary[];
-  pitch_node_id: string;
-};
-
 export async function getDemoAna(): Promise<DemoAnaResponse> {
   return apiFetch<DemoAnaResponse>("/demo/ana");
 }
-
-export type SendMentorMessagePayload = {
-  user_id?: string;
-  message: string;
-  node_id?: string | null;
-  node_title?: string | null;
-  history?: MentorMessage[];
-};
 
 export async function getMentorContext(
   nodeId?: string | null,
@@ -184,7 +128,7 @@ export async function getMentorContext(
 }
 
 export async function sendMentorMessage(
-  payload: SendMentorMessagePayload,
+  payload: MentorRequest,
   userId?: string,
 ): Promise<MentorRunResponse> {
   const resolvedUserId = userId ?? getUserId();
