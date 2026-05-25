@@ -81,7 +81,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 - [x] **HAC-13** [P] — Contextual Mentor
 - [ ] **HAC-14** [P] — Mock Interview Loop
-- [ ] **HAC-15** [P] — Relatório mentor
+- [x] **HAC-15** [P] — Relatório mentor
 
 **Parallel:** HAC-13, HAC-14, HAC-15 after HAC-12 (HAC-15 also needs HAC-10)
 
