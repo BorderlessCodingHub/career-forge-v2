@@ -16,6 +16,7 @@ from career_forge.schemas.validation import (
     ValidationResponse,
     ValidationRunResponse,
 )
+from career_forge.services import planning as planning_service
 from career_forge.services import validation as validation_service
 
 router = APIRouter()
@@ -71,14 +72,34 @@ async def run_validation(
 
     validation = _extract_validation(result.run.output)
 
+    node_status = validation.status.value
+    mastery_score = validation.score
+    plan_update = None
+    graph_patch = None
+    roadmap = None
+
     try:
         _, user_skill = validation_service.persist_validation_result(db, body, validation)
         node_status = user_skill.status
         mastery_score = user_skill.mastery_score
     except Exception:
         db.rollback()
-        node_status = validation.status.value
-        mastery_score = validation.score
+
+    try:
+        roadmap, graph_patch, plan_update = planning_service.recalibrate_after_validation(
+            db,
+            body.user_id,
+            body.node_id,
+            body.node_title,
+            validation,
+        )
+    except Exception:
+        db.rollback()
+        roadmap, graph_patch, plan_update = planning_service.recalibrate_from_catalog(
+            body.node_id,
+            body.node_title,
+            validation,
+        )
 
     return ValidationRunResponse(
         run_id=result.run.id,
@@ -88,4 +109,7 @@ async def run_validation(
         node_id=body.node_id,
         node_status=node_status,
         mastery_score=mastery_score,
+        plan_update=plan_update,
+        graph_patch=graph_patch,
+        roadmap=roadmap,
     )

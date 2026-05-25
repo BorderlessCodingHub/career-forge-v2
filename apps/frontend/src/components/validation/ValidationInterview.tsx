@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui";
+import { storeAdaptiveSession } from "@/lib/adaptive-session";
 import { getValidationQuestions, submitValidation } from "@/lib/api-client";
-import type { ValidationQuestion, ValidationResponse } from "@/types/contracts";
+import type { PlanUpdateResponse, ValidationQuestion, ValidationResponse } from "@/types/contracts";
 
 import { ValidationResult } from "./ValidationResult";
 
@@ -23,6 +24,7 @@ export function ValidationInterview({ nodeId }: ValidationInterviewProps) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [draft, setDraft] = useState("");
   const [result, setResult] = useState<ValidationResponse | null>(null);
+  const [planUpdate, setPlanUpdate] = useState<PlanUpdateResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const loadQuestions = useCallback(async () => {
@@ -36,6 +38,7 @@ export function ValidationInterview({ nodeId }: ValidationInterviewProps) {
       setAnswers({});
       setDraft("");
       setResult(null);
+      setPlanUpdate(null);
       setPhase("interview");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao carregar entrevista");
@@ -77,6 +80,14 @@ export function ValidationInterview({ nodeId }: ValidationInterviewProps) {
         })),
       });
       setResult(response.validation);
+      if (response.plan_update && response.roadmap) {
+        setPlanUpdate(response.plan_update);
+        storeAdaptiveSession({
+          plan: response.plan_update,
+          roadmap: response.roadmap,
+          nodeId,
+        });
+      }
       setPhase("result");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao avaliar respostas");
@@ -89,6 +100,7 @@ export function ValidationInterview({ nodeId }: ValidationInterviewProps) {
       <ValidationResult
         nodeTitle={nodeTitle}
         result={result}
+        planUpdate={planUpdate}
         onRetry={() => {
           void loadQuestions();
         }}

@@ -4,17 +4,23 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
-import type { ValidationResponse } from "@/types/contracts";
+import type { PlanUpdateResponse, ValidationResponse } from "@/types/contracts";
 
 import { ScoreRing } from "./ScoreRing";
 
 type ValidationResultProps = {
   nodeTitle: string;
   result: ValidationResponse;
+  planUpdate?: PlanUpdateResponse | null;
   onRetry: () => void;
 };
 
-export function ValidationResult({ nodeTitle, result, onRetry }: ValidationResultProps) {
+export function ValidationResult({
+  nodeTitle,
+  result,
+  planUpdate,
+  onRetry,
+}: ValidationResultProps) {
   const [accordionOpen, setAccordionOpen] = useState(false);
   const passed = result.status === "aprovado";
 
@@ -113,10 +119,17 @@ export function ValidationResult({ nodeTitle, result, onRetry }: ValidationResul
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-        <Link href="/roadmap">
+        <Link href={passed ? "/roadmap" : "/roadmap?adaptive=1"}>
           <Button variant="ghost">← Voltar à trilha</Button>
         </Link>
         <div className="flex flex-wrap gap-2">
+          {!passed && planUpdate && (
+            <Link href="/roadmap?adaptive=1">
+              <Button data-testid="view-adaptive-roadmap">
+                Ver trilha adaptada →
+              </Button>
+            </Link>
+          )}
           <Button variant="ghost" onClick={onRetry}>
             Refazer validação
           </Button>

@@ -12,7 +12,7 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 
 | Task | Read in order | Then do |
 |------|---------------|---------|
-| **Implement a Linear issue** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Branch `HAC-XX-title-slug` · implement · triple gate · merge · **end-task** |
+| **Implement a Linear issue** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Worktree `../worktrees/hac-XX-<slug>` · branch `HAC-XX-title-slug` · triple gate · merge · **end-task** |
 | **AI / LangGraph work** | [EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) → [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) → [REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) § AI layer | Use `GraphExecutor` + `AgentFactory` — no per-graph streaming |
 | **Bootstrap / first session** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | Paste block below · `make smoke` when apps exist |
 | **Cloud agent / Linear MCP** | [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Set `HACKATON_LINEAR_API_KEY` in [Cloud secrets](https://cursor.com/dashboard/cloud-agents) · repo [`.cursor/mcp.json`](./.cursor/mcp.json) |

@@ -131,4 +131,31 @@ export type ValidationRunResponse = {
   node_id: string;
   node_status: string;
   mastery_score: number;
+  plan_update?: PlanUpdateResponse | null;
+  graph_patch?: GraphPatch | null;
+  roadmap?: RoadmapResponse | null;
+};
+
+export type TodayFocus = {
+  node_id: string;
+  title: string;
+  duration_minutes: number;
+  objective: string;
+};
+
+export type PlanUpdateResponse = {
+  today_focus: TodayFocus;
+  next_mission: string;
+};
+
+export type GraphPatch = {
+  patches: Array<{
+    node_id: string;
+    status: SkillStatus;
+    mastery_estimated: number;
+    priority: string;
+    rationale: string;
+  }>;
+  continue_research: boolean;
+  summary: string;
 };

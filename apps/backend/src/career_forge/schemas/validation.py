@@ -5,6 +5,9 @@ from __future__ import annotations
 from pydantic import BaseModel, Field, field_validator
 
 from career_forge.schemas.common import ValidationStatus
+from career_forge.schemas.forge import GraphPatch
+from career_forge.schemas.planning import PlanUpdateResponse
+from career_forge.schemas.roadmap import RoadmapResponse
 
 
 class ValidationQuestion(BaseModel):
@@ -78,3 +81,6 @@ class ValidationRunResponse(BaseModel):
     node_id: str
     node_status: str
     mastery_score: int
+    plan_update: PlanUpdateResponse | None = None
+    graph_patch: GraphPatch | None = None
+    roadmap: RoadmapResponse | None = None

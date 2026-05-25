@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-10**
+Last updated: **2026-05-25** · Last merge: **HAC-11**
 
 ---
 
@@ -26,7 +26,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-10**
 | Live Roadmap Forge (timeline-only SSE) | ✅ Done | HAC-18 — forge graph + SSE timeline + reveal |
 | Vertical roadmap UI — artifact mode | ✅ Done | HAC-9 — GET /roadmap, vertical spine, node drawer |
 | Mastery Validation | ✅ Done | HAC-10 — validation graph, /validate interview UI, score ring |
-| Adaptive Planning | ⬜ Todo | HAC-11 — next |
+| Adaptive Planning | ✅ Done | HAC-11 — GraphPatch pós-validação, mission banner, nó revisar destacado |
 
 ---
 
@@ -37,10 +37,10 @@ Last updated: **2026-05-25** · Last merge: **HAC-10**
 | Issue | Title | Class | State |
 |-------|-------|-------|-------|
 | **HAC-10** | Mastery Validation | S | **Done** |
-| HAC-11 | Adaptive Planning | S | **Next** |
-| HAC-12 | Demo mode + seed Ana | S | Todo |
+| **HAC-11** | Adaptive Planning | S | **Done** |
+| HAC-12 | Demo mode + seed Ana | S | **Next** |
 
-Sprint 3 complete (HAC-9). **Dispatch:** HAC-11 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
+Sprint 4 in progress. **Dispatch:** HAC-12 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
 
 ---
 

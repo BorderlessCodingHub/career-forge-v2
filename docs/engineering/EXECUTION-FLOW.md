@@ -307,4 +307,26 @@ Bootstrap paste block and subagent Task template: [AGENTS.md](../../AGENTS.md) �
 
 ---
 
+## Git worktrees (agent isolation)
+
+Use a **sibling worktree** outside the main checkout so issue work does not pollute the primary workspace:
+
+```bash
+# From HB01-2026_soft-push on main
+git worktree add ../worktrees/hac-XX-<slug> -b hac-XX-<slug> origin/main
+cd ../worktrees/hac-XX-<slug>
+# implement → test → merge to main from worktree or main checkout
+```
+
+After merge + end-task:
+
+```bash
+git worktree remove ../worktrees/hac-XX-<slug>
+git branch -d hac-XX-<slug>
+```
+
+Keep `main` clean for harness/docs and parallel prep; one worktree per active `[S]` issue.
+
+---
+
 *HB01-2026 · Programadores Sem Pátria*
