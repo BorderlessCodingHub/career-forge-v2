@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
+import { sendMentorMessage } from "@/lib/api-client";
 import type { RoadmapNode } from "@/types/contracts";
 
 type NodeDrawerProps = {
   node: RoadmapNode | null;
   onClose: () => void;
+  onOpenMentor?: () => void;
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -20,10 +22,33 @@ const STATUS_LABELS: Record<string, string> = {
   revisar: "Revisar",
 };
 
-export function NodeDrawer({ node, onClose }: NodeDrawerProps) {
+export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
   const [askDraft, setAskDraft] = useState("");
+  const [askReply, setAskReply] = useState<string | null>(null);
+  const [askLoading, setAskLoading] = useState(false);
+  const [askError, setAskError] = useState<string | null>(null);
 
   if (!node) return null;
+
+  async function handleAskAi() {
+    const text = askDraft.trim();
+    if (!text || askLoading) return;
+    setAskLoading(true);
+    setAskError(null);
+    try {
+      const response = await sendMentorMessage({
+        message: text,
+        node_id: node.node_id,
+        node_title: node.title,
+      });
+      setAskReply(response.mentor.reply);
+      setAskDraft("");
+    } catch (err) {
+      setAskError(err instanceof Error ? err.message : "Falha ao perguntar ao mentor");
+    } finally {
+      setAskLoading(false);
+    }
+  }
 
   return (
     <>
@@ -104,9 +129,30 @@ export function NodeDrawer({ node, onClose }: NodeDrawerProps) {
               rows={3}
               data-testid="ask-ai-input"
             />
-            <Button variant="ghost" className="mt-2" disabled={!askDraft.trim()}>
-              Perguntar ao mentor (HAC-13)
-            </Button>
+            <div className="mt-2 flex gap-2">
+              <Button
+                variant="ghost"
+                disabled={!askDraft.trim() || askLoading}
+                onClick={() => void handleAskAi()}
+                data-testid="ask-ai-submit"
+              >
+                {askLoading ? "Consultando…" : "Perguntar ao mentor"}
+              </Button>
+              {onOpenMentor && (
+                <Button variant="ghost" onClick={onOpenMentor} data-testid="open-mentor-drawer">
+                  Chat completo
+                </Button>
+              )}
+            </div>
+            {askError && <p className="mt-2 text-sm text-danger">{askError}</p>}
+            {askReply && (
+              <p
+                className="mt-3 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-secondary"
+                data-testid="ask-ai-reply"
+              >
+                {askReply}
+              </p>
+            )}
           </div>
         </div>
 

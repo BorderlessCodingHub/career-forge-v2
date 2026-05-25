@@ -1,5 +1,8 @@
 import type {
   DiagnosisResponse,
+  MentorContextSnapshot,
+  MentorMessage,
+  MentorRunResponse,
   RoadmapResponse,
   RoadmapSyncNode,
   ValidationQuestionsResponse,
@@ -129,6 +132,35 @@ export type DemoAnaResponse = {
 
 export async function getDemoAna(): Promise<DemoAnaResponse> {
   return apiFetch<DemoAnaResponse>("/demo/ana");
+}
+
+export type SendMentorMessagePayload = {
+  user_id?: string;
+  message: string;
+  node_id?: string | null;
+  node_title?: string | null;
+  history?: MentorMessage[];
+};
+
+export async function getMentorContext(
+  nodeId?: string | null,
+  userId?: string,
+): Promise<MentorContextSnapshot> {
+  const resolvedUserId = userId ?? getUserId();
+  const params = new URLSearchParams({ user_id: resolvedUserId });
+  if (nodeId) params.set("node_id", nodeId);
+  return apiFetch<MentorContextSnapshot>(`/mentor/context?${params.toString()}`);
+}
+
+export async function sendMentorMessage(
+  payload: SendMentorMessagePayload,
+  userId?: string,
+): Promise<MentorRunResponse> {
+  const resolvedUserId = userId ?? getUserId();
+  return apiFetch<MentorRunResponse>("/mentor", {
+    method: "POST",
+    body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
+  });
 }
 
 export async function* streamForgeEvents(

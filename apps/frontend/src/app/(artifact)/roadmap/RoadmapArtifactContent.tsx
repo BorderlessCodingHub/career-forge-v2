@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { MissionBanner, NodeDrawer, VerticalSpine, VerticalSpineShell } from "@/components/roadmap";
+import { MissionBanner, MentorDrawer, NodeDrawer, VerticalSpine, VerticalSpineShell } from "@/components/roadmap";
 import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session";
 import { getRoadmap, syncRoadmap } from "@/lib/api-client";
 import { getForgeGraph } from "@/lib/forge-session";
@@ -31,6 +31,7 @@ export default function RoadmapArtifactPageContent() {
   const [planUpdate, setPlanUpdate] = useState<PlanUpdateResponse | null>(null);
   const [highlightNodeId, setHighlightNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [mentorOpen, setMentorOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -118,17 +119,48 @@ export default function RoadmapArtifactPageContent() {
         )}
 
         {roadmap && !loading && (
-          <VerticalSpine
-            categories={roadmap.categories}
-            nodes={roadmap.nodes}
-            selectedNodeId={selectedNodeId ?? highlightNodeId}
-            onSelectNode={setSelectedNodeId}
-          />
+          <>
+            <div className="mx-auto mt-8 flex max-w-3xl justify-center px-4">
+              <button
+                type="button"
+                onClick={() => setMentorOpen(true)}
+                className="inline-flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-left shadow-sm transition hover:border-accent/40 hover:bg-surface-elevated"
+                data-testid="mentor-cta"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-semibold text-white">
+                  RT
+                </span>
+                <span>
+                  <span className="block text-sm font-medium text-text-primary">
+                    Mentor contextual
+                  </span>
+                  <span className="block text-xs text-text-muted">
+                    Sabe onde você errou · chat com memória da trilha
+                  </span>
+                </span>
+              </button>
+            </div>
+            <VerticalSpine
+              categories={roadmap.categories}
+              nodes={roadmap.nodes}
+              selectedNodeId={selectedNodeId ?? highlightNodeId}
+              onSelectNode={setSelectedNodeId}
+            />
+          </>
         )}
 
         <NodeDrawer
           node={selectedNode}
           onClose={() => setSelectedNodeId(null)}
+          onOpenMentor={() => {
+            setMentorOpen(true);
+          }}
+        />
+
+        <MentorDrawer
+          open={mentorOpen}
+          onClose={() => setMentorOpen(false)}
+          node={selectedNode}
         />
       </main>
     </VerticalSpineShell>

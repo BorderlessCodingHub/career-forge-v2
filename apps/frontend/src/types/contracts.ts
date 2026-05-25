@@ -159,3 +159,31 @@ export type GraphPatch = {
   continue_research: boolean;
   summary: string;
 };
+
+export type MentorMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type MentorContextSnapshot = {
+  recent_gaps: string[];
+  recent_strengths: string[];
+  failed_nodes: string[];
+  current_node_status?: string | null;
+  current_node_mastery?: number | null;
+  validation_count: number;
+  last_validation_feedback?: string | null;
+};
+
+export type MentorResponse = {
+  reply: string;
+  references: string[];
+  context_snapshot: MentorContextSnapshot;
+};
+
+export type MentorRunResponse = {
+  run_id: string;
+  status: string;
+  events: Array<Record<string, unknown>>;
+  mentor: MentorResponse;
+};
