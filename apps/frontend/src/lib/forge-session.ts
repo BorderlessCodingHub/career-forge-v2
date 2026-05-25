@@ -1,16 +1,13 @@
-import type { DiagnosisResponse, RoadmapForgeEvent } from "@/types/contracts";
+import type {
+  DiagnosisResponse,
+  ForgeGraphNode,
+  RoadmapForgeEvent,
+} from "@/types/contracts";
+
+export type { ForgeGraphNode };
 
 const FORGE_GRAPH_KEY = "career-forge.forge-graph";
 const FORGE_RUN_KEY = "career-forge.forge-run-id";
-
-export type ForgeGraphNode = {
-  node_id: string;
-  title?: string;
-  status: string;
-  mastery_score: number;
-  priority?: string;
-  rationale?: string;
-};
 
 function readJson<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
@@ -51,12 +48,7 @@ export function extractGraphFromEvents(
 ): ForgeGraphNode[] | null {
   const ready = events.find((e) => e.type === "graph_ready");
   if (!ready || ready.type !== "graph_ready") return null;
-  return ready.graph.map((node) => ({
-    node_id: node.node_id,
-    title: "title" in node ? (node.title as string | undefined) : undefined,
-    status: node.status,
-    mastery_score: node.mastery_score,
-  }));
+  return ready.graph;
 }
 
 export function diagnosisForForge(

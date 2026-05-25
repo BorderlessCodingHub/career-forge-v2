@@ -8,6 +8,19 @@ export type SkillStatus =
   | "aprovado"
   | "revisar";
 
+/** Dynamic per-user skill state — mirrors backend UserSkillNode. */
+export type RoadmapSyncNode = {
+  node_id: string;
+  title?: string | null;
+  status: SkillStatus;
+  mastery_score: number;
+  priority?: string | null;
+  rationale?: string | null;
+};
+
+/** Forge session graph node — same contract as RoadmapSyncNode. */
+export type ForgeGraphNode = RoadmapSyncNode;
+
 export type RoadmapForgeEvent =
   | { type: "reasoning_delta"; text: string; step: string }
   | { type: "artifact_found"; label: string; detail: string }
@@ -22,14 +35,7 @@ export type RoadmapForgeEvent =
   | { type: "step_complete"; step: string; iteration: number }
   | {
       type: "graph_ready";
-      graph: Array<{
-        node_id: string;
-        title?: string;
-        status: SkillStatus;
-        mastery_score: number;
-        priority?: string;
-        rationale?: string;
-      }>;
+      graph: RoadmapSyncNode[];
     }
   | { type: "error"; message: string };
 
@@ -80,15 +86,6 @@ export type RoadmapResponse = {
   track: RoadmapTrack;
   categories: RoadmapCategory[];
   nodes: RoadmapNode[];
-};
-
-export type RoadmapSyncNode = {
-  node_id: string;
-  title: string;
-  status: SkillStatus | string;
-  mastery_score: number;
-  priority?: string | null;
-  rationale?: string | null;
 };
 
 export type ValidationStatus = "aprovado" | "revisar";
@@ -222,4 +219,60 @@ export type MentorReportResponse = {
   profile_label: string;
   validations: MentorReportValidationEntry[];
   learner_gaps: string[];
+};
+
+export type DiagnosisRequest = {
+  user_id?: string;
+  goal_id: string;
+  motivation: string;
+  years_xp?: "0-1" | "1-3" | "3-5" | "5+";
+  answers: Record<string, string>;
+};
+
+export type DiagnosisRunResponse = {
+  run_id: string;
+  status: string;
+  events: Array<Record<string, unknown>>;
+  diagnosis: DiagnosisResponse;
+};
+
+export type ForgeRunResponse = {
+  run_id: string;
+  status: string;
+  events: Array<Record<string, unknown>>;
+  output: Record<string, unknown> | null;
+};
+
+export type ValidationRequest = {
+  user_id?: string;
+  node_id: string;
+  node_title: string;
+  rubric: string[];
+  answers: ValidationAnswer[];
+};
+
+export type MockInterviewRequest = ValidationRequest;
+
+export type DemoValidationSummary = {
+  node_id: string;
+  score: number;
+  passed: boolean;
+  feedback?: string | null;
+};
+
+export type DemoAnaResponse = {
+  user_id: string;
+  display_name: string;
+  diagnosis: DiagnosisResponse;
+  roadmap: RoadmapResponse;
+  validations: DemoValidationSummary[];
+  pitch_node_id: string;
+};
+
+export type MentorRequest = {
+  user_id?: string;
+  message: string;
+  node_id?: string | null;
+  node_title?: string | null;
+  history?: MentorMessage[];
 };

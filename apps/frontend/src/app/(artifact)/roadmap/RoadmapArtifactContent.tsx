@@ -8,16 +8,18 @@ import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session
 import { getRoadmap, syncRoadmap } from "@/lib/api-client";
 import { getForgeGraph } from "@/lib/forge-session";
 import { getStoredDiagnosis } from "@/lib/onboarding-session";
-import type { PlanUpdateResponse, RoadmapNode, RoadmapResponse } from "@/types/contracts";
+import type {
+  ForgeGraphNode,
+  PlanUpdateResponse,
+  RoadmapNode,
+  RoadmapResponse,
+  RoadmapSyncNode,
+} from "@/types/contracts";
 
-function forgeGraphToSyncNodes(graph: NonNullable<ReturnType<typeof getForgeGraph>>) {
+function forgeGraphToSyncNodes(graph: ForgeGraphNode[]): RoadmapSyncNode[] {
   return graph.map((node) => ({
-    node_id: node.node_id,
+    ...node,
     title: node.title ?? node.node_id,
-    status: node.status,
-    mastery_score: node.mastery_score,
-    priority: node.priority ?? null,
-    rationale: node.rationale ?? null,
   }));
 }
 
