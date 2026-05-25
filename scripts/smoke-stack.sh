@@ -5,8 +5,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-API_URL="${API_URL:-http://localhost:8000}"
-WEB_URL="${WEB_URL:-http://localhost:${WEB_HOST_PORT:-3000}}"
+API_URL="${BACKEND_URL:-${API_URL:-http://localhost:8000}}"
+WEB_URL="${FRONTEND_URL:-${WEB_URL:-http://localhost:${WEB_HOST_PORT:-3000}}}"
 
 wait_for_url() {
   local url="$1"
@@ -47,6 +47,6 @@ print("  OK: health payload valid:", data)
 echo "smoke-stack: OpenAPI /docs"
 curl -sf "${API_URL}/docs" | grep -q "Swagger UI" && echo "  OK: /docs serves OpenAPI UI"
 
-wait_for_url "${WEB_URL}" "web home" 45
+wait_for_url "${WEB_URL}" "frontend home" 45
 
 echo "smoke-stack: STACK OK"

@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-5** (monorepo Next.js + FastAPI + Postgres + docker-compose)
+Last updated: **2026-05-25** · Last merge: **HAC-31** (professional scaffold — backend/frontend restructure)
 
 ---
 
@@ -12,14 +12,15 @@ Last updated: **2026-05-25** · Last merge: **HAC-5** (monorepo Next.js + FastAP
 |------|--------|-------|
 | Agent harness | ✅ Done | AGENTS.md, rules, hooks, triple gate docs |
 | Agent lifecycle + sprint board | ✅ Done | HAC-30 — AGENT-LIFECYCLE, SPRINT-BOARD, parallel-dispatch |
+| Professional repo scaffold | ✅ Done | HAC-31 — `apps/backend` + `apps/frontend`, REPO-STRUCTURE.md |
 | Claude Design prototype | ⚠️ Partial sync | Artifact mode (HAC-25); pill diagnostic; drift on forge stream |
 | UX documentation | ✅ Done | UX-FLOW, SCREEN-INTENT, artifact mode spec |
-| Borderless theming (HAC-23) | ✅ Done | BORDERLESS-THEMING, prototype CSS vars |
+| Borderless theming (HAC-23) | ✅ Done | BORDERLESS-THEMING, prototype CSS vars, Tailwind tokens in frontend |
 | Backlog compliance (HAC-26) | ✅ Done | Docs + Linear HAC-5–18 aligned |
 | Linear sprint milestones | ✅ Done | Sprint 1–5 milestones + deps (HAC-30) |
-| Monorepo apps/web + apps/api | ✅ Done | HAC-5 — Next.js + FastAPI + docker-compose + deploy skeleton |
+| Monorepo apps/frontend + apps/backend | ✅ Done | HAC-5 + HAC-31 — domain-oriented layers |
 | Postgres schema + seed | ✅ Done | HAC-6 — models, Alembic, roadmap.json, seed Ana |
-| AI JSON contracts | ⬜ Todo | HAC-7 |
+| AI JSON contracts | ✅ Done | HAC-7 — Pydantic schemas + fixtures migrated to `career_forge/schemas/` |
 | Identity onboarding + editable diagnosis | ⬜ Todo | HAC-8 |
 | Live Roadmap Forge (timeline-only SSE) | ⬜ Todo | HAC-18 — MVP target quinta 2026-05-29 |
 | Vertical roadmap UI — artifact mode | ⬜ Todo | HAC-9 |
@@ -36,7 +37,8 @@ Last updated: **2026-05-25** · Last merge: **HAC-5** (monorepo Next.js + FastAP
 |-------|-------|-------|-------|
 | HAC-5 [P] | Monorepo + deploy skeleton | Arthur (FE) / shared | Done |
 | HAC-6 [P] | Skill graph schema + seed | — | Done |
-| HAC-7 [P] | AI JSON contracts | — | Backlog |
+| HAC-7 [P] | AI JSON contracts | — | Done |
+| HAC-31 | Professional scaffold restructure | — | Done |
 | HAC-30 | Arthur sync — sprint roadmap + lifecycle | Matheus | Done |
 
 **Dispatch:** Launch HAC-5/6/7 in ONE message when HAC-30 merges ([parallel-dispatch](../.cursor/rules/parallel-dispatch.mdc))
@@ -64,6 +66,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 | UI prototype (artifact mode + onboarding pills) | ⚠️ |
 | UX docs + steady-state reference | ✅ |
 | Sprint board + agent lifecycle | ✅ |
+| Professional monorepo scaffold | ✅ |
 | Live forge SSE (timeline-only) | ⬜ |
 | Validation interview | ⬜ |
 | End-to-end pitch | ⬜ |

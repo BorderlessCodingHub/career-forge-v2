@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Gate C — harness + API/DB checks when stack is available (HAC-5+)
+# Gate C — harness + backend/frontend structure checks (HAC-31+)
 set -euo pipefail
 
 checks=0
@@ -21,16 +21,36 @@ echo "agent-verify: Career Forge harness"
 check test -f AGENTS.md
 check test -f docs/CHECKPOINT.md
 check test -f docs/AGENT-DELIVERY.md
+check test -f docs/engineering/REPO-STRUCTURE.md
 check test -f .cursor/rules/end-task-workflow.mdc
 check test -f claude-design-docs/README.md
 check test -f claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md
 check test -f claude-design-docs/BORDERLESS-THEMING.md
 check test -f .cursor/rules/ui-product-sync.mdc
-check test -f apps/api/app/main.py
-check test -f apps/web/app/page.tsx
+check test -f apps/backend/src/career_forge/main.py
+check test -f apps/backend/src/career_forge/db/session.py
+check test ! -f apps/backend/src/career_forge/database.py
+check test -f apps/frontend/src/app/layout.tsx
+check test -f apps/frontend/src/app/\(setup\)/page.tsx
 check test -f docker-compose.yml
 
-API_URL="${API_URL:-http://localhost:8000}"
+# No legacy app paths (exclude harness docs that mention the ban)
+LEGACY_EXCLUDE='(REPO-STRUCTURE|end-task-workflow|AGENT-LIFECYCLE|AGENT-DELIVERY|agent-verify\.sh)'
+if find . -type f \( -name "*.md" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" -o -name "Makefile" -o -name "*.mdc" -o -name "*.toml" -o -name "*.json" \) \
+  ! -path "./.git/*" \
+  -exec grep -lE 'apps/(api|web)' {} + 2>/dev/null | grep -vE "${LEGACY_EXCLUDE}" | grep -q .; then
+  echo "  FAIL: legacy apps/api or apps/web references found"
+  find . -type f \( -name "*.md" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" -o -name "Makefile" -o -name "*.mdc" -o -name "*.toml" -o -name "*.json" \) \
+    ! -path "./.git/*" \
+    -exec grep -lE 'apps/(api|web)' {} + 2>/dev/null | grep -vE "${LEGACY_EXCLUDE}" || true
+  exit 1
+else
+  checks=$((checks + 1))
+  passed=$((passed + 1))
+  echo "  OK: no legacy apps/api or apps/web references"
+fi
+
+API_URL="${BACKEND_URL:-${API_URL:-http://localhost:8000}}"
 if curl -sf "${API_URL}/health" >/dev/null 2>&1; then
   checks=$((checks + 1))
   if curl -sf "${API_URL}/health" | python3 -c '
@@ -56,7 +76,7 @@ python3 - <<PY
 import json
 print(json.dumps({
   "status": "VERIFIED",
-  "checks": "harness+monorepo",
+  "checks": "harness+monorepo+structure",
   "api_runtime": "${db_status}"
 }))
 PY

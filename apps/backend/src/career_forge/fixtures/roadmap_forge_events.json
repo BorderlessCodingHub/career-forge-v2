@@ -1,0 +1,81 @@
+[
+  {
+    "type": "reasoning_delta",
+    "text": "Cruzando perfil iniciante_js com catálogo backend-beginner…",
+    "step": "analyze_gaps"
+  },
+  {
+    "type": "artifact_found",
+    "label": "Sinal forte: Git e GitHub",
+    "detail": "versionamento OK · pré-validado pela evidência anterior"
+  },
+  {
+    "type": "node_updated",
+    "node": {
+      "node_id": "git",
+      "status": "aprovado",
+      "mastery_score": 78,
+      "priority": "low"
+    }
+  },
+  {
+    "type": "step_complete",
+    "step": "accumulate_graph",
+    "iteration": 1
+  },
+  {
+    "type": "graph_ready",
+    "graph": [
+      {
+        "node_id": "js",
+        "title": "JavaScript base",
+        "status": "aprovado",
+        "mastery_score": 65,
+        "priority": "low"
+      },
+      {
+        "node_id": "git",
+        "title": "Git e GitHub",
+        "status": "aprovado",
+        "mastery_score": 78,
+        "priority": "low"
+      },
+      {
+        "node_id": "http",
+        "title": "HTTP básico",
+        "status": "recomendado",
+        "mastery_score": 42,
+        "priority": "high",
+        "rationale": "Próximo nó da cadeia crítica"
+      },
+      {
+        "node_id": "db",
+        "title": "Banco relacional",
+        "status": "recomendado",
+        "mastery_score": 35,
+        "priority": "medium"
+      },
+      {
+        "node_id": "rest",
+        "title": "APIs REST",
+        "status": "bloqueado",
+        "mastery_score": 0,
+        "priority": "high"
+      },
+      {
+        "node_id": "auth",
+        "title": "Autenticação JWT",
+        "status": "bloqueado",
+        "mastery_score": 0,
+        "priority": "medium"
+      },
+      {
+        "node_id": "final",
+        "title": "Projeto: API CRUD",
+        "status": "bloqueado",
+        "mastery_score": 0,
+        "priority": "low"
+      }
+    ]
+  }
+]

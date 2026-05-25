@@ -1,7 +1,7 @@
 ---
 description: Read claude-design-docs before UI work; update PRODUCT-SOURCE-OF-TRUTH when UI paradigm changes.
 globs:
-  - apps/web/**
+  - apps/frontend/**
   - claude-design-docs/**
   - "**/tailwind.config.*"
   - "**/*.css"
@@ -33,7 +33,7 @@ Compare three views:
 
 - **Docs intent** — UX-FLOW + SCREEN-INTENT (wins over prototype flow)
 - **Prototype** — tokens, components, copy
-- **Implemented UI** — `apps/web/` when present
+- **Implemented UI** — `apps/frontend/` when present
 - **Product goals** — CHECKPOINT wow features
 
 Resolve conflicts using the hierarchy in PRODUCT-SOURCE-OF-TRUTH (goals → screen intent → prototype → code).

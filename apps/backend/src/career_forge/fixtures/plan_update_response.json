@@ -1,0 +1,9 @@
+{
+  "today_focus": {
+    "node_id": "http",
+    "title": "HTTP básico",
+    "duration_minutes": 40,
+    "objective": "Métodos HTTP, status codes e headers comuns"
+  },
+  "next_mission": "HTTP básico — métodos e status codes (40 min)"
+}

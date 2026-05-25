@@ -32,7 +32,8 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 - [x] **HAC-5** [P] — Monorepo Next.js + FastAPI + Postgres + deploy
 - [x] **HAC-6** [P] — Skill graph schema + roadmap.json seed
-- [ ] **HAC-7** [P] — Pydantic + LangGraph state contracts
+- [x] **HAC-7** [P] — Pydantic + LangGraph state contracts
+- [x] **HAC-31** — Professional scaffold (`apps/backend` + `apps/frontend`)
 
 **Parallel:** HAC-5, HAC-6, HAC-7 after HAC-19 (no cross-deps)
 

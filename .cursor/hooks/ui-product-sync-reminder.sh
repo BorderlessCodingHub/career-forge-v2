@@ -16,7 +16,7 @@ fi
 ui_touched=0
 if git rev-parse --git-dir >/dev/null 2>&1; then
   ui_files=$(git diff --name-only HEAD 2>/dev/null; git diff --name-only --cached 2>/dev/null; git ls-files --others --exclude-standard 2>/dev/null)
-  if printf '%s\n' "$ui_files" | grep -qE '^(apps/web/|claude-design-docs/|.*tailwind\.config\.|.*\.css$)'; then
+  if printf '%s\n' "$ui_files" | grep -qE '^(apps/frontend/|claude-design-docs/|.*tailwind\.config\.|.*\.css$)'; then
     ui_touched=1
   fi
 fi

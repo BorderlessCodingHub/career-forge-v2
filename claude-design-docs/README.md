@@ -142,7 +142,7 @@ Ver [brief-v1.md](./brief-v1.md) — prompts usados no Claude Design (pré HAC-2
 Ao implementar:
 
 1. Extrair tokens → `tailwind.config.ts`
-2. Mapear componentes → `apps/web/components/`
+2. Mapear componentes → `apps/frontend/components/`
 3. Seguir rotas de [UX-FLOW.md](./UX-FLOW.md) — não hash routes legacy do prototype
 4. Forge timeline → consome `EventSource` SSE (timeline only)
 5. Reveal → Framer Motion (items → vertical roadmap positions)

@@ -1,0 +1,85 @@
+"""Live Roadmap Forge — SSE events and graph patch (HAC-7)."""
+
+from __future__ import annotations
+
+from typing import Annotated, Any, Literal, Union
+
+from pydantic import BaseModel, Field, TypeAdapter
+
+from career_forge.schemas.common import (
+    Priority,
+    SkillStatus,
+    UserSkillNode,
+    UserSkillNodePartial,
+)
+
+
+class NodePatch(BaseModel):
+    """Single node update proposed by the LLM (applied by accumulate_graph)."""
+
+    node_id: str
+    status: SkillStatus
+    mastery_estimated: int = Field(ge=0, le=100)
+    priority: Priority
+    rationale: str = ""
+
+
+class GraphPatch(BaseModel):
+    """LLM proposal for node updates — code validates and merges."""
+
+    patches: list[NodePatch] = Field(default_factory=list)
+    continue_research: bool = False
+    summary: str = ""
+
+
+class ReasoningDeltaEvent(BaseModel):
+    type: Literal["reasoning_delta"] = "reasoning_delta"
+    text: str
+    step: str
+
+
+class ArtifactFoundEvent(BaseModel):
+    type: Literal["artifact_found"] = "artifact_found"
+    label: str
+    detail: str
+
+
+class NodeUpdatedEvent(BaseModel):
+    type: Literal["node_updated"] = "node_updated"
+    node: UserSkillNodePartial
+
+
+class StepCompleteEvent(BaseModel):
+    type: Literal["step_complete"] = "step_complete"
+    step: str
+    iteration: int = Field(ge=0)
+
+
+class GraphReadyEvent(BaseModel):
+    type: Literal["graph_ready"] = "graph_ready"
+    graph: list[UserSkillNode]
+
+
+class ForgeErrorEvent(BaseModel):
+    type: Literal["error"] = "error"
+    message: str
+
+
+RoadmapForgeEvent = Annotated[
+    Union[
+        ReasoningDeltaEvent,
+        ArtifactFoundEvent,
+        NodeUpdatedEvent,
+        StepCompleteEvent,
+        GraphReadyEvent,
+        ForgeErrorEvent,
+    ],
+    Field(discriminator="type"),
+]
+
+_forge_event_adapter = TypeAdapter(RoadmapForgeEvent)
+
+
+def parse_forge_event(data: dict[str, Any]) -> RoadmapForgeEvent:
+    """Parse a single SSE payload dict into a typed forge event."""
+    return _forge_event_adapter.validate_python(data)

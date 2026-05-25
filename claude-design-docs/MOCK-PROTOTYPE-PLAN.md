@@ -106,7 +106,7 @@ Do not batch unrelated visual changes without backlog entries.
 
 ---
 
-## Handoff to Next.js (`apps/web`)
+## Handoff to Next.js (`apps/frontend`)
 
 When monorepo lands (HAC-5, HAC-9):
 

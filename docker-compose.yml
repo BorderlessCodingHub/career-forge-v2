@@ -15,12 +15,12 @@ services:
       timeout: 5s
       retries: 10
 
-  api:
+  backend:
     build:
-      context: ./apps/api
+      context: ./apps/backend
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-careerforge}:${POSTGRES_PASSWORD:-careerforge}@postgres:5432/${POSTGRES_DB:-careerforge}
-      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      CORS_ORIGINS: ${FRONTEND_URL:-http://localhost:3000},http://127.0.0.1:3000
       API_HOST: 0.0.0.0
       API_PORT: 8000
     ports:
@@ -35,22 +35,23 @@ services:
       retries: 10
       start_period: 15s
 
-  web:
+  frontend:
     build:
-      context: ./apps/web
+      context: ./apps/frontend
       target: dev
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
-      API_INTERNAL_URL: http://api:8000
+      NEXT_PUBLIC_BACKEND_URL: ${BACKEND_URL:-http://localhost:8000}
+      NEXT_PUBLIC_API_URL: ${BACKEND_URL:-http://localhost:8000}
+      API_INTERNAL_URL: http://backend:8000
     ports:
       - "${WEB_HOST_PORT:-3000}:3000"
     depends_on:
-      api:
+      backend:
         condition: service_healthy
     volumes:
-      - ./apps/web:/app
-      - web-node-modules:/app/node_modules
+      - ./apps/frontend:/app
+      - frontend-node-modules:/app/node_modules
 
 volumes:
   postgres-data:
-  web-node-modules:
+  frontend-node-modules:
