@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-42**
+Last updated: **2026-05-25** · Last merge: **HAC-46**
 
 ---
 
@@ -33,20 +33,28 @@ Last updated: **2026-05-25** · Last merge: **HAC-42**
 | Mentor report | ✅ Done | HAC-15 — GET /mentor-report, /report artifact page, evidence + interventions |
 | Frontend session storage | ✅ Done | HAC-35 — shared `lib/session/storage.ts`, domain modules preserved |
 | CTRR diagnosis interview schemas | ✅ Done | HAC-42 — `diagnosis_interview.py` contracts + frontend `contracts.ts` sync |
+| CV ingest (PDF + CvSignals) | ✅ Done | HAC-33 — `services/cv.py`, optional Screen 1 attach |
+| Adaptive diagnosis interview graph | ✅ Done | HAC-43 — `diagnosis_interview` Judge + Interviewer via GraphExecutor |
+| Diagnosis session API + Postgres | ✅ Done | HAC-44 — `POST /diagnosis/interview/start|turn`, `diagnosis_sessions` table |
+| Frontend adaptive diagnosis UI | ✅ Done | HAC-45 — DiagnosticPills uses interview API, sidebar from `mapping_progress` |
+| Diagnosis guardrails | ✅ Done | HAC-46 — max 5 rounds, LLM 503 retry, agent-verify checks |
 
 ---
 
 ## Current sprint
 
-**Sprint 5 — Stretch P1** ✅ ([P] parallel complete)
+**Sprint 6 — AI diagnosis interview (P0)** ✅
 
 | Issue | Title | Class | State |
 |-------|-------|-------|-------|
-| **HAC-13** | Contextual Mentor | P | **Done** |
-| **HAC-14** | Mock Interview Loop | P | **Done** |
-| **HAC-15** | Relatório mentor | P | **Done** |
+| **HAC-33** | CV ingest MVP | — | **Done** |
+| **HAC-42** | CTRR schemas | — | **Done** |
+| **HAC-43** | diagnosis_interview graph | S | **Done** |
+| **HAC-44** | Session API + Postgres | S | **Done** |
+| **HAC-45** | Frontend adaptive UI | S | **Done** |
+| **HAC-46** | Guardrails + fallback | S | **Done** |
 
-Sprint 5 complete — HAC-13/14/15 merged ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
+Sprint 6 complete — adaptive diagnosis interview live on onboarding path ([DIAGNOSIS-INTERVIEW](./product/DIAGNOSIS-INTERVIEW.md)).
 
 ---
 
@@ -70,6 +78,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 |-------|-------|
 | UI prototype (artifact mode + onboarding pills) | ⚠️ |
 | Onboarding flow wired to API | ✅ |
+| Adaptive diagnosis interview (CTRR) | ✅ |
 | UX docs + steady-state reference | ✅ |
 | Sprint board + agent lifecycle | ✅ |
 | Professional monorepo scaffold | ✅ |

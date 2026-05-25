@@ -38,6 +38,9 @@ check test -f docs/product/DIAGNOSIS-INTERVIEW.md
 check test -f .cursor/rules/diagnosis-interview.mdc
 check test -f .cursor/rules/cv-ingest.mdc
 check test -f apps/frontend/src/components/diagnosis/AGENTS.md
+check test -f apps/backend/src/career_forge/ai/graphs/diagnosis_interview.py
+check test -f apps/backend/src/career_forge/api/diagnosis_interview.py
+check test -f apps/backend/src/career_forge/services/diagnosis_session.py
 check test -f apps/backend/src/career_forge/api/mentor.py
 check test -f apps/backend/src/career_forge/ai/agents/mentor.py
 check test -f apps/backend/src/career_forge/db/session.py

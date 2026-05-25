@@ -93,12 +93,12 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 **Why:** Hackathon rule — remove AI, app stops. Screen 2 must be LLM-driven (CTRR + Interviewer/Judge).
 
-- [ ] **HAC-33** — CV ingest MVP (PDF extract + optional CvSignals) — supports skip logic
+- [x] **HAC-33** — CV ingest MVP (PDF extract + optional CvSignals) — supports skip logic
 - [x] **HAC-42** — Rubric schemas + CTRR contracts
-- [ ] **HAC-43** — `diagnosis_interview` graph (Judge + Interviewer)
-- [ ] **HAC-44** — Multi-turn session API + Postgres
-- [ ] **HAC-45** — Frontend adaptive UI (dumb renderer)
-- [ ] **HAC-46** — Saturation guardrails + LLM fallback
+- [x] **HAC-43** — `diagnosis_interview` graph (Judge + Interviewer)
+- [x] **HAC-44** — Multi-turn session API + Postgres
+- [x] **HAC-45** — Frontend adaptive UI (dumb renderer)
+- [x] **HAC-46** — Saturation guardrails + LLM fallback
 
 **Sequential:** HAC-42 → HAC-43 → HAC-44 → HAC-45 → HAC-46 · HAC-33 parallel with HAC-42–44
 

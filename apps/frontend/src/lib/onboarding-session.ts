@@ -14,6 +14,7 @@ const GOAL_KEY = "career-forge.goal";
 const MOTIVATION_KEY = "career-forge.motivation";
 const YEARS_XP_KEY = "career-forge.years-xp";
 const CV_ATTACHMENT_KEY = "career-forge.cv-attachment";
+const DIAGNOSIS_SESSION_KEY = "career-forge.diagnosis-session-id";
 const ANSWERS_KEY = "career-forge.answers";
 const DIAGNOSIS_KEY = "career-forge.diagnosis";
 
@@ -55,6 +56,18 @@ export function clearCvAttachment() {
   removeItem(CV_ATTACHMENT_KEY);
 }
 
+export function getDiagnosisSessionId(): string | null {
+  return readString(DIAGNOSIS_SESSION_KEY);
+}
+
+export function setDiagnosisSessionId(sessionId: string) {
+  writeString(DIAGNOSIS_SESSION_KEY, sessionId);
+}
+
+export function clearDiagnosisSessionId() {
+  removeItem(DIAGNOSIS_SESSION_KEY);
+}
+
 export function getAnswers(): Record<string, string> {
   return readJson<Record<string, string>>(ANSWERS_KEY) ?? {};
 }
@@ -77,6 +90,7 @@ export function clearOnboardingSession() {
     MOTIVATION_KEY,
     YEARS_XP_KEY,
     CV_ATTACHMENT_KEY,
+    DIAGNOSIS_SESSION_KEY,
     ANSWERS_KEY,
     DIAGNOSIS_KEY,
   ]);

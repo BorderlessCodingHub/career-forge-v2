@@ -1,40 +1,61 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui";
-import { createDiagnosis } from "@/lib/api-client";
 import {
-  CAREER_GOALS,
-  DIAG_MAP_LABELS,
-  DIAG_ROUNDS,
-} from "@/lib/onboarding-data";
+  startDiagnosisInterview,
+  submitDiagnosisTurn,
+} from "@/lib/api-client";
+import { CAREER_GOALS } from "@/lib/onboarding-data";
 import {
+  getCvAttachment,
   getMotivation,
   getSelectedGoal,
   getYearsXp,
   setAnswers,
+  setDiagnosisSessionId,
   setStoredDiagnosis,
 } from "@/lib/onboarding-session";
+import type {
+  CvAttachment,
+  InterviewQuestion,
+  InterviewTurnResponse,
+  RubricMapItem,
+} from "@/types/contracts";
 
 import { PillRound } from "./PillRound";
 
-function initialAnswers() {
-  const init: Record<string, string> = {};
-  DIAG_ROUNDS.forEach((round) =>
-    round.questions.forEach((question) => {
-      init[question.id] = "";
-    }),
-  );
-  return init;
+const MIN_ANSWER_LENGTH = 8;
+const MAX_ROUNDS = 5;
+
+function toInterviewCv(cv: CvAttachment) {
+  if (cv.mimeType !== "application/pdf") return undefined;
+  return {
+    filename: cv.filename,
+    mime_type: "application/pdf" as const,
+    content_base64: cv.dataBase64,
+  };
+}
+
+function mapStatusFromProgress(
+  item: RubricMapItem,
+): "done" | "active" | "pending" {
+  if (item.saturated) return "done";
+  if (item.confidence > 0) return "active";
+  return "pending";
 }
 
 export function DiagnosticPills() {
   const router = useRouter();
-  const [roundIdx, setRoundIdx] = useState(0);
-  const [answers, setAnswersState] = useState<Record<string, string>>(initialAnswers);
-  const [generating, setGenerating] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
+  const [mappingProgress, setMappingProgress] = useState<RubricMapItem[]>([]);
+  const [answers, setAnswersState] = useState<Record<string, string>>({});
+  const [roundCount, setRoundCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const goalId = getSelectedGoal() ?? "backend";
@@ -49,62 +70,138 @@ export function DiagnosticPills() {
     }
   }, [router]);
 
-  const round = DIAG_ROUNDS[roundIdx];
-  const totalQuestions = DIAG_ROUNDS.reduce(
-    (count, current) => count + current.questions.length,
-    0,
-  );
-  const answeredCount =
-    roundIdx * 2 +
-    round.questions.filter((question) => answers[question.id]?.trim()).length;
-  const pct = Math.min(100, Math.round((answeredCount / totalQuestions) * 100));
-  const roundComplete = round.questions.every(
-    (question) => (answers[question.id]?.trim().length ?? 0) >= 8,
-  );
-  const isLastRound = roundIdx === DIAG_ROUNDS.length - 1;
+  const applyTurnResponse = useCallback((response: InterviewTurnResponse) => {
+    setSessionId(response.session_id);
+    setDiagnosisSessionId(response.session_id);
+    setQuestions(response.questions);
+    setMappingProgress(response.mapping_progress);
+    setAnswersState((current) => {
+      const next = { ...current };
+      response.questions.forEach((question) => {
+        if (next[question.id] === undefined) {
+          next[question.id] = "";
+        }
+      });
+      return next;
+    });
+  }, []);
 
-  const mapStatus = useMemo(() => {
-    const doneLabels = new Set<string>();
-    for (let index = 0; index < roundIdx; index += 1) {
-      DIAG_ROUNDS[index].maps.forEach((label) => doneLabels.add(label));
+  useEffect(() => {
+    let cancelled = false;
+
+    async function bootstrap() {
+      setLoading(true);
+      setError(null);
+      try {
+        const cv = getCvAttachment();
+        const response = await startDiagnosisInterview({
+          goal_id: goalId,
+          motivation,
+          years_xp: yearsXp ?? undefined,
+          cv: cv ? toInterviewCv(cv) : undefined,
+        });
+        if (cancelled) return;
+        applyTurnResponse(response);
+        setRoundCount(1);
+      } catch (cause) {
+        if (cancelled) return;
+        setError(
+          cause instanceof Error
+            ? cause.message
+            : "Não foi possível iniciar o diagnóstico.",
+        );
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
-    return (label: string) => {
-      if (doneLabels.has(label)) return "done";
-      if (round.maps.includes(label)) return "active";
-      return "pending";
+
+    void bootstrap();
+    return () => {
+      cancelled = true;
     };
-  }, [round.maps, roundIdx]);
+  }, [applyTurnResponse, goalId, motivation, yearsXp]);
+
+  const roundComplete = questions.every(
+    (question) => (answers[question.id]?.trim().length ?? 0) >= MIN_ANSWER_LENGTH,
+  );
+
+  const answeredInRound = questions.filter(
+    (question) => (answers[question.id]?.trim().length ?? 0) >= MIN_ANSWER_LENGTH,
+  ).length;
+
+  const totalExpectedQuestions = Math.min(MAX_ROUNDS * 2, 10);
+  const answeredTotal =
+    (roundCount - 1) * 2 + answeredInRound;
+  const pct = Math.min(
+    100,
+    Math.round((answeredTotal / totalExpectedQuestions) * 100),
+  );
+
+  const activeTopics = useMemo(
+    () => new Set(questions.map((question) => question.topic)),
+    [questions],
+  );
 
   const submitRound = async () => {
-    if (!roundComplete || generating) return;
+    if (!roundComplete || submitting || !sessionId) return;
 
-    if (!isLastRound) {
-      setRoundIdx((index) => index + 1);
-      return;
-    }
-
-    setGenerating(true);
+    setSubmitting(true);
     setError(null);
+
+    const turnAnswers = questions.map((question) => ({
+      question_id: question.id,
+      text: answers[question.id]?.trim() ?? "",
+    }));
+
     setAnswers(answers);
 
     try {
-      const result = await createDiagnosis({
-        goal_id: goalId,
-        motivation,
-        years_xp: yearsXp ?? undefined,
-        answers,
+      const response = await submitDiagnosisTurn(sessionId, {
+        answers: turnAnswers,
       });
-      setStoredDiagnosis(result.diagnosis);
-      router.push("/onboarding/edit");
+
+      if (response.status === "complete" && response.diagnosis) {
+        setStoredDiagnosis(response.diagnosis);
+        router.push("/onboarding/edit");
+        return;
+      }
+
+      applyTurnResponse(response);
+      setRoundCount((count) => count + 1);
+      setSubmitting(false);
     } catch (cause) {
       setError(
         cause instanceof Error
           ? cause.message
-          : "Não foi possível gerar o diagnóstico.",
+          : "Não foi possível enviar suas respostas. Tente novamente.",
       );
-      setGenerating(false);
+      setSubmitting(false);
     }
   };
+
+  const roundTitle =
+    questions.length === 1
+      ? questions[0]?.topic ?? "Diagnóstico adaptativo"
+      : "Diagnóstico adaptativo";
+
+  const roundIntro =
+    "Sem certo ou errado — quanto mais honesto, mais útil sua trilha. A IA escolhe as próximas perguntas com base no que já sabe sobre você.";
+
+  if (loading) {
+    return (
+      <main
+        className="min-h-screen grid-dots px-4 py-8 lg:px-8"
+        data-testid="diagnostic-pills"
+      >
+        <div className="mx-auto flex max-w-6xl items-center justify-center py-24">
+          <div className="flex items-center gap-3 text-sm text-text-secondary">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+            Preparando entrevista adaptativa…
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main
@@ -127,7 +224,7 @@ export function DiagnosticPills() {
             <div className="flex items-center justify-between text-xs text-text-muted">
               <span>Diagnóstico</span>
               <span>
-                Rodada {roundIdx + 1}/{DIAG_ROUNDS.length}
+                Rodada {roundCount}/{MAX_ROUNDS}
               </span>
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-elevated">
@@ -143,11 +240,13 @@ export function DiagnosticPills() {
               O que a IA está mapeando
             </div>
             <ul className="mt-3 space-y-2">
-              {DIAG_MAP_LABELS.map((label) => {
-                const status = mapStatus(label);
+              {mappingProgress.map((item) => {
+                const status = activeTopics.has(item.label)
+                  ? "active"
+                  : mapStatusFromProgress(item);
                 return (
                   <li
-                    key={label}
+                    key={item.rubric_key}
                     className={`flex items-center gap-2 text-sm ${
                       status === "done"
                         ? "text-accent-mint"
@@ -165,7 +264,7 @@ export function DiagnosticPills() {
                             : "bg-border"
                       }`}
                     />
-                    {label}
+                    {item.label}
                   </li>
                 );
               })}
@@ -176,32 +275,32 @@ export function DiagnosticPills() {
         <section className="rounded-card border border-border bg-surface p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="text-sm text-text-secondary">
-              Passo <strong>2/3</strong> · Diagnóstico · Rodada {roundIdx + 1} de{" "}
-              {DIAG_ROUNDS.length}
+              Passo <strong>2/3</strong> · Diagnóstico · Rodada {roundCount} de{" "}
+              {MAX_ROUNDS}
             </div>
-            <PillRound label={round.title} />
+            <PillRound label={roundTitle} />
           </div>
 
-          <p className="mt-4 text-sm text-text-secondary">{round.intro}</p>
+          <p className="mt-4 text-sm text-text-secondary">{roundIntro}</p>
 
           <div className="mt-6 grid gap-4">
-            {round.questions.map((question) => (
+            {questions.map((question) => (
               <div
                 key={question.id}
                 className="rounded-card border border-border-soft bg-surface-elevated p-4"
               >
                 <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <PillRound label={question.tag} />
+                  <PillRound label={question.topic} />
                   <p className="text-sm font-medium text-text-primary">
-                    {question.prompt}
+                    {question.question}
                   </p>
                 </div>
                 <textarea
                   data-testid={`answer-${question.id}`}
                   className="min-h-[96px] w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm text-text-primary outline-none ring-accent focus:ring-2"
-                  placeholder={question.placeholder}
+                  placeholder={question.example_of_answer}
                   value={answers[question.id] ?? ""}
-                  disabled={generating}
+                  disabled={submitting}
                   onChange={(event) =>
                     setAnswersState((current) => ({
                       ...current,
@@ -213,29 +312,29 @@ export function DiagnosticPills() {
             ))}
           </div>
 
-          {generating ? (
+          {submitting ? (
             <div
               className="mt-6 flex items-center gap-3 rounded-card border border-border-soft bg-surface-elevated p-4"
               data-testid="diagnosis-generating"
             >
               <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
               <div className="text-sm text-text-secondary">
-                <strong className="text-text-primary">Gerando diagnóstico…</strong>{" "}
-                mapeando {totalQuestions} sinais nas suas respostas.
+                <strong className="text-text-primary">Processando respostas…</strong>{" "}
+                a IA está atualizando seu mapa de competências.
               </div>
             </div>
           ) : (
             <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
               <span className="text-sm text-text-muted">
-                {round.questions.length} perguntas nesta rodada · responda todas
+                {questions.length} pergunta(s) nesta rodada · responda todas
                 para continuar
               </span>
               <Button
                 data-testid="submit-round"
-                disabled={!roundComplete}
+                disabled={!roundComplete || questions.length === 0}
                 onClick={() => void submitRound()}
               >
-                {isLastRound ? "Gerar diagnóstico" : "Próxima rodada"} →
+                {roundCount >= MAX_ROUNDS ? "Gerar diagnóstico" : "Próxima rodada"} →
               </Button>
             </div>
           )}

@@ -1,9 +1,12 @@
 import type {
   DemoAnaResponse,
+  DiagnosisIntake,
   DiagnosisRequest,
   DiagnosisResponse,
   DiagnosisRunResponse,
   ForgeRunResponse,
+  InterviewTurnRequest,
+  InterviewTurnResponse,
   MentorContextSnapshot,
   MentorReportResponse,
   MentorRequest,
@@ -40,6 +43,28 @@ export async function createDiagnosis(
     method: "POST",
     body: JSON.stringify({ user_id: getUserId(), ...payload }),
   });
+}
+
+export async function startDiagnosisInterview(
+  payload: DiagnosisIntake,
+): Promise<InterviewTurnResponse> {
+  return apiFetch<InterviewTurnResponse>("/diagnosis/interview/start", {
+    method: "POST",
+    body: JSON.stringify({ user_id: getUserId(), ...payload }),
+  });
+}
+
+export async function submitDiagnosisTurn(
+  sessionId: string,
+  payload: InterviewTurnRequest,
+): Promise<InterviewTurnResponse> {
+  return apiFetch<InterviewTurnResponse>(
+    `/diagnosis/interview/${encodeURIComponent(sessionId)}/turn`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+  );
 }
 
 export async function startForgeRun(

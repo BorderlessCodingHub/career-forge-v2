@@ -65,6 +65,7 @@ Registered names (HAC-32):
 | Name | Builder | Issue |
 |------|---------|-------|
 | `diagnosis` | `build_diagnosis_graph` | HAC-8 |
+| `diagnosis_interview` | `build_diagnosis_interview_graph` | HAC-43 |
 | `roadmap_forge` | `build_roadmap_forge_graph` | HAC-18 |
 | `validation` | `build_validation_graph` | HAC-10 |
 | `mentor` | `build_mentor_agent` | HAC-13 |
