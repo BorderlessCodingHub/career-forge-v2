@@ -1,4 +1,4 @@
-"""Adaptive diagnosis interview contracts — CTRR rubric (HAC-42)."""
+"""Adaptive diagnosis interview contracts — universal profile rubric (ADR-002)."""
 
 from __future__ import annotations
 
@@ -8,68 +8,61 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 from career_forge.schemas.diagnosis import DiagnosisResponse
 
-# --- CTRR constants (single source of truth) ---
+# --- Universal profile dimensions (single source of truth) ---
 
 RubricDimensionKey = Literal[
-    "learning_stage",
-    "project_scope",
-    "background_context",
-    "hands_on_evidence",
-    "git",
-    "client_server",
-    "http_apis",
-    "database",
+    "motivation_goal",
+    "background_transfer",
+    "learning_velocity",
+    "hands_on_proof",
+    "constraints",
 ]
 
-CTRR_DIMENSION_KEYS: tuple[RubricDimensionKey, ...] = (
-    "learning_stage",
-    "project_scope",
-    "background_context",
-    "hands_on_evidence",
-    "git",
-    "client_server",
-    "http_apis",
-    "database",
+PROFILE_DIMENSION_KEYS: tuple[RubricDimensionKey, ...] = (
+    "motivation_goal",
+    "background_transfer",
+    "learning_velocity",
+    "hands_on_proof",
+    "constraints",
 )
 
-CTRR_DIMENSION_LABELS: dict[RubricDimensionKey, str] = {
-    "learning_stage": "Senioridade",
-    "project_scope": "Escala",
-    "background_context": "Contexto",
-    "hands_on_evidence": "Experiência prática",
-    "git": "Git",
-    "client_server": "Cliente/servidor",
-    "http_apis": "HTTP & APIs",
-    "database": "Banco de dados",
+PROFILE_DIMENSION_LABELS: dict[RubricDimensionKey, str] = {
+    "motivation_goal": "Objetivo",
+    "background_transfer": "De onde você vem",
+    "learning_velocity": "Ritmo de aprendizado",
+    "hands_on_proof": "Prova prática",
+    "constraints": "Contexto real",
 }
 
-# Short PT-BR line for sidebar — what the Judge is trying to learn per dimension.
-CTRR_DIMENSION_DESCRIPTIONS: dict[RubricDimensionKey, str] = {
-    "learning_stage": "Quanto você já praticou programação (cursos, exercícios, tempo)",
-    "project_scope": "Maior projeto que já construiu ou tentou construir",
-    "background_context": "De onde você vem e como estuda tecnologia hoje",
-    "hands_on_evidence": "Algo concreto que já fez ou tentou na prática",
-    "git": "Se já usou Git ou GitHub em algum projeto",
-    "client_server": "Como você entende frontend vs backend",
-    "http_apis": "Se já viu ou fez requisições HTTP ou chamadas de API",
-    "database": "Exposição a banco de dados ou SQL",
+PROFILE_DIMENSION_DESCRIPTIONS: dict[RubricDimensionKey, str] = {
+    "motivation_goal": "Por que esse caminho e alinhamento com sua meta",
+    "background_transfer": "Área anterior e hábitos que você traz para tech",
+    "learning_velocity": "Quanto pratica, com que frequência e consistência",
+    "hands_on_proof": "Maior coisa que construiu, tentou ou entregou",
+    "constraints": "Tempo/semana, idioma, budget, como estuda hoje",
 }
 
 SATURATION_CONFIDENCE_THRESHOLD = 0.75
-MAX_INTERVIEW_ROUNDS = 5
+MAX_INTERVIEW_ROUNDS = 3
 MAX_QUESTIONS_PER_TURN = 2
 
 DiagnosisSessionStatus = Literal["asking", "complete"]
+RubricDimensionStatus = Literal["pending", "mapped", "needs_clarification"]
 YearsXpRange = Literal["0-1", "1-3", "3-5", "5+"]
 
 
 class RubricDimension(BaseModel):
-    """Judge belief for one CTRR dimension."""
+    """Judge belief for one profile dimension."""
 
     key: RubricDimensionKey
     label: str
     confidence: float = Field(ge=0.0, le=1.0)
     evidence: list[str] = Field(default_factory=list)
+    status: RubricDimensionStatus = "pending"
+    note: str = Field(
+        default="",
+        description="Succinct PT-BR summary of what was inferred (intake, CV, or answers).",
+    )
 
 
 class BeliefState(BaseModel):
@@ -83,19 +76,46 @@ class BeliefState(BaseModel):
             dimensions={
                 key: RubricDimension(
                     key=key,
-                    label=CTRR_DIMENSION_LABELS[key],
+                    label=PROFILE_DIMENSION_LABELS[key],
                     confidence=0.0,
                     evidence=[],
+                    status="pending",
+                    note="",
                 )
-                for key in CTRR_DIMENSION_KEYS
+                for key in PROFILE_DIMENSION_KEYS
             },
         )
 
     def unsaturated_keys(self, threshold: float = SATURATION_CONFIDENCE_THRESHOLD) -> list[RubricDimensionKey]:
-        return [key for key in CTRR_DIMENSION_KEYS if self.dimensions[key].confidence < threshold]
+        return [key for key in PROFILE_DIMENSION_KEYS if self.dimensions[key].confidence < threshold]
+
+    def interviewable_keys(self) -> list[RubricDimensionKey]:
+        """Dimensions the Interviewer may still ask about."""
+        return [
+            key
+            for key in PROFILE_DIMENSION_KEYS
+            if self.dimensions[key].status in ("pending", "needs_clarification")
+        ]
 
     def is_saturated(self, threshold: float = SATURATION_CONFIDENCE_THRESHOLD) -> bool:
         return all(dim.confidence >= threshold for dim in self.dimensions.values())
+
+    def is_interview_complete(self, threshold: float = SATURATION_CONFIDENCE_THRESHOLD) -> bool:
+        """True when every dimension is mapped with sufficient confidence."""
+        return all(
+            dim.status == "mapped" and dim.confidence >= threshold
+            for dim in self.dimensions.values()
+        )
+
+    def profile_completeness(self, threshold: float = SATURATION_CONFIDENCE_THRESHOLD) -> float:
+        if not self.dimensions:
+            return 0.0
+        mapped = sum(
+            1
+            for dim in self.dimensions.values()
+            if dim.status == "mapped" and dim.confidence >= threshold
+        )
+        return mapped / len(PROFILE_DIMENSION_KEYS)
 
 
 class CvAttachment(BaseModel):
@@ -131,10 +151,10 @@ class DiagnosisIntake(BaseModel):
 
 
 class InterviewQuestion(BaseModel):
-    """Interviewer output — one question targeting a rubric dimension."""
+    """Interviewer output — one question (may cover multiple dimensions)."""
 
     id: str = Field(min_length=1)
-    topic: str = Field(description="Sidebar label, e.g. Senioridade")
+    topic: str = Field(description="Sidebar label, e.g. Prova prática")
     rubric_key: RubricDimensionKey
     question: str = Field(min_length=1)
     example_of_answer: str = Field(min_length=1)
@@ -171,6 +191,8 @@ class RubricMapItem(BaseModel):
     description: str
     confidence: float = Field(ge=0.0, le=1.0)
     saturated: bool
+    status: RubricDimensionStatus
+    note: str = ""
 
 
 def build_rubric_map(
@@ -178,16 +200,19 @@ def build_rubric_map(
     *,
     threshold: float = SATURATION_CONFIDENCE_THRESHOLD,
 ) -> list[RubricMapItem]:
-    """Map belief state to frontend sidebar items (stable CTRR order)."""
+    """Map belief state to frontend sidebar items (stable profile order)."""
     return [
         RubricMapItem(
             rubric_key=key,
-            label=belief.dimensions[key].label,
-            description=CTRR_DIMENSION_DESCRIPTIONS[key],
-            confidence=belief.dimensions[key].confidence,
-            saturated=belief.dimensions[key].confidence >= threshold,
+            label=dim.label,
+            description=PROFILE_DIMENSION_DESCRIPTIONS[key],
+            confidence=dim.confidence,
+            saturated=dim.status == "mapped" and dim.confidence >= threshold,
+            status=dim.status,
+            note=dim.note,
         )
-        for key in CTRR_DIMENSION_KEYS
+        for key in PROFILE_DIMENSION_KEYS
+        for dim in (belief.dimensions[key],)
     ]
 
 
@@ -212,7 +237,9 @@ class DiagnosisSession(BaseModel):
         threshold: float = SATURATION_CONFIDENCE_THRESHOLD,
         max_rounds: int = MAX_INTERVIEW_ROUNDS,
     ) -> bool:
-        return self.belief.is_saturated(threshold) or self.round_count >= max_rounds
+        if self.round_count >= max_rounds:
+            return True
+        return self.belief.is_interview_complete(threshold)
 
 
 class InterviewStartRequest(DiagnosisIntake):
