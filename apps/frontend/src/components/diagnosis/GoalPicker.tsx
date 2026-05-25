@@ -21,7 +21,7 @@ import { CvDropzone } from "./CvDropzone";
 
 export function GoalPicker() {
   const router = useRouter();
-  const [selected, setSelected] = useState("backend");
+  const [selected, setSelected] = useState("fullstack");
   const [motivation, setMotivationValue] = useState("");
   const [yearsXp, setYearsXpValue] = useState<YearsXpRange | "">("");
   const [cvAttachment, setCvAttachmentState] = useState<CvAttachment | null>(null);
@@ -56,7 +56,7 @@ export function GoalPicker() {
           </h1>
         </header>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           {CAREER_GOALS.map((goal) => (
             <button
               key={goal.id}

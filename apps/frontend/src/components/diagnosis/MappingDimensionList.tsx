@@ -1,19 +1,11 @@
-import type { RubricDimensionKey, RubricMapItem } from "@/types/contracts";
-
-type DimensionStatus = "mapped" | "active" | "pending";
-
-function mapStatus(
-  item: RubricMapItem,
-  activeKeys: Set<RubricDimensionKey>,
-): DimensionStatus {
-  if (item.saturated) return "mapped";
-  if (activeKeys.has(item.rubric_key)) return "active";
-  if (item.confidence > 0) return "active";
-  return "pending";
-}
+import type {
+  RubricDimensionKey,
+  RubricDimensionStatus,
+  RubricMapItem,
+} from "@/types/contracts";
 
 const STATUS_STYLES: Record<
-  DimensionStatus,
+  RubricDimensionStatus | "active" | "analyzing",
   { dot: string; label: string; description: string }
 > = {
   mapped: {
@@ -21,8 +13,8 @@ const STATUS_STYLES: Record<
     label: "text-accent-mint",
     description: "text-text-muted",
   },
-  active: {
-    dot: "bg-accent animate-pulse",
+  needs_clarification: {
+    dot: "bg-warning",
     label: "text-text-primary",
     description: "text-text-secondary",
   },
@@ -31,43 +23,64 @@ const STATUS_STYLES: Record<
     label: "text-text-muted",
     description: "text-text-muted",
   },
+  active: {
+    dot: "bg-accent animate-pulse",
+    label: "text-text-primary",
+    description: "text-text-secondary",
+  },
+  analyzing: {
+    dot: "bg-accent animate-pulse ring-2 ring-accent/30",
+    label: "text-accent",
+    description: "text-accent/80",
+  },
 };
+
+function resolveStatus(
+  item: RubricMapItem,
+  activeKeys: Set<RubricDimensionKey>,
+  analyzingKey: RubricDimensionKey | null,
+  streaming: boolean,
+): RubricDimensionStatus | "active" | "analyzing" {
+  if (activeKeys.has(item.rubric_key)) return "active";
+  if (streaming && analyzingKey === item.rubric_key) return "analyzing";
+  if (item.status !== "pending" || item.note.trim().length > 0) return item.status;
+  if (streaming) return "pending";
+  return item.status;
+}
 
 type MappingDimensionListProps = {
   items: RubricMapItem[];
   activeKeys: Set<RubricDimensionKey>;
-  loading: boolean;
+  analyzingKey: RubricDimensionKey | null;
+  streaming: boolean;
 };
 
 export function MappingDimensionList({
   items,
   activeKeys,
-  loading,
+  analyzingKey,
+  streaming,
 }: MappingDimensionListProps) {
   return (
     <ul className="mt-3 space-y-3">
       {items.map((item) => {
-        const status = loading ? "pending" : mapStatus(item, activeKeys);
+        const status = resolveStatus(item, activeKeys, analyzingKey, streaming);
         const styles = STATUS_STYLES[status];
-        const showPulse = loading || (status === "active" && !item.saturated);
+
+        const descriptionText =
+          status === "analyzing"
+            ? "Analisando…"
+            : !streaming && item.note.trim().length > 0
+              ? item.note
+              : item.description;
 
         return (
           <li key={item.rubric_key} className="flex gap-2.5">
-            <span
-              className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${styles.dot} ${
-                showPulse ? "animate-pulse" : ""
-              }`}
-            />
+            <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${styles.dot}`} />
             <div className="min-w-0">
-              <div className={`text-sm font-medium ${styles.label}`}>
-                {item.label}
-              </div>
-              <div
-                className={`mt-0.5 text-xs leading-snug ${styles.description} ${
-                  loading ? "animate-pulse" : ""
-                }`}
-              >
-                {item.description}
+              <div className={`text-sm font-medium ${styles.label}`}>{item.label}</div>
+              <div className={`mt-0.5 text-xs leading-snug ${styles.description}`}>
+                {descriptionText}
               </div>
             </div>
           </li>

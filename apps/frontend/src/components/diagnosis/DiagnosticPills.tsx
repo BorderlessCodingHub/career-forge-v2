@@ -8,27 +8,8 @@ import { useDiagnosisInterview } from "@/lib/hooks/useDiagnosisInterview";
 
 import { PillRound } from "./PillRound";
 
-function QuestionSkeleton() {
-  return (
-    <div className="space-y-4">
-      {[0, 1].map((index) => (
-        <div
-          key={index}
-          className="rounded-card border border-border-soft bg-surface-elevated p-4"
-        >
-          <div className="mb-3 flex items-center gap-2">
-            <div className="h-6 w-24 animate-pulse rounded-full bg-border" />
-            <div className="h-4 flex-1 animate-pulse rounded bg-border" />
-          </div>
-          <div className="h-24 animate-pulse rounded-lg bg-border/60" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const ROUND_INTRO =
-  "Sem certo ou errado — quanto mais honesto, mais útil sua trilha. A IA escolhe as próximas perguntas com base no que já sabe sobre você.";
+  "Sem certo ou errado — quanto mais concreto, menos perguntas. A IA extrai o máximo de cada resposta.";
 
 export function DiagnosticPills() {
   const {
@@ -39,6 +20,9 @@ export function DiagnosticPills() {
     roundCount,
     bootstrapping,
     submitting,
+    streaming,
+    streamPhaseLabel,
+    analyzingKey,
     error,
     activeKeys,
     roundComplete,
@@ -72,22 +56,17 @@ export function DiagnosticPills() {
           yearsXp={intake.yearsXp}
           cvAttachment={cvAttachment}
           bootstrapping={bootstrapping}
+          streaming={streaming}
+          streamPhaseLabel={streamPhaseLabel}
           roundCount={roundCount}
           progressPct={progressPct}
           mappingProgress={mappingProgress}
           activeKeys={activeKeys}
+          analyzingKey={analyzingKey}
         />
 
         <section className="rounded-card border border-border bg-surface p-6">
-          {bootstrapping ? (
-            <>
-              <div className="flex items-center gap-3 text-sm text-text-secondary">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                Preparando entrevista adaptativa…
-              </div>
-              <QuestionSkeleton />
-            </>
-          ) : (
+          {bootstrapping ? null : (
             <>
               <div className="flex flex-wrap items-center gap-3">
                 <PillRound label={roundTitle} />
@@ -119,32 +98,19 @@ export function DiagnosticPills() {
                 ))}
               </div>
 
-              {submitting ? (
-                <div
-                  className="mt-6 flex items-center gap-3 rounded-card border border-border-soft bg-surface-elevated p-4"
-                  data-testid="diagnosis-generating"
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+                <span className="text-sm text-text-muted">
+                  {questions.length} pergunta(s) nesta rodada · responda todas
+                  para continuar
+                </span>
+                <Button
+                  data-testid="submit-round"
+                  disabled={!roundComplete || questions.length === 0 || submitting}
+                  onClick={() => void submitRound()}
                 >
-                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                  <div className="text-sm text-text-secondary">
-                    <strong className="text-text-primary">Processando respostas…</strong>{" "}
-                    a IA está atualizando seu mapa de competências.
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                  <span className="text-sm text-text-muted">
-                    {questions.length} pergunta(s) nesta rodada · responda todas
-                    para continuar
-                  </span>
-                  <Button
-                    data-testid="submit-round"
-                    disabled={!roundComplete || questions.length === 0}
-                    onClick={() => void submitRound()}
-                  >
-                    {roundCount >= maxRounds ? "Gerar diagnóstico" : "Próxima rodada"} →
-                  </Button>
-                </div>
-              )}
+                  {roundCount >= maxRounds ? "Gerar diagnóstico" : "Próxima rodada"} →
+                </Button>
+              </div>
             </>
           )}
 
