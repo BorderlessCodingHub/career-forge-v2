@@ -136,6 +136,20 @@ export type ValidationRunResponse = {
   roadmap?: RoadmapResponse | null;
 };
 
+export type MockInterviewQuestion = ValidationQuestion & {
+  phase: "base" | "gap_probe" | "scenario";
+};
+
+export type MockInterviewQuestionsResponse = {
+  node_id: string;
+  node_title: string;
+  node_icon: string;
+  total_questions: number;
+  questions: MockInterviewQuestion[];
+};
+
+export type MockInterviewRunResponse = ValidationRunResponse;
+
 export type TodayFocus = {
   node_id: string;
   title: string;

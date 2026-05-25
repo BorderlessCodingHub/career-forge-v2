@@ -159,7 +159,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
         <div className="border-t border-border px-6 py-4">
           <Link href={`/validate?node=${node.node_id}`}>
             <Button className="w-full" data-testid="validate-node-cta">
-              Validar mastery com IA →
+              Mock interview — validar mastery →
             </Button>
           </Link>
         </div>

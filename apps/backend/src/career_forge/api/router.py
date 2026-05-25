@@ -2,7 +2,17 @@
 
 from fastapi import APIRouter
 
-from career_forge.api import demo, diagnosis, forge, health, mentor, mentor_report, roadmap, validation
+from career_forge.api import (
+    demo,
+    diagnosis,
+    forge,
+    health,
+    mentor,
+    mentor_report,
+    mock_interview,
+    roadmap,
+    validation,
+)
 
 api_router = APIRouter()
 api_router.include_router(health.router)
@@ -17,3 +27,4 @@ api_router.include_router(
     prefix="/mentor-report",
     tags=["mentor-report"],
 )
+api_router.include_router(mock_interview.router, prefix="/mock-interview", tags=["mock-interview"])

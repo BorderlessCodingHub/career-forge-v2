@@ -4,6 +4,8 @@ import type {
   MentorMessage,
   MentorReportResponse,
   MentorRunResponse,
+  MockInterviewQuestionsResponse,
+  MockInterviewRunResponse,
   RoadmapResponse,
   RoadmapSyncNode,
   ValidationQuestionsResponse,
@@ -110,6 +112,33 @@ export async function submitValidation(
 ): Promise<ValidationRunResponse> {
   const resolvedUserId = userId ?? getUserId();
   return apiFetch<ValidationRunResponse>("/validation", {
+    method: "POST",
+    body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
+  });
+}
+
+export async function getMockInterviewQuestions(
+  nodeId: string,
+): Promise<MockInterviewQuestionsResponse> {
+  return apiFetch<MockInterviewQuestionsResponse>(
+    `/mock-interview/questions?node_id=${encodeURIComponent(nodeId)}`,
+  );
+}
+
+export type SubmitMockInterviewPayload = {
+  user_id?: string;
+  node_id: string;
+  node_title: string;
+  rubric: string[];
+  answers: Array<{ question_id: string; answer: string }>;
+};
+
+export async function submitMockInterview(
+  payload: SubmitMockInterviewPayload,
+  userId?: string,
+): Promise<MockInterviewRunResponse> {
+  const resolvedUserId = userId ?? getUserId();
+  return apiFetch<MockInterviewRunResponse>("/mock-interview", {
     method: "POST",
     body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
   });
