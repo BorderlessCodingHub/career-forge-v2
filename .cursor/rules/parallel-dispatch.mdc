@@ -1,0 +1,63 @@
+---
+description: Mandatory parallel Task dispatch when 2+ Linear issues are class P with satisfied deps. Apply during sprint planning and batch execution.
+alwaysApply: true
+---
+
+# Parallel dispatch (mandatory)
+
+When planning or executing a batch, classify issues per [linear-delivery-workflow.mdc](./linear-delivery-workflow.mdc):
+
+| Class | Meaning |
+|-------|---------|
+| **P** | Parallel-safe — no dependency on sibling in-flight work |
+| **S** | Sequential — wait for upstream issue merge |
+| **B** | Blocker — resolve before anything else |
+
+---
+
+## Rule
+
+**If 2 or more issues in the current batch are class P and their dependencies are satisfied, the parent agent MUST launch Task subagents for ALL of them in a SINGLE message.**
+
+Do **not** serialize parallel-safe work. Do **not** implement P-class issues one-by-one when they could run concurrently.
+
+Reference flowchart: [docs/engineering/lifecycle-session-planning.png](../../docs/engineering/lifecycle-session-planning.png)
+
+---
+
+## Examples (Career Forge)
+
+| Batch | Parallel group | Issues |
+|-------|----------------|--------|
+| Sprint 1 Foundation | **[P]** | HAC-5, HAC-6, HAC-7 (after HAC-19 done) |
+| Sprint 5 Stretch | **[P]** | HAC-13, HAC-14, HAC-15 (after Sprint 4) |
+
+Sequential chains (do **not** parallelize):
+
+- HAC-8 → HAC-18 → HAC-9 (Sprint 2)
+- HAC-10 → HAC-11 → HAC-12 (Sprint 4)
+
+---
+
+## Parent agent checklist
+
+1. Read [docs/SPRINT-BOARD.md](../../docs/SPRINT-BOARD.md) or [docs/ROADMAP.md](../../docs/ROADMAP.md) for `[P]` markers
+2. Confirm deps merged on `main`
+3. Set all issues → `In Progress` via Linear MCP
+4. Launch **one message** with multiple `Task` tool calls (one per issue)
+5. After all subagents return: consolidate, run triple gate per branch, merge sequentially, update STATUS once
+
+---
+
+## Anti-patterns
+
+- ❌ Implementing HAC-5, then HAC-6, then HAC-7 serially when all three are P
+- ❌ Waiting for one P issue to fully merge before starting another P issue in the same batch
+- ❌ Launching subagents in separate turns when they could have been parallel
+
+---
+
+## Related
+
+- [linear-delivery-workflow.mdc](./linear-delivery-workflow.mdc)
+- [docs/engineering/AGENT-LIFECYCLE.md](../../docs/engineering/AGENT-LIFECYCLE.md)
