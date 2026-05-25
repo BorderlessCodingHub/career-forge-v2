@@ -19,6 +19,8 @@ smoke:
 	@test -f claude-design-docs/prototype/index.html
 	@test -f claude-design-docs/prototype/Career\ OS.html
 	@test -f claude-design-docs/prototype/README.md
+	@test -f data/roadmap.json
+	@test -f apps/api/app/models/skill_node.py
 	@test -f claude-design-docs/references/prototype-onboarding-current.png
 	@bash scripts/agent-verify.sh
 	@echo "SMOKE OK (harness + stub verify)"
