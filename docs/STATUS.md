@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-9**
+Last updated: **2026-05-25** · Last merge: **HAC-10**
 
 ---
 
@@ -25,21 +25,22 @@ Last updated: **2026-05-25** · Last merge: **HAC-9**
 | Identity onboarding + editable diagnosis | ✅ Done | HAC-8 — goal picker, pill rounds, POST /diagnosis via GraphExecutor |
 | Live Roadmap Forge (timeline-only SSE) | ✅ Done | HAC-18 — forge graph + SSE timeline + reveal |
 | Vertical roadmap UI — artifact mode | ✅ Done | HAC-9 — GET /roadmap, vertical spine, node drawer |
-| Mastery Validation | ⬜ Todo | HAC-10 — pitch focus mock interview |
-| Adaptive Planning | ⬜ Todo | HAC-11 |
+| Mastery Validation | ✅ Done | HAC-10 — validation graph, /validate interview UI, score ring |
+| Adaptive Planning | ⬜ Todo | HAC-11 — next |
 
 ---
 
 ## Current sprint
 
-**Sprint 3 — Artifact UI** (sequential **[S]**)
+**Sprint 4 — Mastery loop** (sequential **[S]**)
 
 | Issue | Title | Class | State |
 |-------|-------|-------|-------|
-| **HAC-9** | Vertical roadmap UI — artifact mode | S | **Done** |
-| HAC-10 | Mastery Validation | S | **Next** |
+| **HAC-10** | Mastery Validation | S | **Done** |
+| HAC-11 | Adaptive Planning | S | **Next** |
+| HAC-12 | Demo mode + seed Ana | S | Todo |
 
-Sprint 2 complete (HAC-8/18). **Dispatch:** HAC-10 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
+Sprint 3 complete (HAC-9). **Dispatch:** HAC-11 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
 
 ---
 
@@ -68,6 +69,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 | Professional monorepo scaffold | ✅ |
 | Live forge SSE (timeline-only) | ✅ |
 | Vertical roadmap steady state | ✅ |
+| Mastery validation interview | ✅ |
 | End-to-end pitch | ⬜ |
 
 ---

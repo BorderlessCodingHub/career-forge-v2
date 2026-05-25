@@ -67,7 +67,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 **Target:** 2026-05-31
 
-- [ ] **HAC-10** — AI Mastery Validation
+- [x] **HAC-10** — AI Mastery Validation
 - [ ] **HAC-11** — Adaptive Planning
 - [ ] **HAC-12** — Demo mode + seed Ana
 
