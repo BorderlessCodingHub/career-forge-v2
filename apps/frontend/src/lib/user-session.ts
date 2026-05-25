@@ -6,8 +6,14 @@ const USER_ID_KEY = "career-forge.user-id";
 export const DEMO_USER_ID =
   process.env.NEXT_PUBLIC_DEMO_USER_ID?.trim() || "demo-ana";
 
+/**
+ * Returns the persisted anonymous user id. Client-only — throws during SSR so
+ * server code cannot silently fall back to the demo seed user.
+ */
 export function getUserId(): string {
-  if (typeof window === "undefined") return DEMO_USER_ID;
+  if (typeof window === "undefined") {
+    throw new Error("getUserId() is client-only and cannot run during SSR");
+  }
   const stored = window.localStorage.getItem(USER_ID_KEY);
   if (stored) return stored;
   const generated = `user-${crypto.randomUUID().slice(0, 8)}`;

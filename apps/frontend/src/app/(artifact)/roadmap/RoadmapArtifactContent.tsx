@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { MissionBanner, MentorDrawer, NodeDrawer, VerticalSpine, VerticalSpineShell } from "@/components/roadmap";
@@ -25,6 +25,7 @@ export default function RoadmapArtifactPageContent() {
   const searchParams = useSearchParams();
   const adaptiveMode = searchParams.get("adaptive") === "1";
   const nodeFromQuery = searchParams.get("node");
+  const prevAdaptiveMode = useRef<boolean | null>(null);
 
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
   const [planUpdate, setPlanUpdate] = useState<PlanUpdateResponse | null>(null);
@@ -33,6 +34,9 @@ export default function RoadmapArtifactPageContent() {
   const [mentorOpen, setMentorOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [adaptiveSessionMissing, setAdaptiveSessionMissing] = useState(false);
+
+  const showingAdaptiveView = adaptiveMode && !adaptiveSessionMissing;
 
   const trackName =
     getStoredDiagnosis()?.profile.label ??
@@ -42,14 +46,18 @@ export default function RoadmapArtifactPageContent() {
   const loadRoadmap = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setAdaptiveSessionMissing(false);
     try {
-      const adaptiveSession = adaptiveMode ? getAdaptiveSession() : null;
-      if (adaptiveSession) {
-        setRoadmap(adaptiveSession.roadmap);
-        setPlanUpdate(adaptiveSession.plan);
-        setHighlightNodeId(adaptiveSession.nodeId);
-        setSelectedNodeId(adaptiveSession.nodeId);
-        return;
+      if (adaptiveMode) {
+        const adaptiveSession = getAdaptiveSession();
+        if (adaptiveSession) {
+          setRoadmap(adaptiveSession.roadmap);
+          setPlanUpdate(adaptiveSession.plan);
+          setHighlightNodeId(adaptiveSession.nodeId);
+          setSelectedNodeId(adaptiveSession.nodeId);
+          return;
+        }
+        setAdaptiveSessionMissing(true);
       }
 
       const forgeGraph = getForgeGraph();
@@ -77,9 +85,10 @@ export default function RoadmapArtifactPageContent() {
   }, [loadRoadmap]);
 
   useEffect(() => {
-    if (!adaptiveMode) {
+    if (prevAdaptiveMode.current === true && !adaptiveMode) {
       clearAdaptiveSession();
     }
+    prevAdaptiveMode.current = adaptiveMode;
   }, [adaptiveMode]);
 
   const selectedNode: RoadmapNode | null =
@@ -89,7 +98,7 @@ export default function RoadmapArtifactPageContent() {
     <VerticalSpineShell>
       <main
         className="min-h-screen pb-16"
-        data-screen={adaptiveMode ? "adaptive-state" : "vertical-roadmap"}
+        data-screen={showingAdaptiveView ? "adaptive-state" : "vertical-roadmap"}
         data-mode="artifact"
         data-testid="vertical-roadmap"
       >
@@ -97,13 +106,23 @@ export default function RoadmapArtifactPageContent() {
           <p className="text-xs uppercase tracking-widest text-text-muted">Artefato · Trilha</p>
           <h1 className="mt-2 text-3xl font-semibold text-text-primary">{trackName}</h1>
           <p className="mt-2 text-sm text-text-secondary">
-            {adaptiveMode
+            {showingAdaptiveView
               ? "A trilha reagiu ao seu desempenho — revise o nó destacado antes de avançar."
               : "Clique em um nó para ver status, referências e validar mastery."}
           </p>
         </div>
 
-        {planUpdate && <MissionBanner plan={planUpdate} />}
+        {adaptiveSessionMissing && (
+          <p
+            className="mx-auto mt-6 max-w-lg rounded-lg border border-warning/30 bg-warning/10 p-3 text-center text-sm text-warning"
+            data-testid="adaptive-session-missing"
+          >
+            Sessão adaptativa não encontrada — mostrando a trilha atual do servidor. Refaça a
+            validação para gerar uma nova ramificação.
+          </p>
+        )}
+
+        {planUpdate && showingAdaptiveView && <MissionBanner plan={planUpdate} />}
 
         {loading && (
           <p className="mt-12 text-center text-sm text-text-muted animate-pulse">

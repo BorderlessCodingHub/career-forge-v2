@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -16,10 +17,16 @@ function ValidatePageContent() {
 
   if (!nodeId) {
     return (
-      <div className="mx-auto max-w-lg py-20 text-center">
+      <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <p className="text-sm text-text-secondary">
-          Selecione um tópico na trilha para iniciar a validação.
+          Selecione um nó na trilha para iniciar a validação.
         </p>
+        <Link
+          href="/roadmap"
+          className="mt-4 inline-block text-sm font-medium text-accent hover:underline"
+        >
+          Voltar à trilha →
+        </Link>
       </div>
     );
   }
