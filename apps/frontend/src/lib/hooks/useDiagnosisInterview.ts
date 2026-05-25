@@ -24,11 +24,11 @@ import {
 import { buildSkeletonMappingProgress, profileCompletenessPct } from "@/lib/profile-dimensions";
 import {
   clearDiagnosisSessionId,
+  clearStoredDiagnosis,
   getCvAttachment,
   getDiagnosisSessionId,
   getMotivation,
   getSelectedGoal,
-  getStoredDiagnosis,
   getYearsXp,
   setAnswers,
   setDiagnosisSessionId,
@@ -160,11 +160,6 @@ export function useDiagnosisInterview() {
     let cancelled = false;
 
     async function bootstrap() {
-      if (getStoredDiagnosis()) {
-        router.replace("/onboarding/edit");
-        return;
-      }
-
       const existingSessionId = getDiagnosisSessionId();
       if (existingSessionId) {
         setPhase("bootstrapping");
@@ -203,6 +198,7 @@ export function useDiagnosisInterview() {
         mappingProgress: buildSkeletonMappingProgress(),
       });
       setError(null);
+      clearStoredDiagnosis();
 
       try {
         const response = await streamDiagnosisInterviewStart(

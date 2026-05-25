@@ -64,19 +64,12 @@ function EditableList({
 export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) {
   const router = useRouter();
   const [diagnosis, setDiagnosis] = useState<DiagnosisResponse | null>(
-    initialDiagnosis ?? null,
+    () => initialDiagnosis ?? getStoredDiagnosis(),
   );
 
   useEffect(() => {
-    if (!diagnosis) {
-      setDiagnosis(getStoredDiagnosis());
-    }
-  }, [diagnosis]);
-
-  useEffect(() => {
-    if (!diagnosis) {
-      router.replace("/onboarding");
-    }
+    if (diagnosis) return;
+    router.replace("/onboarding");
   }, [diagnosis, router]);
 
   if (!diagnosis) {

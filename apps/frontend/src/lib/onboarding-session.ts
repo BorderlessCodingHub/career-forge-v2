@@ -84,6 +84,10 @@ export function setStoredDiagnosis(diagnosis: DiagnosisResponse) {
   writeJson(DIAGNOSIS_KEY, diagnosis);
 }
 
+export function clearStoredDiagnosis() {
+  removeItem(DIAGNOSIS_KEY);
+}
+
 export function clearOnboardingSession() {
   removeItems([
     GOAL_KEY,
