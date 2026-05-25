@@ -11,6 +11,8 @@ Branch format: `HAC-XX-title-slug` (git hygiene). Linear status: **manual** via 
 ## Batch 0 — Foundation ✅ partial
 
 - [x] **HAC-19** — Engineering lifecycle + agent harness
+- [x] **HAC-20** — UI product source of truth docs + sync rule/hook
+- [x] **HAC-21** — UX paradigm doc update (editable diagnosis + forge redesign)
 - [x] **HAC-20** — UI product source of truth + sync rule/hook
 - [ ] **HAC-5** — Monorepo Next.js + FastAPI + Postgres + deploy
 - [ ] **HAC-6** — Skill graph schema + roadmap.json seed
@@ -22,11 +24,13 @@ Branch format: `HAC-XX-title-slug` (git hygiene). Linear status: **manual** via 
 
 ## Batch 1 — First AI wow
 
-- [ ] **HAC-8** — Identity Engine (onboarding diagnóstico)
-- [ ] **HAC-18** — Live Roadmap Forge (LangGraph SSE + reveal) ⭐
-- [ ] **HAC-9** — Skill Graph UI (steady + animation)
+- [ ] **HAC-8** — Identity Engine (onboarding diagnóstico + **editable diagnosis** screen)
+- [ ] **HAC-18** — Live Roadmap Forge (LangGraph SSE + animation reveal) ⭐
+- [ ] **HAC-9** — Vertical roadmap UI (steady state + optional AI sidebar)
 
 **Sequential:** HAC-8 → HAC-18 → HAC-9
+
+> **HAC-21 scope note:** Forge UI is **timeline-only during stream** (no graph preview). Reveal animates into **vertical roadmap.sh-style layout**. HAC-9 owns steady-state roadmap + optional AI sidebar — not legacy skill-graph dashboard. See [UX-FLOW.md](../claude-design-docs/UX-FLOW.md).
 
 ---
 

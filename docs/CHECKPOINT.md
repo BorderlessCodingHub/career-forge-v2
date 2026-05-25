@@ -67,9 +67,11 @@ Statuses: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar`
 
 ## UI reference
 
-Claude Design prototype: [claude-design-docs/prototype/](../claude-design-docs/prototype/)
+Canonical UX (HAC-21): [claude-design-docs/UX-FLOW.md](../claude-design-docs/UX-FLOW.md) · [SCREEN-INTENT.md](../claude-design-docs/SCREEN-INTENT.md)
 
-Visual: roadmap.sh minimalism + living skill graph.
+Claude Design prototype: [claude-design-docs/prototype/](../claude-design-docs/prototype/) — tokens/components only; flow may lag docs.
+
+Visual steady state: roadmap.sh vertical layout + adaptive personalized skill graph. Reference: [roadmap-sh-vertical-ai-tutor.png](../claude-design-docs/references/roadmap-sh-vertical-ai-tutor.png)
 
 ---
 
@@ -77,9 +79,10 @@ Visual: roadmap.sh minimalism + living skill graph.
 
 1. Goal + motivation
 2. Onboarding chat → diagnóstico
-3. **Forge stream** → graph reveal
-4. Validar REST → resposta ruim → score
-5. Graph reage + mentor suggestion
+3. **Editable diagnosis** — ajustar lacuna, clicar **"Gerar roadmap"**
+4. **Forge stream** (timeline passos 1–N, sem grafo) → **animation reveal** → vertical roadmap
+5. Validar REST → resposta ruim → score
+6. Roadmap reage + sugestão mentor / AI sidebar
 
 ---
 

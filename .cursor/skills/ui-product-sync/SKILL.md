@@ -26,9 +26,10 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../../.cursor/rules/ui-product-sync.md
 Read:
 
 1. [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md)
-2. [SCREEN-INTENT-MAP.md](../../claude-design-docs/SCREEN-INTENT-MAP.md)
-3. Relevant screen in [`prototype/Career OS.html`](../../claude-design-docs/prototype/Career%20OS.html)
-4. Changed files: `git diff origin/main...HEAD -- apps/web claude-design-docs`
+2. [UX-FLOW.md](../../claude-design-docs/UX-FLOW.md)
+3. [SCREEN-INTENT.md](../../claude-design-docs/SCREEN-INTENT.md)
+4. Relevant screen in [`prototype/Career OS.html`](../../claude-design-docs/prototype/Career%20OS.html) (tokens/components — flow may lag)
+5. Changed files: `git diff origin/main...HEAD -- apps/web claude-design-docs`
 
 ### 2. Compare trilogy
 
@@ -44,7 +45,7 @@ Apply hierarchy from PRODUCT-SOURCE-OF-TRUTH § Source-of-truth hierarchy.
 
 | If… | Then update… |
 |-----|----------------|
-| Route/flow changed | SCREEN-INTENT-MAP |
+| Route/flow changed | UX-FLOW + SCREEN-INTENT + SCREEN-INTENT-MAP |
 | Colors/type/spacing changed | design-tokens.md + UI-PRINCIPLES if pattern new |
 | Code intentionally differs from prototype | PRODUCT-SOURCE-OF-TRUTH → Implementation notes row |
 | New shared component | UI-PRINCIPLES component table + Implementation notes |

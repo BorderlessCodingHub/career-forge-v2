@@ -13,12 +13,16 @@
 - Dev-friendly — feels like a tool, not a course marketplace
 - Reference mood: [roadmap.sh](https://roadmap.sh) backend beginner — **layout inspiration only**
 
-### Living skill graph (evolution)
+### Adaptive vertical roadmap (HAC-21 steady state)
 
-- Replace linear checklist with **connected nodes** + dependency lines
+- Vertical spine with category headers — layout inspired by [roadmap.sh](https://roadmap.sh)
+- Nodes alternate left/right of spine; connected by dependency lines
 - Each node: title, status pill, mastery % when known
 - Locked nodes dimmed; current focus highlighted (accent border/glow)
-- Graph is the **hero** on `/roadmap` — not a sidebar widget
+- Roadmap is the **hero** on `/roadmap` — not a sidebar widget
+- **Optional AI sidebar** (Explain, Test knowledge, Chat) — user opens when needed
+
+Reference: [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png)
 
 ### What we are NOT
 
@@ -78,10 +82,12 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 | Screen type | Layout |
 |-------------|--------|
 | Marketing/entry | Centered hero, max-width ~720px |
-| Forge | 40/60 split: timeline left, graph right |
-| Dashboard | Graph main + right sidebar (progress, evidence, mentor CTA) |
+| Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
+| Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
+| Forge reveal | Animation overlay → vertical roadmap materializes |
+| Roadmap steady state | Vertical spine + left/right nodes + **optional** AI sidebar |
 | Validation | Focus mode — question card dominant, minimal chrome |
-| Mentor | Drawer from right on dashboard — contextual, not full page |
+| Mentor | AI sidebar or drawer on roadmap — contextual, not full page |
 
 Desktop-first **1280px**. Mobile responsive nice-to-have for hackathon.
 
@@ -102,12 +108,14 @@ Before merging UI for these screens, verify against prototype:
 
 **Live Roadmap Forge**
 - [ ] Timeline items appear sequentially (not all at once)
-- [ ] Graph skeleton fills as nodes arrive
+- [ ] Steps numbered 1–N during generation only
+- [ ] **No graph/map visible during stream**
 - [ ] No generic spinner as primary feedback
 
-**Graph reveal**
-- [ ] Transition from forge to full graph feels like completion
-- [ ] MissionBanner visible with concrete next topic
+**Animation reveal**
+- [ ] Stream items fly into vertical roadmap positions
+- [ ] Transition feels like completion — no confetti
+- [ ] Mission/next action visible after reveal
 
 **Mastery validation**
 - [ ] Headline: provar aprendizado, not "quiz"

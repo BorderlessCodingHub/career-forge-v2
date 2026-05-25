@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-20** (UI product source of truth + sync harness)
+Last updated: **2026-05-25** · Last merge: **HAC-21** (UX paradigm doc update)
 
 ---
 
@@ -11,14 +11,14 @@ Last updated: **2026-05-25** · Last merge: **HAC-20** (UI product source of tru
 | Area | Status | Notes |
 |------|--------|-------|
 | Agent harness | ✅ Done | AGENTS.md, rules, hooks, triple gate docs |
-| UI product source of truth | ✅ Done | `claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md`, ui-product-sync rule/hook/skill |
-| Claude Design prototype | ✅ Done | `claude-design-docs/prototype/` |
+| Claude Design prototype | ⚠️ Legacy flow | `claude-design-docs/prototype/` — tokens OK, flow pre-HAC-21 |
+| UX documentation (HAC-21) | ✅ Done | UX-FLOW, SCREEN-INTENT, vertical roadmap reference |
 | Monorepo apps/web + apps/api | ⬜ Todo | HAC-5 |
 | Postgres schema + seed | ⬜ Todo | HAC-6 |
 | AI JSON contracts | ⬜ Todo | HAC-7 |
-| Identity onboarding | ⬜ Todo | HAC-8 |
-| Live Roadmap Forge (SSE) | ⬜ Todo | HAC-18 |
-| Skill Graph UI | ⬜ Todo | HAC-9 |
+| Identity onboarding + editable diagnosis | ⬜ Todo | HAC-8 |
+| Live Roadmap Forge (timeline-only SSE) | ⬜ Todo | HAC-18 |
+| Vertical roadmap UI + AI sidebar | ⬜ Todo | HAC-9 |
 | Mastery Validation | ⬜ Todo | HAC-10 |
 | Adaptive Planning | ⬜ Todo | HAC-11 |
 
@@ -44,8 +44,9 @@ HAC-8 → HAC-18 → HAC-9
 
 | Scene | Ready |
 |-------|-------|
-| UI prototype (static) | ✅ |
-| Live forge SSE | ⬜ |
+| UI prototype (static, legacy flow) | ⚠️ |
+| UX docs + steady-state reference | ✅ |
+| Live forge SSE (timeline-only) | ⬜ |
 | Validation interview | ⬜ |
 | End-to-end pitch | ⬜ |
 

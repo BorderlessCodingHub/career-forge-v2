@@ -32,25 +32,27 @@ Usuário declara **quem quer ser** e **por quê** (motivação). Objetivo alimen
 - MVP: uma trilha ativa (Backend Developer)
 - Outras trilhas: "Em breve" no UI
 
-### 2. Skill graph — cérebro visual
+### 2. Skill graph — cérebro adaptativo
 
-Grafo de dependências com estados e mastery % — não lista vertical infinita.
+Grafo de dependências personalizado com estados e mastery % — trilha viva, não checklist estático.
 
 - Catálogo base: `data/roadmap.json` (tópicos + prerequisites + rubric)
 - Estado dinâmico: status por nó + evidências acumuladas
+- **Steady state UI:** layout vertical roadmap.sh-style (spine + categorias + nós left/right)
 - Status: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar`
 
 ### 3. Live Roadmap Forge — wow #1
 
-Após onboarding, usuário **assiste** a IA forjar a trilha:
+Após diagnóstico **editável**, usuário clica **"Gerar roadmap"** e **assiste** a IA forjar a trilha:
 
-- Timeline ao vivo (reasoning, artifacts, decisions)
-- Grafo enchendo nó a nó
-- Reveal → trilha pronta + próxima missão
+- Timeline ao vivo — passos numerados 1, 2, 3, 4… (reasoning, artifacts, decisions)
+- **Sem grafo visível durante stream** — foco total no pensamento da IA
+- Animação reveal — items voam para layout vertical
+- Trilha pronta + próxima missão
 
 Reação esperada: *"Tô vendo a IA pensar e montar MINHA trilha."*
 
-Spec técnica: [stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md)
+Spec técnica: [stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md) · Flow: [UX-FLOW.md](./UX-FLOW.md)
 
 ### 4. Mastery validation — wow #2
 
@@ -99,15 +101,19 @@ Do not build UI for these in MVP (see [CHECKPOINT](../docs/CHECKPOINT.md)):
 
 | Moment | Pass |
 |--------|------|
-| Forge | Timeline + graph fill visible < 60s in demo |
+| Editable diagnosis | User adjusts item, clicks "Gerar roadmap" |
+| Forge | Timeline-only stream with numbered steps < 60s in demo |
+| Reveal | Items animate into vertical roadmap layout |
 | Validation | Score + lacunas + próximo passo in one screen |
-| Adaptive | Graph visibly changes after failed validation |
+| Adaptive | Roadmap visibly changes after failed validation |
 | Mentor (P1) | Answer references last validation, not generic tips |
 
 ---
 
 ## References
 
+- [UX-FLOW.md](./UX-FLOW.md) — canonical flow (HAC-21)
 - [brief-v1.md](./brief-v1.md) — screen prompts used in Claude Design
 - [handoff_chat_gpt.txt](../docs/handoff_chat_gpt.txt) — team debate + judge reframing
-- [prototype/](./prototype/) — visual embodiment of this vision
+- [prototype/](./prototype/) — tokens/components (flow may lag docs)
+- [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) — steady-state layout
