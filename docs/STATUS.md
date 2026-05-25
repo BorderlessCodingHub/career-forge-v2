@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-6** (skill graph schema + roadmap.json seed)
+Last updated: **2026-05-25** · Last merge: **HAC-6** · **HAC-7** branch `hac-7-ai-json-contracts` pushed (pending merge)
 
 ---
 
