@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import Link from "next/link";
 
 import { DemoModeToggle } from "@/components/layout/DemoModeToggle";
 
@@ -29,6 +30,13 @@ export function ArtifactShell({
           </div>
         </div>
         <DemoModeToggle compact />
+        <Link
+          href="/report"
+          className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-accent hover:text-accent"
+          data-testid="mentor-report-link"
+        >
+          Relatório mentor
+        </Link>
         <div className="text-right">
           <p className="text-[10px] uppercase tracking-widest text-text-muted">Sua trilha</p>
           <p className="text-sm font-medium text-text-primary">{trackName}</p>

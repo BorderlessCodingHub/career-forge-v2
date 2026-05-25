@@ -2,6 +2,7 @@ import type {
   DiagnosisResponse,
   MentorContextSnapshot,
   MentorMessage,
+  MentorReportResponse,
   MentorRunResponse,
   RoadmapResponse,
   RoadmapSyncNode,
@@ -161,6 +162,13 @@ export async function sendMentorMessage(
     method: "POST",
     body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
   });
+}
+
+export async function getMentorReport(userId?: string): Promise<MentorReportResponse> {
+  const resolvedUserId = userId ?? getUserId();
+  return apiFetch<MentorReportResponse>(
+    `/mentor-report?user_id=${encodeURIComponent(resolvedUserId)}`,
+  );
 }
 
 export async function* streamForgeEvents(

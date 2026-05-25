@@ -187,3 +187,25 @@ export type MentorRunResponse = {
   events: Array<Record<string, unknown>>;
   mentor: MentorResponse;
 };
+
+export type MentorReportValidationEntry = {
+  node_id: string;
+  node_title: string;
+  score: number;
+  status: ValidationStatus;
+  strengths: string[];
+  gaps: string[];
+  mentor_summary: string;
+  recommended_intervention: string;
+  validated_at?: string | null;
+};
+
+export type MentorReportResponse = {
+  user_id: string;
+  display_name: string;
+  goal: string;
+  track_title: string;
+  profile_label: string;
+  validations: MentorReportValidationEntry[];
+  learner_gaps: string[];
+};
