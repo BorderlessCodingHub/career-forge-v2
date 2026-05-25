@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  startDiagnosisInterview,
-  submitDiagnosisTurn,
+  streamDiagnosisInterviewStart,
+  streamDiagnosisInterviewTurn,
 } from "@/lib/api-client";
-import { buildSkeletonMappingProgress } from "@/lib/ctrr-dimensions";
+import { buildSkeletonMappingProgress, profileCompletenessPct } from "@/lib/profile-dimensions";
 import {
   buildInterviewIntake,
   MAX_INTERVIEW_ROUNDS,
@@ -15,7 +15,13 @@ import {
   MIN_ANSWER_LENGTH,
 } from "@/lib/diagnosis-interview";
 import {
+  applyMappingDimensionEvent,
+  diagnosisStreamPhaseLabel,
+  nextAnalyzingKey,
+} from "@/lib/diagnosis-stream";
+import {
   getCvAttachment,
+  getDiagnosisSessionId,
   getMotivation,
   getSelectedGoal,
   getYearsXp,
@@ -24,6 +30,8 @@ import {
   setStoredDiagnosis,
 } from "@/lib/onboarding-session";
 import type {
+  DiagnosisInterviewStatusPhase,
+  DiagnosisStreamEvent,
   InterviewQuestion,
   InterviewTurnResponse,
   RubricDimensionKey,
@@ -36,6 +44,8 @@ type OnboardingIntake = {
   yearsXp: NonNullable<ReturnType<typeof getYearsXp>>;
 };
 
+type InterviewPhase = "bootstrapping" | "ready" | "submitting";
+
 function readOnboardingIntake(): OnboardingIntake | null {
   const goalId = getSelectedGoal();
   const motivation = getMotivation().trim();
@@ -44,40 +54,98 @@ function readOnboardingIntake(): OnboardingIntake | null {
   return { goalId, motivation, yearsXp };
 }
 
+function answersForQuestions(
+  questions: InterviewQuestion[],
+  answers: Record<string, string>,
+): Record<string, string> {
+  return Object.fromEntries(
+    questions.map((question) => [question.id, answers[question.id]?.trim() ?? ""]),
+  );
+}
+
+function handleStreamEvent(
+  event: DiagnosisStreamEvent,
+  setters: {
+    setStreamPhase: (phase: DiagnosisInterviewStatusPhase | null) => void;
+    setAnalyzingKey: (key: RubricDimensionKey | null) => void;
+    setMappingProgress: React.Dispatch<React.SetStateAction<RubricMapItem[]>>;
+  },
+) {
+  if (event.type === "interview_status") {
+    setters.setStreamPhase(event.phase);
+    if (event.phase === "judging") {
+      setters.setAnalyzingKey("motivation_goal");
+    }
+    return;
+  }
+
+  if (event.type === "mapping_dimension") {
+    setters.setMappingProgress((current) => {
+      const updated = applyMappingDimensionEvent(current, event);
+      setters.setAnalyzingKey(nextAnalyzingKey(updated, event.item.rubric_key));
+      return updated;
+    });
+  }
+}
+
 export function useDiagnosisInterview() {
   const router = useRouter();
   const intake = useMemo(() => readOnboardingIntake(), []);
 
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(() =>
+    getDiagnosisSessionId(),
+  );
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [mappingProgress, setMappingProgress] = useState<RubricMapItem[]>(
     buildSkeletonMappingProgress,
   );
   const [answers, setAnswersState] = useState<Record<string, string>>({});
   const [roundCount, setRoundCount] = useState(0);
-  const [bootstrapping, setBootstrapping] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  const [phase, setPhase] = useState<InterviewPhase>("bootstrapping");
+  const [streamPhase, setStreamPhase] = useState<DiagnosisInterviewStatusPhase | null>(
+    "analyzing_intake",
+  );
+  const [analyzingKey, setAnalyzingKey] = useState<RubricDimensionKey | null>(
+    "motivation_goal",
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!intake) router.replace("/");
   }, [intake, router]);
 
-  const applyTurnResponse = useCallback((response: InterviewTurnResponse) => {
-    setSessionId(response.session_id);
-    setDiagnosisSessionId(response.session_id);
-    setQuestions(response.questions);
-    setMappingProgress(response.mapping_progress);
-    setAnswersState((current) => {
-      const next = { ...current };
-      response.questions.forEach((question) => {
-        if (next[question.id] === undefined) {
-          next[question.id] = "";
-        }
-      });
-      return next;
-    });
-  }, []);
+  const streamSetters = useMemo(
+    () => ({
+      setStreamPhase,
+      setAnalyzingKey,
+      setMappingProgress,
+    }),
+    [],
+  );
+
+  const applyTurnResponse = useCallback(
+    (response: InterviewTurnResponse): boolean => {
+      setSessionId(response.session_id);
+      setDiagnosisSessionId(response.session_id);
+      setMappingProgress(response.mapping_progress);
+      setStreamPhase(null);
+      setAnalyzingKey(null);
+
+      if (response.status === "complete" && response.diagnosis) {
+        setStoredDiagnosis(response.diagnosis);
+        return true;
+      }
+
+      setQuestions(response.questions);
+      setAnswersState(
+        Object.fromEntries(
+          response.questions.map((question) => [question.id, ""]),
+        ),
+      );
+      return false;
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!intake) return;
@@ -86,20 +154,32 @@ export function useDiagnosisInterview() {
     let cancelled = false;
 
     async function bootstrap() {
-      setBootstrapping(true);
+      setPhase("bootstrapping");
+      setStreamPhase("analyzing_intake");
+      setAnalyzingKey("motivation_goal");
+      setMappingProgress(buildSkeletonMappingProgress());
       setError(null);
       try {
-        const response = await startDiagnosisInterview(
+        const response = await streamDiagnosisInterviewStart(
           buildInterviewIntake({
             goalId: readyIntake.goalId,
             motivation: readyIntake.motivation,
             yearsXp: readyIntake.yearsXp,
             cv: getCvAttachment(),
           }),
+          (event) => {
+            if (cancelled) return;
+            handleStreamEvent(event, streamSetters);
+          },
         );
         if (cancelled) return;
-        applyTurnResponse(response);
+        const completed = applyTurnResponse(response);
+        if (completed) {
+          router.push("/onboarding/edit");
+          return;
+        }
         setRoundCount(1);
+        setPhase("ready");
       } catch (cause) {
         if (cancelled) return;
         setError(
@@ -107,8 +187,7 @@ export function useDiagnosisInterview() {
             ? cause.message
             : "Não foi possível iniciar o diagnóstico.",
         );
-      } finally {
-        if (!cancelled) setBootstrapping(false);
+        setPhase("ready");
       }
     }
 
@@ -116,7 +195,7 @@ export function useDiagnosisInterview() {
     return () => {
       cancelled = true;
     };
-  }, [applyTurnResponse, intake]);
+  }, [applyTurnResponse, intake, router, streamSetters]);
 
   const activeKeys = useMemo(
     () => new Set(questions.map((question) => question.rubric_key)),
@@ -127,18 +206,9 @@ export function useDiagnosisInterview() {
     (question) => (answers[question.id]?.trim().length ?? 0) >= MIN_ANSWER_LENGTH,
   );
 
-  const answeredInRound = questions.filter(
-    (question) => (answers[question.id]?.trim().length ?? 0) >= MIN_ANSWER_LENGTH,
-  ).length;
-
-  const totalExpectedQuestions = Math.min(
-    MAX_INTERVIEW_ROUNDS * MAX_QUESTIONS_PER_TURN,
-    10,
-  );
-  const answeredTotal = (roundCount - 1) * MAX_QUESTIONS_PER_TURN + answeredInRound;
-  const progressPct = Math.min(
-    100,
-    Math.round((answeredTotal / totalExpectedQuestions) * 100),
+  const progressPct = useMemo(
+    () => profileCompletenessPct(mappingProgress),
+    [mappingProgress],
   );
 
   const setAnswer = useCallback((questionId: string, text: string) => {
@@ -146,9 +216,11 @@ export function useDiagnosisInterview() {
   }, []);
 
   const submitRound = useCallback(async () => {
-    if (!roundComplete || submitting || !sessionId) return;
+    if (!roundComplete || phase !== "ready" || !sessionId) return;
 
-    setSubmitting(true);
+    setPhase("submitting");
+    setStreamPhase("processing_answers");
+    setAnalyzingKey(null);
     setError(null);
 
     const turnAnswers = questions.map((question) => ({
@@ -156,12 +228,14 @@ export function useDiagnosisInterview() {
       text: answers[question.id]?.trim() ?? "",
     }));
 
-    setAnswers(answers);
-
     try {
-      const response = await submitDiagnosisTurn(sessionId, {
-        answers: turnAnswers,
-      });
+      setAnswers(answersForQuestions(questions, answers));
+
+      const response = await streamDiagnosisInterviewTurn(
+        sessionId,
+        { answers: turnAnswers },
+        (event) => handleStreamEvent(event, streamSetters),
+      );
 
       if (response.status === "complete" && response.diagnosis) {
         setStoredDiagnosis(response.diagnosis);
@@ -171,23 +245,26 @@ export function useDiagnosisInterview() {
 
       applyTurnResponse(response);
       setRoundCount((count) => count + 1);
-      setSubmitting(false);
     } catch (cause) {
       setError(
         cause instanceof Error
           ? cause.message
           : "Não foi possível enviar suas respostas. Tente novamente.",
       );
-      setSubmitting(false);
+    } finally {
+      setPhase("ready");
+      setStreamPhase(null);
+      setAnalyzingKey(null);
     }
   }, [
     answers,
     applyTurnResponse,
+    phase,
     questions,
     roundComplete,
     router,
     sessionId,
-    submitting,
+    streamSetters,
   ]);
 
   return {
@@ -196,8 +273,11 @@ export function useDiagnosisInterview() {
     mappingProgress,
     answers,
     roundCount,
-    bootstrapping,
-    submitting,
+    bootstrapping: phase === "bootstrapping",
+    submitting: phase === "submitting",
+    streaming: phase === "bootstrapping" || phase === "submitting",
+    streamPhaseLabel: diagnosisStreamPhaseLabel(streamPhase),
+    analyzingKey,
     error,
     activeKeys: activeKeys as Set<RubricDimensionKey>,
     roundComplete,

@@ -6,7 +6,7 @@ import type {
 } from "@/types/contracts";
 
 /** Mirror backend diagnosis_interview.py interview limits. */
-export const MAX_INTERVIEW_ROUNDS = 5;
+export const MAX_INTERVIEW_ROUNDS = 3;
 export const MAX_QUESTIONS_PER_TURN = 2;
 export const MIN_ANSWER_LENGTH = 8;
 

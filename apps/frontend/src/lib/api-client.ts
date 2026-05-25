@@ -4,6 +4,7 @@ import type {
   DiagnosisRequest,
   DiagnosisResponse,
   DiagnosisRunResponse,
+  DiagnosisStreamEvent,
   ForgeRunResponse,
   InterviewTurnRequest,
   InterviewTurnResponse,
@@ -88,6 +89,113 @@ export async function startDiagnosisInterview(
     method: "POST",
     body: JSON.stringify({ user_id: getUserId(), ...payload }),
   });
+}
+
+function parseDiagnosisStreamEvent(raw: Record<string, unknown>): DiagnosisStreamEvent | null {
+  if (typeof raw.type !== "string") return null;
+  return raw as DiagnosisStreamEvent;
+}
+
+function graphOutputToTurnResponse(
+  output: InterviewTurnResponse & { session?: unknown },
+): InterviewTurnResponse {
+  return {
+    session_id: output.session_id,
+    status: output.status,
+    questions: output.questions ?? [],
+    mapping_progress: output.mapping_progress ?? [],
+    diagnosis: output.diagnosis,
+  };
+}
+
+async function consumeDiagnosisInterviewStream(
+  path: string,
+  body: unknown,
+  onEvent?: (event: DiagnosisStreamEvent) => void,
+): Promise<InterviewTurnResponse> {
+  let res: Response;
+  try {
+    res = await fetch(`${backendUrl}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "text/event-stream",
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (cause) {
+    const message =
+      cause instanceof Error ? cause.message : "Network request failed";
+    throw new Error(`Cannot reach API ${backendUrl}${path}: ${message}.`);
+  }
+
+  if (!res.ok || !res.body) {
+    const message = await readApiErrorMessage(res);
+    throw new Error(`API ${path} failed: ${message}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let finalResponse: InterviewTurnResponse | null = null;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const parts = buffer.split("\n\n");
+    buffer = parts.pop() ?? "";
+
+    for (const part of parts) {
+      const line = part.split("\n").find((row) => row.startsWith("data:"));
+      if (!line) continue;
+      const json = line.replace(/^data:\s*/, "");
+      try {
+        const raw = JSON.parse(json) as Record<string, unknown>;
+        const event = parseDiagnosisStreamEvent(raw);
+        if (!event) continue;
+        onEvent?.(event);
+        if (event.type === "error") {
+          throw new Error(event.message);
+        }
+        if (event.type === "graph_complete") {
+          finalResponse = graphOutputToTurnResponse(event.output);
+        }
+      } catch (cause) {
+        if (cause instanceof Error && cause.message !== "Unexpected token") {
+          throw cause;
+        }
+      }
+    }
+  }
+
+  if (!finalResponse) {
+    throw new Error("Stream terminou sem resposta final do diagnóstico.");
+  }
+  return finalResponse;
+}
+
+export async function streamDiagnosisInterviewStart(
+  payload: DiagnosisIntake,
+  onEvent?: (event: DiagnosisStreamEvent) => void,
+): Promise<InterviewTurnResponse> {
+  return consumeDiagnosisInterviewStream(
+    "/diagnosis/interview/start/stream",
+    { user_id: getUserId(), ...payload },
+    onEvent,
+  );
+}
+
+export async function streamDiagnosisInterviewTurn(
+  sessionId: string,
+  payload: InterviewTurnRequest,
+  onEvent?: (event: DiagnosisStreamEvent) => void,
+): Promise<InterviewTurnResponse> {
+  return consumeDiagnosisInterviewStream(
+    `/diagnosis/interview/${encodeURIComponent(sessionId)}/turn/stream`,
+    payload,
+    onEvent,
+  );
 }
 
 export async function submitDiagnosisTurn(
