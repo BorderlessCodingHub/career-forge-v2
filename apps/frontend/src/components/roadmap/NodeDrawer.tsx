@@ -1,16 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 import { Button } from "@/components/ui";
-import { sendMentorMessage } from "@/lib/api-client";
 import type { RoadmapNode } from "@/types/contracts";
 
 type NodeDrawerProps = {
   node: RoadmapNode | null;
   onClose: () => void;
-  onOpenMentor?: () => void;
+  onOpenMentor: () => void;
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -23,33 +21,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
-  const [askDraft, setAskDraft] = useState("");
-  const [askReply, setAskReply] = useState<string | null>(null);
-  const [askLoading, setAskLoading] = useState(false);
-  const [askError, setAskError] = useState<string | null>(null);
-
-  const activeNode = node;
-  if (!activeNode) return null;
-
-  async function handleAskAi() {
-    const text = askDraft.trim();
-    if (!text || askLoading || !activeNode) return;
-    setAskLoading(true);
-    setAskError(null);
-    try {
-      const response = await sendMentorMessage({
-        message: text,
-        node_id: activeNode.node_id,
-        node_title: activeNode.title,
-      });
-      setAskReply(response.mentor.reply);
-      setAskDraft("");
-    } catch (err) {
-      setAskError(err instanceof Error ? err.message : "Falha ao perguntar ao mentor");
-    } finally {
-      setAskLoading(false);
-    }
-  }
+  if (!node) return null;
 
   return (
     <>
@@ -120,40 +92,19 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
 
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-              Ask AI
+              Mentor contextual
             </h3>
-            <textarea
-              value={askDraft}
-              onChange={(event) => setAskDraft(event.target.value)}
-              placeholder="Como posso praticar este tópico?"
-              className="mt-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted"
-              rows={3}
-              data-testid="ask-ai-input"
-            />
-            <div className="mt-2 flex gap-2">
-              <Button
-                variant="ghost"
-                disabled={!askDraft.trim() || askLoading}
-                onClick={() => void handleAskAi()}
-                data-testid="ask-ai-submit"
-              >
-                {askLoading ? "Consultando…" : "Perguntar ao mentor"}
-              </Button>
-              {onOpenMentor && (
-                <Button variant="ghost" onClick={onOpenMentor} data-testid="open-mentor-drawer">
-                  Chat completo
-                </Button>
-              )}
-            </div>
-            {askError && <p className="mt-2 text-sm text-danger">{askError}</p>}
-            {askReply && (
-              <p
-                className="mt-3 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-secondary"
-                data-testid="ask-ai-reply"
-              >
-                {askReply}
-              </p>
-            )}
+            <p className="mt-2 text-sm text-text-secondary">
+              Peça referências, esclareça lacunas da validação ou como praticar este tópico.
+            </p>
+            <Button
+              variant="ghost"
+              className="mt-3"
+              onClick={onOpenMentor}
+              data-testid="open-mentor-drawer"
+            >
+              Abrir chat com mentor →
+            </Button>
           </div>
         </div>
 
