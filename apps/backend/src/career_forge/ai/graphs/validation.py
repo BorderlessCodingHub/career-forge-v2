@@ -5,8 +5,13 @@ from __future__ import annotations
 import re
 from collections.abc import AsyncIterator
 from typing import Any
-from uuid import uuid4
-
+from career_forge.ai.streaming.langchain_events import (
+    LangChainStreamEvent,
+    emit_chain_end,
+    emit_chain_start,
+    emit_chain_stream,
+    new_run_id,
+)
 from career_forge.schemas.common import ValidationStatus
 from career_forge.schemas.validation import ValidationRequest, ValidationResponse
 
@@ -144,22 +149,6 @@ NEXT_ACTIONS: dict[str, str] = {
 }
 
 
-def _lc_event(
-    event: str,
-    name: str,
-    run_id: str,
-    data: dict[str, Any],
-) -> dict[str, Any]:
-    return {
-        "event": event,
-        "name": name,
-        "run_id": run_id,
-        "tags": [],
-        "metadata": {},
-        "data": data,
-    }
-
-
 def _score_text(text: str, keywords: tuple[str, ...]) -> int:
     lowered = text.lower()
     hits = sum(1 for keyword in keywords if keyword in lowered)
@@ -251,33 +240,30 @@ class ValidationGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncIterator[LangChainStreamEvent]:
         del version
         payload = ValidationRequest.model_validate(input_data)
         result = build_validation_response(payload)
-        run_id = str(uuid4())
+        run_id = new_run_id()
 
-        yield _lc_event("on_chain_start", self.graph_name, run_id, {})
+        yield emit_chain_start(self.graph_name, run_id)
 
-        yield _lc_event(
-            "on_chain_stream",
+        yield emit_chain_stream(
             "evaluate_rubric",
             run_id,
             {
-                "chunk": {
-                    "type": "progress",
-                    "step": "evaluate_rubric",
-                    "message": f"Avaliando evidências de {payload.node_title}",
-                },
+                "type": "progress",
+                "step": "evaluate_rubric",
+                "message": f"Avaliando evidências de {payload.node_title}",
             },
         )
 
         output = result.model_dump()
-        yield _lc_event(
-            "on_chain_end",
+        yield emit_chain_end(
             self.graph_name,
             run_id,
-            {"output": output, "input": input_data},
+            output=output,
+            input_data=input_data,
         )
 
 

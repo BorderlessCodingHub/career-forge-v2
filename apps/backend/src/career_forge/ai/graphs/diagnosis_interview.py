@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 from collections.abc import AsyncIterator
 from typing import Any, Literal
-from uuid import uuid4
 
 from career_forge.ai.llm.diagnosis_interview import (
     DiagnosisInterviewLlmError,
@@ -29,20 +28,14 @@ from career_forge.services.cv import process_cv_attachment
 GraphPhase = Literal["start", "turn"]
 
 
-def _lc_event(
-    event: str,
-    name: str,
-    run_id: str,
-    data: dict[str, Any],
-) -> dict[str, Any]:
-    return {
-        "event": event,
-        "name": name,
-        "run_id": run_id,
-        "tags": [],
-        "metadata": {},
-        "data": data,
-    }
+from career_forge.ai.streaming.langchain_events import (
+    LangChainStreamEvent,
+    emit_chain_end,
+    emit_chain_start,
+    emit_chain_stream,
+    emit_chain_error,
+    new_run_id,
+)
 
 
 def _extract_cv_text(intake: DiagnosisIntake) -> tuple[str | None, CvSignals | None]:
@@ -382,15 +375,15 @@ class DiagnosisInterviewGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncIterator[LangChainStreamEvent]:
         del version
-        run_id = str(uuid4())
+        run_id = new_run_id()
         phase: GraphPhase = input_data.get("phase", "start")
         session = DiagnosisSession.model_validate(input_data["session"])
         answers_raw = input_data.get("answers") or []
         answers = [InterviewAnswer.model_validate(item) for item in answers_raw]
 
-        yield _lc_event("on_chain_start", self.graph_name, run_id, {})
+        yield emit_chain_start(self.graph_name, run_id)
 
         try:
             output: dict[str, Any] | None = None
@@ -404,30 +397,20 @@ class DiagnosisInterviewGraphRunnable:
                 if chunk.get("type") == "_output":
                     output = chunk["output"]
                     continue
-                yield _lc_event(
-                    "on_chain_stream",
-                    chunk.get("phase", "diagnosis_interview"),
-                    run_id,
-                    {"chunk": chunk},
-                )
+                yield emit_chain_stream(self.graph_name, run_id, chunk)
 
             if output is None:
                 msg = "diagnosis interview graph completed without output"
                 raise DiagnosisInterviewLlmError(msg)
 
-            yield _lc_event(
-                "on_chain_end",
+            yield emit_chain_end(
                 self.graph_name,
                 run_id,
-                {"output": output, "input": input_data},
+                output=output,
+                input_data=input_data,
             )
         except DiagnosisInterviewLlmError as exc:
-            yield _lc_event(
-                "on_chain_error",
-                self.graph_name,
-                run_id,
-                {"error": exc.retry_message},
-            )
+            yield emit_chain_error(self.graph_name, run_id, exc.retry_message)
             raise
 
 

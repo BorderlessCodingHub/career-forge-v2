@@ -5,8 +5,13 @@ from __future__ import annotations
 import re
 from collections.abc import AsyncIterator
 from typing import Any
-from uuid import uuid4
-
+from career_forge.ai.streaming.langchain_events import (
+    LangChainStreamEvent,
+    emit_chain_end,
+    emit_chain_start,
+    emit_chain_stream,
+    new_run_id,
+)
 from career_forge.ai.graphs.validation import (
     NEXT_ACTIONS,
     PASS_THRESHOLD,
@@ -132,45 +137,33 @@ class MockInterviewGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncIterator[LangChainStreamEvent]:
         del version
         payload = MockInterviewRequest.model_validate(input_data)
         result = build_mock_interview_response(payload)
-        run_id = str(uuid4())
+        run_id = new_run_id()
 
-        yield {
-            "event": "on_chain_start",
-            "name": self.graph_name,
-            "run_id": run_id,
-            "tags": [],
-            "metadata": {},
-            "data": {},
-        }
+        yield emit_chain_start(self.graph_name, run_id)
 
-        yield {
-            "event": "on_chain_stream",
-            "name": "evaluate_contextual",
-            "run_id": run_id,
-            "tags": [],
-            "metadata": {},
-            "data": {
-                "chunk": {
-                    "type": "progress",
-                    "step": "evaluate_contextual",
-                    "message": f"Avaliando {len(payload.answers)} respostas contextuais de {payload.node_title}",
-                },
+        yield emit_chain_stream(
+            "evaluate_contextual",
+            run_id,
+            {
+                "type": "progress",
+                "step": "evaluate_contextual",
+                "message": (
+                    f"Avaliando {len(payload.answers)} respostas contextuais de {payload.node_title}"
+                ),
             },
-        }
+        )
 
         output = result.model_dump()
-        yield {
-            "event": "on_chain_end",
-            "name": self.graph_name,
-            "run_id": run_id,
-            "tags": [],
-            "metadata": {},
-            "data": {"output": output, "input": input_data},
-        }
+        yield emit_chain_end(
+            self.graph_name,
+            run_id,
+            output=output,
+            input_data=input_data,
+        )
 
 
 def build_mock_interview_graph() -> MockInterviewGraphRunnable:
