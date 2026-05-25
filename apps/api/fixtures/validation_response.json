@@ -1,0 +1,14 @@
+{
+  "score": 48,
+  "status": "revisar",
+  "strengths": [
+    "Entendeu comunicação entre sistemas",
+    "Citou endpoints e JSON"
+  ],
+  "gaps": [
+    "Confundiu método HTTP com rota",
+    "Não explicou status codes 401 vs 403"
+  ],
+  "next_action": "Revise GET, POST, PUT, PATCH, DELETE e tente novamente.",
+  "mentor_summary": "Para o mentor: aluno confunde API com acesso direto ao banco; reforçar verbos HTTP e códigos de status antes de liberar REST."
+}

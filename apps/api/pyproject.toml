@@ -1,0 +1,15 @@
+[project]
+name = "career-forge-api"
+version = "0.1.0"
+description = "Career Forge FastAPI — AI JSON contracts (HAC-7)"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6,<3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0,<9"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

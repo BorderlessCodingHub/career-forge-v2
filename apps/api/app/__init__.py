@@ -1,1 +1,1 @@
-"""Career Forge API — FastAPI application package."""
+"""Career Forge API package."""

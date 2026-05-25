@@ -19,7 +19,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-6** (skill graph schema + road
 | Linear sprint milestones | ✅ Done | Sprint 1–5 milestones + deps (HAC-30) |
 | Monorepo apps/web + apps/api | ⬜ Todo | HAC-5 — Arthur sync: Arthur → frontend TS |
 | Postgres schema + seed | ✅ Done | HAC-6 — models, Alembic, roadmap.json, seed Ana |
-| AI JSON contracts | ⬜ Todo | HAC-7 |
+| AI JSON contracts | ✅ Done | HAC-7 — `apps/api/app/schemas/`, fixtures, pytest |
 | Identity onboarding + editable diagnosis | ⬜ Todo | HAC-8 |
 | Live Roadmap Forge (timeline-only SSE) | ⬜ Todo | HAC-18 — MVP target quinta 2026-05-29 |
 | Vertical roadmap UI — artifact mode | ⬜ Todo | HAC-9 |
@@ -36,7 +36,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-6** (skill graph schema + road
 |-------|-------|-------|-------|
 | HAC-5 [P] | Monorepo + deploy skeleton | Arthur (FE) / shared | Backlog |
 | HAC-6 [P] | Skill graph schema + seed | — | Done |
-| HAC-7 [P] | AI JSON contracts | — | Backlog |
+| HAC-7 [P] | AI JSON contracts | Matheus | Done (branch pushed) |
 | HAC-30 | Arthur sync — sprint roadmap + lifecycle | Matheus | Done |
 
 **Dispatch:** Launch HAC-5/6/7 in ONE message when HAC-30 merges ([parallel-dispatch](../.cursor/rules/parallel-dispatch.mdc))
