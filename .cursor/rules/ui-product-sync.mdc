@@ -19,12 +19,15 @@ Apply when editing front-end UI, design docs, or Tailwind/theme tokens.
 Read in order:
 
 1. [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) — **canonical hierarchy + flow summary**
-2. [UX-FLOW.md](../../claude-design-docs/UX-FLOW.md) — screen-by-screen flow (HAC-21+)
-3. [SCREEN-INTENT.md](../../claude-design-docs/SCREEN-INTENT.md) — per-screen must-match
-4. [UI-PRINCIPLES.md](../../claude-design-docs/UI-PRINCIPLES.md)
-5. [references/roadmap-sh-vertical-ai-tutor.png](../../claude-design-docs/references/roadmap-sh-vertical-ai-tutor.png) — steady-state layout
-6. Target screen components in [`claude-design-docs/prototype/`](../../claude-design-docs/prototype/) (tokens only — flow may lag)
-7. [docs/CHECKPOINT.md](../../docs/CHECKPOINT.md) — P0 scope + demo script
+2. [BORDERLESS-THEMING.md](../../claude-design-docs/BORDERLESS-THEMING.md) — **canonical Borderless visual language** (tokens, shell, canvas, nodes)
+3. [UX-FLOW.md](../../claude-design-docs/UX-FLOW.md) — screen-by-screen flow (HAC-21+)
+4. [SCREEN-INTENT.md](../../claude-design-docs/SCREEN-INTENT.md) — per-screen must-match
+5. [UI-PRINCIPLES.md](../../claude-design-docs/UI-PRINCIPLES.md)
+6. [references/borderless-code-breakers-dashboard.png](../../claude-design-docs/references/borderless-code-breakers-dashboard.png) — steady-state shell + canvas (primary)
+7. [references/borderless-logo-brand.png](../../claude-design-docs/references/borderless-logo-brand.png) — brand colors
+8. Target screen components in [`claude-design-docs/prototype/`](../../claude-design-docs/prototype/) (tokens only — flow may lag)
+9. [docs/CHECKPOINT.md](../../docs/CHECKPOINT.md) — P0 scope + demo script
+10. [UI-SUGGESTIONS-BACKLOG.md](../../claude-design-docs/UI-SUGGESTIONS-BACKLOG.md) — pending user UI feedback
 
 Compare three views:
 
@@ -44,7 +47,7 @@ If the session changed **UI paradigm**, update docs in the **same session** (bef
 | Change type | Update |
 |-------------|--------|
 | New/changed route or flow | [UX-FLOW.md](../../claude-design-docs/UX-FLOW.md) + [SCREEN-INTENT.md](../../claude-design-docs/SCREEN-INTENT.md) + [SCREEN-INTENT-MAP.md](../../claude-design-docs/SCREEN-INTENT-MAP.md) |
-| Token / color / typography | [design-tokens.md](../../claude-design-docs/design-tokens.md) |
+| Token / color / typography / theming | [design-tokens.md](../../claude-design-docs/design-tokens.md) + [BORDERLESS-THEMING.md](../../claude-design-docs/BORDERLESS-THEMING.md) |
 | Deliberate prototype divergence | [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) → Implementation notes |
 | New shared component pattern | PRODUCT-SOURCE-OF-TRUTH Implementation notes + UI-PRINCIPLES component table |
 

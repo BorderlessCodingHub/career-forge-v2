@@ -24,6 +24,7 @@ check test -f docs/AGENT-DELIVERY.md
 check test -f .cursor/rules/end-task-workflow.mdc
 check test -f claude-design-docs/README.md
 check test -f claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md
+check test -f claude-design-docs/BORDERLESS-THEMING.md
 check test -f .cursor/rules/ui-product-sync.mdc
 
 python3 - <<'PY'

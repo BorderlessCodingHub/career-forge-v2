@@ -1,28 +1,44 @@
 # UI Principles — Career Forge
 
-> How the product should *feel*. Tokens: [design-tokens.md](./design-tokens.md) · Prototype: [`prototype/`](./prototype/)
+> How the product should *feel*. Tokens: [design-tokens.md](./design-tokens.md) · **Borderless:** [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · Prototype: [`prototype/`](./prototype/)
 
 ---
 
 ## Visual DNA
 
-### roadmap.sh minimalism (baseline)
+### Borderless Community (primary — HAC-23)
+
+Career Forge lives inside the **Borderless** ecosystem. Steady-state UI should match the Code Breakers dashboard mood: deep purple-black canvas, fixed sidebar, top search bar, node-based roadmap on a dot grid.
+
+| Element | Rule |
+|---------|------|
+| Background | `#0D0B14` deep purple-black — not navy `#0B0F19` |
+| Nodes | Vibrant purple cards `#6B4CE6` with cyan/mint progress `#2DD4BF` |
+| Accent | Logo purple `#7C3AED` — CTAs, active nav pill |
+| Connections | Dashed grey lines with arrowheads |
+| Canvas | Dot grid; zoom controls bottom-left; minimap bottom-right |
+
+**References:** [borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) · [borderless-logo-brand.png](./references/borderless-logo-brand.png)
+
+Full token table + component specs: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md)
+
+### roadmap.sh minimalism (layout baseline)
 
 - Calm dark canvas, generous whitespace, clear hierarchy
 - One primary action per screen
 - Dev-friendly — feels like a tool, not a course marketplace
 - Reference mood: [roadmap.sh](https://roadmap.sh) backend beginner — **layout inspiration only**
 
-### Adaptive vertical roadmap (HAC-21 steady state)
+### Steady-state roadmap canvas (HAC-21 + Borderless)
 
-- Vertical spine with category headers — layout inspired by [roadmap.sh](https://roadmap.sh)
-- Nodes alternate left/right of spine; connected by dependency lines
-- Each node: title, status pill, mastery % when known
-- Locked nodes dimmed; current focus highlighted (accent border/glow)
-- Roadmap is the **hero** on `/roadmap` — not a sidebar widget
-- **Optional AI sidebar** (Explain, Test knowledge, Chat) — user opens when needed
+- **Code Breakers–style canvas** — purple rounded topic nodes, progress bar at bottom, dashed dependency lines
+- Layout may combine roadmap.sh spine concepts with **horizontal/flow canvas** (React Flow style in production)
+- Each node: title, status pill, mastery % / progress bar when known
+- Locked nodes dimmed; current focus highlighted (purple glow + mint accent)
+- Roadmap is the **hero** on `/roadmap` — full canvas area inside Borderless app shell
+- **Optional AI sidebar** (Explain, Test knowledge, Chat) — right panel inside shell; user opens when needed
 
-Reference: [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png)
+References: [borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) (colors + shell) · [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) (AI sidebar layout only)
 
 ### What we are NOT
 
@@ -33,18 +49,34 @@ Reference: [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh
 
 ---
 
-## Dark dev aesthetic
+## Dark dev aesthetic (Borderless)
 
 | Element | Rule |
 |---------|------|
-| Background | Deep navy `#0B0F19` — not pure black |
-| Surfaces | Layered: surface → surface-elevated for depth |
-| Accent | Indigo `#6366F1` — CTAs, selection, links |
-| Semantic | Green mastery, amber review, sky evidence, slate locked |
+| Background | Deep purple-black `#0D0B14` — textured dark, not pure black |
+| Surfaces | Layered: surface → surface-elevated; nodes use `surface-node` purple |
+| Accent | Purple `#7C3AED` — CTAs, active nav; mint `#2DD4BF` — progress, evidence |
+| Semantic | Green mastery, amber review, mint evidence, slate locked |
 | Typography | Inter/Geist sans; JetBrains Mono for timeline/scores/code |
-| Motion | Subtle — fade-in timeline items, graph reveal; no bounce/confetti |
+| Motion | Subtle — fade-in timeline items, canvas reveal; no bounce/confetti |
 
-Full token table: [design-tokens.md](./design-tokens.md) · CSS: [`prototype/styles.css`](./prototype/styles.css)
+Full token table: [design-tokens.md](./design-tokens.md) · [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · CSS: [`prototype/styles.css`](./prototype/styles.css)
+
+---
+
+## Borderless app shell
+
+| Region | Rule |
+|--------|------|
+| **Sidebar** | Fixed left ~240px; BORDERLESS logo; nav list; active item = solid purple pill |
+| **Top bar** | Search (⌘K hint), calendar/utilities, sign out — above canvas |
+| **Main canvas** | Dot grid background; roadmap nodes; pan/zoom |
+| **Floating controls** | Zoom +/- and fit — bottom-left of canvas |
+| **Minimap** | Small roadmap preview — bottom-right |
+| **Forge stream** | Timeline in content area; **no canvas nodes** until reveal |
+| **AI panel** | Optional right sidebar inside shell — not full-page chat |
+
+Prototype evolution: [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) · User feedback: [UI-SUGGESTIONS-BACKLOG.md](./UI-SUGGESTIONS-BACKLOG.md)
 
 ---
 
@@ -85,7 +117,7 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 | Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes |
-| Roadmap steady state | Vertical spine + left/right nodes + **optional** AI sidebar |
+| Roadmap steady state | Borderless shell + canvas nodes + **optional** AI sidebar |
 | Validation | Focus mode — question card dominant, minimal chrome |
 | Mentor | AI sidebar or drawer on roadmap — contextual, not full page |
 

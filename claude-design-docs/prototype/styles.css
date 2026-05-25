@@ -1,25 +1,31 @@
 /* ===== Career Forge — Design tokens ===== */
 :root {
-  --bg: #0B0F19;
-  --surface: #131825;
-  --surface-2: #1A2236;
-  --surface-3: #222C44;
-  --border: #2A3348;
-  --border-soft: #1F2738;
-  --text: #F1F5F9;
-  --text-2: #94A3B8;
-  --text-3: #64748B;
-  --muted: #475569;
-  --accent: #6366F1;
-  --accent-2: #818CF8;
-  --accent-glow: rgba(99, 102, 241, 0.18);
+  /* Borderless palette (HAC-23) — see BORDERLESS-THEMING.md */
+  --bg: #0D0B14;
+  --bg-sidebar: #0A0812;
+  --surface: #15121F;
+  --surface-2: #1C1828;
+  --surface-3: #252033;
+  --surface-node: #6B4CE6;
+  --border: #2A2540;
+  --border-soft: #1F1A30;
+  --text: #FFFFFF;
+  --text-2: #9CA3AF;
+  --text-3: #6B7280;
+  --muted: #4B5563;
+  --accent: #7C3AED;
+  --accent-2: #8B5CF6;
+  --accent-mint: #2DD4BF;
+  --accent-mint-bright: #00E5C0;
+  --accent-glow: rgba(124, 58, 237, 0.22);
+  --mint-glow: rgba(45, 212, 191, 0.18);
   --success: #22C55E;
   --success-soft: rgba(34, 197, 94, 0.12);
   --warning: #F59E0B;
   --warning-soft: rgba(245, 158, 11, 0.12);
-  --evidence: #38BDF8;
-  --evidence-soft: rgba(56, 189, 248, 0.12);
-  --locked: #475569;
+  --evidence: #2DD4BF;
+  --evidence-soft: rgba(45, 212, 191, 0.12);
+  --locked: #4B5563;
 
   --r-sm: 6px;
   --r: 8px;
@@ -47,8 +53,8 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(900px 500px at 10% -10%, rgba(99,102,241,0.08), transparent 60%),
-    radial-gradient(700px 400px at 90% 110%, rgba(56,189,248,0.05), transparent 60%);
+    radial-gradient(900px 500px at 10% -10%, rgba(124,58,237,0.10), transparent 60%),
+    radial-gradient(700px 400px at 90% 110%, rgba(45,212,191,0.06), transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -60,7 +66,7 @@ body::before {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 32px;
   border-bottom: 1px solid var(--border-soft);
-  background: rgba(11,15,25,0.7);
+  background: rgba(13,11,20,0.75);
   backdrop-filter: blur(12px);
   position: sticky; top: 0; z-index: 50;
 }

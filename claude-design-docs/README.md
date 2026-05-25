@@ -9,13 +9,17 @@ Documentação da UI gerada no Claude Design, intent de produto por tela, e **fo
 | Doc | Purpose |
 |-----|---------|
 | **[PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md)** | **Canonical** — hierarchy, flow summary, implementation notes |
+| **[BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md)** | **Canonical theming** — Borderless palette, shell, canvas, nodes (HAC-23) |
 | **[UX-FLOW.md](./UX-FLOW.md)** | Screen-by-screen flow + old vs new paradigm (HAC-21) |
 | **[SCREEN-INTENT.md](./SCREEN-INTENT.md)** | Per-screen must-match constraints |
 | [PRODUCT-VISION.md](./PRODUCT-VISION.md) | North star, pillars, demo narrative |
 | [UI-PRINCIPLES.md](./UI-PRINCIPLES.md) | Visual DNA, tokens, component patterns |
+| [design-tokens.md](./design-tokens.md) | Borderless color/type tokens |
+| [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) | HTML prototype evolution (Phase 1–4) |
+| [UI-SUGGESTIONS-BACKLOG.md](./UI-SUGGESTIONS-BACKLOG.md) | User UI feedback backlog |
 | [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) | Route table + quick reference |
 
-**Before UI work:** read PRODUCT-SOURCE-OF-TRUTH → UX-FLOW → SCREEN-INTENT → open [steady-state reference](./references/roadmap-sh-vertical-ai-tutor.png) → read [docs/CHECKPOINT.md](../docs/CHECKPOINT.md).
+**Before UI work:** read PRODUCT-SOURCE-OF-TRUTH → UX-FLOW → SCREEN-INTENT → [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) → open [Code Breakers reference](./references/borderless-code-breakers-dashboard.png) → read [docs/CHECKPOINT.md](../docs/CHECKPOINT.md).
 
 **After UI paradigm change:** update PRODUCT-SOURCE-OF-TRUTH (rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc), skill: [.cursor/skills/ui-product-sync/SKILL.md](../.cursor/skills/ui-product-sync/SKILL.md)).
 
@@ -64,15 +68,16 @@ Atualizar prototype: issue futura (HAC-9 / HAC-18 UI).
 
 ---
 
-## Posicionamento visual
+## Posicionamento visual (Borderless — HAC-23)
 
-- **Inspirado em** [roadmap.sh](https://roadmap.sh) — layout vertical, spine central, categorias, AI tutor sidebar opcional
-- **Evoluído para** skill graph adaptativo — nós personalizados com status, dependências, mastery %
-- **Não é** LMS genérico, gamificação ou clone 1:1
+- **Identidade:** Borderless Community — roxo profundo + mint/cyan, shell sidebar + canvas (Code Breakers)
+- **Inspirado em** [roadmap.sh](https://roadmap.sh) — AI tutor sidebar opcional (layout secundário)
+- **Evoluído para** skill graph adaptativo em canvas — nós roxos, progresso mint, dependências tracejadas
+- **Não é** LMS genérico, gamificação ou indigo navy legacy
 
-Referência visual: [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png)
+Referências: [borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) · [borderless-logo-brand.png](./references/borderless-logo-brand.png)
 
-Detalhes: [UI-PRINCIPLES.md](./UI-PRINCIPLES.md)
+Detalhes: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · [UI-PRINCIPLES.md](./UI-PRINCIPLES.md)
 
 ---
 

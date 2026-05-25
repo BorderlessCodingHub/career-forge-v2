@@ -2,7 +2,7 @@
 
 > **Canonical doc for agents.** Read this before any UI work. Update this when the UI paradigm changes.
 
-**Navigation:** [README](./README.md) · [UX-FLOW](./UX-FLOW.md) · [SCREEN-INTENT](./SCREEN-INTENT.md) · [PRODUCT-VISION](./PRODUCT-VISION.md) · [UI-PRINCIPLES](./UI-PRINCIPLES.md) · [CHECKPOINT](../docs/CHECKPOINT.md)
+**Navigation:** [README](./README.md) · [UX-FLOW](./UX-FLOW.md) · [SCREEN-INTENT](./SCREEN-INTENT.md) · [PRODUCT-VISION](./PRODUCT-VISION.md) · [UI-PRINCIPLES](./UI-PRINCIPLES.md) · [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) · [CHECKPOINT](../docs/CHECKPOINT.md)
 
 ---
 
@@ -43,7 +43,7 @@ When sources conflict, apply this order **unless** an active Linear issue explic
 ### Tie-breakers
 
 - **Copy (PT-BR):** Prototype microcopy wins unless CHECKPOINT/demo script requires different wording.
-- **Tokens:** [design-tokens.md](./design-tokens.md) wins over ad-hoc hex in JSX/CSS. Tailwind theme must map to tokens.
+- **Tokens:** [design-tokens.md](./design-tokens.md) + [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) win over ad-hoc hex in JSX/CSS. Tailwind theme must map to Borderless tokens (not legacy indigo).
 - **Status enum:** `bloqueado | recomendado | em_estudo | validar | aprovado | revisar` — never rename without updating CHECKPOINT + API contracts.
 - **Forge SSE:** Backend event names in CHECKPOINT beat prototype mock labels; UI maps events to **timeline-only** stream (no graph during generation).
 
@@ -67,18 +67,43 @@ Full narrative: [PRODUCT-VISION](./PRODUCT-VISION.md)
 
 ---
 
+## Theming (Borderless — HAC-23)
+
+**Canonical:** [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md)
+
+Career Forge uses **Borderless Community** visual language within the Borderless ecosystem:
+
+| Aspect | Spec |
+|--------|------|
+| Palette | Deep purple-black bg, purple nodes, cyan/mint progress, logo purple accent |
+| Shell | Fixed sidebar + top search bar + full-width canvas |
+| Steady state | Code Breakers–style node canvas on dot grid (not legacy indigo skill graph) |
+| Flow | Unchanged HAC-21 — forge timeline-only → reveal → canvas steady state |
+
+**Reference images:**
+
+| File | Role |
+|------|------|
+| [references/borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) | Shell, sidebar, canvas, nodes, connections |
+| [references/borderless-logo-brand.png](./references/borderless-logo-brand.png) | Brand colors (mint + purple) |
+| [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) | AI sidebar layout only (secondary) |
+
+Prototype plan: [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) · Feedback: [UI-SUGGESTIONS-BACKLOG.md](./UI-SUGGESTIONS-BACKLOG.md)
+
+---
+
 ## UI principles (summary)
 
-Full spec: [UI-PRINCIPLES](./UI-PRINCIPLES.md)
+Full spec: [UI-PRINCIPLES](./UI-PRINCIPLES.md) · Theming: [BORDERLESS-THEMING](./BORDERLESS-THEMING.md)
 
-- roadmap.sh **vertical layout** + **adaptive personalized skill graph** (status, mastery %)
-- Dark dev aesthetic — tokens in [design-tokens.md](./design-tokens.md)
+- **Borderless shell** + **canvas roadmap** (Code Breakers reference) + adaptive skill graph (status, mastery %)
+- Dark purple-black aesthetic — tokens in [design-tokens.md](./design-tokens.md)
 - Portuguese (Brazil) for all user-facing copy
 - Premium dev-tool feel — no LMS chrome, no confetti/gamification
 - Hero moments: **Forge timeline stream**, **Animation reveal**, **Validation interview + score**
-- Steady state: vertical roadmap + **optional** AI sidebar (Explain / Test / Chat)
+- Steady state: canvas nodes + **optional** AI sidebar (Explain / Test / Chat)
 
-**Layout reference:** [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png)
+**Primary layout reference:** [borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png)
 
 ---
 
@@ -108,8 +133,13 @@ Prototype entry: [`prototype/Career Forge.html`](./prototype/Career%20Forge.html
 | [UX-FLOW.md](./UX-FLOW.md) | Canonical flow + old vs new |
 | [SCREEN-INTENT.md](./SCREEN-INTENT.md) | Per-screen must-match |
 | [brief-v1.md](./brief-v1.md) | Original Claude Design prompts per screen |
-| [design-tokens.md](./design-tokens.md) | Color, type, status pills, spacing |
-| [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) | Steady-state layout reference |
+| [design-tokens.md](./design-tokens.md) | Color, type, status pills, spacing (Borderless) |
+| [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) | Canonical Borderless visual language |
+| [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) | HTML prototype evolution phases |
+| [UI-SUGGESTIONS-BACKLOG.md](./UI-SUGGESTIONS-BACKLOG.md) | User UI feedback backlog |
+| [references/borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) | Shell + canvas + nodes (primary) |
+| [references/borderless-logo-brand.png](./references/borderless-logo-brand.png) | Brand colors |
+| [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) | AI sidebar layout (secondary) |
 | [prototype/](./prototype/) | Component/token reference (flow may lag) |
 | [docs/CHECKPOINT.md](../docs/CHECKPOINT.md) | Stack, wow features, demo script, scope |
 | [docs/stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md) | Forge SSE + LangGraph spec |
@@ -133,8 +163,8 @@ Prototype entry: [`prototype/Career Forge.html`](./prototype/Career%20Forge.html
 
 ## Agent workflow — before UI work
 
-1. Read this file → [UX-FLOW](./UX-FLOW.md) → [SCREEN-INTENT](./SCREEN-INTENT.md) → [UI-PRINCIPLES](./UI-PRINCIPLES.md)
-2. Open [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) for steady-state target
+1. Read this file → [UX-FLOW](./UX-FLOW.md) → [SCREEN-INTENT](./SCREEN-INTENT.md) → [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) → [UI-PRINCIPLES](./UI-PRINCIPLES.md)
+2. Open [references/borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) for steady-state shell + canvas
 3. Open [`prototype/Career Forge.html`](./prototype/Career%20Forge.html) for tokens/components (ignore old flow)
 4. Read [CHECKPOINT](../docs/CHECKPOINT.md) for P0 scope
 5. If `apps/web/` exists, diff against SCREEN-INTENT — do not blindly diff pixels
@@ -145,11 +175,11 @@ Update when any of: new shared component pattern, layout shift, token change, ne
 
 1. Edit **Implementation notes** table above
 2. Update [UX-FLOW.md](./UX-FLOW.md) + [SCREEN-INTENT.md](./SCREEN-INTENT.md) + [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md)
-3. Update [design-tokens.md](./design-tokens.md) if tokens changed
+3. Update [design-tokens.md](./design-tokens.md) + [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) if tokens/theming changed
 4. Mention doc updates in commit/PR summary
 
 Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) · Skill: [.cursor/skills/ui-product-sync/SKILL.md](../.cursor/skills/ui-product-sync/SKILL.md)
 
 ---
 
-*Last updated: HAC-21 — UX paradigm shift (editable diagnosis, timeline-only forge, vertical roadmap steady state)*
+*Last updated: HAC-23 — Borderless theming (visual language, reference images, token palette)*

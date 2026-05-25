@@ -1,22 +1,44 @@
-# Design tokens — Career Forge
+# Design tokens — Career Forge (Borderless)
 
-Extraídos do prototype Claude Design (`prototype/styles.css`).
+> **Canonical palette:** [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · CSS: [`prototype/styles.css`](./prototype/styles.css)
+
+Extracted from Borderless Community reference (Code Breakers dashboard + logo). Replaces legacy indigo/navy Career Forge tokens (HAC-23).
 
 ## Colors
 
 | Token | Hex | Uso |
 |-------|-----|-----|
-| `bg` | `#0B0F19` | Background principal |
-| `surface` | `#131825` | Cards, panels |
-| `surface-elevated` | `#1A2236` | Modals, drawers |
-| `border` | `#2A3348` | Bordas sutis |
-| `text-primary` | `#F1F5F9` | Títulos, body |
-| `text-secondary` | `#94A3B8` | Labels, hints |
-| `accent` | `#6366F1` | CTA, seleção, links |
+| `bg` | `#0D0B14` | Background principal, canvas base |
+| `bg-sidebar` | `#0A0812` | Sidebar fixa |
+| `surface` | `#15121F` | Cards, inputs, top bar |
+| `surface-elevated` | `#1C1828` | Modals, drawers |
+| `surface-node` | `#6B4CE6` | Nós do roadmap (roxo vibrante) |
+| `border` | `#2A2540` | Bordas, linhas tracejadas |
+| `border-soft` | `#1F1A30` | Divisores sutis |
+| `text-primary` | `#FFFFFF` | Títulos, body |
+| `text-secondary` | `#9CA3AF` | Labels, hints |
+| `text-muted` | `#6B7280` | Meta, timestamps |
+| `accent` | `#7C3AED` | CTA, nav ativa, roxo logo |
+| `accent-mint` | `#2DD4BF` | Progresso, evidências, mint logo |
+| `accent-mint-bright` | `#00E5C0` | Pico da barra de progresso |
 | `success` | `#22C55E` | Mastery / aprovado |
 | `warning` | `#F59E0B` | Revisar / atenção |
-| `locked` | `#475569` | Nó bloqueado |
-| `evidence` | `#38BDF8` | Evidências, artifacts |
+| `locked` | `#4B5563` | Nó bloqueado |
+| `evidence` | `#2DD4BF` | Evidências, artifacts (mint) |
+
+### CSS variables (`prototype/styles.css`)
+
+```css
+--bg: #0D0B14;
+--bg-sidebar: #0A0812;
+--surface: #15121F;
+--surface-2: #1C1828;
+--surface-node: #6B4CE6;
+--border: #2A2540;
+--accent: #7C3AED;
+--accent-mint: #2DD4BF;
+--accent-mint-bright: #00E5C0;
+```
 
 ## Typography
 
@@ -28,9 +50,9 @@ Extraídos do prototype Claude Design (`prototype/styles.css`).
 | Status | Cor | Significado |
 |--------|-----|-------------|
 | `bloqueado` | locked | Prerequisite não cumprido |
-| `recomendado` | accent | Prioridade atual |
-| `em_estudo` | text-secondary | Em progresso |
-| `validar` | evidence | Pronto para entrevista IA |
+| `recomendado` | accent (purple) | Prioridade atual |
+| `em_estudo` | accent-mint | Em progresso |
+| `validar` | warning | Pronto para entrevista IA |
 | `aprovado` | success | Mastery validado |
 | `revisar` | warning | Falhou validação |
 
@@ -40,9 +62,15 @@ Grid 4px: 4, 8, 12, 16, 24, 32, 48
 
 ## Radius
 
-- Cards: 8px
+- Cards / nodes: 12–16px
 - Modals: 12px
+- Nav active pill: full (999px)
 - Pills: full
+
+## Canvas
+
+- Dot grid: 24px spacing, `rgba(255,255,255,0.04)` dots on `--bg`
+- Connection lines: dashed `#4B5563` or `--border`
 
 ## Componentes reutilizáveis (prototype)
 
@@ -55,3 +83,7 @@ Definidos em `prototype/components.jsx`:
 - `ForgeTimelineItem`
 - `ChatBubble`
 - `PrimaryButton` / `GhostButton`
+
+---
+
+*HAC-23 — Borderless tokens · 2026-05-25*

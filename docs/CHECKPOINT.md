@@ -71,7 +71,7 @@ Canonical UX (HAC-21): [claude-design-docs/UX-FLOW.md](../claude-design-docs/UX-
 
 Claude Design prototype: [claude-design-docs/prototype/](../claude-design-docs/prototype/) — tokens/components only; flow may lag docs.
 
-Visual steady state: roadmap.sh vertical layout + adaptive personalized skill graph. Reference: [roadmap-sh-vertical-ai-tutor.png](../claude-design-docs/references/roadmap-sh-vertical-ai-tutor.png)
+**Visual identity (HAC-23):** Borderless Community theming — deep purple-black, purple roadmap nodes, cyan progress, sidebar + canvas shell. Canonical: [BORDERLESS-THEMING.md](../claude-design-docs/BORDERLESS-THEMING.md). Primary reference: [borderless-code-breakers-dashboard.png](../claude-design-docs/references/borderless-code-breakers-dashboard.png). Steady state: canvas roadmap + optional AI sidebar (roadmap.sh layout secondary).
 
 ---
 
