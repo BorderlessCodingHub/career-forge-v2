@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import os
-
 import pytest
 
 from career_forge.ai.executor import GraphExecutor
@@ -13,7 +11,6 @@ from career_forge.ai.graphs.diagnosis_interview import (
     run_interview_phase,
 )
 from career_forge.ai.llm.diagnosis_interview import (
-    MockDiagnosisInterviewLlm,
     reset_diagnosis_interview_llm,
     set_diagnosis_interview_llm,
 )
@@ -26,11 +23,11 @@ from career_forge.schemas.diagnosis_interview import (
     DiagnosisSession,
     InterviewAnswer,
 )
+from tests.mocks.diagnosis_interview_llm import MockDiagnosisInterviewLlm
 
 
 @pytest.fixture(autouse=True)
-def mock_llm(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("DIAGNOSIS_LLM_MODE", "mock")
+def mock_llm() -> None:
     set_diagnosis_interview_llm(MockDiagnosisInterviewLlm())
     yield
     reset_diagnosis_interview_llm()

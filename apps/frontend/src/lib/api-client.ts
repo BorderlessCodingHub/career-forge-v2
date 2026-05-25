@@ -27,12 +27,48 @@ const backendUrl =
   process.env.NEXT_PUBLIC_API_URL ??
   "http://localhost:8000";
 
+async function readApiErrorMessage(res: Response): Promise<string> {
+  try {
+    const body = (await res.json()) as { detail?: unknown };
+    const detail = body.detail;
+    if (typeof detail === "string") return detail;
+    if (
+      detail &&
+      typeof detail === "object" &&
+      "message" in detail &&
+      typeof detail.message === "string"
+    ) {
+      return detail.message;
+    }
+  } catch {
+    // ignore JSON parse errors
+  }
+  return `${res.status} ${res.statusText}`;
+}
+
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${backendUrl}${path}`, {
-    ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers },
-  });
-  if (!res.ok) throw new Error(`API ${path} failed: ${res.status}`);
+  let res: Response;
+  try {
+    res = await fetch(`${backendUrl}${path}`, {
+      ...init,
+      headers: { "Content-Type": "application/json", ...init?.headers },
+    });
+  } catch (cause) {
+    const origin =
+      typeof window !== "undefined" ? window.location.origin : null;
+    const corsHint = origin
+      ? ` Ensure backend CORS_ORIGINS includes ${origin} (see .env.example).`
+      : "";
+    const message =
+      cause instanceof Error ? cause.message : "Network request failed";
+    throw new Error(
+      `Cannot reach API ${backendUrl}${path}: ${message}.${corsHint}`,
+    );
+  }
+  if (!res.ok) {
+    const message = await readApiErrorMessage(res);
+    throw new Error(`API ${path} failed: ${message}`);
+  }
   return res.json() as Promise<T>;
 }
 

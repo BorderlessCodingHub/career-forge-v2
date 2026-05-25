@@ -258,6 +258,18 @@ export type RubricDimensionKey =
   | "http_apis"
   | "database";
 
+/** Ordered CTRR keys — must match backend CTRR_DIMENSION_KEYS. */
+export const CTRR_DIMENSION_KEYS = [
+  "learning_stage",
+  "project_scope",
+  "background_context",
+  "hands_on_evidence",
+  "git",
+  "client_server",
+  "http_apis",
+  "database",
+] as const satisfies readonly RubricDimensionKey[];
+
 export type InterviewQuestion = {
   id: string;
   topic: string;
@@ -274,6 +286,7 @@ export type InterviewAnswer = {
 export type RubricMapItem = {
   rubric_key: RubricDimensionKey;
   label: string;
+  description: string;
   confidence: number;
   saturated: boolean;
 };

@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-46**
+Last updated: **2026-05-25** · Last merge: **HAC-47**
 
 ---
 
@@ -38,6 +38,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-46**
 | Diagnosis session API + Postgres | ✅ Done | HAC-44 — `POST /diagnosis/interview/start|turn`, `diagnosis_sessions` table |
 | Frontend adaptive diagnosis UI | ✅ Done | HAC-45 — DiagnosticPills uses interview API, sidebar from `mapping_progress` |
 | Diagnosis guardrails | ✅ Done | HAC-46 — max 5 rounds, LLM 503 retry, agent-verify checks |
+| Diagnosis polish + observability | ✅ Done | HAC-47 — fail-fast LLM, CORS 3300, LangSmith/local-debug harness, UX refactor, dead code cleanup |
 
 ---
 
@@ -53,8 +54,9 @@ Last updated: **2026-05-25** · Last merge: **HAC-46**
 | **HAC-44** | Session API + Postgres | S | **Done** |
 | **HAC-45** | Frontend adaptive UI | S | **Done** |
 | **HAC-46** | Guardrails + fallback | S | **Done** |
+| **HAC-47** | Polish + observability harness | S | **Done** |
 
-Sprint 6 complete — adaptive diagnosis interview live on onboarding path ([DIAGNOSIS-INTERVIEW](./product/DIAGNOSIS-INTERVIEW.md)).
+Sprint 6 complete — adaptive diagnosis interview live on onboarding path ([DIAGNOSIS-INTERVIEW](./product/DIAGNOSIS-INTERVIEW.md)). HAC-47 adds fail-fast LLM, local-debug/LangSmith harness, and UX polish.
 
 ---
 

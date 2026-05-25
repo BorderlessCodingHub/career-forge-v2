@@ -1,0 +1,36 @@
+---
+description: When debugging LLM behavior, inspect LangSmith traces via CLI — load .env credentials, prefer trace hierarchy for GraphExecutor flows.
+globs:
+  - apps/backend/src/career_forge/ai/**
+  - apps/backend/src/career_forge/api/**
+  - apps/backend/src/career_forge/services/diagnosis*
+  - docs/engineering/AI-EXECUTION.md
+  - docs/engineering/EXECUTION-FLOW.md
+alwaysApply: false
+---
+
+# LangSmith inspect (LLM debugging)
+
+When debugging LLM output, latency, or GraphExecutor failures, use the [langsmith-inspect skill](../skills/langsmith-inspect/SKILL.md).
+
+---
+
+## Golden rules
+
+1. **Source `.env` first** — `LANGSMITH_API_KEY` and `LANGSMITH_PROJECT` via `./scripts/langsmith-env.sh` or `set -a && source .env && set +a`
+2. **Do not ask the user for API keys** if repo `.env` exists — check key status with `./scripts/langsmith-env.sh` (no args)
+3. **Prefer trace hierarchy** — `trace get <id> --full --show-hierarchy` for nested GraphExecutor / LangGraph runs
+4. **Never print or commit secrets** — reference `.env.example` for var names only
+
+---
+
+## Quick start
+
+```bash
+./scripts/langsmith-env.sh trace list --project "$LANGSMITH_PROJECT" --last-n-minutes 60 --format pretty
+./scripts/langsmith-env.sh trace get <trace-id> --project "$LANGSMITH_PROJECT" --full --show-hierarchy
+```
+
+Filter errors: `--error` · slow runs: `--min-latency 5` · graph name: `--name diagnosis_interview`
+
+Default project: `career-forge` (`LANGSMITH_PROJECT` in `.env`).

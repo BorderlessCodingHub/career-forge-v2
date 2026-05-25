@@ -10,6 +10,7 @@ from pydantic import ValidationError
 
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.diagnosis_interview import (
+    CTRR_DIMENSION_DESCRIPTIONS,
     CTRR_DIMENSION_KEYS,
     CTRR_DIMENSION_LABELS,
     MAX_INTERVIEW_ROUNDS,
@@ -43,6 +44,7 @@ def load_fixture(name: str) -> dict:
 class TestCtrrConstants:
     def test_dimension_keys_match_labels(self) -> None:
         assert set(CTRR_DIMENSION_KEYS) == set(CTRR_DIMENSION_LABELS.keys())
+        assert set(CTRR_DIMENSION_KEYS) == set(CTRR_DIMENSION_DESCRIPTIONS.keys())
         assert len(CTRR_DIMENSION_KEYS) == 8
 
     def test_saturation_threshold(self) -> None:
@@ -174,6 +176,7 @@ class TestRubricMap:
         git_item = next(item for item in items if item.rubric_key == "git")
         assert git_item.saturated is True
         assert git_item.confidence == 0.8
+        assert git_item.description == CTRR_DIMENSION_DESCRIPTIONS["git"]
 
 
 class TestInterviewTurn:

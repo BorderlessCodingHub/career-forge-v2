@@ -21,12 +21,16 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-careerforge}:${POSTGRES_PASSWORD:-careerforge}@postgres:5432/${POSTGRES_DB:-careerforge}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,http://localhost:3300,http://127.0.0.1:3300}
+      ENV: ${ENV:-local}
+      DEBUG: ${DEBUG:-true}
       SEED_DEMO_ANA: ${SEED_DEMO_ANA:-true}
       ROADMAP_JSON_PATH: /data/roadmap.json
       API_HOST: 0.0.0.0
       API_PORT: 8000
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     volumes:
       - ./data:/data:ro
+      - ./logs:/app/logs
     ports:
       - "8000:8000"
     depends_on:

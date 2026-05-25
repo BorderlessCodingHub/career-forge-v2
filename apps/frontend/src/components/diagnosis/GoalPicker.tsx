@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { Button } from "@/components/ui";
+import { Button, Select } from "@/components/ui";
 import { CAREER_GOALS } from "@/lib/onboarding-data";
 import {
   clearCvAttachment,
@@ -15,15 +15,9 @@ import {
   type CvAttachment,
   type YearsXpRange,
 } from "@/lib/onboarding-session";
+import { YEARS_XP_OPTIONS } from "@/lib/years-xp";
 
 import { CvDropzone } from "./CvDropzone";
-
-const YEARS_XP_OPTIONS: Array<{ value: YearsXpRange; label: string }> = [
-  { value: "0-1", label: "0–1 ano" },
-  { value: "1-3", label: "1–3 anos" },
-  { value: "3-5", label: "3–5 anos" },
-  { value: "5+", label: "5+ anos" },
-];
 
 export function GoalPicker() {
   const router = useRouter();
@@ -119,23 +113,18 @@ export function GoalPicker() {
           >
             Anos de XP (se aplicável)
           </label>
-          <select
+          <Select
             id="years-xp"
             data-testid="years-xp-select"
+            className="mt-2"
             value={yearsXp}
-            onChange={(event) => {
-              setYearsXpValue(event.target.value as YearsXpRange | "");
+            options={YEARS_XP_OPTIONS}
+            placeholder="Selecione…"
+            onChange={(next) => {
+              setYearsXpValue(next);
               setTouched(true);
             }}
-            className="mt-2 w-full rounded-card border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
-          >
-            <option value="">Selecione…</option>
-            {YEARS_XP_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          />
           {touched && !yearsXp && (
             <p className="mt-2 text-sm text-warning">
               Informe sua experiência para calibrar o diagnóstico.

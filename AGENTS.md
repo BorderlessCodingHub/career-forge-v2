@@ -14,6 +14,8 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 |------|---------------|---------|
 | **Implement a Linear issue** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Worktree `../worktrees/hac-XX-<slug>` · branch `HAC-XX-title-slug` · triple gate · merge · **end-task** |
 | **AI / LangGraph work** | [EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) → [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) → [REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) § AI layer | Use `GraphExecutor` + `AgentFactory` — no per-graph streaming |
+| **Debug LLM / traces** | [langsmith-inspect skill](./.cursor/skills/langsmith-inspect/SKILL.md) → [langsmith-inspect rule](./.cursor/rules/langsmith-inspect.mdc) | `./scripts/langsmith-env.sh` loads `.env` · inspect traces before changing prompts/graphs |
+| **Local runtime / failed to fetch** | [local-debug skill](./.cursor/skills/local-debug/SKILL.md) → [local-debug rule](./.cursor/rules/local-debug.mdc) | Docker logs · CORS · `logs/backend.log` when `ENV=local` |
 | **Diagnosis / onboarding AI** | [ADR-001](./docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md) → [DIAGNOSIS-INTERVIEW](./docs/product/DIAGNOSIS-INTERVIEW.md) → [diagnosis-interview rule](./.cursor/rules/diagnosis-interview.mdc) | Multi-turn CTRR · ≤2 Q/turn · FE dumb renderer · HAC-42–46 |
 | **Bootstrap / first session** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | Paste block below · `make smoke` when apps exist |
 | **Cloud agent / Linear MCP** | [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Set `HACKATON_LINEAR_API_KEY` in [Cloud secrets](https://cursor.com/dashboard/cloud-agents) · repo [`.cursor/mcp.json`](./.cursor/mcp.json) |
@@ -99,6 +101,22 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 | [ADR-001 diagnosis](./docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md) | Business decisions — adaptive interview CTRR |
 | [diagnosis-interview](./.cursor/rules/diagnosis-interview.mdc) | Globs diagnosis FE/BE — read ADR + product spec |
 | [cv-ingest](./.cursor/rules/cv-ingest.mdc) | PDF CV extract policy |
+| [langsmith-inspect](./.cursor/rules/langsmith-inspect.mdc) | LangSmith CLI trace inspection for LLM debugging |
+| [langsmith-inspect skill](./.cursor/skills/langsmith-inspect/SKILL.md) | CLI commands, filters, Career Forge graph names |
+| [local-debug](./.cursor/rules/local-debug.mdc) | Docker, CORS, API smoke — always on runtime errors |
+| [local-debug skill](./.cursor/skills/local-debug/SKILL.md) | Stack ports, log paths, curl recipes, common fixes |
+
+---
+
+## LLM observability
+
+LangSmith traces every `GraphRun`. Before changing prompts, graphs, or streaming:
+
+1. `./scripts/langsmith-env.sh` — confirm `LANGSMITH_PROJECT` and API key (from `.env`, never committed)
+2. `./scripts/langsmith-env.sh trace list --project "$LANGSMITH_PROJECT" --last-n-minutes 60 --format pretty`
+3. `./scripts/langsmith-env.sh trace get <trace-id> --full --show-hierarchy` for GraphExecutor trees
+
+Full workflow: [langsmith-inspect skill](./.cursor/skills/langsmith-inspect/SKILL.md). CLI install: `curl -fsSL https://cli.langsmith.com/install.sh | sh` → `~/.local/bin/langsmith`.
 
 ---
 
@@ -110,6 +128,8 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 | `make test` | Backend pytest — before merge |
 | `make smoke` | Full harness + stack health |
 | `make agent-verify` | Gate C — structure + optional runtime `/health` |
+| `./scripts/langsmith-env.sh` | LangSmith env status + CLI version |
+| `./scripts/langsmith-env.sh trace list …` | Recent traces (sources `.env` automatically) |
 
 ---
 

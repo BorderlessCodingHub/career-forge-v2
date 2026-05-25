@@ -9,15 +9,18 @@ Onboarding screens: goal picker (screen 1), adaptive interview (screen 2), edita
 
 ## Screen 2 rules
 
-- Fetch questions from `POST /diagnosis/interview/start` and `.../turn`
+- Fetch questions via `useDiagnosisInterview` (`lib/hooks/useDiagnosisInterview.ts`) → `POST /diagnosis/interview/start` and `.../turn`
+- `DiagnosticPills` is presentation-only; intake/build helpers live in `lib/diagnosis-interview.ts`
+- Sidebar recap: `OnboardingRecapSidebar`; mapping list: `MappingDimensionList`
 - Render `InterviewQuestion[]` — topic pill, question, placeholder from `example_of_answer`
-- Sidebar `mapping_progress` from API — not hardcoded `DIAG_MAP_LABELS` in prod
+- Sidebar `mapping_progress` from API — skeleton from `buildSkeletonMappingProgress()` only while loading
 - Do not embed question logic or rubric in TS constants
 
 ## Screen 1
 
 - Real user input only (no pre-filled motivation)
-- `CvDropzone` → send PDF on interview start (not sessionStorage-only in prod)
+- `CvDropzone` accepts PDF only (matches backend `CvAttachment.mime_type`)
+- Shared years-xp labels: `lib/years-xp.ts`
 
 ## Cursor rule
 

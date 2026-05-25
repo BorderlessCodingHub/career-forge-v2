@@ -1,0 +1,16 @@
+---
+description: On runtime errors, failed to fetch, or local Docker/API debugging — read local-debug skill first.
+alwaysApply: true
+---
+
+# Local debug (mandatory for runtime issues)
+
+When the user reports **failed to fetch**, onboarding/API errors, Docker stack problems, or any **local runtime failure**:
+
+1. **Read first:** [local-debug skill](../skills/local-debug/SKILL.md)
+2. **Check stack:** `docker compose ps` · `docker compose logs backend --tail 100`
+3. **Verify CORS:** OPTIONS preflight must return 200 for the browser origin (`WEB_HOST_PORT`, often 3300)
+4. **Do not add mock fallbacks** — fix root cause; fail fast with clear errors
+5. **Feed the skill:** append new discoveries to section 8 of the skill
+
+For LLM-specific failures after API is reachable, also use [langsmith-inspect](../skills/langsmith-inspect/SKILL.md).

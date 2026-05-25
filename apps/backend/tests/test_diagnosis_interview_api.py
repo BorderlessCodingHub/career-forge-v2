@@ -6,7 +6,6 @@ import pytest
 
 from career_forge.ai.llm.diagnosis_interview import (
     DiagnosisInterviewLlmError,
-    MockDiagnosisInterviewLlm,
     reset_diagnosis_interview_llm,
     set_diagnosis_interview_llm,
 )
@@ -16,6 +15,7 @@ from career_forge.services.diagnosis_session import (
     InMemoryDiagnosisSessionStore,
     set_diagnosis_session_service,
 )
+from tests.mocks.diagnosis_interview_llm import MockDiagnosisInterviewLlm
 
 
 START_BODY = {
@@ -28,7 +28,6 @@ START_BODY = {
 
 @pytest.fixture(autouse=True)
 def interview_test_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("DIAGNOSIS_LLM_MODE", "mock")
     set_diagnosis_interview_llm(MockDiagnosisInterviewLlm())
     service = DiagnosisSessionService(session_store=InMemoryDiagnosisSessionStore())
     set_diagnosis_session_service(service)

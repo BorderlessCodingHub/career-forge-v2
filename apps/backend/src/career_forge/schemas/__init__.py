@@ -18,6 +18,7 @@ from career_forge.schemas.diagnosis import (
 )
 from career_forge.schemas.diagnosis_interview import (
     BeliefState,
+    CTRR_DIMENSION_DESCRIPTIONS,
     CTRR_DIMENSION_KEYS,
     CTRR_DIMENSION_LABELS,
     CvAttachment as InterviewCvAttachment,
@@ -56,6 +57,7 @@ __all__ = [
     "Artifact",
     "ArtifactFoundEvent",
     "BeliefState",
+    "CTRR_DIMENSION_DESCRIPTIONS",
     "CTRR_DIMENSION_KEYS",
     "CTRR_DIMENSION_LABELS",
     "CvSignals",

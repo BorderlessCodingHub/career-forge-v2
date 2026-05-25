@@ -99,8 +99,9 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-44** — Multi-turn session API + Postgres
 - [x] **HAC-45** — Frontend adaptive UI (dumb renderer)
 - [x] **HAC-46** — Saturation guardrails + LLM fallback
+- [x] **HAC-47** — Onboarding diagnosis polish + observability harness
 
-**Sequential:** HAC-42 → HAC-43 → HAC-44 → HAC-45 → HAC-46 · HAC-33 parallel with HAC-42–44
+**Sequential:** HAC-42 → HAC-43 → HAC-44 → HAC-45 → HAC-46 · HAC-33 parallel with HAC-42–44 · HAC-47 post-merge polish
 
 ---
 

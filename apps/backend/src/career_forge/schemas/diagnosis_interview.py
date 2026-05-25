@@ -43,6 +43,18 @@ CTRR_DIMENSION_LABELS: dict[RubricDimensionKey, str] = {
     "database": "Banco de dados",
 }
 
+# Short PT-BR line for sidebar — what the Judge is trying to learn per dimension.
+CTRR_DIMENSION_DESCRIPTIONS: dict[RubricDimensionKey, str] = {
+    "learning_stage": "Quanto você já praticou programação (cursos, exercícios, tempo)",
+    "project_scope": "Maior projeto que já construiu ou tentou construir",
+    "background_context": "De onde você vem e como estuda tecnologia hoje",
+    "hands_on_evidence": "Algo concreto que já fez ou tentou na prática",
+    "git": "Se já usou Git ou GitHub em algum projeto",
+    "client_server": "Como você entende frontend vs backend",
+    "http_apis": "Se já viu ou fez requisições HTTP ou chamadas de API",
+    "database": "Exposição a banco de dados ou SQL",
+}
+
 SATURATION_CONFIDENCE_THRESHOLD = 0.75
 MAX_INTERVIEW_ROUNDS = 5
 MAX_QUESTIONS_PER_TURN = 2
@@ -156,6 +168,7 @@ class RubricMapItem(BaseModel):
 
     rubric_key: RubricDimensionKey
     label: str
+    description: str
     confidence: float = Field(ge=0.0, le=1.0)
     saturated: bool
 
@@ -170,6 +183,7 @@ def build_rubric_map(
         RubricMapItem(
             rubric_key=key,
             label=belief.dimensions[key].label,
+            description=CTRR_DIMENSION_DESCRIPTIONS[key],
             confidence=belief.dimensions[key].confidence,
             saturated=belief.dimensions[key].confidence >= threshold,
         )

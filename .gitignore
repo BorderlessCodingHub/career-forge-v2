@@ -15,6 +15,7 @@ dist/
 # Runtime
 .runtime/
 *.log
+logs/
 
 # OS
 .DS_Store

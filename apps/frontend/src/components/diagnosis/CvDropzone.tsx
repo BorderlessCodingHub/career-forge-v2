@@ -4,12 +4,8 @@ import { useCallback, useRef, useState } from "react";
 
 import type { CvAttachment } from "@/lib/onboarding-session";
 
-const ACCEPTED_TYPES = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
-const ACCEPTED_EXTENSIONS = [".pdf", ".doc", ".docx"];
+const ACCEPTED_TYPES = ["application/pdf"];
+const ACCEPTED_EXTENSIONS = [".pdf"];
 const MAX_BYTES = 5 * 1024 * 1024;
 
 type CvDropzoneProps = {
@@ -57,7 +53,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
     async (file: File) => {
       setError(null);
       if (!isAcceptedFile(file)) {
-        setError("Formato não suportado. Use PDF, DOC ou DOCX.");
+        setError("Formato não suportado. Use PDF.");
         return;
       }
       if (file.size > MAX_BYTES) {
@@ -68,10 +64,14 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
       setBusy(true);
       try {
         const dataBase64 = await readFileAsBase64(file);
+        const mimeType =
+          file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")
+            ? "application/pdf"
+            : file.type;
         onAttach({
           filename: file.name,
           size: file.size,
-          mimeType: file.type || "application/octet-stream",
+          mimeType,
           dataBase64,
         });
       } catch {
@@ -148,7 +148,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
           Arraste seu currículo aqui
         </p>
         <p className="mt-1 text-xs text-text-muted">
-          ou clique para escolher · PDF, DOC, DOCX · até 5 MB
+          ou clique para escolher · PDF · até 5 MB
         </p>
         <p className="mt-2 text-[11px] text-text-muted">
           Opcional — usaremos para personalizar sua trilha em breve
@@ -157,7 +157,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
       <input
         ref={inputRef}
         type="file"
-        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        accept=".pdf,application/pdf"
         className="hidden"
         data-testid="cv-file-input"
         onChange={(event) => {
