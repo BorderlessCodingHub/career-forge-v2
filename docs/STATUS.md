@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-13**
+Last updated: **2026-05-25** · Last merge: **HAC-14**
 
 ---
 
@@ -29,6 +29,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-13**
 | Adaptive Planning | ✅ Done | HAC-11 — GraphPatch pós-validação, mission banner, nó revisar destacado |
 | Demo mode + seed Ana | ✅ Done | HAC-12 — GET /demo/ana, seed js/git validations, Demo Ana toggle, Docker auto-seed |
 | Contextual Mentor | ✅ Done | HAC-13 — mentor agent via GraphExecutor, POST/GET /mentor, drawer + Ask AI |
+| Mock Interview Loop | ✅ Done | HAC-14 — 5–7 contextual Qs, mock_interview graph, trail recalibration |
 
 ---
 
@@ -39,10 +40,10 @@ Last updated: **2026-05-25** · Last merge: **HAC-13**
 | Issue | Title | Class | State |
 |-------|-------|-------|-------|
 | **HAC-13** | Contextual Mentor | P | **Done** |
-| **HAC-14** | Mock Interview Loop | P | In progress (parallel) |
+| **HAC-14** | Mock Interview Loop | P | **Done** |
 | **HAC-15** | Relatório mentor | P | In progress (parallel) |
 
-Sprint 4 complete. HAC-13 merged; HAC-14/15 dispatch in parallel ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
+Sprint 4 complete. HAC-13/14 merged; HAC-15 dispatch in parallel ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
 
 ---
 
@@ -72,6 +73,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 | Live forge SSE (timeline-only) | ✅ |
 | Vertical roadmap steady state | ✅ |
 | Mastery validation interview | ✅ |
+| Mock interview loop (5–7 Qs) | ✅ |
 | End-to-end pitch | ✅ |
 | Contextual mentor chat | ✅ |
 

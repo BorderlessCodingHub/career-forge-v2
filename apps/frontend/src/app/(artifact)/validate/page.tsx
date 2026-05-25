@@ -3,13 +3,18 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { ValidationInterview } from "@/components/validation";
+import { MockInterviewLoop, ValidationInterview } from "@/components/validation";
 
 function ValidatePageContent() {
   const searchParams = useSearchParams();
   const nodeId = searchParams.get("node") ?? "http";
+  const mode = searchParams.get("mode") ?? "loop";
 
-  return <ValidationInterview nodeId={nodeId} />;
+  if (mode === "quick") {
+    return <ValidationInterview nodeId={nodeId} />;
+  }
+
+  return <MockInterviewLoop nodeId={nodeId} />;
 }
 
 export default function ValidatePage() {

@@ -12,7 +12,7 @@ from career_forge.ai.graphs.roadmap_forge import RoadmapForgeGraphRunnable
 
 def test_factory_returns_registered_names() -> None:
     factory = AgentFactory()
-    assert factory.names() == ["diagnosis", "mentor", "roadmap_forge", "validation"]
+    assert factory.names() == ["diagnosis", "mentor", "mock_interview", "roadmap_forge", "validation"]
 
 
 def test_factory_get_returns_runnable() -> None:
