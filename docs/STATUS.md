@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-14**
+Last updated: **2026-05-25** · Last merge: **HAC-35**
 
 ---
 
@@ -31,6 +31,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-14**
 | Contextual Mentor | ✅ Done | HAC-13 — mentor agent via GraphExecutor, POST/GET /mentor, drawer + Ask AI |
 | Mock Interview Loop | ✅ Done | HAC-14 — 5–7 contextual Qs, mock_interview graph, trail recalibration |
 | Mentor report | ✅ Done | HAC-15 — GET /mentor-report, /report artifact page, evidence + interventions |
+| Frontend session storage | ✅ Done | HAC-35 — shared `lib/session/storage.ts`, domain modules preserved |
 
 ---
 

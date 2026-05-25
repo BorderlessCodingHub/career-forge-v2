@@ -87,6 +87,12 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 ---
 
+## Tech debt cleanup
+
+- [x] **HAC-35** — Consolidate fragmented session stores (`lib/session/storage.ts`)
+
+---
+
 ## Backlog / Won't do
 
 | Issue | Title | Status |
