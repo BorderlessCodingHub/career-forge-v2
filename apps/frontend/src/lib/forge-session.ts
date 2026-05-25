@@ -1,4 +1,4 @@
-import type { DiagnosisResponse, RoadmapForgeEvent } from "@/types/contracts";
+import type { RoadmapForgeEvent } from "@/types/contracts";
 
 const FORGE_GRAPH_KEY = "career-forge.forge-graph";
 const FORGE_RUN_KEY = "career-forge.forge-run-id";
@@ -57,12 +57,6 @@ export function extractGraphFromEvents(
     status: node.status,
     mastery_score: node.mastery_score,
   }));
-}
-
-export function diagnosisForForge(
-  diagnosis: DiagnosisResponse,
-): DiagnosisResponse {
-  return diagnosis;
 }
 
 export function clearForgeSession() {

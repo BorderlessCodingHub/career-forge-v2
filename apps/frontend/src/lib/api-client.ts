@@ -201,39 +201,4 @@ export async function getMentorReport(userId?: string): Promise<MentorReportResp
   );
 }
 
-export async function* streamForgeEvents(
-  runId: string,
-): AsyncGenerator<Record<string, unknown>> {
-  const res = await fetch(forgeStreamUrl(runId), {
-    headers: { Accept: "text/event-stream" },
-  });
-  if (!res.ok || !res.body) {
-    throw new Error(`Forge stream failed: ${res.status}`);
-  }
-
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const parts = buffer.split("\n\n");
-    buffer = parts.pop() ?? "";
-    for (const part of parts) {
-      const line = part
-        .split("\n")
-        .find((row) => row.startsWith("data:"));
-      if (!line) continue;
-      const json = line.replace(/^data:\s*/, "");
-      try {
-        yield JSON.parse(json) as Record<string, unknown>;
-      } catch {
-        /* skip malformed chunk */
-      }
-    }
-  }
-}
-
 export { backendUrl };
