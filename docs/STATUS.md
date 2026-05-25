@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-11**
+Last updated: **2026-05-25** · Last merge: **HAC-12**
 
 ---
 
@@ -27,20 +27,21 @@ Last updated: **2026-05-25** · Last merge: **HAC-11**
 | Vertical roadmap UI — artifact mode | ✅ Done | HAC-9 — GET /roadmap, vertical spine, node drawer |
 | Mastery Validation | ✅ Done | HAC-10 — validation graph, /validate interview UI, score ring |
 | Adaptive Planning | ✅ Done | HAC-11 — GraphPatch pós-validação, mission banner, nó revisar destacado |
+| Demo mode + seed Ana | ✅ Done | HAC-12 — GET /demo/ana, seed js/git validations, Demo Ana toggle, Docker auto-seed |
 
 ---
 
 ## Current sprint
 
-**Sprint 4 — Mastery loop** (sequential **[S]**)
+**Sprint 4 — Mastery loop** ✅ (sequential **[S]**)
 
 | Issue | Title | Class | State |
 |-------|-------|-------|-------|
 | **HAC-10** | Mastery Validation | S | **Done** |
 | **HAC-11** | Adaptive Planning | S | **Done** |
-| HAC-12 | Demo mode + seed Ana | S | **Next** |
+| **HAC-12** | Demo mode + seed Ana | S | **Done** |
 
-Sprint 4 in progress. **Dispatch:** HAC-12 ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
+Sprint 4 complete. **Dispatch:** HAC-13/14/15 parallel ([EXECUTION-FLOW](./engineering/EXECUTION-FLOW.md)).
 
 ---
 
@@ -70,7 +71,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 | Live forge SSE (timeline-only) | ✅ |
 | Vertical roadmap steady state | ✅ |
 | Mastery validation interview | ✅ |
-| End-to-end pitch | ⬜ |
+| End-to-end pitch | ✅ |
 
 ---
 
