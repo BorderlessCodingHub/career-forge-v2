@@ -45,7 +45,7 @@ Unified under `career_forge/ai/`:
 - **AgentFactory** — `factory.get("roadmap_forge")` → configured runnable
 - **GraphExecutor** — always `astream_events` v2; `stream=False` collects, `stream=True` → SSE
 
-Canonical doc: [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md)
+Canonical doc: [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) · [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md)
 
 ---
 

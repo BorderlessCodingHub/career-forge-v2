@@ -1,6 +1,16 @@
-.PHONY: smoke agent-verify up down status test stack-smoke
+.PHONY: smoke agent-verify up down status test stack-smoke help
 
 COMPOSE ?= docker compose
+
+help:
+	@echo "Career Forge — make targets:"
+	@echo "  make up            Start docker stack (postgres + backend + frontend)"
+	@echo "  make down          Stop docker stack"
+	@echo "  make status        Show compose status + URLs"
+	@echo "  make test          Backend pytest (apps/backend)"
+	@echo "  make smoke         Full harness + stack health"
+	@echo "  make agent-verify  Gate C — structure + optional /health"
+	@echo "  make stack-smoke   Docker stack health only"
 
 # Full smoke — harness + monorepo + stack health (starts docker if needed)
 smoke:

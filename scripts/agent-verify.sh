@@ -27,6 +27,12 @@ check test -f claude-design-docs/README.md
 check test -f claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md
 check test -f claude-design-docs/BORDERLESS-THEMING.md
 check test -f .cursor/rules/ui-product-sync.mdc
+check test -f apps/backend/src/career_forge/ai/executor.py
+check test -f apps/backend/src/career_forge/ai/factory.py
+check test -f apps/backend/src/career_forge/ai/run.py
+check test -f .cursor/rules/ai-execution.mdc
+check test -f docs/engineering/EXECUTION-FLOW.md
+check test -f docs/engineering/AI-EXECUTION.md
 check test -f apps/backend/src/career_forge/main.py
 check test -f apps/backend/src/career_forge/db/session.py
 check test ! -f apps/backend/src/career_forge/database.py

@@ -26,12 +26,11 @@ Entrada → Planejamento → Implementação → Triple QA → Saída
 
 1. [AGENTS.md](../../AGENTS.md) — index + Task template
 2. [docs/ROADMAP.md](../ROADMAP.md) — current sprint / batch
-3. [docs/STATUS.md](../STATUS.md) — parity matrix, last merge
-4. [docs/CHECKPOINT.md](../CHECKPOINT.md) — product north star, demo script
+3. [docs/SPRINT-BOARD.md](../SPRINT-BOARD.md) — [P]/[S] classification, parallel groups
+4. [docs/STATUS.md](../STATUS.md) — parity matrix, last merge
+5. [docs/CHECKPOINT.md](../CHECKPOINT.md) — product north star, demo script
 
-Optional for sprint planning: [docs/SPRINT-BOARD.md](../SPRINT-BOARD.md)
-
-**Rule:** Never start coding before reading all four core docs.
+**Rule:** Never start coding before reading all five core docs.
 
 ---
 

@@ -1,6 +1,6 @@
 # AI execution architecture — Career Forge
 
-> **Navigation:** [REPO-STRUCTURE.md](./REPO-STRUCTURE.md) · [CHECKPOINT.md](../CHECKPOINT.md)
+> **Navigation:** [EXECUTION-FLOW.md](./EXECUTION-FLOW.md) · [REPO-STRUCTURE.md](./REPO-STRUCTURE.md) · [CHECKPOINT.md](../CHECKPOINT.md)
 
 Canonical reference for how graphs/agents run, stream, and persist events.
 
@@ -43,7 +43,11 @@ Defined in `career_forge/ai/run.py`:
 | `error` | Failure message when `status=failed` |
 | timestamps | `created_at`, `updated_at`, `completed_at` |
 
-**Store:** `InMemoryGraphRunStore` (scaffold/tests). SQLAlchemy `GraphRunRecord` + `graph_runs` table (Alembic `002_graph_runs`) for Phase 2 DB wiring.
+**Store (canonical):** Postgres via `GraphRunRecord` → `graph_runs` table (Alembic `002_graph_runs`). Implement `PostgresGraphRunStore` satisfying the `GraphRunStore` protocol. **`InMemoryGraphRunStore`** remains dev/test fallback only (pytest, local smoke without DB).
+
+**LangGraph checkpointer (canonical):** Postgres checkpointer pattern (`PostgresSaver` / `langgraph-checkpoint-postgres`) — graph internal state between nodes. Injected into builders via `AgentFactory`. Same Postgres instance; separate checkpoint tables from `graph_runs`.
+
+End-to-end flow: [EXECUTION-FLOW.md](./EXECUTION-FLOW.md) § Persistence — Postgres checkpointer.
 
 ---
 
@@ -155,8 +159,9 @@ Other agents (diagnosis, validation) follow the same pattern in their routers wh
 
 ## Phase 2
 
-- [ ] Replace `MockGraphRunnable` with compiled LangGraph graphs
-- [ ] Wire `GraphRunStore` to SQLAlchemy `GraphRunRecord`
+- [ ] Replace `MockGraphRunnable` with compiled LangGraph graphs (HAC-8/10/18)
+- [ ] Wire `PostgresGraphRunStore` as production default (replace module-level `InMemoryGraphRunStore`)
+- [ ] Inject LangGraph `PostgresSaver` checkpointer in graph builders
 - [ ] LangSmith trace IDs on `GraphRun`
 - [ ] Replay stored `raw_events` without re-execution (optional)
 

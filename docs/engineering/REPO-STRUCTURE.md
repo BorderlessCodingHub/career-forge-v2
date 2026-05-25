@@ -1,6 +1,6 @@
 # Repository structure — Career Forge (canonical)
 
-> **Navigation:** [AGENTS.md](../AGENTS.md) · [AGENT-LIFECYCLE.md](./AGENT-LIFECYCLE.md) · [AI-EXECUTION.md](./AI-EXECUTION.md)
+> **Navigation:** [AGENTS.md](../AGENTS.md) · [AGENT-LIFECYCLE.md](./AGENT-LIFECYCLE.md) · [EXECUTION-FLOW.md](./EXECUTION-FLOW.md) · [AI-EXECUTION.md](./AI-EXECUTION.md)
 
 Last updated: **HAC-32** — unified AI layer (`career_forge/ai/`).
 
@@ -50,7 +50,7 @@ apps/backend/
         │   ├── session.py       # ONLY db entry — no database.py duplicate
         │   ├── base.py
         │   └── models/
-        │       └── graph_run.py # GraphRunRecord (Phase 2 persistence)
+        │       └── graph_run.py # GraphRunRecord → graph_runs (Postgres canonical store)
         ├── schemas/             # Pydantic structured outputs (HAC-7)
         │   ├── diagnosis.py
         │   ├── forge.py
@@ -84,14 +84,14 @@ apps/backend/
 |--------|----------------|
 | `ai/factory.py` | `factory.get("roadmap_forge")` → configured runnable |
 | `ai/executor.py` | **Single** code path: `astream_events` v2 → record OR stream |
-| `ai/run.py` | `GraphRun` entity (id, graph_name, user_id, status, I/O, events) |
+| `ai/run.py` | `GraphRun` entity + `GraphRunStore` (Postgres canonical; InMemory dev fallback) |
 | `ai/streaming/` | SSE + event normalization only — no graph logic |
 | `ai/graphs/` | LangGraph builders + `SkillGraphState` |
 | `ai/agents/` | Non-graph agents (mentor chat) |
 
 **Self-critique:** No duplicate streaming/recording logic outside `ai/executor.py` and `ai/streaming/`.
 
-Canonical execution doc: [AI-EXECUTION.md](./AI-EXECUTION.md)
+Canonical execution docs: [EXECUTION-FLOW.md](./EXECUTION-FLOW.md) (E2E tree + dispatch) · [AI-EXECUTION.md](./AI-EXECUTION.md) (GraphExecutor internals)
 
 ### Layer rules
 
