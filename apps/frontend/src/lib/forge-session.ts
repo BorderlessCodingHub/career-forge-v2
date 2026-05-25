@@ -1,3 +1,4 @@
+import { readJson, removeItems, writeJson, writeString, readString } from "@/lib/session/storage";
 import type { DiagnosisResponse, RoadmapForgeEvent } from "@/types/contracts";
 
 const FORGE_GRAPH_KEY = "career-forge.forge-graph";
@@ -12,30 +13,12 @@ export type ForgeGraphNode = {
   rationale?: string;
 };
 
-function readJson<T>(key: string): T | null {
-  if (typeof window === "undefined") return null;
-  const raw = window.sessionStorage.getItem(key);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
-}
-
-function writeJson(key: string, value: unknown) {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.setItem(key, JSON.stringify(value));
-}
-
 export function setForgeRunId(runId: string) {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.setItem(FORGE_RUN_KEY, runId);
+  writeString(FORGE_RUN_KEY, runId);
 }
 
 export function getForgeRunId(): string | null {
-  if (typeof window === "undefined") return null;
-  return window.sessionStorage.getItem(FORGE_RUN_KEY);
+  return readString(FORGE_RUN_KEY);
 }
 
 export function setForgeGraph(graph: ForgeGraphNode[]) {
@@ -66,7 +49,5 @@ export function diagnosisForForge(
 }
 
 export function clearForgeSession() {
-  if (typeof window === "undefined") return;
-  window.sessionStorage.removeItem(FORGE_GRAPH_KEY);
-  window.sessionStorage.removeItem(FORGE_RUN_KEY);
+  removeItems([FORGE_GRAPH_KEY, FORGE_RUN_KEY]);
 }

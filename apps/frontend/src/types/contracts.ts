@@ -41,9 +41,20 @@ export type DiagnosisResponse = {
   estimated_mastery: Record<string, number>;
 };
 
+export type YearsXpRange = "0-1" | "1-3" | "3-5" | "5+";
+
+export type CvAttachment = {
+  filename: string;
+  size: number;
+  mimeType: string;
+  dataBase64: string;
+};
+
 export type OnboardingSession = {
-  goalId: string;
+  goalId: string | null;
   motivation: string;
+  yearsXp: YearsXpRange | null;
+  cvAttachment: CvAttachment | null;
   answers: Record<string, string>;
   diagnosis?: DiagnosisResponse;
 };
