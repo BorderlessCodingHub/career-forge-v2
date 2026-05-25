@@ -18,7 +18,8 @@
 | 2 | [STATUS.md](./STATUS.md) | What's actually done |
 | 3 | [CHECKPOINT.md](./CHECKPOINT.md) | Product vision, stack, wow features |
 | 4 | [AGENT-DELIVERY.md](./AGENT-DELIVERY.md) | Triple QA gate |
-| 5 | [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md) | Forge LangGraph spec |
+| 5 | [CURSOR-CLOUD.md](./CURSOR-CLOUD.md) | Cloud agent bootstrap · Linear MCP secrets |
+| 6 | [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md) | Forge LangGraph spec |
 
 ## Design
 

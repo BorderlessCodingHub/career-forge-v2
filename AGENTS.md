@@ -15,6 +15,7 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 | **Implement a Linear issue** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Branch `HAC-XX-title-slug` · implement · triple gate · merge · **end-task** |
 | **AI / LangGraph work** | [EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) → [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) → [REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) § AI layer | Use `GraphExecutor` + `AgentFactory` — no per-graph streaming |
 | **Bootstrap / first session** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | Paste block below · `make smoke` when apps exist |
+| **Cloud agent / Linear MCP** | [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Set `HACKATON_LINEAR_API_KEY` in [Cloud secrets](https://cursor.com/dashboard/cloud-agents) · repo [`.cursor/mcp.json`](./.cursor/mcp.json) |
 | **Agent lifecycle / sprint planning** | [AGENT-LIFECYCLE](./docs/engineering/AGENT-LIFECYCLE.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) | Classify P/S/B · parallel dispatch for [P] batches |
 | **UI from Claude Design** | [PRODUCT-SOURCE-OF-TRUTH](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) → [claude-design-docs/README.md](./claude-design-docs/README.md) | Map prototype → Next.js; sync docs after paradigm change |
 | **Delivery / merge** | [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) → [end-task-workflow](./.cursor/rules/end-task-workflow.mdc) | `SHIP + PASS + VERIFIED` then **manual Done in Linear** |
@@ -83,6 +84,7 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 | [ai-execution](./.cursor/rules/ai-execution.mdc) | GraphExecutor-only path for AI/LangGraph changes |
 | [AGENT-LIFECYCLE](./docs/engineering/AGENT-LIFECYCLE.md) | Session entry → planning → impl → QA → exit |
 | [SPRINT-BOARD](./docs/SPRINT-BOARD.md) | Sprint goals, [P] groups, fit/no-fit table |
+| [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Cloud bootstrap · Linear HTTP MCP · `HACKATON_LINEAR_API_KEY` |
 | [linear-delivery-workflow](./.cursor/rules/linear-delivery-workflow.mdc) | Branch, micro-PR, P/S/B classification |
 | [parallel-dispatch](./.cursor/rules/parallel-dispatch.mdc) | **Mandatory** parallel Task launch for [P] batches |
 | [end-task-workflow](./.cursor/rules/end-task-workflow.mdc) | **Manual Linear Done** (no GitHub integration) |
@@ -104,6 +106,21 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 | `make test` | Backend pytest — before merge |
 | `make smoke` | Full harness + stack health |
 | `make agent-verify` | Gate C — structure + optional runtime `/health` |
+
+---
+
+## Cursor Cloud specific instructions
+
+Cloud agents clone this repo only. Full bootstrap: [docs/CURSOR-CLOUD.md](./docs/CURSOR-CLOUD.md).
+
+| Item | Value |
+|------|-------|
+| Linear MCP config | [`.cursor/mcp.json`](./.cursor/mcp.json) — HTTP Bearer via `HACKATON_LINEAR_API_KEY` |
+| Secret name | `HACKATON_LINEAR_API_KEY` |
+| Dashboard | [cursor.com/dashboard/cloud-agents](https://cursor.com/dashboard/cloud-agents) → **Secrets** tab |
+| Linear key source | Linear → Settings → API → Personal API keys (hackas-borderless workspace) |
+
+Do **not** commit API keys. Restart Cloud agents after adding or rotating secrets.
 
 ---
 
