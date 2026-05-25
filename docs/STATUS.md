@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-26** (backlog compliance audit)
+Last updated: **2026-05-25** · Last merge: **HAC-30** (Arthur sync — sprint roadmap + agent lifecycle)
 
 ---
 
@@ -11,7 +11,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-26** (backlog compliance audit
 | Area | Status | Notes |
 |------|--------|-------|
 | Agent harness | ✅ Done | AGENTS.md, rules, hooks, triple gate docs |
-| Agent lifecycle + sprint board | ⚠️ In progress | HAC-30 — AGENT-LIFECYCLE, SPRINT-BOARD, parallel-dispatch |
+| Agent lifecycle + sprint board | ✅ Done | HAC-30 — AGENT-LIFECYCLE, SPRINT-BOARD, parallel-dispatch |
 | Claude Design prototype | ⚠️ Partial sync | Artifact mode (HAC-25); pill diagnostic; drift on forge stream |
 | UX documentation | ✅ Done | UX-FLOW, SCREEN-INTENT, artifact mode spec |
 | Borderless theming (HAC-23) | ✅ Done | BORDERLESS-THEMING, prototype CSS vars |
@@ -37,7 +37,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-26** (backlog compliance audit
 | HAC-5 [P] | Monorepo + deploy skeleton | Arthur (FE) / shared | Backlog |
 | HAC-6 [P] | Skill graph schema + seed | — | Backlog |
 | HAC-7 [P] | AI JSON contracts | — | Backlog |
-| HAC-30 | Arthur sync — sprint roadmap + lifecycle | Matheus | In Progress |
+| HAC-30 | Arthur sync — sprint roadmap + lifecycle | Matheus | Done |
 
 **Dispatch:** Launch HAC-5/6/7 in ONE message when HAC-30 merges ([parallel-dispatch](../.cursor/rules/parallel-dispatch.mdc))
 
@@ -63,7 +63,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 |-------|-------|
 | UI prototype (artifact mode + onboarding pills) | ⚠️ |
 | UX docs + steady-state reference | ✅ |
-| Sprint board + agent lifecycle | ⚠️ HAC-30 |
+| Sprint board + agent lifecycle | ✅ |
 | Live forge SSE (timeline-only) | ⬜ |
 | Validation interview | ⬜ |
 | End-to-end pitch | ⬜ |

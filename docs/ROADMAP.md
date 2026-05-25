@@ -22,7 +22,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-24** — Prototype onboarding pills, minimal goal, vertical graph, 404 fix
 - [x] **HAC-25** — Prototype artifact mode: steady trail canvas, node drawer, uniform forge nodes
 - [x] **HAC-26** — Backlog compliance audit (docs + Linear HAC-5–18 alignment)
-- [ ] **HAC-30** — Arthur sync — sprint roadmap + agent lifecycle
+- [x] **HAC-30** — Arthur sync — sprint roadmap + agent lifecycle
 
 ---
 
