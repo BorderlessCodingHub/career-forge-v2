@@ -1,4 +1,10 @@
-import type { DiagnosisResponse, RoadmapResponse, RoadmapSyncNode } from "@/types/contracts";
+import type {
+  DiagnosisResponse,
+  RoadmapResponse,
+  RoadmapSyncNode,
+  ValidationQuestionsResponse,
+  ValidationRunResponse,
+} from "@/types/contracts";
 
 const backendUrl =
   process.env.NEXT_PUBLIC_BACKEND_URL ??
@@ -69,6 +75,32 @@ export async function syncRoadmap(
   return apiFetch<RoadmapResponse>("/roadmap/sync", {
     method: "POST",
     body: JSON.stringify({ user_id: userId, nodes }),
+  });
+}
+
+export async function getValidationQuestions(
+  nodeId: string,
+): Promise<ValidationQuestionsResponse> {
+  return apiFetch<ValidationQuestionsResponse>(
+    `/validation/questions?node_id=${encodeURIComponent(nodeId)}`,
+  );
+}
+
+export type SubmitValidationPayload = {
+  user_id?: string;
+  node_id: string;
+  node_title: string;
+  rubric: string[];
+  answers: Array<{ question_id: string; answer: string }>;
+};
+
+export async function submitValidation(
+  payload: SubmitValidationPayload,
+  userId = "demo-ana",
+): Promise<ValidationRunResponse> {
+  return apiFetch<ValidationRunResponse>("/validation", {
+    method: "POST",
+    body: JSON.stringify({ user_id: userId, ...payload }),
   });
 }
 

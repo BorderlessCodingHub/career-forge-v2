@@ -1,10 +1,56 @@
-"""Mastery validation interview result (HAC-10)."""
+"""Mastery validation interview contracts (HAC-10)."""
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from career_forge.schemas.common import ValidationStatus
+
+
+class ValidationQuestion(BaseModel):
+    """Single interview question derived from node rubric."""
+
+    id: str
+    index: int = Field(ge=1, le=3)
+    label: str = Field(description="Short tag, e.g. conceito + aplicação")
+    prompt: str
+    hint: str | None = None
+    rubric_criterion: str
+
+
+class ValidationQuestionsResponse(BaseModel):
+    """Questions for a mastery interview on a skill node."""
+
+    node_id: str
+    node_title: str
+    node_icon: str = "code"
+    questions: list[ValidationQuestion] = Field(min_length=3, max_length=3)
+
+
+class ValidationAnswer(BaseModel):
+    """Learner answer tied to a generated question."""
+
+    question_id: str
+    answer: str = Field(min_length=1)
+
+    @field_validator("answer")
+    @classmethod
+    def strip_answer(cls, value: str) -> str:
+        stripped = value.strip()
+        if not stripped:
+            msg = "answer cannot be empty"
+            raise ValueError(msg)
+        return stripped
+
+
+class ValidationRequest(BaseModel):
+    """Submit mastery interview answers for evaluation."""
+
+    user_id: str = "demo-ana"
+    node_id: str
+    node_title: str
+    rubric: list[str] = Field(default_factory=list)
+    answers: list[ValidationAnswer] = Field(min_length=3, max_length=3)
 
 
 class ValidationResponse(BaseModel):
@@ -20,3 +66,15 @@ class ValidationResponse(BaseModel):
     mentor_summary: str = Field(
         description="Collapsed accordion copy for Borderless mentors",
     )
+
+
+class ValidationRunResponse(BaseModel):
+    """GraphExecutor collect result + persisted validation."""
+
+    run_id: str
+    status: str
+    events: list[dict]
+    validation: ValidationResponse
+    node_id: str
+    node_status: str
+    mastery_score: int

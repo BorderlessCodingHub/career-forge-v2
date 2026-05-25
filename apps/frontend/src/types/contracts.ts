@@ -90,3 +90,45 @@ export type RoadmapSyncNode = {
   priority?: string | null;
   rationale?: string | null;
 };
+
+export type ValidationStatus = "aprovado" | "revisar";
+
+export type ValidationQuestion = {
+  id: string;
+  index: number;
+  label: string;
+  prompt: string;
+  hint?: string | null;
+  rubric_criterion: string;
+};
+
+export type ValidationQuestionsResponse = {
+  node_id: string;
+  node_title: string;
+  node_icon: string;
+  questions: ValidationQuestion[];
+};
+
+export type ValidationAnswer = {
+  question_id: string;
+  answer: string;
+};
+
+export type ValidationResponse = {
+  score: number;
+  status: ValidationStatus;
+  strengths: string[];
+  gaps: string[];
+  next_action: string;
+  mentor_summary: string;
+};
+
+export type ValidationRunResponse = {
+  run_id: string;
+  status: string;
+  events: Array<Record<string, unknown>>;
+  validation: ValidationResponse;
+  node_id: string;
+  node_status: string;
+  mastery_score: number;
+};
