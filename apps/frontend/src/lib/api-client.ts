@@ -1,4 +1,4 @@
-import type { DiagnosisResponse } from "@/types/contracts";
+import type { DiagnosisResponse, RoadmapResponse, RoadmapSyncNode } from "@/types/contracts";
 
 const backendUrl =
   process.env.NEXT_PUBLIC_BACKEND_URL ??
@@ -56,6 +56,20 @@ export async function startForgeRun(
 
 export function forgeStreamUrl(runId: string): string {
   return `${backendUrl}/forge/${runId}/stream`;
+}
+
+export async function getRoadmap(userId = "demo-ana"): Promise<RoadmapResponse> {
+  return apiFetch<RoadmapResponse>(`/roadmap/?user_id=${encodeURIComponent(userId)}`);
+}
+
+export async function syncRoadmap(
+  nodes: RoadmapSyncNode[],
+  userId = "demo-ana",
+): Promise<RoadmapResponse> {
+  return apiFetch<RoadmapResponse>("/roadmap/sync", {
+    method: "POST",
+    body: JSON.stringify({ user_id: userId, nodes }),
+  });
 }
 
 export async function* streamForgeEvents(

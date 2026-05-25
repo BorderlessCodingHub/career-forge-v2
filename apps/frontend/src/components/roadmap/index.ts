@@ -1,3 +1,3 @@
 export { NodeDrawer } from "./NodeDrawer";
 export { SkillNode } from "./SkillNode";
-export { VerticalSpine } from "./VerticalSpine";
+export { VerticalSpine, VerticalSpineShell } from "./VerticalSpine";
