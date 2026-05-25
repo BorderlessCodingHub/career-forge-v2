@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-22** (rename product to Career Forge)
+Last updated: **2026-05-25** · Last merge: **HAC-23** (Borderless UI theming guidance)
 
 ---
 
@@ -13,6 +13,7 @@ Last updated: **2026-05-25** · Last merge: **HAC-22** (rename product to Career
 | Agent harness | ✅ Done | AGENTS.md, rules, hooks, triple gate docs |
 | Claude Design prototype | ⚠️ Legacy flow | `claude-design-docs/prototype/` — tokens OK, flow pre-HAC-21 |
 | UX documentation (HAC-21) | ✅ Done | UX-FLOW, SCREEN-INTENT, vertical roadmap reference |
+| Borderless theming (HAC-23) | ✅ Done | BORDERLESS-THEMING, reference images, prototype CSS vars Phase 1 |
 | Monorepo apps/web + apps/api | ⬜ Todo | HAC-5 |
 | Postgres schema + seed | ⬜ Todo | HAC-6 |
 | AI JSON contracts | ⬜ Todo | HAC-7 |
