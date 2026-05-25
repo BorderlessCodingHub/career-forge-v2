@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from sqlalchemy import select
@@ -22,8 +23,20 @@ from career_forge.demo.ana_state import (
     load_demo_diagnosis,
 )
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
-ROADMAP_PATH = REPO_ROOT / "data" / "roadmap.json"
+
+def _default_roadmap_path() -> Path:
+    env_path = os.environ.get("ROADMAP_JSON_PATH")
+    if env_path:
+        return Path(env_path)
+    start = Path(__file__).resolve().parent
+    for parent in (start, *start.parents):
+        candidate = parent / "data" / "roadmap.json"
+        if candidate.is_file():
+            return candidate
+    return start.parents[2] / "data" / "roadmap.json"
+
+
+ROADMAP_PATH = _default_roadmap_path()
 
 
 def load_roadmap(path: Path = ROADMAP_PATH) -> dict:
