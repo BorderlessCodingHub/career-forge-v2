@@ -35,7 +35,7 @@ def mock_llm() -> None:
 
 SAMPLE_INTAKE = DiagnosisIntake(
     user_id="test-user",
-    goal_id="backend",
+    goal_id="fullstack",
     motivation="Quero migrar de carreira para tecnologia e trabalhar com APIs.",
     years_xp="0-1",
 )
@@ -88,9 +88,32 @@ class TestDiagnosisInterviewGraph:
 
         assert output["status"] == "complete"
         diagnosis = DiagnosisResponse.model_validate(output["diagnosis"])
-        assert diagnosis.profile.track_id == "backend-beginner"
+        assert diagnosis.profile.track_id == "fullstack-beginner"
         assert diagnosis.strengths
         assert diagnosis.gaps
+
+    @pytest.mark.asyncio
+    async def test_execute_stream_yields_interview_status_and_mapping(
+        self,
+        executor: GraphExecutor,
+    ) -> None:
+        session = DiagnosisSession(session_id="sess-stream", intake=SAMPLE_INTAKE)
+        run = GraphRun(
+            graph_name="diagnosis_interview",
+            user_id="test-user",
+            input={"phase": "start", "session": session.model_dump(), "answers": []},
+        )
+        event_iter = await executor.execute(run, stream=True)
+        assert not isinstance(event_iter, GraphRunResult)
+
+        collected = [event async for event in event_iter]
+        types = [event["type"] for event in collected]
+
+        assert "interview_status" in types
+        assert "mapping_dimension" in types
+        assert collected[-1]["type"] == "graph_complete"
+        assert collected[-1]["output"]["status"] == "asking"
+        assert collected[-1]["output"]["questions"]
 
     @pytest.mark.asyncio
     async def test_execute_collect_via_graph_executor(self, executor: GraphExecutor) -> None:
@@ -110,6 +133,73 @@ class TestDiagnosisInterviewGraph:
 
 
 class TestSaturationGuardrails:
+    @pytest.mark.asyncio
+    async def test_start_never_returns_asking_with_zero_questions(self) -> None:
+        session = DiagnosisSession(session_id="sess-empty", intake=SAMPLE_INTAKE)
+        output = await run_interview_phase(phase="start", session=session)
+        if output["status"] == "asking":
+            assert len(output["questions"]) >= 1
+        else:
+            assert output["status"] == "complete"
+            assert output["diagnosis"] is not None
+
+    @pytest.mark.asyncio
+    async def test_cv_rich_belief_still_gets_questions(self) -> None:
+        """CV-only high confidence must not skip interview via needs_clarification status."""
+
+        class CvRichMock(MockDiagnosisInterviewLlm):
+            async def initialize_belief(self, *args, **kwargs):  # noqa: ANN002, ANN003
+                from career_forge.schemas.diagnosis_interview import (
+                    PROFILE_DIMENSION_KEYS,
+                    PROFILE_DIMENSION_LABELS,
+                    BeliefState,
+                    RubricDimension,
+                )
+
+                belief = BeliefState.empty()
+                for key in PROFILE_DIMENSION_KEYS:
+                    belief.dimensions[key] = RubricDimension(
+                        key=key,
+                        label=PROFILE_DIMENSION_LABELS[key],
+                        confidence=0.65,
+                        evidence=["CV menciona experiência avançada"],
+                        status="needs_clarification",
+                        note="CV sugere experiência — confirmar na entrevista",
+                    )
+                return belief
+
+        set_diagnosis_interview_llm(CvRichMock())
+        session = DiagnosisSession(session_id="sess-cv", intake=SAMPLE_INTAKE)
+        output = await run_interview_phase(phase="start", session=session)
+        assert output["status"] == "asking"
+        assert len(output["questions"]) >= 1
+
+    @pytest.mark.asyncio
+    async def test_negative_hands_on_answer_skips_repeat_questions(self) -> None:
+        session = DiagnosisSession(session_id="sess-neg", intake=SAMPLE_INTAKE)
+        output = await run_interview_phase(phase="start", session=session)
+        session = DiagnosisSession.model_validate(output["session"])
+
+        answers = [
+            InterviewAnswer(
+                question_id=output["questions"][0]["id"],
+                text="Nunca fiz projetos práticos em AI/ML, só estudo teórico por enquanto.",
+            ),
+        ]
+        output = await run_interview_phase(
+            phase="turn",
+            session=session,
+            answers=answers,
+        )
+        session = DiagnosisSession.model_validate(output["session"])
+        proof = session.belief.dimensions["hands_on_proof"]
+        assert proof.status == "mapped"
+        assert "hands_on_proof" not in session.belief.interviewable_keys()
+
+        if output["status"] == "asking":
+            for question in output["questions"]:
+                assert question["rubric_key"] != "hands_on_proof"
+
     @pytest.mark.asyncio
     async def test_max_rounds_enforced(self) -> None:
         session = DiagnosisSession(session_id="sess-max", intake=SAMPLE_INTAKE)
