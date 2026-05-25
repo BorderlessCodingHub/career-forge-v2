@@ -16,12 +16,19 @@ import type {
   MockInterviewRequest,
   MockInterviewRunResponse,
   RoadmapResponse,
+  RoadmapForgeEvent,
   RoadmapSyncNode,
   ValidationQuestionsResponse,
   ValidationRequest,
   ValidationRunResponse,
 } from "@/types/contracts";
 import { consumeFetchEventStream } from "@/lib/sse/consume";
+import {
+  applyForgeStreamEvent,
+  createInitialForgeStreamState,
+  parseForgeStreamEvent,
+  type ForgeStreamSideEffects,
+} from "@/lib/forge-stream";
 import { getUserId } from "@/lib/user-session";
 
 const backendUrl =
@@ -208,6 +215,31 @@ export async function startForgeRun(
 
 export function forgeStreamUrl(runId: string): string {
   return `${backendUrl}/forge/${runId}/stream`;
+}
+
+export async function streamForgeRun(
+  runId: string,
+  effects: ForgeStreamSideEffects = {},
+): Promise<RoadmapForgeEvent[]> {
+  let state = createInitialForgeStreamState();
+  let streamError: Error | null = null;
+
+  await consumeFetchEventStream<RoadmapForgeEvent>(
+    forgeStreamUrl(runId),
+    { method: "GET" },
+    (_eventName, payload) => {
+      if (payload.type === "error") {
+        streamError = new Error(payload.message);
+        effects.onError?.(payload.message);
+        return;
+      }
+      state = applyForgeStreamEvent(state, payload, effects);
+    },
+    parseForgeStreamEvent,
+  );
+
+  if (streamError) throw streamError;
+  return state.events;
 }
 
 export async function getRoadmap(userId?: string): Promise<RoadmapResponse> {
