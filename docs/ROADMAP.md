@@ -31,7 +31,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 **Target:** 2026-05-27 · **Dispatch:** [parallel-dispatch](../.cursor/rules/parallel-dispatch.mdc)
 
 - [ ] **HAC-5** [P] — Monorepo Next.js + FastAPI + Postgres + deploy
-- [ ] **HAC-6** [P] — Skill graph schema + roadmap.json seed
+- [x] **HAC-6** [P] — Skill graph schema + roadmap.json seed
 - [ ] **HAC-7** [P] — Pydantic + LangGraph state contracts
 
 **Parallel:** HAC-5, HAC-6, HAC-7 after HAC-19 (no cross-deps)
