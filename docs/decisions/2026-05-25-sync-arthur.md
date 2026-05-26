@@ -86,3 +86,9 @@ Narrativa de pitch: *"Roadmap que não aceita check manual — a IA diagnostica,
 ---
 
 *Next review: after Sprint 1 Foundation merge (HAC-5/6/7)*
+
+---
+
+## Historical note (post-MVP evolution)
+
+The deploy decision above reflects the 2026-05-25 meeting context. Current production baseline evolved to GHCR + VPS (host nginx + `docker-compose.prod.yml`) documented in [docs/engineering/DEPLOY-VPS.md](../engineering/DEPLOY-VPS.md).

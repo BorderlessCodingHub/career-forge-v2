@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-25** · Last merge: **HAC-47**
+Last updated: **2026-05-26** · Last merge: **Deploy health-check curl fix (`18a12ee`)**
 
 ---
 
@@ -39,10 +39,17 @@ Last updated: **2026-05-25** · Last merge: **HAC-47**
 | Frontend adaptive diagnosis UI | ✅ Done | HAC-45 — DiagnosticPills uses interview API, sidebar from `mapping_progress` |
 | Diagnosis guardrails | ✅ Done | HAC-46 — max 5 rounds, LLM 503 retry, agent-verify checks |
 | Diagnosis polish + observability | ✅ Done | HAC-47 — fail-fast LLM, CORS 3300, LangSmith/local-debug harness, UX refactor, dead code cleanup |
+| VPS deploy pipeline hardening | ✅ Done | GHCR namespace `ghcr.io/pedroalano`, monorepo Dockerfile build paths fixed, SSH deploy health check migrated from Python to `curl` |
 
 ---
 
 ## Current sprint
+
+**Post-MVP docs revision (HAC-51)** In progress
+
+Documentation pass to align CHECKPOINT/STATUS/ROADMAP/SPRINT-BOARD and engineering docs with implemented Sprint 6 + deploy pipeline hardening.
+
+### Last completed sprint
 
 **Sprint 6 — AI diagnosis interview (P0)** ✅
 

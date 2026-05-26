@@ -2,7 +2,7 @@
 
 > **Navigation:** [AGENTS.md](../AGENTS.md) · [AGENT-LIFECYCLE.md](./AGENT-LIFECYCLE.md) · [EXECUTION-FLOW.md](./EXECUTION-FLOW.md) · [AI-EXECUTION.md](./AI-EXECUTION.md)
 
-Last updated: **HAC-32** — unified AI layer (`career_forge/ai/`).
+Last updated: **HAC-51** — Sprint 6 + deploy hardening docs sync.
 
 ## Root layout
 
@@ -19,6 +19,8 @@ Last updated: **HAC-32** — unified AI layer (`career_forge/ai/`).
 │   ├── agent-verify.sh
 │   └── smoke-stack.sh
 ├── docker-compose.yml
+├── docker-compose.prod.yml
+├── deploy/
 ├── Makefile
 └── .env.example
 ```
@@ -69,6 +71,8 @@ apps/backend/
         │   │   ├── base.py      # BaseGraphBuilder protocol
         │   │   ├── state.py     # SkillGraphState TypedDict
         │   │   ├── diagnosis.py
+        │   │   ├── diagnosis_interview.py
+        │   │   ├── mock_interview.py
         │   │   ├── roadmap_forge.py
         │   │   └── validation.py
         │   ├── agents/          # Non-graph LLM (mentor)
@@ -121,9 +125,13 @@ apps/frontend/
     │   ├── (setup)/
     │   │   ├── page.tsx
     │   │   ├── onboarding/
+    │   │   │   └── edit/
     │   │   └── forge/
+    │   │       └── complete/
     │   └── (artifact)/
-    │       └── roadmap/
+    │       ├── roadmap/
+    │       ├── validate/
+    │       └── report/
     ├── components/
     │   ├── ui/
     │   ├── layout/

@@ -47,61 +47,85 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 ---
 
-## Sprint 2 — Identity + Forge (core wow)
+## Sprint 2 — Identity + Forge (core wow) ✅
 
 **Goal:** Onboarding diagnóstico editável → Live Roadmap Forge SSE → primeiro wow ao vivo.  
 **Target:** 2026-05-29 (MVP milestone)
 
-| Issue | Title | Class | Deps |
-|-------|-------|-------|------|
-| **HAC-8** | Identity Engine — goal, pills, editable diagnosis | S | HAC-5, HAC-6, HAC-7 |
-| **HAC-18** | Live Roadmap Forge — LangGraph SSE + timeline reveal | S | HAC-8 |
-| *(HAC-9)* | *(Sprint 3 — steady artifact UI)* | — | HAC-18 |
+| Issue | Title | Class | Deps | Status |
+|-------|-------|-------|------|--------|
+| **HAC-8** | Identity Engine — goal, pills, editable diagnosis | S | HAC-5, HAC-6, HAC-7 | ✅ |
+| **HAC-18** | Live Roadmap Forge — LangGraph SSE + timeline reveal | S | HAC-8 | ✅ |
+| *(HAC-9)* | *(Sprint 3 — steady artifact UI)* | — | HAC-18 | ✅ |
 
 **Sequential chain:** HAC-8 → HAC-18
 
 ---
 
-## Sprint 3 — Artifact UI
+## Sprint 3 — Artifact UI ✅
 
 **Goal:** Trilha vertical estilo roadmap.sh em artifact mode (steady state pós-forge).  
 **Target:** 2026-05-30
 
-| Issue | Title | Class | Deps |
-|-------|-------|-------|------|
-| **HAC-9** | Vertical roadmap UI — artifact mode steady state | S | HAC-18 |
+| Issue | Title | Class | Deps | Status |
+|-------|-------|-------|------|--------|
+| **HAC-9** | Vertical roadmap UI — artifact mode steady state | S | HAC-18 | ✅ |
 
 ---
 
-## Sprint 4 — Mastery loop
+## Sprint 4 — Mastery loop ✅
 
 **Goal:** Validar aprendizado → trilha reage → demo mode Ana para pitch 7 min.  
 **Target:** 2026-05-31
 
-| Issue | Title | Class | Deps |
-|-------|-------|-------|------|
-| **HAC-10** | AI Mastery Validation — entrevista + score | S | HAC-9 |
-| **HAC-11** | Adaptive Planning — trilha reativa | S | HAC-10 |
-| **HAC-12** | Demo mode + seed user Ana | S | HAC-11 |
+| Issue | Title | Class | Deps | Status |
+|-------|-------|-------|------|--------|
+| **HAC-10** | AI Mastery Validation — entrevista + score | S | HAC-9 | ✅ |
+| **HAC-11** | Adaptive Planning — trilha reativa | S | HAC-10 | ✅ |
+| **HAC-12** | Demo mode + seed user Ana | S | HAC-11 | ✅ |
 
 **Sequential chain:** HAC-10 → HAC-11 → HAC-12
 
 ---
 
-## Sprint 5 — Stretch P1
+## Sprint 5 — Stretch P1 ✅
 
 **Goal:** Mentor contextual, mock interview loop, relatório mentor — parallel where possible.  
 **Target:** 2026-06-01
 
-| Issue | Title | Class | Deps |
-|-------|-------|-------|------|
-| **HAC-13** [P] | Contextual Mentor — chat com memória | P | HAC-12 |
-| **HAC-14** [P] | Mock Interview Loop — recalibra trilha | P | HAC-12 |
-| **HAC-15** [P] | Relatório para mentor | P | HAC-10 |
+| Issue | Title | Class | Deps | Status |
+|-------|-------|-------|------|--------|
+| **HAC-13** [P] | Contextual Mentor — chat com memória | P | HAC-12 | ✅ |
+| **HAC-14** [P] | Mock Interview Loop — recalibra trilha | P | HAC-12 | ✅ |
+| **HAC-15** [P] | Relatório para mentor | P | HAC-10 | ✅ |
 
 > HAC-13/14/15 can run in parallel after Sprint 4 demo core is stable.
 
 ---
+
+## Sprint 6 — Adaptive diagnosis interview (P0 post-MVP) ✅
+
+**Goal:** Make Screen 2 fully LLM-driven with CTRR Interviewer/Judge loop and production guardrails.
+
+| Issue | Title | Class | Deps | Status |
+|-------|-------|-------|------|--------|
+| **HAC-33** | CV ingest MVP | — | HAC-42..44 (parallel path) | ✅ |
+| **HAC-42** | CTRR schemas + contracts | S | Sprint 5 complete | ✅ |
+| **HAC-43** | `diagnosis_interview` graph | S | HAC-42 | ✅ |
+| **HAC-44** | Session API + Postgres | S | HAC-43 | ✅ |
+| **HAC-45** | Frontend adaptive diagnosis UI | S | HAC-44 | ✅ |
+| **HAC-46** | Guardrails + fallback | S | HAC-45 | ✅ |
+| **HAC-47** | Polish + observability harness | S | HAC-46 | ✅ |
+
+**Sequential chain:** HAC-42 → HAC-43 → HAC-44 → HAC-45 → HAC-46 → HAC-47 (HAC-33 parallel support)
+
+---
+
+## Ops hardening (post-MVP) ✅
+
+| Issue | Scope | Status |
+|-------|-------|--------|
+| **HAC-50** | VPS production deploy hardening (GHCR namespace, CI Dockerfile paths, nginx envsubst safety, curl health check) | ✅ |
 
 ## Backlog / Won't do
 
