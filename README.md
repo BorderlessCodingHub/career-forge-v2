@@ -99,8 +99,9 @@ pnpm install && pnpm dev
 |-----|------------|--------|
 | `apps/frontend` | Vercel | `vercel.json` (root directory `apps/frontend`) |
 | `apps/backend` | Railway | `railway.toml` + env `DATABASE_URL`, `CORS_ORIGINS` |
+| `VPS (full stack)` | Docker Compose + nginx + Let's Encrypt | See [`docs/engineering/DEPLOY-VPS.md`](./docs/engineering/DEPLOY-VPS.md) |
 
-Variáveis compartilhadas: ver `.env.example` (`BACKEND_URL`, `FRONTEND_URL`, `OPENAI_API_KEY`, `LANGSMITH_*`).
+Variáveis compartilhadas: ver `.env.example` (`BACKEND_URL`, `FRONTEND_URL`, `OPENAI_API_KEY`, `LANGSMITH_*`). Para produção VPS: ver `.env.production.example`.
 
 ## Equipe
 
