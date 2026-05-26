@@ -17,150 +17,168 @@ This is a v1 deployment runbook for a VPS where **host nginx** already exists. D
 - Nginx templates + generator:
   - [`deploy/nginx/*.conf.template`](../../deploy/nginx/)
   - [`deploy/scripts/render-nginx.sh`](../../deploy/scripts/render-nginx.sh)
+- CI/CD: [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml)
+
+## GitHub Actions setup (one-time)
+
+GHCR image names must be **lowercase**. This project publishes under `ghcr.io/pedroalano/...` (not the org name `ProgramadoresSemPatria`).
+
+### Personal access token (PAT)
+
+1. GitHub profile → **Settings → Developer settings → Personal access tokens**
+2. Create a token with **`read:packages`** and **`write:packages`**
+3. Store the value as repo secret **`GHCR_TOKEN`**
+
+### Repository secrets
+
+**Settings → Secrets and variables → Actions → Secrets**
+
+| Secret | Value |
+|--------|--------|
+| `GHCR_TOKEN` | PAT from above |
+| `GHCR_USERNAME` | `pedroalano` (optional; workflow uses `pedroalano` explicitly) |
+| `VPS_HOST` | VPS IP or hostname |
+| `VPS_USER` | SSH user (e.g. `ubuntu`) |
+| `VPS_SSH_KEY` | Private SSH key (PEM) for the VPS |
+
+### Repository variables
+
+**Settings → Secrets and variables → Actions → Variables**
+
+| Variable | Example |
+|----------|---------|
+| `NEXT_PUBLIC_BACKEND_URL` | `https://api.yourdomain.com` |
+| `NEXT_PUBLIC_API_URL` | `https://api.yourdomain.com` |
+
+These are baked into the frontend image at **build** time in CI.
+
+### Package visibility
+
+After the first successful workflow run, open [github.com/pedroalano?tab=packages](https://github.com/pedroalano?tab=packages) and set `career-forge-backend` / `career-forge-frontend` to **public**, or keep private and ensure the VPS `docker login` token can **read** packages.
 
 ## 1) Prepare the VPS directory
 
-1. Create the app directory (example):
-
-   ```bash
-   sudo mkdir -p /opt/career-forge
-   sudo chown -R "$USER":"$USER" /opt/career-forge
-   ```
-
-2. Copy the repo (or clone it) into `/opt/career-forge`.
-
-## 2) Create `/opt/career-forge/.env`
+Example path used by the deploy workflow:
 
 ```bash
-cd /opt/career-forge
+# clone or sync repo
+cd /home/ubuntu/soft-push
+```
+
+If you use a different path, update `APP_DIR` in [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml).
+
+## 2) Create `/home/ubuntu/soft-push/.env`
+
+```bash
+cd /home/ubuntu/soft-push
 cp .env.production.example .env
+nano .env
 ```
 
 Set at minimum:
 
-- `POSTGRES_PASSWORD` (generate a strong password)
+- `POSTGRES_PASSWORD` (strong, non-empty)
 - `APP_DOMAIN` and `API_DOMAIN`
 - `CERTBOT_EMAIL`
-- `OPENAI_API_KEY` and `LANGSMITH_API_KEY` (required for diagnosis interview / forge)
+- `OPENAI_API_KEY` and `LANGSMITH_API_KEY`
 - `CORS_ORIGINS` must include `https://$APP_DOMAIN`
-- `FRONTEND_HOST_PORT` and `BACKEND_HOST_PORT` must be free on the VPS host
+- `FRONTEND_HOST_PORT` and `BACKEND_HOST_PORT` must be free on the host (defaults `13000` / `18000`)
+- `GHCR_IMAGE_NAMESPACE=ghcr.io/pedroalano`
+- `IMAGE_TAG=latest` (must match tags pushed by CI)
 
-Tip: these host ports are only bound to `127.0.0.1`, so they do not need to be exposed publicly.
+Tip: compose binds app ports to `127.0.0.1` only; nginx is the public entrypoint. **Do not** use `docker-compose.yml` (dev) on the VPS — it can publish Postgres on `5432` and conflict with other stacks.
 
 ## 3) Generate nginx server blocks
 
-1. Render configs from the templates using your VPS `.env`:
+`render-nginx.sh` uses **restricted** `envsubst` so nginx variables like `$host` are not stripped.
 
-   ```bash
-   cd /opt/career-forge
-   ENV_FILE=./.env ./deploy/scripts/render-nginx.sh
-   ```
+```bash
+cd /home/ubuntu/soft-push
+ENV_FILE=./.env ./deploy/scripts/render-nginx.sh
+```
 
-   If `envsubst` is missing, install it:
-
-   ```bash
-   sudo apt-get update
-   sudo apt-get install -y gettext-base
-   ```
-
-2. Install generated configs alongside existing nginx vhosts:
-
-   ```bash
-   sudo cp deploy/nginx/generated/*.conf /etc/nginx/sites-available/
-   sudo ln -sf /etc/nginx/sites-available/career-forge-*.conf /etc/nginx/sites-enabled/
-   ```
-
-3. Validate and reload:
-
-   ```bash
-   sudo nginx -t && sudo systemctl reload nginx
-   ```
-
-## 4) Get TLS certificates with Certbot
-
-If certbot is not installed yet:
+If `envsubst` is missing:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y certbot python3-certbot-nginx
+sudo apt-get install -y gettext-base
 ```
 
-Then run (creates/updates SSL for the new `server_name` blocks):
+Install generated configs:
 
 ```bash
+sudo cp deploy/nginx/generated/*.conf /etc/nginx/sites-available/
+sudo ln -sf /etc/nginx/sites-available/career-forge-*.conf /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+## 4) Get TLS certificates with Certbot
+
+```bash
+set -a && source .env && set +a
+sudo apt-get install -y certbot python3-certbot-nginx
 sudo certbot --nginx \
   -d "$APP_DOMAIN" \
   -d "$API_DOMAIN" \
   --email "$CERTBOT_EMAIL" \
   --agree-tos
-```
-
-Verify renewal:
-
-```bash
 sudo certbot renew --dry-run
 ```
 
 ## 5) Start the production stack
 
-### Option A: Build locally on the VPS (no GitHub Secrets required)
+### Option A: Pull from GHCR (recommended)
 
 ```bash
-cd /opt/career-forge
-docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
-```
+cd /home/ubuntu/soft-push
+set -a && source .env && set +a
 
-### Option B: Pull GHCR images (for automated deploy)
-
-If you use GitHub Actions deploy, you can pull the tagged images and restart:
-
-```bash
-cd /opt/career-forge
+echo "$GHCR_TOKEN" | docker login ghcr.io -u pedroalano --password-stdin
 docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d --no-build
 ```
 
-## 6) Smoke tests
+Or trigger **Actions → Deploy production (VPS)** on `main` (requires `VPS_*` secrets).
 
-### Backend health
+Always **`pull`** before **`up`** when using `IMAGE_TAG=latest`.
 
-If nginx is live with TLS:
+### Option B: Build on the VPS (no GHCR)
 
 ```bash
-curl -fsS "https://$API_DOMAIN/health"
+cd /home/ubuntu/soft-push
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
 ```
 
-If you want to bypass TLS and test the container directly:
+## 6) Smoke tests
 
 ```bash
 curl -fsS "http://127.0.0.1:${BACKEND_HOST_PORT}/health"
+curl -fsS "https://$API_DOMAIN/health"
 ```
 
-### Forge SSE
-
-Open the frontend and run through the flow that triggers Forge stream.
-
-If you need a direct curl:
+Forge SSE (through nginx):
 
 ```bash
-curl -N \
-  -H "Accept: text/event-stream" \
-  "https://$API_DOMAIN/forge/<run_id>/stream"
+curl -N -H "Accept: text/event-stream" "https://$API_DOMAIN/forge/<run_id>/stream"
 ```
 
-## 7) Rollback (v1)
+## 7) Rollback
 
-Rollback is done by setting `IMAGE_TAG` to the previous working SHA and restarting:
+If CI also pushed `:${{ github.sha }}`, pin VPS `.env`:
 
-1. Update `.env`:
-   - change `IMAGE_TAG` to the last known good tag (v1 assumes tags are SHAs)
-2. Restart:
-   ```bash
-   docker compose -f docker-compose.prod.yml up -d --no-build
-   ```
+```env
+IMAGE_TAG=<previous-commit-sha>
+```
 
-If you prefer a build-based rollback (no registry):
+Then:
+
+```bash
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d --no-build
+```
+
+Build-based rollback on VPS:
 
 ```bash
 git checkout <previous-commit>
@@ -168,9 +186,19 @@ docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml up -d
 ```
 
-## Notes / gotchas
+## Troubleshooting
 
-- Ensure `CORS_ORIGINS` includes the browser origin `https://$APP_DOMAIN` (not just localhost).
-- nginx SSE block disables buffering for `/forge/…` so streams arrive immediately.
-- The compose host ports are bound to `127.0.0.1` only; nginx is the public entrypoint.
+| Symptom | Cause | Fix |
+|---------|--------|-----|
+| `repository name must be lowercase` | GHCR tag used `ProgramadoresSemPatria` | Use `ghcr.io/pedroalano/...` (see workflow) |
+| `manifest unknown` on pull | `IMAGE_TAG` mismatch | Set `IMAGE_TAG=latest` or the SHA CI pushed; run `docker compose pull` |
+| Postgres exits immediately | Empty `POSTGRES_PASSWORD` in `.env` | Set password; if volume was initialized with another password, `docker compose down -v` (data loss) |
+| `Bind for 0.0.0.0:5432 failed` | Wrong compose file (dev) | Use `docker-compose.prod.yml` only |
+| `invalid number of arguments in proxy_set_header` | Bare `envsubst` wiped `$host` | Use updated `render-nginx.sh` (restricted substitution) |
+| `failed to fetch` in browser | CORS | `CORS_ORIGINS=https://$APP_DOMAIN` and restart backend |
 
+## Notes
+
+- Ensure `CORS_ORIGINS` includes `https://$APP_DOMAIN`.
+- nginx SSE block disables buffering for `/forge/…`.
+- Frontend public API URLs come from CI build args (`NEXT_PUBLIC_*` variables).

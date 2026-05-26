@@ -27,31 +27,33 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: pedroalano
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build & push backend
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: apps/backend/Dockerfile
+          context: ./apps/backend
+          file: Dockerfile
           target: production
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/career-forge-backend:${{ github.sha }}
+            ghcr.io/pedroalano/career-forge-backend:latest
+            ghcr.io/pedroalano/career-forge-backend:${{ github.sha }}
 
       - name: Build & push frontend
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: apps/frontend/Dockerfile
+          context: ./apps/frontend
+          file: Dockerfile
           target: production
           push: true
           build-args: |
             NEXT_PUBLIC_BACKEND_URL=${{ vars.NEXT_PUBLIC_BACKEND_URL }}
             NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/career-forge-frontend:${{ github.sha }}
+            ghcr.io/pedroalano/career-forge-frontend:latest
+            ghcr.io/pedroalano/career-forge-frontend:${{ github.sha }}
 
   deploy:
     name: Deploy to VPS via SSH
@@ -68,10 +70,9 @@ jobs:
           script: |
             set -euo pipefail
 
-            APP_DIR="/opt/career-forge"
+            APP_DIR="/home/ubuntu/soft-push"
             cd "$APP_DIR"
 
-            # Load runtime env (domains, ports, AI keys, etc.)
             if [ -f .env ]; then
               set -a
               # shellcheck disable=SC1091
@@ -79,24 +80,22 @@ jobs:
               set +a
             fi
 
-            export GHCR_IMAGE_NAMESPACE="ghcr.io/${{ github.repository_owner }}"
-            export IMAGE_TAG="${{ github.sha }}"
+            export GHCR_IMAGE_NAMESPACE="ghcr.io/pedroalano"
+            export IMAGE_TAG="latest"
 
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME || github.actor }}" --password-stdin
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u pedroalano --password-stdin
 
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans --no-build
 
-            # Health check (API /health)
             python - <<'PY'
             import os, urllib.request, ssl
             api_domain = os.environ.get("API_DOMAIN")
             if not api_domain:
-                raise SystemExit("API_DOMAIN missing from /opt/career-forge/.env")
+                raise SystemExit("API_DOMAIN missing from .env")
             url = f"https://{api_domain}/health"
             ctx = ssl.create_default_context()
             with urllib.request.urlopen(url, context=ctx, timeout=15) as resp:
                 data = resp.read()
             print("Health OK:", data[:200])
             PY
-
