@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Render nginx templates using the VPS `.env` file and `envsubst`.
+# Render nginx templates using the VPS `.env` file and restricted `envsubst`.
+# Only Career Forge env vars are substituted; nginx $host, $remote_addr, etc. are preserved.
 #
 # Usage:
-#   cd /opt/career-forge
+#   cd /home/ubuntu/soft-push
 #   ENV_FILE=./.env ./deploy/scripts/render-nginx.sh
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -27,10 +28,12 @@ set +a
 
 mkdir -p "$OUT_DIR"
 
-for tpl in "$NGINX_DIR"/career-forge-*.conf.template; do
-  base="$(basename "$tpl" .template)"
-  envsubst < "$tpl" > "$OUT_DIR/$base"
-done
+envsubst '${APP_DOMAIN} ${FRONTEND_HOST_PORT}' \
+  < "$NGINX_DIR/career-forge-app.conf.template" \
+  > "$OUT_DIR/career-forge-app.conf"
+
+envsubst '${API_DOMAIN} ${BACKEND_HOST_PORT}' \
+  < "$NGINX_DIR/career-forge-api.conf.template" \
+  > "$OUT_DIR/career-forge-api.conf"
 
 echo "nginx config rendered into: $OUT_DIR"
-
