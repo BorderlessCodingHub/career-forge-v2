@@ -3,6 +3,8 @@
 > **Agent navigation:** [← AGENTS.md](../AGENTS.md) · **Prev:** [CHECKPOINT.md](./CHECKPOINT.md) · **Next:** [AGENT-DELIVERY.md](./AGENT-DELIVERY.md)  
 > **See also:** [docs index](./README.md) · [end-session-smoke rule](../.cursor/rules/end-session-smoke.mdc)
 
+Start with [CHECKPOINT.md](./CHECKPOINT.md) for the complete application overview before running Cloud workflows.
+
 How to run Career Forge development from a **Cloud agent** that clones only this Git repo. No parent workspace folder required.
 
 ---
@@ -195,4 +197,4 @@ Doc catalog: [docs/README.md](./README.md). Workflow chain continues at [AGENT-D
 
 ---
 
-*Last updated: 2026-05-25*
+*Last updated: 2026-05-26*

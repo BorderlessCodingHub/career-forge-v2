@@ -36,10 +36,69 @@ Sub-eixo: **Aprender com validação prática** (Alpha School: mastery before pr
 apps/frontend/     Next.js + TS + Tailwind
 apps/backend/     FastAPI + Pydantic + SQLAlchemy
 PostgreSQL    skill graph state, validations, profiles, graph_runs
-LangGraph     diagnosis_graph, roadmap_forge_graph, validation_graph
+LangGraph     diagnosis_graph, diagnosis_interview_graph, roadmap_forge_graph, validation_graph, mock_interview_graph
 LangChain     astream_events v2 via GraphExecutor (HAC-32)
 LangSmith     traces per GraphRun
 ```
+
+## Application map (implemented)
+
+```mermaid
+flowchart TD
+  goal[Goal_and_optional_CV] --> interview[Adaptive_diagnosis_interview_CTRR]
+  interview --> editDiag[Editable_diagnosis]
+  editDiag --> forge[Live_Roadmap_Forge_SSE]
+  forge --> roadmap[Vertical_roadmap_artifact]
+  roadmap --> validate[Mastery_validation]
+  validate --> adapt[Adaptive_planning_GraphPatch]
+  roadmap --> mentor[Contextual_mentor]
+  roadmap --> mock[Mock_interview]
+  mentor --> report[Mentor_report]
+```
+
+### Frontend routes
+
+| Route | Purpose |
+|---|---|
+| `(setup)/` | Goal entry |
+| `(setup)/onboarding` | Adaptive diagnosis interview (CTRR) |
+| `(setup)/onboarding/edit` | Editable diagnosis |
+| `(setup)/forge` | Live forge timeline SSE |
+| `(setup)/forge/complete` | Post-forge transition |
+| `(artifact)/roadmap` | Vertical steady-state trail |
+| `(artifact)/validate` | Mastery validation interview |
+| `(artifact)/report` | Mentor report (Borderless) |
+
+### API surface
+
+| Prefix | Key endpoints |
+|---|---|
+| `/health` | Health probe used by smoke/deploy |
+| `/demo/ana` | Demo seed user |
+| `/diagnosis` | Legacy single-shot diagnosis |
+| `/diagnosis/interview/start`, `/diagnosis/interview/{session_id}/turn` | Multi-turn CTRR diagnosis interview |
+| `/forge`, `/forge/stream`, `/forge/{run_id}/stream` | Forge run + SSE timeline |
+| `/roadmap/`, `/roadmap/sync` | Steady-state trail + sync |
+| `/validation/questions`, `/validation` | Mastery validation |
+| `/mentor/context`, `/mentor` | Contextual mentor |
+| `/mentor-report` | Mentor evidence report |
+| `/mock-interview/questions`, `/mock-interview` | Mock interview loop + recalibration |
+
+## Data model summary
+
+Core models under `apps/backend/src/career_forge/db/models/`:
+
+- `user.py`, `profile.py` — user identity and profile context
+- `skill_node.py`, `user_skill_node.py` — static catalog node + personalized node state
+- `validation.py` — mastery validation runs/evidence
+- `diagnosis_session.py` — multi-turn interview sessions
+- `graph_run.py` — GraphExecutor run audit trail (`graph_runs`)
+
+## Deployment baseline
+
+- Production images are published to `ghcr.io/pedroalano/career-forge-{backend,frontend}:latest`.
+- Canonical server deploy path is VPS + host nginx + `docker-compose.prod.yml` over SSH workflow.
+- Post-deploy verification is `curl -fsS "https://$API_DOMAIN/health"` (no Python dependency on VPS image).
 
 ## AI execution layer (HAC-32)
 
@@ -48,6 +107,7 @@ Unified under `career_forge/ai/`:
 - **GraphRun** — one execution record (id, graph_name, user_id, status, I/O, events)
 - **AgentFactory** — `factory.get("roadmap_forge")` → configured runnable
 - **GraphExecutor** — always `astream_events` v2; `stream=False` collects, `stream=True` → SSE
+- **Registry** — `diagnosis`, `diagnosis_interview`, `roadmap_forge`, `validation`, `mock_interview`, `mentor`
 
 Canonical doc: [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) · [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md)
 
@@ -90,13 +150,31 @@ Claude Design prototype: [claude-design-docs/prototype/](../claude-design-docs/p
 
 ---
 
-## Adaptive diagnosis (ADR-001 — in progress HAC-42–46)
+## Adaptive diagnosis (ADR-001 — Sprint 6 done)
 
-Screen 2: **CTRR** rubric + Interviewer/Judge loop — max 2 questions/turn, optional PDF CV, accumulative transcript → `DiagnosisResponse`.
+Screen 2 is live: **CTRR** rubric + Interviewer/Judge loop — max 2 questions/turn, optional PDF CV, accumulative transcript → `DiagnosisResponse`.
 
 Spec: [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md)
 
 ---
+
+## Runtime environments
+
+| Environment | Baseline |
+|---|---|
+| Local dev | `make up` (`docker-compose.yml`) + `.env.example` |
+| Verification | `make smoke`, `make agent-verify`, backend `/health` |
+| Production | GHCR + VPS (`docker-compose.prod.yml`) + host nginx + Certbot |
+
+## Documentation quick index
+
+| Need | Read |
+|---|---|
+| Product/feature overview | [CHECKPOINT.md](./CHECKPOINT.md) |
+| Sprint ordering and issue status | [ROADMAP.md](./ROADMAP.md), [SPRINT-BOARD.md](./SPRINT-BOARD.md), [STATUS.md](./STATUS.md) |
+| AI runtime internals | [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md), [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md) |
+| Deploy and ops | [engineering/DEPLOY-VPS.md](./engineering/DEPLOY-VPS.md) |
+| Diagnosis deep spec | [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) |
 
 ## Demo script (5 min)
 

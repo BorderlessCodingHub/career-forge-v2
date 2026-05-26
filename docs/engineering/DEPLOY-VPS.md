@@ -2,6 +2,8 @@
 
 This is a v1 deployment runbook for a VPS where **host nginx** already exists. Docker only runs the apps and Postgres; nginx + Certbot live on the host.
 
+Product-level deployment overview lives in [docs/CHECKPOINT.md](../CHECKPOINT.md) under **Deployment baseline**.
+
 ## Assumptions
 
 1. You have an existing `nginx` installation on the VPS.

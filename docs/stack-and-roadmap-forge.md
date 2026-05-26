@@ -9,10 +9,10 @@
 | Database | PostgreSQL |
 | AI orchestration | LangGraph + LangChain |
 | Observability | LangSmith |
-| Deploy | Vercel (web) + Railway/Render (api) + Postgres managed |
+| Deploy | GHCR + VPS (host nginx + `docker-compose.prod.yml`) + Postgres |
 | Local dev | docker-compose (web + api + postgres) |
 
-Monorepo sugerido:
+Monorepo:
 ```
 apps/frontend/          # Next.js
 apps/backend/          # FastAPI
@@ -73,10 +73,10 @@ Node `accumulate_graph` aplica patches com validação Pydantic + regras de prer
 ### SSE — FastAPI endpoint
 
 ```
-POST /api/v1/roadmap/forge
+POST /forge
 → 202 { "run_id": "..." }
 
-GET /api/v1/roadmap/forge/{run_id}/stream
+GET /forge/{run_id}/stream
 → text/event-stream
 ```
 
@@ -91,7 +91,7 @@ type RoadmapForgeEvent =
   | { type: "error"; message: string };
 ```
 
-Implementação: `langgraph.stream()` + adapter para SSE, ou `astream_events` filtrando tags.
+Implementação: `GraphExecutor` com `astream_events` v2 + normalização em `ai/streaming/events.py`.
 
 ### Frontend — UX (HAC-21 + HAC-25)
 
@@ -137,3 +137,7 @@ HAC-8 (onboarding) + HAC-6 + HAC-7 → HAC-18 (Live Roadmap Forge)
 HAC-18 → HAC-9 (Skill Graph UI reveal)
 HAC-9 + HAC-7 → HAC-10 (Mastery Validation)
 ```
+
+---
+
+Canonical overview for full runtime/API map: [CHECKPOINT.md](./CHECKPOINT.md).

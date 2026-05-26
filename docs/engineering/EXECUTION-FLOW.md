@@ -2,9 +2,9 @@
 
 > **Navigation:** [AI-EXECUTION.md](./AI-EXECUTION.md) · [REPO-STRUCTURE.md](./REPO-STRUCTURE.md) · [SPRINT-BOARD.md](../SPRINT-BOARD.md) · [CHECKPOINT.md](../CHECKPOINT.md)
 
-End-to-end execution tree, parallel dispatch order, and architecture after **HAC-32**.
+End-to-end execution tree, parallel dispatch order, and architecture after Sprint 6 + deploy hardening.
 
-Last updated: **HAC-32** (Postgres checkpointer = canonical persistence target)
+Last updated: **HAC-51**
 
 ---
 
@@ -12,11 +12,11 @@ Last updated: **HAC-32** (Postgres checkpointer = canonical persistence target)
 
 | Area | Status |
 |------|--------|
-| Sprint 0 + Sprint 1 | ✅ Done (HAC-5/6/7/31/32) |
+| Sprint 0 → Sprint 6 | ✅ Done (HAC-5..15, HAC-33, HAC-42..47) |
 | AI layer | ✅ `career_forge/ai/` — GraphRun, GraphExecutor, AgentFactory |
-| Graph builders | ✅ `diagnosis` wired; `roadmap_forge`/`validation` mock until HAC-10/18 |
-| HTTP | ✅ `api/forge.py` wired; `api/diagnosis.py` wired; `roadmap`, `validation` stubs |
-| Persistence | ⚠️ `GraphRunRecord` + `graph_runs` table exist; runtime default still `InMemoryGraphRunStore` (dev/tests) |
+| Graph builders | ✅ `diagnosis`, `diagnosis_interview`, `roadmap_forge`, `validation`, `mock_interview`; mentor as agent runnable |
+| HTTP | ✅ diagnosis, diagnosis interview, forge, roadmap, validation, mentor, mentor report, mock interview routes wired |
+| Persistence | ✅ `GraphRunRecord` + `graph_runs` table; diagnosis sessions and skill graph state persisted in Postgres |
 
 ---
 
@@ -120,7 +120,7 @@ flowchart LR
     CP --> PG
 ```
 
-**Layer rules:** `api/` creates `GraphRun` and calls `GraphExecutor` only. `services/` handles deterministic merge and DB persistence — no streaming. `ai/` owns all LangChain/LangGraph execution.
+**Layer rules:** `api/` creates `GraphRun` and calls `GraphExecutor` only. `services/` handles deterministic merge and DB persistence — no streaming. `ai/` owns all LangChain/LangGraph execution. For endpoint-level API map, see [CHECKPOINT.md](../CHECKPOINT.md) § Application map.
 
 ---
 

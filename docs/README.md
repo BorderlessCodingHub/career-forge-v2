@@ -16,7 +16,7 @@
 |---|-----|---------|
 | 1 | [ROADMAP.md](./ROADMAP.md) | What to work on now |
 | 2 | [STATUS.md](./STATUS.md) | What's actually done |
-| 3 | [CHECKPOINT.md](./CHECKPOINT.md) | Product vision, stack, wow features |
+| 3 | [CHECKPOINT.md](./CHECKPOINT.md) | Complete application overview: product flow, routes, API, AI, data, deploy |
 | 4 | [AGENT-DELIVERY.md](./AGENT-DELIVERY.md) | Triple QA gate |
 | 5 | [CURSOR-CLOUD.md](./CURSOR-CLOUD.md) | Cloud agent bootstrap · Linear MCP secrets |
 | 6 | [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md) | Forge LangGraph spec |
@@ -41,6 +41,7 @@
 |----------|---------|
 | [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) | E2E execution tree |
 | [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md) | GraphExecutor internals |
+| [engineering/DEPLOY-VPS.md](./engineering/DEPLOY-VPS.md) | VPS production deploy runbook (GHCR + nginx + curl health check) |
 | [.cursor/rules/](../.cursor/rules/) | Delivery + end-task + ai-execution |
 | [.cursor/skills/](../.cursor/skills/) | Gate procedures |
 | [.cursor/hooks.json](../.cursor/hooks.json) | Session lifecycle |

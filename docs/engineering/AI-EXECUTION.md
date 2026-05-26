@@ -4,7 +4,7 @@
 
 Canonical reference for how graphs/agents run, stream, and persist events.
 
-Last updated: **HAC-32**
+Last updated: **HAC-51**
 
 ---
 
@@ -60,7 +60,7 @@ factory = get_agent_factory()
 runnable = factory.get("roadmap_forge")  # names match schema modules
 ```
 
-Registered names (HAC-32):
+Registered names:
 
 | Name | Builder | Issue |
 |------|---------|-------|
@@ -68,6 +68,7 @@ Registered names (HAC-32):
 | `diagnosis_interview` | `build_diagnosis_interview_graph` | HAC-43 |
 | `roadmap_forge` | `build_roadmap_forge_graph` | HAC-18 |
 | `validation` | `build_validation_graph` | HAC-10 |
+| `mock_interview` | `build_mock_interview_graph` | HAC-14 |
 | `mentor` | `build_mentor_agent` | HAC-13 |
 
 Extend via `factory.register(name, builder_fn)`.
@@ -132,7 +133,7 @@ LangChain v2 event shape (simplified):
 - **Forge:** `RoadmapForgeEvent` schema (`reasoning_delta`, `graph_ready`, …)
 - **Other graphs:** `graph_complete` wrapper with structured output
 
-Scaffold uses `MockGraphRunnable` (`ai/graphs/base.py`) that emits v2-shaped events from fixtures until LangGraph is wired in HAC-8/10/18.
+Production path uses LangGraph builders through `ai/registry.py` for diagnosis, diagnosis interview, roadmap forge, validation and mock interview; mentor remains a non-graph agent runnable.
 
 ---
 
@@ -144,7 +145,7 @@ Scaffold uses `MockGraphRunnable` (`ai/graphs/base.py`) that emits v2-shaped eve
 | `GET` | `/forge/stream` | Demo SSE — ephemeral run, stream mock forge |
 | `GET` | `/forge/{run_id}/stream` | Re-execute stored run with `stream=True` → SSE |
 
-Other agents (diagnosis, validation) follow the same pattern in their routers when implemented.
+Other AI-backed routers already follow this pattern (`diagnosis`, `diagnosis_interview`, `validation`, `mock_interview`, `mentor`).
 
 ---
 
@@ -158,7 +159,7 @@ Other agents (diagnosis, validation) follow the same pattern in their routers wh
 
 ---
 
-## Phase 2
+## Current follow-ups
 
 - [ ] Replace `MockGraphRunnable` with compiled LangGraph graphs (HAC-8/10/18)
 - [ ] Wire `PostgresGraphRunStore` as production default (replace module-level `InMemoryGraphRunStore`)

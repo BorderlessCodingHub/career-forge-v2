@@ -2,7 +2,7 @@
 
 > **Authority:** [ADR-001](../decisions/ADR-001-adaptive-diagnosis-ctrr.md) (business decisions) · this doc (operational spec)
 
-**Status:** Spec accepted · implementation HAC-42–46
+**Status:** Implemented in production path (HAC-42–46, polished in HAC-47)
 
 ---
 
