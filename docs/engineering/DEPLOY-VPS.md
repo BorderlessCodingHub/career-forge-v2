@@ -138,7 +138,7 @@ docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d --no-build
 ```
 
-Or trigger **Actions → Deploy production (VPS)** on `main` (requires `VPS_*` secrets).
+Or trigger **Actions → Deploy production (VPS)** on `main` (requires `VPS_*` secrets). The deploy job verifies `https://$API_DOMAIN/health` with `curl` (no Python required on the VPS).
 
 Always **`pull`** before **`up`** when using `IMAGE_TAG=latest`.
 
@@ -195,6 +195,7 @@ docker compose -f docker-compose.prod.yml up -d
 | Postgres exits immediately | Empty `POSTGRES_PASSWORD` in `.env` | Set password; if volume was initialized with another password, `docker compose down -v` (data loss) |
 | `Bind for 0.0.0.0:5432 failed` | Wrong compose file (dev) | Use `docker-compose.prod.yml` only |
 | `invalid number of arguments in proxy_set_header` | Bare `envsubst` wiped `$host` | Use updated `render-nginx.sh` (restricted substitution) |
+| `python: command not found` in deploy job | SSH health check used Python | Fixed in workflow: uses `curl -fsS https://$API_DOMAIN/health` |
 | `failed to fetch` in browser | CORS | `CORS_ORIGINS=https://$APP_DOMAIN` and restart backend |
 
 ## Notes

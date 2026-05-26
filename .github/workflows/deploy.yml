@@ -88,14 +88,10 @@ jobs:
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans --no-build
 
-            python - <<'PY'
-            import os, urllib.request, ssl
-            api_domain = os.environ.get("API_DOMAIN")
-            if not api_domain:
-                raise SystemExit("API_DOMAIN missing from .env")
-            url = f"https://{api_domain}/health"
-            ctx = ssl.create_default_context()
-            with urllib.request.urlopen(url, context=ctx, timeout=15) as resp:
-                data = resp.read()
-            print("Health OK:", data[:200])
-            PY
+            if [ -z "${API_DOMAIN:-}" ]; then
+              echo "API_DOMAIN missing from .env" >&2
+              exit 1
+            fi
+            curl -fsS "https://${API_DOMAIN}/health"
+            echo ""
+            echo "Health OK"
