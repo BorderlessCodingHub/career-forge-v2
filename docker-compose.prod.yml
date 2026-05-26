@@ -1,0 +1,69 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-careerforge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-careerforge}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-careerforge} -d ${POSTGRES_DB:-careerforge}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+      target: production
+    image: ${GHCR_IMAGE_NAMESPACE:-ghcr.io/local}/career-forge-backend:${IMAGE_TAG:-local}
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-careerforge}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-careerforge}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      ENV: production
+      DEBUG: ${DEBUG:-false}
+      SEED_DEMO_ANA: ${SEED_DEMO_ANA:-false}
+      ROADMAP_JSON_PATH: /data/roadmap.json
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DIAGNOSIS_INTERVIEW_MODEL: ${DIAGNOSIS_INTERVIEW_MODEL:-gpt-4.1-nano}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY}
+      LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-career-forge}
+    volumes:
+      - ./data:/data:ro
+      - ./logs:/app/logs
+    ports:
+      - "127.0.0.1:${BACKEND_HOST_PORT:-18000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      target: production
+      args:
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    image: ${GHCR_IMAGE_NAMESPACE:-ghcr.io/local}/career-forge-frontend:${IMAGE_TAG:-local}
+    environment:
+      API_INTERNAL_URL: http://backend:8000
+    ports:
+      - "127.0.0.1:${FRONTEND_HOST_PORT:-13000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+
