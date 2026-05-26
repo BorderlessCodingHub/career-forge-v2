@@ -34,7 +34,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./apps/backend
-          file: Dockerfile
+          file: apps/backend/Dockerfile
           target: production
           push: true
           tags: |
@@ -45,7 +45,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./apps/frontend
-          file: Dockerfile
+          file: apps/frontend/Dockerfile
           target: production
           push: true
           build-args: |
