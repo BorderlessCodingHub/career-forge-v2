@@ -165,6 +165,10 @@ def sync_user_graph(
         session.flush()
 
     existing = _user_state_map(session, user)
+    incoming_ids = {node.node_id for node in nodes}
+    if any(node.node_id not in existing for node in nodes):
+        _delete_stale_generated_rows(session, existing, incoming_ids)
+        existing = _user_state_map(session, user)
     for index, node in enumerate(nodes, start=len(existing)):
         _ensure_skill_node(session, node, sort_order=index)
         row = existing.get(node.node_id)
@@ -189,6 +193,18 @@ def sync_user_graph(
 
     session.commit()
     return get_user_roadmap(session, user_id)
+
+
+def _delete_stale_generated_rows(
+    session: Session,
+    existing: dict[str, UserSkillNodeRow],
+    incoming_ids: set[str],
+) -> None:
+    for node_id, row in existing.items():
+        if node_id in incoming_ids:
+            continue
+        if row.skill_node and row.skill_node.track_id == "ai-generated":
+            session.delete(row)
 
 
 def _evidence_items(evidence: list[dict[str, Any]], item_type: str) -> list[dict[str, str]]:

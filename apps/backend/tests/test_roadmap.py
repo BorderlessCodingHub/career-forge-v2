@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from career_forge.schemas.common import SkillStatus, UserSkillNode
+from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
+from career_forge.schemas.roadmap import RoadmapCategory, RoadmapNode, RoadmapResponse, RoadmapTrack
+from career_forge.services.planning import _roadmap_to_graph, _apply_graph_to_roadmap
 from career_forge.services.roadmap import (
     _catalog_node_from_generated_row,
+    _delete_stale_generated_rows,
     _generated_row_sort_order,
     build_roadmap_from_catalog,
 )
@@ -86,4 +89,51 @@ def test_generated_rows_keep_persisted_sort_order_and_evidence() -> None:
     assert catalog_node["id"] == "python-ai"
     assert catalog_node["sort_order"] == 4
     assert catalog_node["outcomes"] == ["Publicar notebook"]
+
+
+def test_delete_stale_generated_rows_removes_only_old_generated_rows() -> None:
+    generated = SimpleNamespace(skill_node=SimpleNamespace(track_id="ai-generated"))
+    catalog = SimpleNamespace(skill_node=SimpleNamespace(track_id="backend-beginner"))
+    kept = SimpleNamespace(skill_node=SimpleNamespace(track_id="ai-generated"))
+    deleted: list[object] = []
+    session = SimpleNamespace(delete=lambda row: deleted.append(row))
+
+    _delete_stale_generated_rows(
+        session,
+        {
+            "old-generated": generated,
+            "catalog-node": catalog,
+            "new-generated": kept,
+        },
+        {"new-generated"},
+    )
+
+    assert deleted == [generated]
+
+
+def test_planning_roundtrip_preserves_tasks_and_references() -> None:
+    roadmap = RoadmapResponse(
+        track=RoadmapTrack(id="ai", title="AI"),
+        categories=[RoadmapCategory(id="ai_generated", label="AI")],
+        nodes=[
+            RoadmapNode(
+                node_id="python-ai",
+                title="Python para IA",
+                category="ai_generated",
+                description="Base",
+                status=SkillStatus.RECOMENDADO,
+                mastery_score=0,
+                priority=Priority.HIGH,
+                tasks=[{"title": "Criar notebook"}],
+                references=[{"title": "Python docs", "url": "https://docs.python.org"}],
+            ),
+        ],
+    )
+    graph = _roadmap_to_graph(roadmap)
+    updated = _apply_graph_to_roadmap(roadmap, graph)
+
+    assert graph[0].tasks == [{"title": "Criar notebook"}]
+    assert graph[0].references[0]["title"] == "Python docs"
+    assert updated.nodes[0].tasks == [{"title": "Criar notebook"}]
+    assert updated.nodes[0].references[0]["url"] == "https://docs.python.org"
 
