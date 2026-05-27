@@ -98,6 +98,8 @@ Production compose mounts the repo `data/` directory read-only into the backend 
 
 On every backend container start, the prod entrypoint runs `python -m scripts.seed` after migrations. That upserts the skill catalog idempotently. `SEED_DEMO_ANA=true` (optional) runs a second seed pass with `--demo-ana` for the pitch demo user only; production should leave `SEED_DEMO_ANA=false` (see [`.env.production.example`](../../.env.production.example)).
 
+**Persistence stores:** set `DIAGNOSIS_SESSION_STORE=postgres` and `GRAPH_RUN_STORE=postgres` (defaults in compose when `ENV=production`) so interview sessions and forge `GraphRun` records survive container restarts.
+
 ## 3) Generate nginx server blocks
 
 `render-nginx.sh` uses **restricted** `envsubst` so nginx variables like `$host` are not stripped.
