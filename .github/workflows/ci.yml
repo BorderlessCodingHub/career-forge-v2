@@ -13,6 +13,14 @@ jobs:
   test:
     name: Backend tests
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: careerforge
+      POSTGRES_PASSWORD: careerforge
+      POSTGRES_DB: careerforge
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: 55432
+      POSTGRES_HOST_PORT: 55432
+      DATABASE_URL: postgresql+psycopg://careerforge:careerforge@127.0.0.1:55432/careerforge
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +35,10 @@ jobs:
 
       - name: pytest
         run: make test
+
+      - name: Tear down postgres
+        if: always()
+        run: docker compose down -v
 
   harness:
     name: Agent harness
