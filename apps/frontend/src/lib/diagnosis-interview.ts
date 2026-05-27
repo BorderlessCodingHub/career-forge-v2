@@ -8,7 +8,9 @@ import type {
 /** Mirror backend diagnosis_interview.py interview limits. */
 export const MAX_INTERVIEW_ROUNDS = 2;
 export const MAX_QUESTIONS_PER_TURN = 2;
-export const MIN_ANSWER_LENGTH = 8;
+// Keep aligned with backend InterviewAnswer.text: explicit short answers like
+// "Nada." are meaningful signals for hands-on baseline.
+export const MIN_ANSWER_LENGTH = 1;
 
 /** Deterministic round titles — mirror backend interview/script.py */
 export const INTERVIEW_ROUND_LABELS = [
