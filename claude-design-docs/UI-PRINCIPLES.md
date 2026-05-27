@@ -120,6 +120,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ForgeTimelineItem` | reasoning / artifact / decision rows |
 | `ChatBubble` | Onboarding + mentor |
 | `PrimaryButton` / `GhostButton` | Actions |
+| `DeployBadge` | Global fixed footer — deploy SHA/time (CI build) + live API health dot; `local dev` label when build env unset |
 
 When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), document it in [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes.
 
@@ -129,6 +130,7 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 
 | Screen type | Layout |
 |-------------|--------|
+| **All routes** | Fixed bottom `DeployBadge` (~32px); root `body` uses `pb-8` so CTAs are not covered; mono SHA, muted text, health dot (success / warning / muted) |
 | Marketing/entry | Centered hero, max-width ~720px |
 | Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |

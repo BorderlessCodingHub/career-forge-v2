@@ -212,6 +212,22 @@ docker compose -f docker-compose.prod.yml up -d
 | Onboarding SSE 404 on `/diagnosis/interview/.../stream` | Frontend CI built with empty `NEXT_PUBLIC_*` — browser calls API path on **app** domain (Next 404) | Fixed in repo: Next rewrites via `API_INTERNAL_URL` + same-origin client. Re-deploy frontend. Optional: set GitHub vars `NEXT_PUBLIC_BACKEND_URL=https://$API_DOMAIN` |
 | Forge/roadmap empty or 500 after deploy | Missing catalog seed / `roadmap.json` | Ensure `data/roadmap.json` exists on VPS; check backend logs for seed errors; restart backend after fixing mount |
 
+## Deploy badge (frontend footer)
+
+After each production frontend image build, CI bakes:
+
+- `NEXT_PUBLIC_BUILD_SHA` — git commit (`github.sha`)
+- `NEXT_PUBLIC_BUILD_TIME` — commit timestamp
+
+The app shows a fixed bottom strip on every page: **deploy {shortSha} · {time}** plus a live **API health** dot (`GET /health`).
+
+| Environment | What you should see |
+|-------------|---------------------|
+| **Production** (post-deploy) | Short SHA matching latest `main` commit; green dot when API is healthy |
+| **Local** (`make up`) | `local dev` label when build vars are unset |
+
+To verify a deploy landed: open `https://$APP_DOMAIN`, compare footer SHA with `git log -1 --oneline` on the VPS after `git pull`, and confirm the health dot is green.
+
 ## Notes
 
 - Ensure `CORS_ORIGINS` includes `https://$APP_DOMAIN`.

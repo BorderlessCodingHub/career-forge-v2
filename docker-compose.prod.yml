@@ -61,6 +61,8 @@ services:
       args:
         NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_BUILD_SHA: ${BUILD_SHA:-local}
+        NEXT_PUBLIC_BUILD_TIME: ${BUILD_TIME:-}
     image: ${GHCR_IMAGE_NAMESPACE:-ghcr.io/local}/career-forge-frontend:${IMAGE_TAG:-local}
     environment:
       API_INTERNAL_URL: http://backend:8000
