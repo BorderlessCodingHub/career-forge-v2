@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import pytest
 
-from career_forge.ai.graphs.roadmap_forge import _evaluation_artifact
 from career_forge.ai.tools.study_plan_evaluator import OpenAiStudyPlanEvaluator
 from career_forge.schemas.study_plan import StudyPlanEvaluation
+from career_forge.services.forge_planning import evaluation_artifact
 
 
 def test_evaluation_artifact_for_revision() -> None:
-    event = _evaluation_artifact(
+    event = evaluation_artifact(
         StudyPlanEvaluation(
             verdict="revise",
             gaps=["sem fonte oficial"],
