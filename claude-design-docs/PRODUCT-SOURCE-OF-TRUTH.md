@@ -125,7 +125,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 |-------|------------|-------------------|
 | `/` Goal picker | Hero + 3 cards + motivation field | Animation library, form validation UX |
 | `/onboarding` | Chat diagnostic, 4–6 Q feel | Streaming vs batch API |
-| `/onboarding/edit` | **Editable** fortes/lacunas/recomendação + **"Gerar roadmap"** | Drag-reorder, autosave |
+| `/onboarding/edit` | **Editable** fortes/lacunas/prioridades + **"Gerar roadmap"** | HAC-53: view-first, pencil/trash, dnd-kit reorder, refazer diagnóstico |
 | `/roadmap/forge` | **Timeline only** — numbered steps, no graph during stream | SSE wiring, scroll behavior |
 | `/roadmap/forge/complete` | Stream items fly into vertical layout | Motion implementation |
 | `/roadmap` | **Vertical roadmap** steady state + optional AI sidebar | Node detail panel, sidebar UX |
@@ -162,12 +162,13 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 
 | Topic | Docs (HAC-21) | Prototype (legacy) | Implemented | Decision | Date |
 |-------|-----------------|-------------------|-------------|----------|------|
-| Post-diagnosis | Editable `/onboarding/edit` | Read-only `/onboarding/result` | Not scaffolded | **Docs win** — skip confirmation dead-end | HAC-21 |
-| Forge during stream | Timeline only, no graph | Split timeline + graph skeleton | Not scaffolded | **Docs win** — timeline-only wow | HAC-21 |
-| Steady state | Vertical roadmap + optional AI sidebar | Skill graph dashboard | Not scaffolded | **Docs win** — roadmap.sh layout | HAC-21 |
-| Reveal | Items fly into vertical layout | Graph panel reveal | Not scaffolded | **Docs win** | HAC-21 |
-| Monorepo UI | Full flow per UX-FLOW | Old hash routes in HTML | Not scaffolded | Match docs when HAC-9/HAC-18 start | — |
-| Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | Map SSE to timeline UI only | — | — |
+| Post-diagnosis | Editable `/onboarding/edit` | Read-only `/onboarding/result` | HAC-53 shipped — view-first edit, dnd-kit priorities, sessionStorage | **Docs + code aligned** | HAC-53 |
+| Forge during stream | Timeline only, no graph | Split timeline + graph skeleton | Implemented | **Docs win** — timeline-only wow | HAC-18 |
+| Steady state | Vertical roadmap + optional AI sidebar | Skill graph dashboard | Implemented (HAC-9) | **Docs win** — roadmap.sh layout | HAC-9 |
+| Reveal | Items fly into vertical layout | Graph panel reveal | Implemented | **Docs win** | HAC-18 |
+| Monorepo UI | Full flow per UX-FLOW | Old hash routes in HTML | Mostly implemented | HAC-57 pending confirm→save→forge API | HAC-52 |
+| Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
+| Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
 
 ---
 
@@ -192,4 +193,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: HAC-26 — backlog compliance audit (flow labels, forge timeline-only, artifact mode refs)*
+*Last updated: HAC-53 + HAC-58 merges — diagnosis UX shipped, prod Postgres stores, implementation notes refreshed*

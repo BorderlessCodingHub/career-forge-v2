@@ -67,9 +67,10 @@ Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → F
 | | |
 |---|---|
 | **Old** | `/onboarding/result` — 3 blocos read-only (fortes / lacunas / recomendação), CTA "Ver minha trilha" |
-| **New** | Lista estruturada **editável**: editar item, adicionar item, remover item. Perfil badge + evidence callout. CTA primário: **"Gerar roadmap"** |
+| **New** | **View-first** listas editáveis: ícones editar/excluir por item, add (+), **drag-and-drop** em prioridades (dnd-kit). CTA **"Gerar roadmap"** + **"Refazer diagnóstico"** |
 | **Why** | Tela de confirmação era dead-end — sem feedback, sem agency |
-| **Route** | `/onboarding/edit` · `data-screen="diagnosis-editable"` |
+| **Route** | `/onboarding/edit` · `data-testid="editable-diagnosis"` |
+| **Shipped** | HAC-53 — view/edit modes per item; strengths/gaps editable; priorities reorderable |
 
 **Sections (editable lists):**
 - Pontos fortes

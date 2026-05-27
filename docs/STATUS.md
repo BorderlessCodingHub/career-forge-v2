@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-26** · Last merge: **HAC-59 prod skill catalog bootstrap**
+Last updated: **2026-05-27** · Last merge: **HAC-53 + HAC-58** (diagnosis UX + prod Postgres stores)
 
 ---
 
@@ -41,16 +41,24 @@ Last updated: **2026-05-26** · Last merge: **HAC-59 prod skill catalog bootstra
 | Diagnosis polish + observability | ✅ Done | HAC-47 — fail-fast LLM, CORS 3300, LangSmith/local-debug harness, UX refactor, dead code cleanup |
 | VPS deploy pipeline hardening | ✅ Done | GHCR namespace `ghcr.io/pedroalano`, monorepo Dockerfile build paths fixed, SSH deploy health check migrated from Python to `curl` |
 | Prod skill catalog seed on deploy | ✅ Done | HAC-59 — prod/dev entrypoints always run `scripts.seed`; `SEED_DEMO_ANA` only for demo Ana; `data/roadmap.json` documented in DEPLOY-VPS |
+| Prod Postgres persistence stores | ✅ Done | HAC-58 — `DIAGNOSIS_SESSION_STORE` + `GRAPH_RUN_STORE` → Postgres when `ENV=production` |
+| Diagnosis screen UX (view-first edit) | ✅ Done | HAC-53 — inline edit icons, add/delete, dnd-kit priority reorder, refazer diagnóstico |
 
 ---
 
 ## Current sprint
 
-**Ops / deploy (HAC-59)** — prod catalog bootstrap complete
+**Sprint 7 — Sync 2026-05-26 production push** — in progress
 
-VPS backends seed `skill_nodes` on every container start; demo Ana remains opt-in via `SEED_DEMO_ANA=true`.
+| Issue | Title | State |
+|-------|-------|-------|
+| **HAC-58** | Prod Postgres stores | **Done** |
+| **HAC-53** | Diagnosis screen UX | **Done** |
+| **HAC-52** | Roadmap motor API — persist + forge | **Next** |
+| **HAC-57** | Diagnosis confirm → save → forge (Arthur) | Blocked by HAC-52 |
+| **HAC-54/55** | Web search + LLM graph | Backlog |
 
-### Last completed sprint
+### Previous ops batch
 
 **Sprint 6 — AI diagnosis interview (P0)** ✅
 
