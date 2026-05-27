@@ -38,10 +38,17 @@ class ReasoningDeltaEvent(BaseModel):
     step: str
 
 
+class SearchSource(BaseModel):
+    title: str
+    url: str
+    snippet: str = ""
+
+
 class ArtifactFoundEvent(BaseModel):
     type: Literal["artifact_found"] = "artifact_found"
     label: str
     detail: str
+    sources: list[SearchSource] = Field(default_factory=list)
 
 
 class NodeUpdatedEvent(BaseModel):

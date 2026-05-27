@@ -50,6 +50,8 @@ Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → F
 
 **Redesigned (HAC-24).** Pill/balloon rounds — 3 batches, 2 questions per round; not linear chat bubbles.
 
+Short explicit negative answers (for example, **"Nada."**) are valid evidence for the Judge and must not block "Próxima rodada".
+
 | | |
 |---|---|
 | **Old** | Linear chat bubbles — one Q at a time |
@@ -87,13 +89,17 @@ Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → F
 | | |
 |---|---|
 | **Old** | Split view: timeline esquerda + skill graph skeleton direita preenchendo com `node_updated` |
-| **New** | **Full-width streaming timeline only.** Passos numerados (1, 2, 3, 4…). Tipos: `reasoning_delta`, `artifact_found`, `decision`. **Nenhum grafo/map durante stream** |
+| **New** | **Full-width streaming timeline only.** Passos numerados (1, 2, 3, 4…). Tipos: `reasoning_delta`, `artifact_found`, `decision`. `artifact_found` pode mostrar resumo formatado + fontes oficiais. **Nenhum grafo/map durante stream** |
 | **Route** | `/roadmap/forge` · `data-screen="forge-stream"` |
 
 **During generation:**
 - Header: "Forjando sua trilha personalizada"
 - Counter: elapsed, passos concluídos
+- Etapas instantâneas têm pausa curta (~1.5s) para manter sensação de "IA pensando" sem inflar latência real.
+- Pesquisa ao vivo: resumo formatado + cards de fontes oficiais quando `research_enrich` roda
+- Planner/evaluator: artifacts mostram criação do plano e verdict `ship|revise`; quando há revise, a IA aplica feedback antes do `graph_ready`.
 - Cursor/stream tail ativo até `graph_ready`
+- Após `graph_ready`, manter a timeline na tela e mostrar CTA manual **"Ver roadmap"** para facilitar debug e controle do usuário.
 
 **NOT during generation:**
 - Skill graph preview

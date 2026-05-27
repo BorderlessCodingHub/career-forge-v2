@@ -119,12 +119,13 @@ Post-onboarding LangGraph loop:
 
 1. `load_topics` — roadmap.json catalog
 2. `analyze_gaps` — LLM streams reasoning
-3. `research_enrich` — history + feedback
-4. `accumulate_graph` — **Python merge** into SkillGraphState (LLM proposes, code disposes)
-5. `should_continue` — max 3 iterations
-6. `emit_final` — SSE `graph_ready`
+3. `research_enrich` — OpenAI native `web_search` + official source citations
+4. `plan_study_graph` — planner LLM creates a structured `StudyPlan`
+5. `evaluate_plan` — mini evaluator returns `ship|revise`; feedback can loop back into planner
+6. `accumulate_graph` — converts approved `StudyPlan` into `graph_ready` nodes
+7. `emit_final` — SSE `graph_ready`
 
-SSE events: `reasoning_delta`, `artifact_found`, `node_updated`, `step_complete`, `graph_ready`
+SSE events: `reasoning_delta`, `artifact_found` (with `sources[]` for web search), `node_updated`, `step_complete`, `graph_ready`
 
 Full spec: [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md)
 

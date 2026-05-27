@@ -47,10 +47,18 @@ from career_forge.schemas.forge import (
     NodeUpdatedEvent,
     ReasoningDeltaEvent,
     RoadmapForgeEvent,
+    SearchSource,
     StepCompleteEvent,
     parse_forge_event,
 )
 from career_forge.schemas.planning import PlanUpdateResponse, TodayFocus
+from career_forge.schemas.study_plan import (
+    StudyPlan,
+    StudyPlanEvaluation,
+    StudyPlanNode,
+    StudyPlanTask,
+    StudyResource,
+)
 from career_forge.schemas.validation import ValidationResponse
 
 __all__ = [
@@ -90,9 +98,15 @@ __all__ = [
     "ReasoningDeltaEvent",
     "ReasoningEntry",
     "RoadmapForgeEvent",
+    "SearchSource",
     "SkillNode",
     "SkillStatus",
     "StepCompleteEvent",
+    "StudyPlan",
+    "StudyPlanEvaluation",
+    "StudyPlanNode",
+    "StudyPlanTask",
+    "StudyResource",
     "TodayFocus",
     "UserSkillNode",
     "UserSkillNodePartial",

@@ -23,7 +23,12 @@ export type ForgeGraphNode = RoadmapSyncNode;
 
 export type RoadmapForgeEvent =
   | { type: "reasoning_delta"; text: string; step: string }
-  | { type: "artifact_found"; label: string; detail: string }
+  | {
+      type: "artifact_found";
+      label: string;
+      detail: string;
+      sources?: Array<{ title: string; url: string; snippet?: string }>;
+    }
   | {
       type: "node_updated";
       node: {

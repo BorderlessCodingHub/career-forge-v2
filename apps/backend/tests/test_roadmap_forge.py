@@ -8,10 +8,18 @@ from career_forge.ai.executor import GraphExecutor
 from career_forge.ai.factory import AgentFactory
 from career_forge.ai.graphs.diagnosis import build_diagnosis_response
 from career_forge.ai.graphs.roadmap_forge import (
+    RoadmapForgeGraphRunnable,
     build_accumulated_graph,
     build_forge_timeline,
 )
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
+from career_forge.ai.tools.openai_web_search import WebSearchResult, WebSearchSource
+from career_forge.schemas.study_plan import (
+    StudyPlan,
+    StudyPlanEvaluation,
+    StudyPlanNode,
+    StudyPlanTask,
+)
 from career_forge.schemas.diagnosis import DiagnosisRequest
 
 _SAMPLE = DiagnosisRequest(
@@ -53,7 +61,93 @@ class TestRoadmapForgeEngine:
 
 @pytest.fixture
 def executor() -> GraphExecutor:
-    return GraphExecutor(factory=AgentFactory(), store=InMemoryGraphRunStore())
+    factory = AgentFactory()
+    factory.register(
+        "roadmap_forge",
+        lambda: RoadmapForgeGraphRunnable(
+            search_client=FakeSearchClient(),
+            planner=FakePlanner(),
+            evaluator=FakeEvaluator(),
+        ),
+    )
+    return GraphExecutor(factory=factory, store=InMemoryGraphRunStore())
+
+
+class FakeSearchClient:
+    async def search(self, prompt: str) -> WebSearchResult:
+        return WebSearchResult(
+            query="FastAPI official docs APIs",
+            summary="Fontes oficiais para APIs modernas.",
+            sources=[
+                WebSearchSource(
+                    title="FastAPI",
+                    url="https://fastapi.tiangolo.com/",
+                    snippet="FastAPI docs",
+                ),
+            ],
+        )
+
+
+class FakeEvaluator:
+    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+        return StudyPlanEvaluation(
+            verdict="ship",
+            strengths=["sequência inicial clara"],
+        )
+
+
+class FakePlanner:
+    async def create_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+    ) -> StudyPlan:
+        return _fake_plan()
+
+    async def revise_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+        plan: StudyPlan,
+        evaluation: StudyPlanEvaluation,
+    ) -> StudyPlan:
+        return _fake_plan(strategy="Plano revisado")
+
+
+def _fake_plan(strategy: str = "Plano inicial") -> StudyPlan:
+    return StudyPlan(
+        goal="backend",
+        learner_context_summary="summary",
+        strategy=strategy,
+        nodes=[
+            StudyPlanNode(
+                node_id="python-ai",
+                title="Python para IA",
+                why_now="Base para projetos AI/ML.",
+                tasks=[
+                    StudyPlanTask(
+                        title="Ler docs",
+                        outcome="Criar primeiro notebook.",
+                        evidence_prompt="Responder entrevista curta.",
+                    ),
+                ],
+            ),
+            StudyPlanNode(
+                node_id="ml-hands-on",
+                title="Projeto hands-on de ML",
+                why_now="Transformar aprendizado em evidência prática.",
+                tasks=[
+                    StudyPlanTask(
+                        title="Treinar modelo simples",
+                        outcome="Publicar projeto com README.",
+                        evidence_prompt="Mostrar métricas e aprendizados.",
+                    ),
+                ],
+            ),
+        ],
+    )
 
 
 @pytest.mark.asyncio
@@ -69,8 +163,19 @@ async def test_roadmap_forge_graph_collect(
     result = await executor.execute(run, stream=False)
     assert isinstance(result, GraphRunResult)
     assert result.run.status == "completed"
+    assert any(
+        event["type"] == "artifact_found" and event.get("sources")
+        for event in result.events
+    )
+    assert any(
+        event["type"] == "artifact_found"
+        and event.get("label") == "Avaliador do plano: ship"
+        for event in result.events
+    )
     assert result.events[-1]["type"] == "graph_ready"
-    assert len(result.events[-1]["graph"]) >= 6
+    graph = result.events[-1]["graph"]
+    assert [node["node_id"] for node in graph] == ["python-ai", "ml-hands-on"]
+    assert graph[0]["status"] == "recomendado"
 
 
 def test_post_forge_api(client, diagnosis_dict: dict) -> None:
@@ -83,3 +188,64 @@ def test_post_forge_api(client, diagnosis_dict: dict) -> None:
     assert payload["status"] == "pending"
     assert payload["run_id"]
     assert payload["events"] == []
+
+
+@pytest.mark.asyncio
+async def test_evaluator_feedback_triggers_plan_revision(diagnosis_dict: dict) -> None:
+    planner = CountingPlanner()
+    evaluator = RevisingEvaluator()
+    factory = AgentFactory()
+    factory.register(
+        "roadmap_forge",
+        lambda: RoadmapForgeGraphRunnable(
+            search_client=FakeSearchClient(),
+            planner=planner,
+            evaluator=evaluator,
+        ),
+    )
+    executor = GraphExecutor(factory=factory, store=InMemoryGraphRunStore())
+    result = await executor.execute(
+        GraphRun(
+            graph_name="roadmap_forge",
+            user_id="test-user",
+            input={"diagnosis": diagnosis_dict},
+        ),
+        stream=False,
+    )
+
+    assert isinstance(result, GraphRunResult)
+    assert planner.revision_count == 1
+    assert any(
+        event["type"] == "reasoning_delta" and event["step"] == "revise_plan"
+        for event in result.events
+    )
+
+
+class CountingPlanner(FakePlanner):
+    def __init__(self) -> None:
+        self.revision_count = 0
+
+    async def revise_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+        plan: StudyPlan,
+        evaluation: StudyPlanEvaluation,
+    ) -> StudyPlan:
+        self.revision_count += 1
+        return _fake_plan(strategy="Plano revisado")
+
+
+class RevisingEvaluator:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+        self.calls += 1
+        if self.calls == 1:
+            return StudyPlanEvaluation(
+                verdict="revise",
+                required_changes=["Adicionar projeto prático"],
+            )
+        return StudyPlanEvaluation(verdict="ship")

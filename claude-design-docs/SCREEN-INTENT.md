@@ -36,7 +36,7 @@
 | Feel | Focused diagnostic — **not** open-ended ChatGPT |
 | Layout | **Pill/balloon rounds** — multiple questions shown together per round |
 | Rounds | 3 batches: seniority/context → stack/domain → gaps (Git, HTTP, APIs, DB) |
-| Input | Each pill has its own textarea — **not** one-at-a-time chat bubbles |
+| Input | Each pill has its own textarea — **not** one-at-a-time chat bubbles; explicit short negative answers like "Nada." are valid signal |
 | Progress | Step indicator + round counter (e.g. Rodada 2/3) |
 | Recap | Goal + motivation from step 1 visible in sidebar |
 | Exit | Transitions to **editable diagnosis** — not forge directly |
@@ -71,10 +71,10 @@
 | Layout | **Timeline only** — full width or centered column |
 | During stream | **NO skill graph, NO map, NO split panel** |
 | Steps | Numbered 1, 2, 3, 4… (or N) **only during generation** |
-| Event types | `reasoning_delta`, `artifact_found`, `decision` visual language |
+| Event types | `reasoning_delta`, `artifact_found`, `decision` visual language; `artifact_found` may include formatted summaries, official source cards, planner/evaluator verdicts |
 | Feedback | Sequential timeline items — **no generic spinner as primary UX** |
 | Header | "Forjando sua trilha personalizada" + elapsed / passos |
-| Exit | On `graph_ready` → animation reveal |
+| Exit | On `graph_ready` → show manual **"Ver roadmap"** CTA → animation reveal |
 
 **Can evolve:** SSE reconnect, scroll auto-behavior, skip control
 

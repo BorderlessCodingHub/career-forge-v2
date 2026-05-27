@@ -225,11 +225,17 @@ export async function confirmDiagnosis(payload: {
 export async function startForgeRun(
   diagnosis: DiagnosisResponse,
   userId?: string,
+  input?: {
+    goal_id?: string | null;
+    motivation?: string;
+    years_xp?: DiagnosisIntake["years_xp"] | null;
+    answers?: Record<string, string>;
+  },
 ): Promise<ForgeRunResponse> {
   const resolvedUserId = userId ?? getUserId();
   return apiFetch<ForgeRunResponse>("/forge", {
     method: "POST",
-    body: JSON.stringify({ user_id: resolvedUserId, diagnosis }),
+    body: JSON.stringify({ user_id: resolvedUserId, diagnosis, input }),
   });
 }
 

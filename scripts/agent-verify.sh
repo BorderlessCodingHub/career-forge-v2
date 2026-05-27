@@ -30,6 +30,9 @@ check test -f .cursor/rules/ui-product-sync.mdc
 check test -f apps/backend/src/career_forge/ai/executor.py
 check test -f apps/backend/src/career_forge/ai/factory.py
 check test -f apps/backend/src/career_forge/ai/run.py
+check test -f apps/backend/src/career_forge/ai/tools/openai_web_search.py
+check test -f apps/backend/src/career_forge/ai/tools/study_plan_planner.py
+check test -f apps/backend/src/career_forge/ai/tools/study_plan_evaluator.py
 check test -f .cursor/rules/ai-execution.mdc
 check test -f docs/engineering/EXECUTION-FLOW.md
 check test -f docs/engineering/AI-EXECUTION.md
