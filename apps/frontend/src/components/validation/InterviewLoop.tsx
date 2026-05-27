@@ -255,7 +255,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
               onKeyDown={handleAnswerKeyDown}
               placeholder="Comece pela sua intuição..."
               disabled={phase === "submitting"}
-              className="min-h-[160px] w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-muted"
+              className="min-h-[160px] w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-muted"
               data-testid={copy.answerTestId}
             />
             <div className="mt-2 flex justify-between text-xs text-text-muted">

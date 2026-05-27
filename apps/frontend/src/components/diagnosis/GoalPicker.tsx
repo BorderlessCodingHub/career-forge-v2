@@ -91,7 +91,7 @@ export function GoalPicker() {
           <textarea
             id="motivation"
             data-testid="motivation-input"
-            className="mt-2 min-h-[120px] w-full rounded-card border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
+            className="mt-2 min-h-[120px] w-full resize-none rounded-card border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
             placeholder="Conte em suas palavras o que te motiva nesse caminho…"
             value={motivation}
             onChange={(event) => {
