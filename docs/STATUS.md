@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-26** · Last merge: **Deploy health-check curl fix (`18a12ee`)**
+Last updated: **2026-05-26** · Last merge: **HAC-59 prod skill catalog bootstrap**
 
 ---
 
@@ -40,14 +40,15 @@ Last updated: **2026-05-26** · Last merge: **Deploy health-check curl fix (`18a
 | Diagnosis guardrails | ✅ Done | HAC-46 — max 5 rounds, LLM 503 retry, agent-verify checks |
 | Diagnosis polish + observability | ✅ Done | HAC-47 — fail-fast LLM, CORS 3300, LangSmith/local-debug harness, UX refactor, dead code cleanup |
 | VPS deploy pipeline hardening | ✅ Done | GHCR namespace `ghcr.io/pedroalano`, monorepo Dockerfile build paths fixed, SSH deploy health check migrated from Python to `curl` |
+| Prod skill catalog seed on deploy | ✅ Done | HAC-59 — prod/dev entrypoints always run `scripts.seed`; `SEED_DEMO_ANA` only for demo Ana; `data/roadmap.json` documented in DEPLOY-VPS |
 
 ---
 
 ## Current sprint
 
-**Post-MVP docs revision (HAC-51)** In progress
+**Ops / deploy (HAC-59)** — prod catalog bootstrap complete
 
-Documentation pass to align CHECKPOINT/STATUS/ROADMAP/SPRINT-BOARD and engineering docs with implemented Sprint 6 + deploy pipeline hardening.
+VPS backends seed `skill_nodes` on every container start; demo Ana remains opt-in via `SEED_DEMO_ANA=true`.
 
 ### Last completed sprint
 

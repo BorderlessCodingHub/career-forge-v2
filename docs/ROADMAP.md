@@ -110,6 +110,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-35** — Consolidate fragmented session stores (`lib/session/storage.ts`)
 - [x] **HAC-50** — VPS production deploy hardening (GHCR namespace `pedroalano`, monorepo Dockerfile paths in CI, nginx envsubst safety, curl-based post-deploy health check)
 - [x] **HAC-51** — Complete application overview + full documentation sync
+- [x] **HAC-59** — Prod skill catalog bootstrap (always seed `skill_nodes` on deploy; `SEED_DEMO_ANA` opt-in for demo Ana)
 
 ---
 

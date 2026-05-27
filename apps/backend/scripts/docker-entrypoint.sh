@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Migrate + seed demo Ana before starting API (HAC-12)
+# Migrate + seed skill catalog; optional demo Ana (HAC-12, HAC-59)
 set -euo pipefail
 
 cd /app
@@ -7,8 +7,11 @@ cd /app
 echo "Running Alembic migrations..."
 alembic upgrade head
 
+echo "Seeding skill catalog (skill_nodes from ROADMAP_JSON_PATH)..."
+python -m scripts.seed
+
 if [ "${SEED_DEMO_ANA:-true}" = "true" ]; then
-  echo "Seeding skill catalog + demo user Ana..."
+  echo "Seeding demo user Ana..."
   python -m scripts.seed --demo-ana
 fi
 
