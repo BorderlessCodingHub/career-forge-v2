@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from career_forge.ai.tools.study_plan_evaluator import StudyPlanEvaluator
-from career_forge.schemas.common import SkillStatus, UserSkillNode
+from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.study_plan import (
     StudyPlan,
@@ -76,6 +76,23 @@ def evaluation_artifact(evaluation: StudyPlanEvaluation) -> dict[str, Any]:
     }
 
 
+def study_plan_to_graph(plan: StudyPlan) -> list[UserSkillNode]:
+    """Convert approved StudyPlan nodes into the graph_ready UI contract."""
+    graph: list[UserSkillNode] = []
+    for index, node in enumerate(plan.nodes):
+        graph.append(
+            UserSkillNode(
+                node_id=node.node_id,
+                title=node.title,
+                status=SkillStatus.RECOMENDADO if index == 0 else SkillStatus.BLOQUEADO,
+                mastery_score=0,
+                priority=_priority_for_index(index),
+                rationale=node.why_now,
+            ),
+        )
+    return graph
+
+
 def _resources_from_research_events(events: list[dict[str, Any]]) -> list[StudyResource]:
     resources: list[StudyResource] = []
     seen: set[str] = set()
@@ -93,6 +110,14 @@ def _resources_from_research_events(events: list[dict[str, Any]]) -> list[StudyR
                 ),
             )
     return resources
+
+
+def _priority_for_index(index: int) -> Priority:
+    if index == 0:
+        return Priority.HIGH
+    if index <= 2:
+        return Priority.MEDIUM
+    return Priority.LOW
 
 
 def _starter_node(resources: list[StudyResource]) -> StudyPlanNode:

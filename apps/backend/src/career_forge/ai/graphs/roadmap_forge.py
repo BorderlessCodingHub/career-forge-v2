@@ -35,6 +35,7 @@ from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.services.forge_planning import (
     build_draft_study_plan,
     evaluation_artifact,
+    study_plan_to_graph,
 )
 from career_forge.services.forge_context import (
     LearnerForgeContext,
@@ -176,9 +177,13 @@ def build_forge_intro_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any
     return events
 
 
-def build_forge_tail_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any]]:
+def build_forge_tail_events(
+    diagnosis: DiagnosisResponse,
+    *,
+    graph: list[UserSkillNode] | None = None,
+) -> list[dict[str, Any]]:
     """Events after research is complete."""
-    graph = build_accumulated_graph(diagnosis)
+    resolved_graph = graph or build_accumulated_graph(diagnosis)
     return [
         {
             "type": "step_complete",
@@ -197,7 +202,7 @@ def build_forge_tail_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any]
         },
         {
             "type": "graph_ready",
-            "graph": [n.model_dump() for n in graph],
+            "graph": [n.model_dump() for n in resolved_graph],
         },
     ]
 
@@ -414,7 +419,8 @@ class RoadmapForgeGraphRunnable:
                     evaluation=evaluation,
                 )
 
-        tail_events = build_forge_tail_events(diagnosis)
+        final_graph = study_plan_to_graph(plan)
+        tail_events = build_forge_tail_events(diagnosis, graph=final_graph)
         for payload in tail_events:
             await _sleep_between_events()
             yield emit_chain_stream(

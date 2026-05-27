@@ -123,14 +123,26 @@ def _fake_plan(strategy: str = "Plano inicial") -> StudyPlan:
         strategy=strategy,
         nodes=[
             StudyPlanNode(
-                node_id="http",
-                title="HTTP básico",
-                why_now="Base para APIs.",
+                node_id="python-ai",
+                title="Python para IA",
+                why_now="Base para projetos AI/ML.",
                 tasks=[
                     StudyPlanTask(
                         title="Ler docs",
-                        outcome="Explicar request/response.",
+                        outcome="Criar primeiro notebook.",
                         evidence_prompt="Responder entrevista curta.",
+                    ),
+                ],
+            ),
+            StudyPlanNode(
+                node_id="ml-hands-on",
+                title="Projeto hands-on de ML",
+                why_now="Transformar aprendizado em evidência prática.",
+                tasks=[
+                    StudyPlanTask(
+                        title="Treinar modelo simples",
+                        outcome="Publicar projeto com README.",
+                        evidence_prompt="Mostrar métricas e aprendizados.",
                     ),
                 ],
             ),
@@ -161,7 +173,9 @@ async def test_roadmap_forge_graph_collect(
         for event in result.events
     )
     assert result.events[-1]["type"] == "graph_ready"
-    assert len(result.events[-1]["graph"]) >= 6
+    graph = result.events[-1]["graph"]
+    assert [node["node_id"] for node in graph] == ["python-ai", "ml-hands-on"]
+    assert graph[0]["status"] == "recomendado"
 
 
 def test_post_forge_api(client, diagnosis_dict: dict) -> None:

@@ -94,13 +94,13 @@ def _fake_plan(strategy: str = "Plano inicial") -> StudyPlan:
         strategy=strategy,
         nodes=[
             StudyPlanNode(
-                node_id="http",
-                title="HTTP básico",
-                why_now="Base para APIs.",
+                node_id="python-ai",
+                title="Python para IA",
+                why_now="Base para projetos AI/ML.",
                 tasks=[
                     StudyPlanTask(
                         title="Ler docs",
-                        outcome="Explicar request/response.",
+                        outcome="Criar primeiro notebook.",
                         evidence_prompt="Responder entrevista curta.",
                     ),
                 ],
