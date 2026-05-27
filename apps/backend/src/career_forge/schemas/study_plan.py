@@ -4,16 +4,24 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, field_validator
 
 
 class StudyResource(BaseModel):
     """Reference used to justify or teach one plan item."""
 
     title: str = Field(min_length=1)
-    url: HttpUrl
+    url: str = Field(min_length=1)
     snippet: str = ""
     source_type: Literal["official_docs", "tutorial", "reference", "example"] = "official_docs"
+
+    @field_validator("url")
+    @classmethod
+    def validate_http_url(cls, value: str) -> str:
+        if not value.startswith(("http://", "https://")):
+            msg = "url must start with http:// or https://"
+            raise ValueError(msg)
+        return value
 
 
 class StudyPlanTask(BaseModel):
