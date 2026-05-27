@@ -114,6 +114,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-58** — Prod Postgres persistence stores (`DIAGNOSIS_SESSION_STORE` + `GRAPH_RUN_STORE`)
 - [x] **HAC-53** — Diagnosis screen UX (view-first edit, dnd-kit reorder)
 - [x] **HAC-52** — Roadmap motor API (`POST /diagnosis/confirm`, forge loads profile, 202 + run_id)
+- [x] **HAC-54** — Web search enrichment (OpenAI native `web_search`, live source cards, planner/evaluator StudyPlan loop)
 
 ---
 

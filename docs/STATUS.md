@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-27** · Last merge: **HAC-52** (diagnosis confirm + forge motor API)
+Last updated: **2026-05-27** · Last merge: **HAC-54** (OpenAI web search + StudyPlan forge)
 
 ---
 
@@ -44,6 +44,7 @@ Last updated: **2026-05-27** · Last merge: **HAC-52** (diagnosis confirm + forg
 | Prod Postgres persistence stores | ✅ Done | HAC-58 — `DIAGNOSIS_SESSION_STORE` + `GRAPH_RUN_STORE` → Postgres when `ENV=production` |
 | Diagnosis screen UX (view-first edit) | ✅ Done | HAC-53 — inline edit icons, add/delete, dnd-kit priority reorder, refazer diagnóstico |
 | Diagnosis confirm + forge motor API | ✅ Done | HAC-52 — `POST /diagnosis/confirm`, `POST /forge` loads profile (202 + run_id) |
+| Forge web search + StudyPlan loop | ✅ Done | HAC-54 — OpenAI native `web_search`, progressive source cards, planner/evaluator loop, `graph_ready` from approved StudyPlan |
 
 ---
 
@@ -56,8 +57,9 @@ Last updated: **2026-05-27** · Last merge: **HAC-52** (diagnosis confirm + forg
 | **HAC-58** | Prod Postgres stores | **Done** |
 | **HAC-53** | Diagnosis screen UX | **Done** |
 | **HAC-52** | Roadmap motor API — persist + forge | **Done** |
+| **HAC-54** | Web search enrichment — live study sources | **Done** |
 | **HAC-57** | Diagnosis confirm → save → forge (Arthur) | **Ready** (wire FE to HAC-52) |
-| **HAC-54/55** | Web search + LLM graph | **Next** |
+| **HAC-55** | LLM graph persistence + references | **Next** |
 
 ### Previous ops batch
 
