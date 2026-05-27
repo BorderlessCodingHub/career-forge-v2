@@ -90,6 +90,14 @@ Set at minimum:
 
 Tip: compose binds app ports to `127.0.0.1` only; nginx is the public entrypoint. **Do not** use `docker-compose.yml` (dev) on the VPS — it can publish Postgres on `5432` and conflict with other stacks.
 
+### Skill catalog data (`data/roadmap.json`)
+
+Production compose mounts the repo `data/` directory read-only into the backend container as `/data` (see [`docker-compose.prod.yml`](../../docker-compose.prod.yml)). The backend uses `ROADMAP_JSON_PATH=/data/roadmap.json` (default in compose).
+
+**Required on the VPS:** keep `data/roadmap.json` in the deploy directory (same tree as `git pull` / CI sync). Without it, backend startup seed fails and forge/roadmap flows have no `skill_nodes`.
+
+On every backend container start, the prod entrypoint runs `python -m scripts.seed` after migrations. That upserts the skill catalog idempotently. `SEED_DEMO_ANA=true` (optional) runs a second seed pass with `--demo-ana` for the pitch demo user only; production should leave `SEED_DEMO_ANA=false` (see [`.env.production.example`](../../.env.production.example)).
+
 ## 3) Generate nginx server blocks
 
 `render-nginx.sh` uses **restricted** `envsubst` so nginx variables like `$host` are not stripped.
@@ -199,6 +207,7 @@ docker compose -f docker-compose.prod.yml up -d
 | `invalid number of arguments in proxy_set_header` | Bare `envsubst` wiped `$host` | Use updated `render-nginx.sh` (restricted substitution) |
 | `python: command not found` in deploy job | SSH health check used Python | Fixed in workflow: uses `curl -fsS https://$API_DOMAIN/health` |
 | `failed to fetch` in browser | CORS | `CORS_ORIGINS=https://$APP_DOMAIN` and restart backend |
+| Forge/roadmap empty or 500 after deploy | Missing catalog seed / `roadmap.json` | Ensure `data/roadmap.json` exists on VPS; check backend logs for seed errors; restart backend after fixing mount |
 
 ## Notes
 
