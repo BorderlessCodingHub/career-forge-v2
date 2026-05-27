@@ -12,7 +12,13 @@ import {
   setForgeGraph,
   setForgeRunId,
 } from "@/lib/forge-session";
-import { getStoredDiagnosis } from "@/lib/onboarding-session";
+import {
+  getAnswers,
+  getMotivation,
+  getSelectedGoal,
+  getStoredDiagnosis,
+  getYearsXp,
+} from "@/lib/onboarding-session";
 import type { RoadmapForgeEvent } from "@/types/contracts";
 
 export default function ForgePage() {
@@ -72,7 +78,12 @@ export default function ForgePage() {
     timerRef.current = setInterval(() => setElapsedSec((s) => s + 1), 1000);
 
     try {
-      const result = await startForgeRun(diagnosis);
+      const result = await startForgeRun(diagnosis, undefined, {
+        goal_id: getSelectedGoal(),
+        motivation: getMotivation(),
+        years_xp: getYearsXp(),
+        answers: getAnswers(),
+      });
       setForgeRunId(result.run_id);
       await connectStream(result.run_id);
     } catch (err) {
