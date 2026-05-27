@@ -11,6 +11,7 @@ from career_forge.ai.graphs.roadmap_forge import RoadmapForgeGraphRunnable
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
 from career_forge.ai.tools.openai_web_search import WebSearchResult, WebSearchSource
 from career_forge.schemas.diagnosis import DiagnosisRequest
+from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
 
 _FORGE_DIAGNOSIS = build_diagnosis_response(
     DiagnosisRequest(
@@ -29,7 +30,10 @@ def executor() -> GraphExecutor:
     factory = AgentFactory()
     factory.register(
         "roadmap_forge",
-        lambda: RoadmapForgeGraphRunnable(FakeSearchClient()),
+        lambda: RoadmapForgeGraphRunnable(
+            search_client=FakeSearchClient(),
+            evaluator=FakeEvaluator(),
+        ),
     )
     return GraphExecutor(factory=factory, store=InMemoryGraphRunStore())
 
@@ -46,6 +50,14 @@ class FakeSearchClient:
                     snippet="HTTP docs",
                 ),
             ],
+        )
+
+
+class FakeEvaluator:
+    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+        return StudyPlanEvaluation(
+            verdict="ship",
+            strengths=["plano testável"],
         )
 
 

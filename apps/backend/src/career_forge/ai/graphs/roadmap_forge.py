@@ -19,9 +19,20 @@ from career_forge.ai.tools.openai_web_search import (
     WebSearchResult,
     build_openai_web_search_client_from_env,
 )
+from career_forge.ai.tools.study_plan_evaluator import (
+    StudyPlanEvaluator,
+    build_study_plan_evaluator_from_env,
+)
 from career_forge.paths import roadmap_json_path
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
+from career_forge.schemas.study_plan import (
+    StudyPlan,
+    StudyPlanEvaluation,
+    StudyPlanNode,
+    StudyPlanTask,
+    StudyResource,
+)
 from career_forge.services.forge_context import (
     LearnerForgeContext,
     build_forge_context_from_input,
@@ -279,13 +290,109 @@ def _compact_summary(summary: str, *, limit: int = 520) -> str:
     return f"{cleaned[: limit - 1].rstrip()}…"
 
 
+def build_draft_study_plan(
+    context: LearnerForgeContext,
+    diagnosis: DiagnosisResponse,
+    research_events: list[dict[str, Any]],
+) -> StudyPlan:
+    """Create a draft plan that the evaluator can critique."""
+    resources = _resources_from_research_events(research_events)
+    graph = build_accumulated_graph(diagnosis)
+    nodes = [
+        StudyPlanNode(
+            node_id=node.node_id,
+            title=node.title or node.node_id,
+            why_now=node.rationale or "Parte da trilha inicial para o objetivo escolhido.",
+            prerequisites=[],
+            tasks=[
+                StudyPlanTask(
+                    title=f"Estudar {node.title or node.node_id}",
+                    outcome=f"Explicar e aplicar {node.title or node.node_id} em um exercício.",
+                    evidence_prompt="Publique uma evidência prática ou responda uma entrevista curta.",
+                ),
+            ],
+            resources=resources[:3],
+        )
+        for node in graph
+        if node.status != SkillStatus.APROVADO
+    ]
+    return StudyPlan(
+        goal=context.goal_id,
+        learner_context_summary=context.compact_summary(),
+        strategy=(
+            "Começar por fundamentos e prática guiada, conectando habilidades "
+            "transferíveis a projetos pequenos com evidência verificável."
+        ),
+        nodes=nodes or [
+            StudyPlanNode(
+                node_id="starter",
+                title="Primeiro projeto prático",
+                why_now="O diagnóstico precisa de evidência hands-on.",
+                tasks=[
+                    StudyPlanTask(
+                        title="Criar um mini-projeto",
+                        outcome="Demonstrar prática mínima no objetivo escolhido.",
+                        evidence_prompt="Mostre código, README ou explicação do que aprendeu.",
+                    ),
+                ],
+                resources=resources[:3],
+            ),
+        ],
+    )
+
+
+async def evaluate_study_plan_event(
+    plan: StudyPlan,
+    evaluator: StudyPlanEvaluator,
+) -> dict[str, Any]:
+    evaluation = await evaluator.evaluate(plan)
+    return _evaluation_artifact(evaluation)
+
+
+def _resources_from_research_events(events: list[dict[str, Any]]) -> list[StudyResource]:
+    resources: list[StudyResource] = []
+    seen: set[str] = set()
+    for event in events:
+        for source in event.get("sources") or []:
+            url = source.get("url")
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            resources.append(
+                StudyResource(
+                    title=source.get("title") or url,
+                    url=url,
+                    snippet=source.get("snippet") or "",
+                ),
+            )
+    return resources
+
+
+def _evaluation_artifact(evaluation: StudyPlanEvaluation) -> dict[str, Any]:
+    if evaluation.verdict == "ship":
+        detail = "Avaliador aprovou a estrutura inicial do plano."
+    else:
+        changes = "; ".join(evaluation.required_changes[:3] or evaluation.gaps[:3])
+        detail = f"Avaliador pediu revisão: {changes}"
+    return {
+        "type": "artifact_found",
+        "label": f"Avaliador do plano: {evaluation.verdict}",
+        "detail": detail,
+    }
+
+
 class RoadmapForgeGraphRunnable:
     """GraphRunnable — load_topics → analyze_gaps → research_enrich → accumulate_graph."""
 
     graph_name = "roadmap_forge"
 
-    def __init__(self, search_client: WebSearchClient | None = None) -> None:
+    def __init__(
+        self,
+        search_client: WebSearchClient | None = None,
+        evaluator: StudyPlanEvaluator | None = None,
+    ) -> None:
         self._search_client = search_client
+        self._evaluator = evaluator
 
     async def astream_events(
         self,
@@ -310,13 +417,24 @@ class RoadmapForgeGraphRunnable:
             )
 
         search_client = self._search_client or build_openai_web_search_client_from_env()
+        research_events: list[dict[str, Any]] = []
         async for payload in iter_research_enrichment_events(context, search_client):
+            research_events.append(payload)
             await asyncio.sleep(STREAM_DELAY_SEC)
             yield emit_chain_stream(
                 payload.get("step", "emit_forge_event"),
                 run_id,
                 {"forge_event": payload},
             )
+
+        evaluator = self._evaluator or build_study_plan_evaluator_from_env()
+        plan = build_draft_study_plan(context, diagnosis, research_events)
+        evaluation_payload = await evaluate_study_plan_event(plan, evaluator)
+        yield emit_chain_stream(
+            "evaluate_plan",
+            run_id,
+            {"forge_event": evaluation_payload},
+        )
 
         tail_events = build_forge_tail_events(diagnosis)
         for payload in tail_events:

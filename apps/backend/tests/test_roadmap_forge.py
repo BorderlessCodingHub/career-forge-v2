@@ -14,6 +14,7 @@ from career_forge.ai.graphs.roadmap_forge import (
 )
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
 from career_forge.ai.tools.openai_web_search import WebSearchResult, WebSearchSource
+from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
 from career_forge.schemas.diagnosis import DiagnosisRequest
 
 _SAMPLE = DiagnosisRequest(
@@ -58,7 +59,10 @@ def executor() -> GraphExecutor:
     factory = AgentFactory()
     factory.register(
         "roadmap_forge",
-        lambda: RoadmapForgeGraphRunnable(FakeSearchClient()),
+        lambda: RoadmapForgeGraphRunnable(
+            search_client=FakeSearchClient(),
+            evaluator=FakeEvaluator(),
+        ),
     )
     return GraphExecutor(factory=factory, store=InMemoryGraphRunStore())
 
@@ -78,6 +82,14 @@ class FakeSearchClient:
         )
 
 
+class FakeEvaluator:
+    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+        return StudyPlanEvaluation(
+            verdict="ship",
+            strengths=["sequência inicial clara"],
+        )
+
+
 @pytest.mark.asyncio
 async def test_roadmap_forge_graph_collect(
     executor: GraphExecutor,
@@ -93,6 +105,11 @@ async def test_roadmap_forge_graph_collect(
     assert result.run.status == "completed"
     assert any(
         event["type"] == "artifact_found" and event.get("sources")
+        for event in result.events
+    )
+    assert any(
+        event["type"] == "artifact_found"
+        and event.get("label") == "Avaliador do plano: ship"
         for event in result.events
     )
     assert result.events[-1]["type"] == "graph_ready"
