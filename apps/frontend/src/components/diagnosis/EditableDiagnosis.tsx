@@ -4,12 +4,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
-  ChevronDown,
-  ChevronUp,
-  Pencil,
-  Plus,
-  Trash2,
-} from "lucide-react";
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui";
 import type { DiagnosisResponse } from "@/types/contracts";
@@ -197,55 +208,39 @@ function EditableList({
   );
 }
 
-function ReorderableItem({
-  value,
-  index,
-  total,
-  onMoveUp,
-  onMoveDown,
-}: {
-  value: string;
-  index: number;
-  total: number;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
-}) {
-  const isFirst = index === 0;
-  const isLast = index === total - 1;
+function SortableItem({ id, value }: { id: string; value: string }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   return (
     <div
-      className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${TONE_ITEM_CLASSES.priority}`}
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${TONE_ITEM_CLASSES.priority} ${
+        isDragging ? "z-10 shadow-lg opacity-90" : ""
+      }`}
     >
+      <button
+        type="button"
+        className="cursor-grab touch-none text-accent-mint/50 transition hover:text-accent-mint active:cursor-grabbing"
+        aria-label="Arrastar para reordenar"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical size={14} />
+      </button>
       <span className="text-sm text-text-primary">{value}</span>
-      <div className="flex shrink-0 flex-col">
-        <button
-          type="button"
-          disabled={isFirst}
-          onClick={onMoveUp}
-          className={`rounded p-0.5 transition ${
-            isFirst
-              ? "cursor-default text-text-muted/30"
-              : "text-accent-mint hover:bg-accent-mint/10"
-          }`}
-          aria-label="Mover para cima"
-        >
-          <ChevronUp size={14} />
-        </button>
-        <button
-          type="button"
-          disabled={isLast}
-          onClick={onMoveDown}
-          className={`rounded p-0.5 transition ${
-            isLast
-              ? "cursor-default text-text-muted/30"
-              : "text-accent-mint hover:bg-accent-mint/10"
-          }`}
-          aria-label="Mover para baixo"
-        >
-          <ChevronDown size={14} />
-        </button>
-      </div>
     </div>
   );
 }
@@ -259,10 +254,18 @@ function ReorderableList({
   items: string[];
   onChange: (items: string[]) => void;
 }) {
-  const swap = (a: number, b: number) => {
-    const next = [...items];
-    [next[a], next[b]] = [next[b], next[a]];
-    onChange(next);
+  const ids = items.map((_, i) => `priority-${i}`);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = ids.indexOf(active.id as string);
+    const newIndex = ids.indexOf(over.id as string);
+    onChange(arrayMove(items, oldIndex, newIndex));
   };
 
   return (
@@ -275,18 +278,26 @@ function ReorderableList({
           {items.length}
         </span>
       </div>
-      <div className="space-y-2">
-        {items.map((item, index) => (
-          <ReorderableItem
-            key={`priority-${index}`}
-            value={item}
-            index={index}
-            total={items.length}
-            onMoveUp={() => swap(index, index - 1)}
-            onMoveDown={() => swap(index, index + 1)}
-          />
-        ))}
-      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+          <div className="space-y-2">
+            {items.map((item, index) => (
+              <SortableItem
+                key={ids[index]}
+                id={ids[index]}
+                value={item}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+      <p className="mt-3 text-center text-xs text-text-muted">
+        Arraste para reordenar prioridades
+      </p>
     </div>
   );
 }
