@@ -89,13 +89,13 @@ Short explicit negative answers (for example, **"Nada."**) are valid evidence fo
 | | |
 |---|---|
 | **Old** | Split view: timeline esquerda + skill graph skeleton direita preenchendo com `node_updated` |
-| **New** | **Full-width streaming timeline only.** Passos numerados (1, 2, 3, 4…). Tipos: `reasoning_delta`, `artifact_found`, `decision`. `artifact_found` pode mostrar query + fontes oficiais. **Nenhum grafo/map durante stream** |
+| **New** | **Full-width streaming timeline only.** Passos numerados (1, 2, 3, 4…). Tipos: `reasoning_delta`, `artifact_found`, `decision`. `artifact_found` pode mostrar resumo formatado + fontes oficiais. **Nenhum grafo/map durante stream** |
 | **Route** | `/roadmap/forge` · `data-screen="forge-stream"` |
 
 **During generation:**
 - Header: "Forjando sua trilha personalizada"
 - Counter: elapsed, passos concluídos
-- Pesquisa ao vivo: query + cards de fontes oficiais quando `research_enrich` roda
+- Pesquisa ao vivo: resumo formatado + cards de fontes oficiais quando `research_enrich` roda
 - Planner/evaluator: artifacts mostram criação do plano e verdict `ship|revise`; quando há revise, a IA aplica feedback antes do `graph_ready`.
 - Cursor/stream tail ativo até `graph_ready`
 - Após `graph_ready`, manter a timeline visível por alguns segundos antes do redirect para o reveal, para o usuário perceber pesquisa + consolidação.

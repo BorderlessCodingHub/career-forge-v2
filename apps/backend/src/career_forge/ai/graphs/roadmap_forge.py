@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 from collections.abc import AsyncIterator
 from typing import Any
 
@@ -272,12 +273,12 @@ async def iter_research_enrichment_events(
 
 
 def _research_artifact(result: WebSearchResult, *, iteration: int = 1) -> dict[str, Any]:
+    del iteration
     return {
         "type": "artifact_found",
-        "label": f"Pesquisa ao vivo {iteration}/{MAX_RESEARCH_ITERATIONS}: fontes oficiais",
-        "detail": _compact_summary(result.summary)
+        "label": "Pesquisando fontes oficiais...",
+        "detail": _clean_research_summary(result.summary)
         or f"{len(result.sources)} fontes encontradas",
-        "query": result.query,
         "sources": [
             {"title": source.title, "url": source.url, "snippet": source.snippet}
             for source in result.sources
@@ -285,11 +286,20 @@ def _research_artifact(result: WebSearchResult, *, iteration: int = 1) -> dict[s
     }
 
 
-def _compact_summary(summary: str, *, limit: int = 520) -> str:
-    cleaned = " ".join(summary.split())
-    if len(cleaned) <= limit:
-        return cleaned
-    return f"{cleaned[: limit - 1].rstrip()}…"
+def _clean_research_summary(summary: str) -> str:
+    """Keep model markdown but remove inline citation links duplicated in source cards."""
+    without_parenthetical_links = re.sub(
+        r"\s*\(\[[^\]]+\]\([^)]+\)\)",
+        "",
+        summary,
+    )
+    without_inline_links = re.sub(
+        r"\[([^\]]+)\]\([^)]+\)",
+        r"\1",
+        without_parenthetical_links,
+    )
+    without_bare_urls = re.sub(r"https?://\S+", "", without_inline_links)
+    return without_bare_urls.strip()
 
 
 def _planner_artifact(iteration: int) -> dict[str, Any]:

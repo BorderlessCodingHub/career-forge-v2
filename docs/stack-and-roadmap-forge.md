@@ -86,14 +86,14 @@ Eventos (`RoadmapForgeEvent`):
 ```typescript
 type RoadmapForgeEvent =
   | { type: "reasoning_delta"; text: string; step: string }
-  | { type: "artifact_found"; label: string; detail: string; query?: string; sources?: ResearchSource[] }
+  | { type: "artifact_found"; label: string; detail: string; sources?: ResearchSource[] }
   | { type: "node_updated"; node: UserSkillNodePartial }
   | { type: "step_complete"; step: string; iteration: number }
   | { type: "graph_ready"; graph: UserSkillNode[] }
   | { type: "error"; message: string };
 ```
 
-`ResearchSource` vem de citações nos `AIMessage.content_blocks` do LangChain, não de HTTP manual para search APIs externas.
+`ResearchSource` vem de citações nos `AIMessage.content_blocks` do LangChain, não de HTTP manual para search APIs externas. Queries ficam internas ao planner/research state; a UI renderiza resumo + cards de referência.
 
 HAC-54 inicia o loop de qualidade: o planner recebe contexto do aluno + fontes; o evaluator retorna `ship|revise`; em caso de `revise`, o planner recebe `previous_plan + evaluator_feedback + research_state + learner_context` para uma nova iteração antes de `graph_ready`.
 

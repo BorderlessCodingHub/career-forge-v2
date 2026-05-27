@@ -125,7 +125,7 @@ Post-onboarding LangGraph loop:
 6. `accumulate_graph` — **Python merge** into SkillGraphState (LLM proposes, code disposes)
 7. `emit_final` — SSE `graph_ready`
 
-SSE events: `reasoning_delta`, `artifact_found` (with `query` + `sources[]` for web search), `node_updated`, `step_complete`, `graph_ready`
+SSE events: `reasoning_delta`, `artifact_found` (with `sources[]` for web search), `node_updated`, `step_complete`, `graph_ready`
 
 Full spec: [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md)
 

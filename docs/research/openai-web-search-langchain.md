@@ -128,14 +128,13 @@ type RoadmapForgeEvent =
       type: "artifact_found";
       label: string;
       detail: string;
-      query?: string;
       sources?: ResearchSource[];
     };
 ```
 
 Mapping:
 
-- `server_tool_call.args.query` or `server_tool_call.args.queries[]` → `artifact_found.query`
+- `server_tool_call.args.query` or `server_tool_call.args.queries[]` → internal research state for planner context, not a UI field
 - Citation annotations → `artifact_found.sources[]`
 - `text` block summary → `artifact_found.detail` or a preceding/following `reasoning_delta`
 
@@ -154,8 +153,8 @@ Mapping:
 
 Render search as "Pesquisa ao vivo" rows in the forge timeline:
 
-- Show query text.
 - Show 2-3 source cards with title, URL hostname, and snippet/cited span.
+- Keep raw queries out of the UI unless explicitly debugging.
 - Avoid displaying raw tool result JSON.
 - Keep graph hidden until `graph_ready`.
 

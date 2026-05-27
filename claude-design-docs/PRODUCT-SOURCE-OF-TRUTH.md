@@ -126,7 +126,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | `/` Goal picker | Hero + 3 cards + motivation field | Animation library, form validation UX |
 | `/onboarding` | Chat diagnostic, 4–6 Q feel; short negative answers like "Nada." are valid evidence | Streaming vs batch API |
 | `/onboarding/edit` | **Editable** fortes/lacunas/prioridades + **"Gerar roadmap"** | HAC-53: view-first, pencil/trash, dnd-kit reorder, refazer diagnóstico |
-| `/roadmap/forge` | **Timeline only** — numbered steps, no graph during stream; research rows may show query + official source cards; planner/evaluator artifacts may appear; brief post-`graph_ready` hold before reveal | SSE wiring, scroll behavior |
+| `/roadmap/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; brief post-`graph_ready` hold before reveal | SSE wiring, scroll behavior |
 | `/roadmap/forge/complete` | Stream items fly into vertical layout | Motion implementation |
 | `/roadmap` | **Vertical roadmap** steady state + optional AI sidebar | Node detail panel, sidebar UX |
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |

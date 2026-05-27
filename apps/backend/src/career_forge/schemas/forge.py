@@ -48,7 +48,6 @@ class ArtifactFoundEvent(BaseModel):
     type: Literal["artifact_found"] = "artifact_found"
     label: str
     detail: str
-    query: str | None = None
     sources: list[SearchSource] = Field(default_factory=list)
 
 

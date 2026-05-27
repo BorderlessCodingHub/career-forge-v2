@@ -27,7 +27,6 @@ export type RoadmapForgeEvent =
       type: "artifact_found";
       label: string;
       detail: string;
-      query?: string | null;
       sources?: Array<{ title: string; url: string; snippet?: string }>;
     }
   | {

@@ -147,7 +147,7 @@ def _compact_research(research_events: list[dict[str, Any]]) -> str:
     for event in research_events:
         if not event.get("sources"):
             continue
-        lines.append(f"- {event.get('label')}: {event.get('query')}")
+        lines.append(f"- {event.get('label')}: {event.get('detail')}")
         for source in event.get("sources") or []:
             lines.append(
                 f"  - {source.get('title')} — {source.get('url')} — {source.get('snippet', '')}",
