@@ -18,6 +18,7 @@ import {
   getCvAttachment,
   getMotivation,
   getSelectedGoal,
+  getStoredDiagnosis,
   getYearsXp,
   setAnswers,
   setDiagnosisSessionId,
@@ -60,7 +61,13 @@ export function useDiagnosisInterview() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!intake) router.replace("/");
+    if (!intake) {
+      router.replace("/");
+      return;
+    }
+    if (getStoredDiagnosis()) {
+      router.replace("/onboarding/edit");
+    }
   }, [intake, router]);
 
   const applyTurnResponse = useCallback((response: InterviewTurnResponse) => {
@@ -80,7 +87,7 @@ export function useDiagnosisInterview() {
   }, []);
 
   useEffect(() => {
-    if (!intake) return;
+    if (!intake || getStoredDiagnosis()) return;
     const readyIntake = intake;
 
     let cancelled = false;

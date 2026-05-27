@@ -8,6 +8,9 @@ import { CAREER_GOALS } from "@/lib/onboarding-data";
 import {
   clearCvAttachment,
   getCvAttachment,
+  getMotivation,
+  getSelectedGoal,
+  getYearsXp,
   setCvAttachment,
   setMotivation,
   setSelectedGoal,
@@ -28,6 +31,12 @@ export function GoalPicker() {
   const [touched, setTouched] = useState(false);
 
   useEffect(() => {
+    const storedGoal = getSelectedGoal();
+    if (storedGoal) setSelected(storedGoal);
+    const storedMotivation = getMotivation();
+    if (storedMotivation) setMotivationValue(storedMotivation);
+    const storedYearsXp = getYearsXp();
+    if (storedYearsXp) setYearsXpValue(storedYearsXp);
     setCvAttachmentState(getCvAttachment());
   }, []);
 
