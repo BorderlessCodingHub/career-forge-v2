@@ -171,6 +171,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Forge research + evaluation | Timeline-only stream with `artifact_found` rows | Mock artifacts without live sources | HAC-54 — OpenAI native `web_search` citations, planner artifact, evaluator verdict, paced instant steps, then manual **Ver roadmap** CTA | **Code + docs aligned** — no third-party search adapter | HAC-54 |
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
+| Deploy badge (global footer) | Not in prototype | N/A | Fixed bottom strip on all routes — `DeployBadge` in root layout; `local dev` when `NEXT_PUBLIC_BUILD_*` unset; prod shows `deploy {sha} · {time}` from CI; health dot polls `GET /health` | **Code wins** — operational debug chrome, not pitch UX; does not replace demo script checks | 2026-05-27 |
 
 ---
 
@@ -195,4 +196,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: 2026-05-27 — diagnosis short-answer validation + HAC-54 source cards*
+*Last updated: 2026-05-27 — deploy badge footer (build SHA + API health)*

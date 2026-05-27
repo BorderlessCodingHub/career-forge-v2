@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+
+import { DeployBadge } from "@/components/layout";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -21,8 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} ${jetbrains.variable} font-sans`}>
+      <body className={`${inter.variable} ${jetbrains.variable} font-sans pb-8`}>
         {children}
+        <DeployBadge />
       </body>
     </html>
   );

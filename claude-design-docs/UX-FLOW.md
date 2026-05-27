@@ -15,6 +15,10 @@ Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → F
 
 5-min demo: [CHECKPOINT](../docs/CHECKPOINT.md#demo-script-5-min)
 
+### Global operational chrome (all routes)
+
+Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA + build time in production (`NEXT_PUBLIC_BUILD_*` from CI); `local dev` when unset; colored dot from live `GET /health`. Low-contrast, does not replace pitch demo checks. See [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes · [DEPLOY-VPS.md](../docs/engineering/DEPLOY-VPS.md).
+
 ---
 
 ## Paradigm shift (old → new)
