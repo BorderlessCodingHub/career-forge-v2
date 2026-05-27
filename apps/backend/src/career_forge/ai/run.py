@@ -59,9 +59,27 @@ class InMemoryGraphRunStore:
         return stored.model_copy(deep=True) if stored else None
 
 
-# Module-level default for API layer (replaced by DI in production).
-_default_store = InMemoryGraphRunStore()
+# Module-level default for API layer (lazy-init for prod Postgres).
+_default_store: GraphRunStore | None = None
+
+
+def _build_graph_run_store() -> GraphRunStore:
+    from career_forge.db.stores.postgres_graph_run import PostgresGraphRunStore
+    from career_forge.persistence.store_mode import resolve_persistence_backend
+
+    backend = resolve_persistence_backend(None, env_var="GRAPH_RUN_STORE")
+    if backend == "postgres":
+        return PostgresGraphRunStore()
+    return InMemoryGraphRunStore()
 
 
 def get_graph_run_store() -> GraphRunStore:
+    global _default_store
+    if _default_store is None:
+        _default_store = _build_graph_run_store()
     return _default_store
+
+
+def set_graph_run_store(store: GraphRunStore | None) -> None:
+    global _default_store
+    _default_store = store

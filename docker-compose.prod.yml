@@ -25,6 +25,8 @@ services:
       ENV: production
       DEBUG: ${DEBUG:-false}
       SEED_DEMO_ANA: ${SEED_DEMO_ANA:-false}
+      DIAGNOSIS_SESSION_STORE: ${DIAGNOSIS_SESSION_STORE:-postgres}
+      GRAPH_RUN_STORE: ${GRAPH_RUN_STORE:-postgres}
       ROADMAP_JSON_PATH: /data/roadmap.json
       API_HOST: 0.0.0.0
       API_PORT: 8000

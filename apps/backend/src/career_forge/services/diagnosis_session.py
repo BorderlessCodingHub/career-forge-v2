@@ -8,7 +8,8 @@ from uuid import UUID, uuid4
 
 from career_forge.ai.executor import GraphExecutor, get_graph_executor
 from career_forge.ai.llm.diagnosis_interview import DiagnosisInterviewLlmError
-from career_forge.ai.run import GraphRun, GraphRunResult, GraphRunStore, InMemoryGraphRunStore
+from career_forge.ai.run import GraphRun, GraphRunResult, GraphRunStore, get_graph_run_store
+from career_forge.persistence.store_mode import resolve_persistence_backend
 from career_forge.db.models.diagnosis_session import DiagnosisSessionRecord
 from career_forge.db.session import SessionLocal
 from career_forge.schemas.diagnosis_interview import (
@@ -129,10 +130,11 @@ def get_diagnosis_session_store() -> DiagnosisSessionStore:
     if _default_store is not None:
         return _default_store
 
-    mode = os.getenv("DIAGNOSIS_SESSION_STORE", "auto").lower()
-    if mode == "memory":
-        _default_store = InMemoryDiagnosisSessionStore()
-    elif mode == "postgres":
+    backend = resolve_persistence_backend(
+        os.getenv("DIAGNOSIS_SESSION_STORE"),
+        env_var="DIAGNOSIS_SESSION_STORE",
+    )
+    if backend == "postgres":
         _default_store = PostgresDiagnosisSessionStore()
     else:
         _default_store = InMemoryDiagnosisSessionStore()
@@ -182,8 +184,8 @@ class DiagnosisSessionService:
         graph_store: GraphRunStore | None = None,
         executor: GraphExecutor | None = None,
     ) -> None:
+        self._graph_store = graph_store or get_graph_run_store()
         self._sessions = session_store or get_diagnosis_session_store()
-        self._graph_store = graph_store or InMemoryGraphRunStore()
         self._executor = executor or GraphExecutor(store=self._graph_store)
 
     async def start_interview(self, body: InterviewStartRequest) -> InterviewTurnResponse:
