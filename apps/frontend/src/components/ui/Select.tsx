@@ -77,7 +77,7 @@ export function Select<T extends string>({
         aria-expanded={open}
         aria-controls={listboxId}
         onClick={() => setOpen((current) => !current)}
-        className={`flex w-full items-center justify-between rounded-card border border-border bg-surface-elevated px-4 py-3 text-left text-sm outline-none ring-accent focus:ring-2 ${
+        className={`flex w-full items-center justify-between rounded-md border border-border bg-surface-elevated px-4 py-3 text-left text-sm outline-none ring-accent focus:ring-2 ${
           value ? "text-text-primary" : "text-text-muted"
         }`}
       >
@@ -90,7 +90,7 @@ export function Select<T extends string>({
           id={listboxId}
           role="listbox"
           aria-labelledby={id}
-          className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-card border border-border bg-surface-elevated py-1 shadow-lg"
+          className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-border bg-surface-elevated py-1 shadow-lg"
         >
           <li role="presentation">
             <button

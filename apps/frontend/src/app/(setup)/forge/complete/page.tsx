@@ -59,7 +59,7 @@ export default function ForgeCompletePage() {
               }`}
               style={{ transitionDelay: `${index * 80}ms` }}
             >
-              <div className="rounded-card border border-border bg-surface px-4 py-3">
+              <div className="rounded-md border border-border bg-surface px-4 py-3">
                 <StreamReveal
                   text={`${node.title ?? node.node_id} · ${node.status} · ${node.mastery_score}%`}
                 />

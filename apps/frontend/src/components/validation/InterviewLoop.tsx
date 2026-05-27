@@ -206,9 +206,9 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
 
       {currentQuestion && (
         <>
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-surface px-4 py-3">
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-md border border-border bg-surface px-4 py-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/20 text-sm font-semibold text-accent">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accent/20 text-sm font-semibold text-accent">
                 {copy.badge}
               </div>
               <p className="font-medium text-text-primary">{nodeTitle}</p>
@@ -233,7 +233,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
             </div>
           </div>
 
-          <div className="mt-6 rounded-xl border border-border bg-surface-elevated p-6">
+          <div className="mt-6 rounded-md border border-border bg-surface-elevated p-6">
             <p className="text-xs uppercase tracking-widest text-text-muted">
               Pergunta {String(currentIndex + 1).padStart(2, "0")} · {currentQuestion.label}
               {isMockQuestion(currentQuestion) && currentQuestion.phase !== "base" && (
@@ -255,7 +255,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
               onKeyDown={handleAnswerKeyDown}
               placeholder="Comece pela sua intuição..."
               disabled={phase === "submitting"}
-              className="min-h-[160px] w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-muted"
+              className="min-h-[160px] w-full resize-none rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-muted"
               data-testid={copy.answerTestId}
             />
             <div className="mt-2 flex justify-between text-xs text-text-muted">
@@ -267,7 +267,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
       )}
 
       {error && (
-        <p className="mt-4 rounded-lg border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
+        <p className="mt-4 rounded-md border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
           {error}
         </p>
       )}

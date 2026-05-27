@@ -26,7 +26,7 @@ export function OnboardingRecapSidebar({
   activeKeys,
 }: OnboardingRecapSidebarProps) {
   return (
-    <aside className="rounded-card border border-border bg-surface p-6">
+    <aside className="rounded-md border border-border bg-surface p-6">
       <div className="text-xs uppercase tracking-wide text-text-muted">
         Seu sonho
       </div>

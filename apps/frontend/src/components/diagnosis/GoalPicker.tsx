@@ -73,7 +73,7 @@ export function GoalPicker() {
               data-testid={`goal-${goal.id}`}
               disabled={!goal.active}
               onClick={() => goal.active && setSelected(goal.id)}
-              className={`rounded-card border p-5 text-left transition ${
+              className={`rounded-md border p-5 text-left transition ${
                 selected === goal.id
                   ? "border-accent bg-accent/10"
                   : "border-border bg-surface hover:border-accent/40"
@@ -100,7 +100,7 @@ export function GoalPicker() {
           <textarea
             id="motivation"
             data-testid="motivation-input"
-            className="mt-2 min-h-[120px] w-full resize-none rounded-card border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
+            className="mt-2 min-h-[120px] w-full resize-none rounded-md border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
             placeholder="Conte em suas palavras o que te motiva nesse caminho…"
             value={motivation}
             onChange={(event) => {

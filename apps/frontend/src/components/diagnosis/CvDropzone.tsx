@@ -96,7 +96,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
   if (attachment) {
     return (
       <div
-        className="mt-2 flex items-center justify-between rounded-card border border-border bg-surface-elevated px-4 py-3"
+        className="mt-2 flex items-center justify-between rounded-md border border-border bg-surface-elevated px-4 py-3"
         data-testid="cv-attachment"
       >
         <div className="min-w-0">
@@ -138,7 +138,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
           }
         }}
         onClick={() => inputRef.current?.click()}
-        className={`cursor-pointer rounded-card border border-dashed px-4 py-8 text-center transition ${
+        className={`cursor-pointer rounded-md border border-dashed px-4 py-8 text-center transition ${
           dragOver
             ? "border-accent bg-accent/5"
             : "border-border bg-surface-elevated hover:border-accent/40"

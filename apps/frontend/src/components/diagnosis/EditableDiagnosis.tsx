@@ -57,7 +57,7 @@ function ViewItem({
 }) {
   return (
     <div
-      className={`flex items-center justify-between gap-3 rounded-lg border px-3 py-2 ${TONE_ITEM_CLASSES[tone]}`}
+      className={`flex items-center justify-between gap-3 rounded-md border px-3 py-2 ${TONE_ITEM_CLASSES[tone]}`}
     >
       <span className="text-sm text-text-primary">{value}</span>
       <div className="flex shrink-0 items-center gap-1">
@@ -112,7 +112,7 @@ function EditItem({
   return (
     <textarea
       ref={ref}
-      className={`min-h-[72px] w-full resize-none rounded-lg border px-3 py-2 text-sm text-text-primary outline-none ring-accent focus:ring-2 ${TONE_ITEM_CLASSES[tone]} bg-bg`}
+      className={`min-h-[72px] w-full resize-none rounded-md border px-3 py-2 text-sm text-text-primary outline-none ring-accent focus:ring-2 ${TONE_ITEM_CLASSES[tone]} bg-bg`}
       value={draft}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={commit}
@@ -141,7 +141,7 @@ function EditableList({
   const [adding, setAdding] = useState(false);
 
   return (
-    <div className={`rounded-card border p-5 ${TONE_CLASSES[tone]}`}>
+    <div className={`rounded-md border p-5 ${TONE_CLASSES[tone]}`}>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-medium uppercase tracking-wide text-text-secondary">
           {title}
@@ -197,7 +197,7 @@ function EditableList({
           <button
             type="button"
             onClick={() => setAdding(true)}
-            className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-accent/30 py-2 text-sm text-accent transition hover:bg-accent/5"
+            className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-accent/30 py-2 text-sm text-accent transition hover:bg-accent/5"
           >
             <Plus size={14} />
             Adicionar {tone === "strength" ? "ponto forte" : "lacuna"}
@@ -227,7 +227,7 @@ function SortableItem({ id, value }: { id: string; value: string }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${TONE_ITEM_CLASSES.priority} ${
+      className={`flex items-center gap-3 rounded-md border px-3 py-2 ${TONE_ITEM_CLASSES.priority} ${
         isDragging ? "z-10 shadow-lg opacity-90" : ""
       }`}
     >
@@ -269,7 +269,7 @@ function ReorderableList({
   };
 
   return (
-    <div className={`rounded-card border p-5 ${TONE_CLASSES.priority}`}>
+    <div className={`rounded-md border p-5 ${TONE_CLASSES.priority}`}>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-medium uppercase tracking-wide text-text-secondary">
           {title}
@@ -383,7 +383,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
           />
         </div>
 
-        <div className="mt-6 rounded-card border border-border bg-surface p-5 text-sm text-text-secondary">
+        <div className="mt-6 rounded-md border border-border bg-surface p-5 text-sm text-text-secondary">
           <strong className="text-text-primary">Avaliação por evidência.</strong>{" "}
           Career Forge não deixa marcar tópicos como concluídos sem provar
           entendimento numa entrevista com a IA.

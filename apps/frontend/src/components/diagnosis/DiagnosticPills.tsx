@@ -14,13 +14,13 @@ function QuestionSkeleton() {
       {[0, 1].map((index) => (
         <div
           key={index}
-          className="rounded-card border border-border-soft bg-surface-elevated p-4"
+          className="rounded-md border border-border-soft bg-surface-elevated p-4"
         >
           <div className="mb-3 flex items-center gap-2">
             <div className="h-6 w-24 animate-pulse rounded-full bg-border" />
             <div className="h-4 flex-1 animate-pulse rounded bg-border" />
           </div>
-          <div className="h-24 animate-pulse rounded-lg bg-border/60" />
+          <div className="h-24 animate-pulse rounded-md bg-border/60" />
         </div>
       ))}
     </div>
@@ -78,7 +78,7 @@ export function DiagnosticPills() {
           activeKeys={activeKeys}
         />
 
-        <section className="rounded-card border border-border bg-surface p-6">
+        <section className="rounded-md border border-border bg-surface p-6">
           {bootstrapping ? (
             <>
               <div className="flex items-center gap-3 text-sm text-text-secondary">
@@ -99,7 +99,7 @@ export function DiagnosticPills() {
                 {questions.map((question) => (
                   <div
                     key={question.id}
-                    className="rounded-card border border-border-soft bg-surface-elevated p-4"
+                    className="rounded-md border border-border-soft bg-surface-elevated p-4"
                   >
                     <div className="mb-3 flex flex-wrap items-center gap-2">
                       <PillRound label={question.topic} />
@@ -109,7 +109,7 @@ export function DiagnosticPills() {
                     </div>
                     <textarea
                       data-testid={`answer-${question.id}`}
-                      className="min-h-[96px] w-full resize-none rounded-lg border border-border bg-bg px-3 py-2 text-sm text-text-primary outline-none ring-accent focus:ring-2"
+                      className="min-h-[96px] w-full resize-none rounded-md border border-border bg-bg px-3 py-2 text-sm text-text-primary outline-none ring-accent focus:ring-2"
                       placeholder={question.example_of_answer}
                       value={answers[question.id] ?? ""}
                       disabled={submitting}
@@ -121,7 +121,7 @@ export function DiagnosticPills() {
 
               {submitting ? (
                 <div
-                  className="mt-6 flex items-center gap-3 rounded-card border border-border-soft bg-surface-elevated p-4"
+                  className="mt-6 flex items-center gap-3 rounded-md border border-border-soft bg-surface-elevated p-4"
                   data-testid="diagnosis-generating"
                 >
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
