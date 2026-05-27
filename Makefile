@@ -48,8 +48,7 @@ status:
 	@echo "Health:   http://localhost:8000/health"
 
 test:
-	@echo "== Backend tests =="
-	@cd apps/backend && PYTHONPATH=src python -m pytest -q 2>/dev/null || (pip install -q -r requirements.txt pytest httpx && PYTHONPATH=src python -m pytest -q)
+	@bash scripts/test-backend.sh
 
 seed:
 	@echo "== Seed catalog + demo Ana =="

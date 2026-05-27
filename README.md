@@ -129,7 +129,7 @@ Roteiro alinhado a [docs/CHECKPOINT.md](./docs/CHECKPOINT.md) § Demo script.
 | `make down` | Para a stack |
 | `make status` | Status do compose + URLs |
 | `make smoke` | Harness + health checks |
-| `make test` | Pytest do backend |
+| `make test` | Bootstrap Postgres + Alembic upgrade + pytest do backend |
 | `make seed` | Seed do catálogo + usuária demo Ana |
 | `make agent-verify` | Gate C de estrutura + `/health` opcional |
 
@@ -202,6 +202,7 @@ python3 -m http.server 8765
 | Diagnóstico/forge não responde | `OPENAI_API_KEY` vazio | Preencha em `.env` e `make down && make up` |
 | Postgres não sobe | Porta 5432 ocupada | Libere a porta ou ajuste `docker-compose.yml` |
 | Frontend em porta errada | `WEB_HOST_PORT` | Use `make status` e abra a URL exibida |
+| Backend tests falham com `connection refused` em `localhost:5432` | Postgres não estava ativo antes do pytest | Use `make test` (agora sobe `postgres`, espera readiness e roda `alembic upgrade head`) |
 
 Mais receitas: [.cursor/skills/local-debug/SKILL.md](./.cursor/skills/local-debug/SKILL.md).
 
