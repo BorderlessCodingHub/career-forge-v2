@@ -149,5 +149,6 @@ docker compose exec backend pytest
 | OPTIONS 400 in backend logs | Same as above | `docker compose logs backend \| grep OPTIONS` |
 | Interview 500 | Missing `OPENAI_API_KEY` | Set in `.env`, restart backend |
 | Frontend can't reach API | Wrong `NEXT_PUBLIC_BACKEND_URL` | Must be host URL, not Docker service name |
+| `make test` fails with `connection refused` on `localhost:5432` | Postgres was not started before pytest | Run `make test` from repo root (boots `postgres`, waits readiness, runs `alembic upgrade head`, then pytest) |
 
 **When you find a new local-only trick, append it to section 8 of this skill.**
