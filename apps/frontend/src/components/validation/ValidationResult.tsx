@@ -26,9 +26,9 @@ export function ValidationResult({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10" data-screen="validation-result">
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-surface px-4 py-3">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-md border border-border bg-surface px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/20 text-sm font-semibold text-accent">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-accent/20 text-sm font-semibold text-accent">
             /v
           </div>
           <p className="font-medium text-text-primary">{nodeTitle}</p>
@@ -42,7 +42,7 @@ export function ValidationResult({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
-        <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-surface-elevated p-6">
+        <div className="flex flex-col items-center gap-4 rounded-md border border-border bg-surface-elevated p-6">
           <ScoreRing score={result.score} status={result.status} />
           <span
             className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest ${
@@ -62,7 +62,7 @@ export function ValidationResult({
 
         <div className="space-y-4">
           {result.strengths.length > 0 && (
-            <div className="rounded-xl border border-success/30 bg-success/5 p-4">
+            <div className="rounded-md border border-success/30 bg-success/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-success">
                 Você acertou
               </p>
@@ -78,7 +78,7 @@ export function ValidationResult({
           )}
 
           {result.gaps.length > 0 && (
-            <div className="rounded-xl border border-warning/30 bg-warning/5 p-4">
+            <div className="rounded-md border border-warning/30 bg-warning/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-warning">
                 Precisa melhorar
               </p>
@@ -93,14 +93,14 @@ export function ValidationResult({
             </div>
           )}
 
-          <div className="rounded-xl border border-accent/30 bg-accent/10 p-4">
+          <div className="rounded-md border border-accent/30 bg-accent/10 p-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-accent">
               Próximo passo
             </p>
             <p className="mt-2 text-sm text-text-secondary">{result.next_action}</p>
           </div>
 
-          <div className="rounded-xl border border-border bg-surface">
+          <div className="rounded-md border border-border bg-surface">
             <button
               type="button"
               className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-text-secondary"

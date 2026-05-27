@@ -117,7 +117,7 @@ export default function RoadmapArtifactPageContent() {
 
         {adaptiveSessionMissing && (
           <p
-            className="mx-auto mt-6 max-w-lg rounded-lg border border-warning/30 bg-warning/10 p-3 text-center text-sm text-warning"
+            className="mx-auto mt-6 max-w-lg rounded-md border border-warning/30 bg-warning/10 p-3 text-center text-sm text-warning"
             data-testid="adaptive-session-missing"
           >
             Sessão adaptativa não encontrada — mostrando a trilha atual do servidor. Refaça a
@@ -134,7 +134,7 @@ export default function RoadmapArtifactPageContent() {
         )}
 
         {error && (
-          <p className="mx-auto mt-8 max-w-lg rounded-lg border border-danger/30 bg-danger/10 p-3 text-center text-sm text-danger">
+          <p className="mx-auto mt-8 max-w-lg rounded-md border border-danger/30 bg-danger/10 p-3 text-center text-sm text-danger">
             {error}
           </p>
         )}
@@ -145,7 +145,7 @@ export default function RoadmapArtifactPageContent() {
               <button
                 type="button"
                 onClick={() => setMentorOpen(true)}
-                className="inline-flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-left shadow-sm transition hover:border-accent/40 hover:bg-surface-elevated"
+                className="inline-flex items-center gap-3 rounded-md border border-border bg-surface px-4 py-3 text-left shadow-sm transition hover:border-accent/40 hover:bg-surface-elevated"
                 data-testid="mentor-cta"
               >
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-semibold text-white">

@@ -44,7 +44,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-2 py-1 text-text-muted hover:bg-surface hover:text-text-primary"
+            className="rounded-md px-2 py-1 text-text-muted hover:bg-surface hover:text-text-primary"
           >
             ✕
           </button>
@@ -54,20 +54,20 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
           <p className="text-sm text-text-secondary">{node.description}</p>
 
           <div className="grid grid-cols-2 gap-3 text-sm">
-            <div className="rounded-lg border border-border bg-surface px-3 py-2">
+            <div className="rounded-md border border-border bg-surface px-3 py-2">
               <p className="text-xs text-text-muted">Status</p>
               <p className="font-medium text-text-primary">
                 {STATUS_LABELS[node.status] ?? node.status}
               </p>
             </div>
-            <div className="rounded-lg border border-border bg-surface px-3 py-2">
+            <div className="rounded-md border border-border bg-surface px-3 py-2">
               <p className="text-xs text-text-muted">Mastery</p>
               <p className="font-mono font-medium text-accent-mint">{node.mastery_score}%</p>
             </div>
           </div>
 
           {node.rationale && (
-            <div className="rounded-lg border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-text-secondary">
+            <div className="rounded-md border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-text-secondary">
               {node.rationale}
             </div>
           )}
@@ -81,7 +81,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
                 {node.outcomes.map((outcome) => (
                   <li
                     key={outcome}
-                    className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-secondary"
+                    className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-secondary"
                   >
                     {outcome}
                   </li>

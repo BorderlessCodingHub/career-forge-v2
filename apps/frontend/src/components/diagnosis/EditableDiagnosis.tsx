@@ -2,18 +2,129 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui";
 import type { DiagnosisResponse } from "@/types/contracts";
 import {
+  clearStoredDiagnosis,
   getStoredDiagnosis,
   setStoredDiagnosis,
 } from "@/lib/onboarding-session";
 
-type EditableDiagnosisProps = {
-  initialDiagnosis?: DiagnosisResponse | null;
+type Tone = "strength" | "gap" | "priority";
+
+const TONE_CLASSES: Record<Tone, string> = {
+  strength: "border-success/20 bg-success/5",
+  gap: "border-warning/20 bg-warning/5",
+  priority: "border-accent/20 bg-accent/5",
 };
+
+const TONE_ITEM_CLASSES: Record<Tone, string> = {
+  strength: "border-success/15",
+  gap: "border-warning/15",
+  priority: "border-accent/15",
+};
+
+function ViewItem({
+  value,
+  tone,
+  onEdit,
+  onDelete,
+}: {
+  value: string;
+  tone: Tone;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div
+      className={`flex items-center justify-between gap-3 rounded-md border px-3 py-2 ${TONE_ITEM_CLASSES[tone]}`}
+    >
+      <span className="text-sm text-text-primary">{value}</span>
+      <div className="flex shrink-0 items-center gap-1">
+        <button
+          type="button"
+          onClick={onEdit}
+          className="rounded p-1 text-accent-mint transition hover:bg-accent-mint/10"
+          aria-label="Editar"
+        >
+          <Pencil size={14} />
+        </button>
+        <button
+          type="button"
+          onClick={onDelete}
+          className="rounded p-1 text-red-500 transition hover:bg-red-500/10"
+          aria-label="Excluir"
+        >
+          <Trash2 size={14} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function EditItem({
+  value,
+  tone,
+  onSave,
+  onDiscard,
+}: {
+  value: string;
+  tone: Tone;
+  onSave: (value: string) => void;
+  onDiscard: () => void;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const [draft, setDraft] = useState(value);
+
+  useEffect(() => {
+    ref.current?.focus();
+  }, []);
+
+  const commit = () => {
+    const trimmed = draft.trim();
+    if (trimmed.length === 0) {
+      onDiscard();
+    } else {
+      onSave(trimmed);
+    }
+  };
+
+  return (
+    <textarea
+      ref={ref}
+      className={`min-h-[72px] w-full resize-none rounded-md border px-3 py-2 text-sm text-text-primary outline-none ring-accent focus:ring-2 ${TONE_ITEM_CLASSES[tone]} bg-bg`}
+      value={draft}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          onSave(value);
+        }
+      }}
+    />
+  );
+}
 
 function EditableList({
   title,
@@ -23,17 +134,14 @@ function EditableList({
 }: {
   title: string;
   items: string[];
-  tone: "strength" | "gap" | "priority";
+  tone: Tone;
   onChange: (items: string[]) => void;
 }) {
-  const toneClasses = {
-    strength: "border-success/20 bg-success/5",
-    gap: "border-warning/20 bg-warning/5",
-    priority: "border-accent/20 bg-accent/5",
-  }[tone];
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [adding, setAdding] = useState(false);
 
   return (
-    <div className={`rounded-card border p-5 ${toneClasses}`}>
+    <div className={`rounded-md border p-5 ${TONE_CLASSES[tone]}`}>
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-sm font-medium uppercase tracking-wide text-text-secondary">
           {title}
@@ -42,24 +150,161 @@ function EditableList({
           {items.length}
         </span>
       </div>
-      <div className="space-y-3">
-        {items.map((item, index) => (
-          <textarea
-            key={`${title}-${index}`}
-            data-testid={`${tone}-item-${index}`}
-            className="min-h-[72px] w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm text-text-primary outline-none ring-accent focus:ring-2"
-            value={item}
-            onChange={(event) => {
-              const next = [...items];
-              next[index] = event.target.value;
-              onChange(next);
+      <div className="space-y-2">
+        {items.map((item, index) =>
+          editingIndex === index ? (
+            <EditItem
+              key={`${tone}-edit-${index}`}
+              value={item}
+              tone={tone}
+              onSave={(val) => {
+                const next = [...items];
+                next[index] = val;
+                onChange(next);
+                setEditingIndex(null);
+              }}
+              onDiscard={() => {
+                const next = items.filter((_, i) => i !== index);
+                onChange(next);
+                setEditingIndex(null);
+              }}
+            />
+          ) : (
+            <ViewItem
+              key={`${tone}-view-${index}`}
+              value={item}
+              tone={tone}
+              onEdit={() => setEditingIndex(index)}
+              onDelete={() => {
+                const next = items.filter((_, i) => i !== index);
+                onChange(next);
+              }}
+            />
+          ),
+        )}
+        {adding ? (
+          <EditItem
+            key={`${tone}-add-new`}
+            value=""
+            tone={tone}
+            onSave={(val) => {
+              onChange([...items, val]);
+              setAdding(false);
             }}
+            onDiscard={() => setAdding(false)}
           />
-        ))}
+        ) : (
+          <button
+            type="button"
+            onClick={() => setAdding(true)}
+            className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-accent/30 py-2 text-sm text-accent transition hover:bg-accent/5"
+          >
+            <Plus size={14} />
+            Adicionar {tone === "strength" ? "ponto forte" : "lacuna"}
+          </button>
+        )}
       </div>
     </div>
   );
 }
+
+function SortableItem({ id, value }: { id: string; value: string }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-3 rounded-md border px-3 py-2 ${TONE_ITEM_CLASSES.priority} ${
+        isDragging ? "z-10 shadow-lg opacity-90" : ""
+      }`}
+    >
+      <button
+        type="button"
+        className="cursor-grab touch-none text-accent-mint/50 transition hover:text-accent-mint active:cursor-grabbing"
+        aria-label="Arrastar para reordenar"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical size={14} />
+      </button>
+      <span className="text-sm text-text-primary">{value}</span>
+    </div>
+  );
+}
+
+function ReorderableList({
+  title,
+  items,
+  onChange,
+}: {
+  title: string;
+  items: string[];
+  onChange: (items: string[]) => void;
+}) {
+  const ids = items.map((_, i) => `priority-${i}`);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = ids.indexOf(active.id as string);
+    const newIndex = ids.indexOf(over.id as string);
+    onChange(arrayMove(items, oldIndex, newIndex));
+  };
+
+  return (
+    <div className={`rounded-md border p-5 ${TONE_CLASSES.priority}`}>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-sm font-medium uppercase tracking-wide text-text-secondary">
+          {title}
+        </h3>
+        <span className="rounded-full bg-surface px-2 py-0.5 text-xs text-text-muted">
+          {items.length}
+        </span>
+      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+          <div className="space-y-2">
+            {items.map((item, index) => (
+              <SortableItem
+                key={ids[index]}
+                id={ids[index]}
+                value={item}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+      <p className="mt-3 text-center text-xs text-text-muted">
+        Arraste para reordenar prioridades
+      </p>
+    </div>
+  );
+}
+
+type EditableDiagnosisProps = {
+  initialDiagnosis?: DiagnosisResponse | null;
+};
 
 export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) {
   const router = useRouter();
@@ -68,13 +313,11 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
   );
 
   useEffect(() => {
-    if (!diagnosis) {
-      setDiagnosis(getStoredDiagnosis());
-    }
-  }, [diagnosis]);
-
-  useEffect(() => {
-    if (!diagnosis) {
+    if (diagnosis) return;
+    const stored = getStoredDiagnosis();
+    if (stored) {
+      setDiagnosis(stored);
+    } else {
       router.replace("/onboarding");
     }
   }, [diagnosis, router]);
@@ -94,6 +337,11 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
       setStoredDiagnosis(next);
       return next;
     });
+  };
+
+  const handleRestart = () => {
+    clearStoredDiagnosis();
+    router.push("/");
   };
 
   return (
@@ -126,24 +374,25 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
             items={diagnosis.gaps}
             onChange={(gaps) => updateDiagnosis({ gaps })}
           />
-          <EditableList
+          <ReorderableList
             title="Prioridades iniciais"
-            tone="priority"
             items={diagnosis.starting_priorities}
-            onChange={(starting_priorities) => updateDiagnosis({ starting_priorities })}
+            onChange={(starting_priorities) =>
+              updateDiagnosis({ starting_priorities })
+            }
           />
         </div>
 
-        <div className="mt-6 rounded-card border border-border bg-surface p-5 text-sm text-text-secondary">
+        <div className="mt-6 rounded-md border border-border bg-surface p-5 text-sm text-text-secondary">
           <strong className="text-text-primary">Avaliação por evidência.</strong>{" "}
           Career Forge não deixa marcar tópicos como concluídos sem provar
           entendimento numa entrevista com a IA.
         </div>
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link href="/onboarding">
-            <Button variant="ghost">Voltar ao diagnóstico</Button>
-          </Link>
+          <Button variant="ghost" onClick={handleRestart}>
+            Refazer diagnóstico
+          </Button>
           <Link href="/forge" data-testid="generate-roadmap">
             <Button>Gerar roadmap →</Button>
           </Link>

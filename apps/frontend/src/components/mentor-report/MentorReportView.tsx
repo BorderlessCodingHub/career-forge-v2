@@ -14,7 +14,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
 
   return (
     <article
-      className="rounded-xl border border-border bg-surface-elevated p-5"
+      className="rounded-md border border-border bg-surface-elevated p-5"
       data-testid={`mentor-report-entry-${entry.node_id}`}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -37,7 +37,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
       {(entry.strengths.length > 0 || entry.gaps.length > 0) && (
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           {entry.strengths.length > 0 && (
-            <div className="rounded-lg border border-success/30 bg-success/5 p-4">
+            <div className="rounded-md border border-success/30 bg-success/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-success">
                 Evidências positivas
               </p>
@@ -52,7 +52,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
             </div>
           )}
           {entry.gaps.length > 0 && (
-            <div className="rounded-lg border border-warning/30 bg-warning/5 p-4">
+            <div className="rounded-md border border-warning/30 bg-warning/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-warning">
                 Lacunas observadas
               </p>
@@ -70,7 +70,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
       )}
 
       {entry.mentor_summary && (
-        <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+        <div className="mt-4 rounded-md border border-border bg-surface p-4">
           <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
             Resumo para mentor
           </p>
@@ -79,7 +79,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
       )}
 
       {entry.recommended_intervention && (
-        <div className="mt-4 rounded-lg border border-accent/30 bg-accent/10 p-4">
+        <div className="mt-4 rounded-md border border-accent/30 bg-accent/10 p-4">
           <p className="text-xs font-semibold uppercase tracking-widest text-accent">
             Intervenção recomendada
           </p>
@@ -93,7 +93,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
 export function MentorReportView({ report }: MentorReportViewProps) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10" data-screen="mentor-report">
-      <div className="mb-8 rounded-xl border border-border bg-surface px-5 py-4">
+      <div className="mb-8 rounded-md border border-border bg-surface px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">
           Relatório Borderless
         </p>
@@ -105,7 +105,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
         </p>
       </div>
 
-      <div className="mb-8 grid gap-4 rounded-xl border border-border bg-surface-elevated p-5 sm:grid-cols-2">
+      <div className="mb-8 grid gap-4 rounded-md border border-border bg-surface-elevated p-5 sm:grid-cols-2">
         <div>
           <p className="text-xs uppercase tracking-widest text-text-muted">Aluno</p>
           <p className="mt-1 text-lg font-medium text-text-primary">{report.display_name}</p>
@@ -125,7 +125,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
       </div>
 
       {report.learner_gaps.length > 0 && (
-        <div className="mb-8 rounded-xl border border-warning/30 bg-warning/5 p-5">
+        <div className="mb-8 rounded-md border border-warning/30 bg-warning/5 p-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-warning">
             Lacunas do diagnóstico inicial
           </p>
@@ -143,7 +143,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
       )}
 
       {report.validations.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
+        <div className="rounded-md border border-dashed border-border bg-surface p-8 text-center">
           <p className="text-sm text-text-muted">
             Nenhuma validação registrada ainda. Peça ao aluno para validar um tópico na trilha.
           </p>

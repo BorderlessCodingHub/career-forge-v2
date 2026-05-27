@@ -7,7 +7,7 @@ type MissionBannerProps = {
 export function MissionBanner({ plan }: MissionBannerProps) {
   return (
     <div
-      className="mx-auto mt-8 max-w-3xl rounded-xl border border-warning/40 bg-warning/10 px-5 py-4"
+      className="mx-auto mt-8 max-w-3xl rounded-md border border-warning/40 bg-warning/10 px-5 py-4"
       data-testid="adaptive-mission-banner"
       data-screen="adaptive-state"
     >

@@ -87,7 +87,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-2 py-1 text-text-muted hover:bg-surface hover:text-text-primary"
+            className="rounded-md px-2 py-1 text-text-muted hover:bg-surface hover:text-text-primary"
           >
             ✕
           </button>
@@ -108,7 +108,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
 
         <div className="flex-1 space-y-3 overflow-y-auto px-5 py-5" data-testid="mentor-messages">
           {messages.length === 0 && (
-            <p className="rounded-lg border border-border bg-surface px-4 py-3 text-sm text-text-secondary">
+            <p className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary">
               Pergunte sobre referências, lacunas da validação ou como praticar{" "}
               {node?.title ?? "sua trilha"}.
             </p>
@@ -116,7 +116,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
           {messages.map((message, index) => (
             <div
               key={`${message.role}-${index}`}
-              className={`max-w-[90%] rounded-xl px-4 py-3 text-sm ${
+              className={`max-w-[90%] rounded-md px-4 py-3 text-sm ${
                 message.role === "user"
                   ? "ml-auto bg-accent/20 text-text-primary"
                   : "mr-auto border border-border bg-surface text-text-secondary"
@@ -143,7 +143,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
                 if (event.key === "Enter") void send();
               }}
               placeholder="Pergunte algo sobre sua trilha..."
-              className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted"
+              className="flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted"
               data-testid="mentor-input"
             />
             <Button

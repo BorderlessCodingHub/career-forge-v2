@@ -31,6 +31,9 @@ const config: Config = {
         border: "var(--border)",
         "border-soft": "var(--border-soft)",
       },
+      borderColor: {
+        DEFAULT: "var(--border)",
+      },
       borderRadius: {
         card: "12px",
         node: "16px",
