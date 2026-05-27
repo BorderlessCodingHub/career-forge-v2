@@ -122,10 +122,12 @@ def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResp
     track = catalog["track"]
     catalog_nodes = sorted(catalog["nodes"], key=lambda n: n.get("sort_order", 0))
     catalog_ids = {node["id"] for node in catalog_nodes}
+    generated_rows = [
+        row for node_id, row in state_by_node.items() if node_id not in catalog_ids
+    ]
     generated_nodes = [
-        _catalog_node_from_generated_row(row, sort_order=len(catalog_nodes) + index)
-        for index, (node_id, row) in enumerate(sorted(state_by_node.items()))
-        if node_id not in catalog_ids
+        _catalog_node_from_generated_row(row)
+        for row in sorted(generated_rows, key=_generated_row_sort_order)
     ]
     if generated_nodes:
         nodes = [
@@ -171,7 +173,7 @@ def sync_user_graph(
             "mastery_score": node.mastery_score,
             "priority": node.priority.value if node.priority else None,
             "rationale": node.rationale,
-            "evidence": _evidence_from_node(node),
+            "evidence": _evidence_from_node(node, sort_order=index),
         }
         if row:
             for key, value in payload.items():
@@ -197,8 +199,10 @@ def _evidence_items(evidence: list[dict[str, Any]], item_type: str) -> list[dict
     ]
 
 
-def _evidence_from_node(node: UserSkillNode) -> list[dict[str, Any]]:
+def _evidence_from_node(node: UserSkillNode, *, sort_order: int) -> list[dict[str, Any]]:
     return [
+        {"type": "metadata", "sort_order": sort_order},
+    ] + [
         {"type": "task", **task}
         for task in node.tasks
     ] + [
@@ -208,7 +212,21 @@ def _evidence_from_node(node: UserSkillNode) -> list[dict[str, Any]]:
 
 
 def _ensure_skill_node(session: Session, node: UserSkillNode, *, sort_order: int) -> None:
-    if session.get(SkillNode, node.node_id) is not None:
+    existing = session.get(SkillNode, node.node_id)
+    if existing is not None:
+        if existing.track_id == "ai-generated":
+            existing.title = node.title or node.node_id
+            existing.description = node.rationale
+            existing.sort_order = sort_order
+            existing.prerequisites = node.prerequisites
+            existing.outcomes = [
+                task.get("outcome", "") for task in node.tasks if task.get("outcome")
+            ]
+            existing.rubric = [
+                task.get("evidence_prompt", "")
+                for task in node.tasks
+                if task.get("evidence_prompt")
+            ]
         return
     session.add(
         SkillNode(
@@ -233,11 +251,10 @@ def _ensure_skill_node(session: Session, node: UserSkillNode, *, sort_order: int
 
 def _catalog_node_from_generated_row(
     row: UserSkillNodeRow,
-    *,
-    sort_order: int,
 ) -> dict[str, Any]:
     evidence = row.evidence or []
     tasks = _evidence_items(evidence, "task")
+    sort_order = _generated_row_sort_order(row)
     return {
         "id": row.skill_node_id,
         "title": row.skill_node.title if row.skill_node else row.skill_node_id,
@@ -254,3 +271,16 @@ def _catalog_node_from_generated_row(
             if task.get("evidence_prompt")
         ],
     }
+
+
+def _generated_row_sort_order(row: UserSkillNodeRow) -> int:
+    evidence = row.evidence or []
+    for item in evidence:
+        if isinstance(item, dict) and item.get("type") == "metadata":
+            try:
+                return int(item.get("sort_order", 0))
+            except (TypeError, ValueError):
+                return 0
+    if row.skill_node is not None:
+        return row.skill_node.sort_order
+    return 0
