@@ -95,10 +95,11 @@ Short explicit negative answers (for example, **"Nada."**) are valid evidence fo
 **During generation:**
 - Header: "Forjando sua trilha personalizada"
 - Counter: elapsed, passos concluídos
+- Etapas instantâneas têm pausa curta (~1.5s) para manter sensação de "IA pensando" sem inflar latência real.
 - Pesquisa ao vivo: resumo formatado + cards de fontes oficiais quando `research_enrich` roda
 - Planner/evaluator: artifacts mostram criação do plano e verdict `ship|revise`; quando há revise, a IA aplica feedback antes do `graph_ready`.
 - Cursor/stream tail ativo até `graph_ready`
-- Após `graph_ready`, manter a timeline visível por alguns segundos antes do redirect para o reveal, para o usuário perceber pesquisa + consolidação.
+- Após `graph_ready`, manter a timeline na tela e mostrar CTA manual **"Ver roadmap"** para facilitar debug e controle do usuário.
 
 **NOT during generation:**
 - Skill graph preview

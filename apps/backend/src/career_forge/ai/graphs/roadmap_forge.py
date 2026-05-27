@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import re
 from collections.abc import AsyncIterator
 from typing import Any
@@ -42,7 +43,7 @@ from career_forge.services.forge_context import (
 
 ROADMAP_PATH = roadmap_json_path()
 
-STREAM_DELAY_SEC = 0.12
+DEFAULT_STREAM_DELAY_SEC = 1.5
 MAX_RESEARCH_ITERATIONS = 3
 MAX_EVALUATION_ITERATIONS = 2
 
@@ -302,6 +303,12 @@ def _clean_research_summary(summary: str) -> str:
     return without_bare_urls.strip()
 
 
+async def _sleep_between_events() -> None:
+    delay = float(os.getenv("FORGE_STREAM_DELAY_SEC", str(DEFAULT_STREAM_DELAY_SEC)))
+    if delay > 0:
+        await asyncio.sleep(delay)
+
+
 def _planner_artifact(iteration: int) -> dict[str, Any]:
     return {
         "type": "artifact_found",
@@ -340,7 +347,7 @@ class RoadmapForgeGraphRunnable:
         yield emit_chain_start(self.graph_name, run_id)
 
         for payload in build_forge_intro_events(diagnosis):
-            await asyncio.sleep(STREAM_DELAY_SEC)
+            await _sleep_between_events()
             yield emit_chain_stream(
                 payload.get("step", "emit_forge_event"),
                 run_id,
@@ -351,7 +358,7 @@ class RoadmapForgeGraphRunnable:
         research_events: list[dict[str, Any]] = []
         async for payload in iter_research_enrichment_events(context, search_client):
             research_events.append(payload)
-            await asyncio.sleep(STREAM_DELAY_SEC)
+            await _sleep_between_events()
             yield emit_chain_stream(
                 payload.get("step", "emit_forge_event"),
                 run_id,
@@ -409,7 +416,7 @@ class RoadmapForgeGraphRunnable:
 
         tail_events = build_forge_tail_events(diagnosis)
         for payload in tail_events:
-            await asyncio.sleep(STREAM_DELAY_SEC)
+            await _sleep_between_events()
             yield emit_chain_stream(
                 payload.get("step", "emit_forge_event"),
                 run_id,

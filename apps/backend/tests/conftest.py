@@ -23,6 +23,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("ENV", "local")
     monkeypatch.setenv("DIAGNOSIS_SESSION_STORE", "memory")
     monkeypatch.setenv("GRAPH_RUN_STORE", "memory")
+    monkeypatch.setenv("FORGE_STREAM_DELAY_SEC", "0")
     set_graph_run_store(None)
     set_diagnosis_session_store(None)
     set_diagnosis_interview_llm(MockDiagnosisInterviewLlm())

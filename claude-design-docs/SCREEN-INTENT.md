@@ -74,7 +74,7 @@
 | Event types | `reasoning_delta`, `artifact_found`, `decision` visual language; `artifact_found` may include formatted summaries, official source cards, planner/evaluator verdicts |
 | Feedback | Sequential timeline items — **no generic spinner as primary UX** |
 | Header | "Forjando sua trilha personalizada" + elapsed / passos |
-| Exit | On `graph_ready` → brief visible "grafo pronto" hold → animation reveal |
+| Exit | On `graph_ready` → show manual **"Ver roadmap"** CTA → animation reveal |
 
 **Can evolve:** SSE reconnect, scroll auto-behavior, skip control
 
