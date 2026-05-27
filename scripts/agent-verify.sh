@@ -43,6 +43,8 @@ check test -f apps/backend/src/career_forge/api/diagnosis_interview.py
 check test -f apps/backend/src/career_forge/services/diagnosis_session.py
 check test -f apps/backend/src/career_forge/api/mentor.py
 check test -f apps/backend/src/career_forge/ai/agents/mentor.py
+check test -f apps/backend/src/career_forge/services/profile_diagnosis.py
+check test -f apps/backend/src/career_forge/schemas/profile_diagnosis.py
 check test -f apps/backend/src/career_forge/db/stores/postgres_graph_run.py
 check test -f apps/backend/src/career_forge/persistence/store_mode.py
 check test ! -f apps/backend/src/career_forge/database.py

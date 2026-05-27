@@ -111,6 +111,9 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-50** — VPS production deploy hardening (GHCR namespace `pedroalano`, monorepo Dockerfile paths in CI, nginx envsubst safety, curl-based post-deploy health check)
 - [x] **HAC-51** — Complete application overview + full documentation sync
 - [x] **HAC-59** — Prod skill catalog bootstrap (always seed `skill_nodes` on deploy; `SEED_DEMO_ANA` opt-in for demo Ana)
+- [x] **HAC-58** — Prod Postgres persistence stores (`DIAGNOSIS_SESSION_STORE` + `GRAPH_RUN_STORE`)
+- [x] **HAC-53** — Diagnosis screen UX (view-first edit, dnd-kit reorder)
+- [x] **HAC-52** — Roadmap motor API (`POST /diagnosis/confirm`, forge loads profile, 202 + run_id)
 
 ---
 

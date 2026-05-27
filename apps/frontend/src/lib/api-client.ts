@@ -103,6 +103,20 @@ export async function submitDiagnosisTurn(
   );
 }
 
+export async function confirmDiagnosis(payload: {
+  diagnosis: DiagnosisResponse;
+  goal_id: string;
+  motivation: string;
+  years_xp?: DiagnosisIntake["years_xp"];
+  cv?: DiagnosisIntake["cv"];
+  answers?: Record<string, string>;
+}): Promise<{ user_id: string; profile_id: string; status: "confirmed" }> {
+  return apiFetch("/diagnosis/confirm", {
+    method: "POST",
+    body: JSON.stringify({ user_id: getUserId(), ...payload }),
+  });
+}
+
 export async function startForgeRun(
   diagnosis: DiagnosisResponse,
   userId?: string,

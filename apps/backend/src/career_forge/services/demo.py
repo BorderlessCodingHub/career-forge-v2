@@ -28,8 +28,12 @@ def get_demo_ana(session: Session) -> DemoAnaResponse:
             raise RuntimeError(msg)
 
     profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
+    from career_forge.schemas.profile_diagnosis import diagnosis_response_from_profile
+
     diagnosis_raw = profile.diagnosis if profile else load_demo_diagnosis()
-    diagnosis = DiagnosisResponse.model_validate(diagnosis_raw)
+    diagnosis = diagnosis_response_from_profile(diagnosis_raw)
+    if diagnosis is None:
+        diagnosis = DiagnosisResponse.model_validate(diagnosis_raw)
 
     validations = session.scalars(
         select(Validation)

@@ -78,7 +78,7 @@ def test_post_forge_api(client, diagnosis_dict: dict) -> None:
         "/forge",
         json={"user_id": "demo-ana", "diagnosis": diagnosis_dict},
     )
-    assert response.status_code == 200
+    assert response.status_code == 202
     payload = response.json()
     assert payload["status"] == "pending"
     assert payload["run_id"]
