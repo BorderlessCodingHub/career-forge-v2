@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-27** · Last merge: **HAC-53 + HAC-58** (diagnosis UX + prod Postgres stores)
+Last updated: **2026-05-27** · Last merge: **HAC-52** (diagnosis confirm + forge motor API)
 
 ---
 
@@ -43,6 +43,7 @@ Last updated: **2026-05-27** · Last merge: **HAC-53 + HAC-58** (diagnosis UX + 
 | Prod skill catalog seed on deploy | ✅ Done | HAC-59 — prod/dev entrypoints always run `scripts.seed`; `SEED_DEMO_ANA` only for demo Ana; `data/roadmap.json` documented in DEPLOY-VPS |
 | Prod Postgres persistence stores | ✅ Done | HAC-58 — `DIAGNOSIS_SESSION_STORE` + `GRAPH_RUN_STORE` → Postgres when `ENV=production` |
 | Diagnosis screen UX (view-first edit) | ✅ Done | HAC-53 — inline edit icons, add/delete, dnd-kit priority reorder, refazer diagnóstico |
+| Diagnosis confirm + forge motor API | ✅ Done | HAC-52 — `POST /diagnosis/confirm`, `POST /forge` loads profile (202 + run_id) |
 
 ---
 
@@ -54,9 +55,9 @@ Last updated: **2026-05-27** · Last merge: **HAC-53 + HAC-58** (diagnosis UX + 
 |-------|-------|-------|
 | **HAC-58** | Prod Postgres stores | **Done** |
 | **HAC-53** | Diagnosis screen UX | **Done** |
-| **HAC-52** | Roadmap motor API — persist + forge | **Next** |
-| **HAC-57** | Diagnosis confirm → save → forge (Arthur) | Blocked by HAC-52 |
-| **HAC-54/55** | Web search + LLM graph | Backlog |
+| **HAC-52** | Roadmap motor API — persist + forge | **Done** |
+| **HAC-57** | Diagnosis confirm → save → forge (Arthur) | **Ready** (wire FE to HAC-52) |
+| **HAC-54/55** | Web search + LLM graph | **Next** |
 
 ### Previous ops batch
 
