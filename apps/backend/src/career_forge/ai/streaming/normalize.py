@@ -39,9 +39,7 @@ def normalize_langchain_event(
 
     custom = _GRAPH_NORMALIZERS.get(graph_name)
     if custom is not None:
-        mapped = custom(event)
-        if mapped is not None:
-            return mapped
+        return custom(event)
 
     return _default_normalizer(event, graph_name)
 
@@ -74,11 +72,6 @@ def _normalize_forge(lc_event: LangChainStreamEvent) -> StreamEvent | None:
         forge_payload = chunk.get("forge_event") if isinstance(chunk, dict) else chunk
         if isinstance(forge_payload, dict) and forge_payload.get("type"):
             return parse_forge_event(forge_payload)
-
-    if event_type == "on_chain_end":
-        output = chain_end_output(lc_event)
-        if isinstance(output, dict) and output.get("type") == "graph_ready":
-            return parse_forge_event(output)
 
     if event_type == "on_chain_error":
         return ForgeErrorEvent(message=chain_error_message(lc_event))

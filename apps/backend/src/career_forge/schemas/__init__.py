@@ -47,6 +47,7 @@ from career_forge.schemas.forge import (
     NodeUpdatedEvent,
     ReasoningDeltaEvent,
     RoadmapForgeEvent,
+    SearchSource,
     StepCompleteEvent,
     parse_forge_event,
 )
@@ -90,6 +91,7 @@ __all__ = [
     "ReasoningDeltaEvent",
     "ReasoningEntry",
     "RoadmapForgeEvent",
+    "SearchSource",
     "SkillNode",
     "SkillStatus",
     "StepCompleteEvent",

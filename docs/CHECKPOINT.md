@@ -119,12 +119,12 @@ Post-onboarding LangGraph loop:
 
 1. `load_topics` — roadmap.json catalog
 2. `analyze_gaps` — LLM streams reasoning
-3. `research_enrich` — history + feedback
+3. `research_enrich` — OpenAI native `web_search` + official source citations
 4. `accumulate_graph` — **Python merge** into SkillGraphState (LLM proposes, code disposes)
 5. `should_continue` — max 3 iterations
 6. `emit_final` — SSE `graph_ready`
 
-SSE events: `reasoning_delta`, `artifact_found`, `node_updated`, `step_complete`, `graph_ready`
+SSE events: `reasoning_delta`, `artifact_found` (with `query` + `sources[]` for web search), `node_updated`, `step_complete`, `graph_ready`
 
 Full spec: [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md)
 

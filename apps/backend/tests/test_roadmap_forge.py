@@ -8,10 +8,12 @@ from career_forge.ai.executor import GraphExecutor
 from career_forge.ai.factory import AgentFactory
 from career_forge.ai.graphs.diagnosis import build_diagnosis_response
 from career_forge.ai.graphs.roadmap_forge import (
+    RoadmapForgeGraphRunnable,
     build_accumulated_graph,
     build_forge_timeline,
 )
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
+from career_forge.ai.tools.openai_web_search import WebSearchResult, WebSearchSource
 from career_forge.schemas.diagnosis import DiagnosisRequest
 
 _SAMPLE = DiagnosisRequest(
@@ -53,7 +55,27 @@ class TestRoadmapForgeEngine:
 
 @pytest.fixture
 def executor() -> GraphExecutor:
-    return GraphExecutor(factory=AgentFactory(), store=InMemoryGraphRunStore())
+    factory = AgentFactory()
+    factory.register(
+        "roadmap_forge",
+        lambda: RoadmapForgeGraphRunnable(FakeSearchClient()),
+    )
+    return GraphExecutor(factory=factory, store=InMemoryGraphRunStore())
+
+
+class FakeSearchClient:
+    async def search(self, prompt: str) -> WebSearchResult:
+        return WebSearchResult(
+            query="FastAPI official docs APIs",
+            summary="Fontes oficiais para APIs modernas.",
+            sources=[
+                WebSearchSource(
+                    title="FastAPI",
+                    url="https://fastapi.tiangolo.com/",
+                    snippet="FastAPI docs",
+                ),
+            ],
+        )
 
 
 @pytest.mark.asyncio
@@ -69,6 +91,10 @@ async def test_roadmap_forge_graph_collect(
     result = await executor.execute(run, stream=False)
     assert isinstance(result, GraphRunResult)
     assert result.run.status == "completed"
+    assert any(
+        event["type"] == "artifact_found" and event.get("sources")
+        for event in result.events
+    )
     assert result.events[-1]["type"] == "graph_ready"
     assert len(result.events[-1]["graph"]) >= 6
 

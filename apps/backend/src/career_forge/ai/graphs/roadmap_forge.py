@@ -6,12 +6,18 @@ import asyncio
 import json
 from collections.abc import AsyncIterator
 from typing import Any
+
 from career_forge.ai.streaming.langchain_events import (
     LangChainStreamEvent,
     emit_chain_end,
     emit_chain_start,
     emit_chain_stream,
     new_run_id,
+)
+from career_forge.ai.tools.openai_web_search import (
+    WebSearchClient,
+    WebSearchResult,
+    build_openai_web_search_client_from_env,
 )
 from career_forge.paths import roadmap_json_path
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
@@ -81,7 +87,11 @@ def build_accumulated_graph(diagnosis: DiagnosisResponse) -> list[UserSkillNode]
     return nodes
 
 
-def build_forge_timeline(diagnosis: DiagnosisResponse) -> list[dict[str, Any]]:
+def build_forge_timeline(
+    diagnosis: DiagnosisResponse,
+    *,
+    research_artifacts: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
     """Ordered forge SSE payloads for the four pipeline steps."""
     persona = diagnosis.profile.persona_slug or "perfil"
     track = diagnosis.profile.track_id
@@ -127,13 +137,16 @@ def build_forge_timeline(diagnosis: DiagnosisResponse) -> list[dict[str, Any]]:
                 },
             )
 
+    events.append(
+        {
+            "type": "reasoning_delta",
+            "text": "Pesquisando fontes oficiais para enriquecer missões e referências…",
+            "step": "research_enrich",
+        },
+    )
+    events.extend(research_artifacts or [])
     events.extend(
         [
-            {
-                "type": "reasoning_delta",
-                "text": "Pesquisando tendências 2026 em APIs e space tech para enriquecer missões…",
-                "step": "research_enrich",
-            },
             {
                 "type": "step_complete",
                 "step": "research_enrich",
@@ -158,10 +171,49 @@ def build_forge_timeline(diagnosis: DiagnosisResponse) -> list[dict[str, Any]]:
     return events
 
 
+def build_research_prompt(diagnosis: DiagnosisResponse, input_data: dict[str, Any]) -> str:
+    goal = input_data.get("goal_id") or diagnosis.profile.track_id
+    priorities = ", ".join(diagnosis.starting_priorities[:3]) or "primeiros fundamentos"
+    gaps = "; ".join(diagnosis.gaps[:3]) or "lacunas iniciais"
+    return (
+        "Use web_search obrigatoriamente para encontrar fontes oficiais de estudo. "
+        "Priorize documentação oficial (OpenAI, FastAPI, MDN, Python, Next.js, PostgreSQL, roadmap.sh) "
+        "quando relevante. Responda em português com um resumo curto e cite as fontes.\n\n"
+        f"Objetivo do aluno: {goal}\n"
+        f"Lacunas: {gaps}\n"
+        f"Prioridades iniciais: {priorities}\n"
+    )
+
+
+async def research_enrichment_events(
+    diagnosis: DiagnosisResponse,
+    input_data: dict[str, Any],
+    search_client: WebSearchClient,
+) -> list[dict[str, Any]]:
+    result = await search_client.search(build_research_prompt(diagnosis, input_data))
+    return [_research_artifact(result)]
+
+
+def _research_artifact(result: WebSearchResult) -> dict[str, Any]:
+    return {
+        "type": "artifact_found",
+        "label": "Pesquisa ao vivo: fontes oficiais",
+        "detail": result.summary or f"{len(result.sources)} fontes encontradas",
+        "query": result.query,
+        "sources": [
+            {"title": source.title, "url": source.url, "snippet": source.snippet}
+            for source in result.sources
+        ],
+    }
+
+
 class RoadmapForgeGraphRunnable:
     """GraphRunnable — load_topics → analyze_gaps → research_enrich → accumulate_graph."""
 
     graph_name = "roadmap_forge"
+
+    def __init__(self, search_client: WebSearchClient | None = None) -> None:
+        self._search_client = search_client
 
     async def astream_events(
         self,
@@ -172,10 +224,20 @@ class RoadmapForgeGraphRunnable:
         del version
         raw_diagnosis = input_data.get("diagnosis") or input_data
         diagnosis = DiagnosisResponse.model_validate(raw_diagnosis)
-        timeline = build_forge_timeline(diagnosis)
         run_id = new_run_id()
 
         yield emit_chain_start(self.graph_name, run_id)
+
+        search_client = self._search_client or build_openai_web_search_client_from_env()
+        research_artifacts = await research_enrichment_events(
+            diagnosis,
+            input_data,
+            search_client,
+        )
+        timeline = build_forge_timeline(
+            diagnosis,
+            research_artifacts=research_artifacts,
+        )
 
         for payload in timeline:
             await asyncio.sleep(STREAM_DELAY_SEC)

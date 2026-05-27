@@ -49,7 +49,7 @@ class SkillGraphState(TypedDict):
 |------|------------------|---------|
 | `load_topics` | Carrega catálogo + perfil do Postgres | evento `step_complete` |
 | `analyze_gaps` | LLM compara perfil vs catálogo; identifica lacunas/redundâncias | `reasoning_delta` (token stream) |
-| `research_enrich` | LLM + tools (opcional) enriquece prioridades/recursos | `artifact_found`, `reasoning_delta` |
+| `research_enrich` | OpenAI native `web_search` via LangChain content blocks; enriquece prioridades/recursos com fontes oficiais | `artifact_found`, `reasoning_delta` |
 | `accumulate_graph` | **Código Python** merge nodes (status, mastery, priority) — NÃO confia na LLM | `node_updated` por nó |
 | `should_continue` | Conditional edge: iteration < max AND gaps significativos | — |
 | `emit_final` | Persiste `user_skill_nodes` + emite `graph_ready` | `graph_ready` |
@@ -84,12 +84,14 @@ Eventos (`RoadmapForgeEvent`):
 ```typescript
 type RoadmapForgeEvent =
   | { type: "reasoning_delta"; text: string; step: string }
-  | { type: "artifact_found"; label: string; detail: string }
+  | { type: "artifact_found"; label: string; detail: string; query?: string; sources?: ResearchSource[] }
   | { type: "node_updated"; node: UserSkillNodePartial }
   | { type: "step_complete"; step: string; iteration: number }
   | { type: "graph_ready"; graph: UserSkillNode[] }
   | { type: "error"; message: string };
 ```
+
+`ResearchSource` vem de citações nos `AIMessage.content_blocks` do LangChain, não de HTTP manual para search APIs externas.
 
 Implementação: `GraphExecutor` com `astream_events` v2 + normalização em `ai/streaming/events.py`.
 
