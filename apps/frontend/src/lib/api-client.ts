@@ -4,6 +4,7 @@ import type {
   DiagnosisRequest,
   DiagnosisResponse,
   DiagnosisRunResponse,
+  DiagnosisStreamEvent,
   ForgeRunResponse,
   InterviewTurnRequest,
   InterviewTurnResponse,
@@ -15,11 +16,19 @@ import type {
   MockInterviewRequest,
   MockInterviewRunResponse,
   RoadmapResponse,
+  RoadmapForgeEvent,
   RoadmapSyncNode,
   ValidationQuestionsResponse,
   ValidationRequest,
   ValidationRunResponse,
 } from "@/types/contracts";
+import { consumeFetchEventStream } from "@/lib/sse/consume";
+import {
+  applyForgeStreamEvent,
+  createInitialForgeStreamState,
+  parseForgeStreamEvent,
+  type ForgeStreamSideEffects,
+} from "@/lib/forge-stream";
 import { getUserId } from "@/lib/user-session";
 
 const backendUrl =
@@ -90,6 +99,96 @@ export async function startDiagnosisInterview(
   });
 }
 
+function parseDiagnosisStreamEvent(raw: Record<string, unknown>): DiagnosisStreamEvent | null {
+  if (typeof raw.type !== "string") return null;
+  return raw as DiagnosisStreamEvent;
+}
+
+function graphOutputToTurnResponse(
+  output: InterviewTurnResponse & { session?: unknown },
+): InterviewTurnResponse {
+  return {
+    session_id: output.session_id,
+    status: output.status,
+    round_count: output.round_count ?? 0,
+    questions: output.questions ?? [],
+    mapping_progress: output.mapping_progress ?? [],
+    diagnosis: output.diagnosis,
+  };
+}
+
+export async function getDiagnosisInterviewSession(
+  sessionId: string,
+): Promise<InterviewTurnResponse> {
+  return apiFetch<InterviewTurnResponse>(
+    `/diagnosis/interview/${encodeURIComponent(sessionId)}`,
+  );
+}
+
+async function consumeDiagnosisInterviewStream(
+  path: string,
+  body: unknown,
+  onEvent?: (event: DiagnosisStreamEvent) => void,
+): Promise<InterviewTurnResponse> {
+  let finalResponse: InterviewTurnResponse | null = null;
+  let streamError: Error | null = null;
+
+  try {
+    await consumeFetchEventStream<DiagnosisStreamEvent>(
+      `${backendUrl}${path}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+      (_eventName, payload) => {
+        onEvent?.(payload);
+        if (payload.type === "error") {
+          streamError = new Error(payload.message);
+          return;
+        }
+        if (payload.type === "graph_complete") {
+          finalResponse = graphOutputToTurnResponse(payload.output);
+        }
+      },
+      (raw) => parseDiagnosisStreamEvent(raw as Record<string, unknown>),
+    );
+  } catch (cause) {
+    const message =
+      cause instanceof Error ? cause.message : "Network request failed";
+    throw new Error(`Cannot reach API ${backendUrl}${path}: ${message}.`);
+  }
+
+  if (streamError) throw streamError;
+  if (!finalResponse) {
+    throw new Error("Stream terminou sem resposta final do diagnóstico.");
+  }
+  return finalResponse;
+}
+
+export async function streamDiagnosisInterviewStart(
+  payload: DiagnosisIntake,
+  onEvent?: (event: DiagnosisStreamEvent) => void,
+): Promise<InterviewTurnResponse> {
+  return consumeDiagnosisInterviewStream(
+    "/diagnosis/interview/start/stream",
+    { user_id: getUserId(), ...payload },
+    onEvent,
+  );
+}
+
+export async function streamDiagnosisInterviewTurn(
+  sessionId: string,
+  payload: InterviewTurnRequest,
+  onEvent?: (event: DiagnosisStreamEvent) => void,
+): Promise<InterviewTurnResponse> {
+  return consumeDiagnosisInterviewStream(
+    `/diagnosis/interview/${encodeURIComponent(sessionId)}/turn/stream`,
+    payload,
+    onEvent,
+  );
+}
+
 export async function submitDiagnosisTurn(
   sessionId: string,
   payload: InterviewTurnRequest,
@@ -130,6 +229,31 @@ export async function startForgeRun(
 
 export function forgeStreamUrl(runId: string): string {
   return `${backendUrl}/forge/${runId}/stream`;
+}
+
+export async function streamForgeRun(
+  runId: string,
+  effects: ForgeStreamSideEffects = {},
+): Promise<RoadmapForgeEvent[]> {
+  let state = createInitialForgeStreamState();
+  let streamError: Error | null = null;
+
+  await consumeFetchEventStream<RoadmapForgeEvent>(
+    forgeStreamUrl(runId),
+    { method: "GET" },
+    (_eventName, payload) => {
+      if (payload.type === "error") {
+        streamError = new Error(payload.message);
+        effects.onError?.(payload.message);
+        return;
+      }
+      state = applyForgeStreamEvent(state, payload, effects);
+    },
+    parseForgeStreamEvent,
+  );
+
+  if (streamError) throw streamError;
+  return state.events;
 }
 
 export async function getRoadmap(userId?: string): Promise<RoadmapResponse> {

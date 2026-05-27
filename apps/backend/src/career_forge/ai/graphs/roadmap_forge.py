@@ -6,8 +6,13 @@ import asyncio
 import json
 from collections.abc import AsyncIterator
 from typing import Any
-from uuid import uuid4
-
+from career_forge.ai.streaming.langchain_events import (
+    LangChainStreamEvent,
+    emit_chain_end,
+    emit_chain_start,
+    emit_chain_stream,
+    new_run_id,
+)
 from career_forge.paths import roadmap_json_path
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
@@ -22,22 +27,6 @@ FORGE_STEPS = (
     "research_enrich",
     "accumulate_graph",
 )
-
-
-def _lc_event(
-    event: str,
-    name: str,
-    run_id: str,
-    data: dict[str, Any],
-) -> dict[str, Any]:
-    return {
-        "event": event,
-        "name": name,
-        "run_id": run_id,
-        "tags": [],
-        "metadata": {},
-        "data": data,
-    }
 
 
 def _load_catalog() -> dict[str, Any]:
@@ -179,29 +168,28 @@ class RoadmapForgeGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncIterator[LangChainStreamEvent]:
         del version
         raw_diagnosis = input_data.get("diagnosis") or input_data
         diagnosis = DiagnosisResponse.model_validate(raw_diagnosis)
         timeline = build_forge_timeline(diagnosis)
-        run_id = str(uuid4())
+        run_id = new_run_id()
 
-        yield _lc_event("on_chain_start", self.graph_name, run_id, {})
+        yield emit_chain_start(self.graph_name, run_id)
 
         for payload in timeline:
             await asyncio.sleep(STREAM_DELAY_SEC)
-            yield _lc_event(
-                "on_chain_stream",
+            yield emit_chain_stream(
                 payload.get("step", "emit_forge_event"),
                 run_id,
-                {"chunk": {"forge_event": payload}},
+                {"forge_event": payload},
             )
 
-        yield _lc_event(
-            "on_chain_end",
+        yield emit_chain_end(
             self.graph_name,
             run_id,
-            {"output": timeline[-1], "input": input_data},
+            output=timeline[-1],
+            input_data=input_data,
         )
 
 

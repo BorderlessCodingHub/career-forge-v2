@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from career_forge.ai.interview.script import (
+    build_round_questions,
+    round_index_for_count,
+)
 from career_forge.schemas.diagnosis import DiagnosisProfile, DiagnosisResponse
 from career_forge.schemas.diagnosis_interview import (
-    CTRR_DIMENSION_LABELS,
-    MAX_QUESTIONS_PER_TURN,
     RubricDimensionKey,
     BeliefState,
     CvSignals,
@@ -17,44 +19,102 @@ from career_forge.schemas.diagnosis_interview import (
     SATURATION_CONFIDENCE_THRESHOLD,
 )
 
+TRACK_BY_GOAL = {
+    "fullstack": "fullstack-beginner",
+    "data": "data-beginner",
+    "ai-ml": "ai-ml-beginner",
+    "web3": "web3-beginner",
+}
+
+
+def _boost_dim(
+    belief: BeliefState,
+    key: RubricDimensionKey,
+    confidence: float,
+    evidence: str,
+    note: str,
+) -> None:
+    dim = belief.dimensions[key]
+    new_conf = max(dim.confidence, confidence)
+    belief.dimensions[key] = RubricDimension(
+        key=key,
+        label=dim.label,
+        confidence=new_conf,
+        evidence=[*dim.evidence, evidence][:5],
+        status="mapped" if new_conf >= SATURATION_CONFIDENCE_THRESHOLD else "needs_clarification",
+        note=note or dim.note,
+    )
+
+
+def _apply_rich_answer(belief: BeliefState, text: str) -> None:
+    lower = text.lower()
+    score = min(0.88, 0.5 + len(text) / 100)
+
+    negative_proof = any(
+        phrase in lower
+        for phrase in (
+            "nunca",
+            "não tenho",
+            "nao tenho",
+            "sem prática",
+            "sem pratica",
+            "zero projeto",
+            "nenhum projeto",
+            "só teoria",
+            "so teoria",
+            "não fiz",
+            "nao fiz",
+        )
+    )
+
+    if negative_proof:
+        _boost_dim(
+            belief,
+            "hands_on_proof",
+            0.68,
+            text[:160],
+            "Sem prática hands-on ainda — baseline iniciante confirmado",
+        )
+    else:
+        _boost_dim(belief, "hands_on_proof", score, text[:160], text[:100])
+
+    if any(token in lower for token in ("semana", "dia", "hora", "consistent", "estudo", "português", "portugues", "inglês", "ingles")):
+        _boost_dim(
+            belief,
+            "constraints",
+            min(0.82, score),
+            text[:120],
+            "Tempo, idioma ou rotina de estudo mencionados",
+        )
+        _boost_dim(
+            belief,
+            "learning_velocity",
+            min(0.85, score),
+            text[:120],
+            "Ritmo e consistência mencionados na resposta",
+        )
+
+    if any(token in lower for token in ("git", "github", "api", "projeto", "app", "deploy")):
+        _boost_dim(
+            belief,
+            "background_transfer",
+            min(0.8, score - 0.05),
+            text[:120],
+            "Ferramentas e contexto prático citados",
+        )
+
+    if any(token in lower for token in ("tempo", "inglês", "budget", "bootcamp", "faculdade")):
+        _boost_dim(
+            belief,
+            "constraints",
+            min(0.78, score - 0.08),
+            text[:120],
+            "Restrições ou contexto real mencionados",
+        )
+
 
 class MockDiagnosisInterviewLlm:
     """Deterministic LLM for pytest — not used in production."""
-
-    QUESTION_BANK: dict[RubricDimensionKey, tuple[str, str]] = {
-        "learning_stage": (
-            "Como você descreveria seu nível atual com programação?",
-            "Ex.: estou no início, fiz um curso de JS há 3 meses.",
-        ),
-        "project_scope": (
-            "Qual foi o maior projeto que você já construiu ou tentou construir?",
-            "Ex.: um todo app, uma API simples, um site estático.",
-        ),
-        "background_context": (
-            "De onde você vem e como está estudando tecnologia hoje?",
-            "Ex.: migrei de outra área, estudo sozinho à noite.",
-        ),
-        "hands_on_evidence": (
-            "Conte algo concreto que você já fez ou tentou fazer na prática.",
-            "Ex.: subi um projeto no GitHub, fiz exercícios de lógica.",
-        ),
-        "git": (
-            "Você já usou Git ou GitHub em algum projeto?",
-            "Ex.: clone, commit, push — mesmo que básico.",
-        ),
-        "client_server": (
-            "Consegue explicar, com suas palavras, frontend vs backend?",
-            "Ex.: frontend é o que o usuário vê; backend processa dados.",
-        ),
-        "http_apis": (
-            "Você já fez ou viu uma requisição HTTP ou chamada de API?",
-            "Ex.: GET/POST, JSON, status code 200 ou 404.",
-        ),
-        "database": (
-            "Já trabalhou ou ouviu falar de banco de dados em algum projeto?",
-            "Ex.: salvar dados de um formulário, SQL básico.",
-        ),
-    }
 
     async def initialize_belief(
         self,
@@ -63,54 +123,35 @@ class MockDiagnosisInterviewLlm:
         cv_text: str | None,
     ) -> BeliefState:
         belief = BeliefState.empty()
-        merged = intake.motivation.lower()
+
+        _boost_dim(
+            belief,
+            "motivation_goal",
+            0.72,
+            intake.motivation[:160],
+            intake.motivation[:100],
+        )
 
         if intake.years_xp:
-            boost = {"0-1": 0.35, "1-3": 0.5, "3-5": 0.65, "5+": 0.75}.get(intake.years_xp, 0.3)
-            belief.dimensions["learning_stage"] = RubricDimension(
-                key="learning_stage",
-                label=CTRR_DIMENSION_LABELS["learning_stage"],
-                confidence=boost,
-                evidence=[f"Autodeclaração: {intake.years_xp} anos de experiência"],
-            )
-            belief.dimensions["background_context"] = RubricDimension(
-                key="background_context",
-                label=CTRR_DIMENSION_LABELS["background_context"],
-                confidence=min(0.7, boost),
-                evidence=[intake.motivation[:120]],
+            boost = {"0-1": 0.45, "1-3": 0.58, "3-5": 0.68, "5+": 0.78}.get(intake.years_xp, 0.4)
+            _boost_dim(
+                belief,
+                "learning_velocity",
+                boost,
+                f"Intake: {intake.years_xp} anos",
+                f"Intake indica {intake.years_xp} de prática/experiência",
             )
 
-        if cv_signals:
-            if cv_signals.skills:
-                if any(s.lower().find("git") >= 0 for s in cv_signals.skills):
-                    belief.dimensions["git"] = RubricDimension(
-                        key="git",
-                        label=CTRR_DIMENSION_LABELS["git"],
-                        confidence=0.78,
-                        evidence=[f"CV menciona: {', '.join(cv_signals.skills[:3])}"],
-                    )
-                if any("api" in s.lower() or "http" in s.lower() for s in cv_signals.skills):
-                    belief.dimensions["http_apis"] = RubricDimension(
-                        key="http_apis",
-                        label=CTRR_DIMENSION_LABELS["http_apis"],
-                        confidence=0.76,
-                        evidence=["CV menciona APIs/HTTP"],
-                    )
-            if cv_signals.roles:
-                belief.dimensions["hands_on_evidence"] = RubricDimension(
-                    key="hands_on_evidence",
-                    label=CTRR_DIMENSION_LABELS["hands_on_evidence"],
-                    confidence=0.72,
-                    evidence=[f"CV: {cv_signals.roles[0]}"],
-                )
-
-        if any(token in merged for token in ("javascript", "js", "program")):
-            belief.dimensions["learning_stage"].confidence = max(
-                belief.dimensions["learning_stage"].confidence,
-                0.55,
+        if cv_signals and cv_signals.roles:
+            _boost_dim(
+                belief,
+                "background_transfer",
+                0.62,
+                f"CV: {cv_signals.roles[0]}",
+                f"CV indica background: {cv_signals.roles[0]}",
             )
-            belief.dimensions["learning_stage"].evidence.append("Motivação menciona programação")
 
+        del cv_text
         return belief
 
     async def update_belief(
@@ -123,7 +164,6 @@ class MockDiagnosisInterviewLlm:
         del intake
         updated = belief.model_copy(deep=True)
         answer_by_qid = {answer.question_id: answer.text for answer in answers}
-
         last_turn = transcript[-1] if transcript else None
         if not last_turn:
             return updated
@@ -132,13 +172,13 @@ class MockDiagnosisInterviewLlm:
             text = answer_by_qid.get(question.id, "")
             if not text:
                 continue
-            score = min(0.85, 0.45 + len(text) / 120)
-            dim = updated.dimensions[question.rubric_key]
-            updated.dimensions[question.rubric_key] = RubricDimension(
-                key=question.rubric_key,
-                label=dim.label,
-                confidence=max(dim.confidence, score),
-                evidence=[*dim.evidence, text[:160]],
+            _apply_rich_answer(updated, text)
+            _boost_dim(
+                updated,
+                question.rubric_key,
+                min(0.85, 0.55 + len(text) / 80),
+                text[:160],
+                text[:100],
             )
         return updated
 
@@ -149,80 +189,61 @@ class MockDiagnosisInterviewLlm:
         transcript: list[InterviewTurn],
         round_count: int,
     ) -> list[InterviewQuestion]:
-        del intake, transcript
-        unsaturated = belief.unsaturated_keys(SATURATION_CONFIDENCE_THRESHOLD)
-        if not unsaturated:
+        del intake
+        round_index = round_index_for_count(round_count)
+        if round_index is None:
             return []
-
-        questions: list[InterviewQuestion] = []
-        for index, key in enumerate(unsaturated[:MAX_QUESTIONS_PER_TURN]):
-            prompt, example = self.QUESTION_BANK[key]
-            questions.append(
-                InterviewQuestion(
-                    id=f"q-r{round_count + 1}-{index + 1}",
-                    topic=CTRR_DIMENSION_LABELS[key],
-                    rubric_key=key,
-                    question=prompt,
-                    example_of_answer=example,
-                ),
-            )
-        return questions
+        return build_round_questions(round_index, belief=belief, transcript=transcript)
 
     async def finalize_diagnosis(
         self,
         belief: BeliefState,
         intake: DiagnosisIntake,
     ) -> DiagnosisResponse:
+        track_id = TRACK_BY_GOAL.get(intake.goal_id, "career-beginner")
+        velocity = belief.dimensions["learning_velocity"].confidence
+        proof = belief.dimensions["hands_on_proof"].confidence
+
         mastery = {
-            "js": int(belief.dimensions["learning_stage"].confidence * 100),
-            "git": int(belief.dimensions["git"].confidence * 100),
-            "http": int(belief.dimensions["http_apis"].confidence * 100),
-            "db": int(belief.dimensions["database"].confidence * 100),
-            "rest": int(belief.dimensions["client_server"].confidence * 40),
+            "js": int(velocity * 100),
+            "git": int(min(1.0, proof + 0.1) * 70),
+            "http": int(min(1.0, proof) * 65),
+            "db": int(min(1.0, proof - 0.1) * 60),
+            "rest": int(belief.dimensions["background_transfer"].confidence * 50),
             "auth": 0,
             "final": 0,
         }
-        strengths: list[str] = []
-        gaps: list[str] = []
 
-        if belief.dimensions["learning_stage"].confidence >= 0.55:
-            strengths.append("Motivação clara e noção do próprio estágio de aprendizado")
-        if belief.dimensions["git"].confidence >= 0.6:
-            strengths.append("Já tem exposição a Git/versionamento")
-        if belief.dimensions["http_apis"].confidence >= 0.55:
-            strengths.append("Familiaridade inicial com HTTP e APIs")
+        strengths = [
+            belief.dimensions["motivation_goal"].note or "Motivação clara para a transição",
+        ]
+        if proof >= 0.55:
+            strengths.append("Evidência prática citada na entrevista")
 
-        if belief.dimensions["http_apis"].confidence < 0.6:
-            gaps.append("HTTP e APIs REST — métodos, status codes e contrato")
-        if belief.dimensions["database"].confidence < 0.6:
-            gaps.append("Banco relacional — modelagem e SQL aplicado")
-        if belief.dimensions["git"].confidence < 0.55:
-            gaps.append("Git colaborativo — branches, merge e fluxo em equipe")
+        gaps = []
+        if proof < 0.65:
+            gaps.append("Prova prática — entregar um artefato mínimo (repo, demo ou deploy)")
+        if velocity < 0.65:
+            gaps.append("Consistência de estudo — rotina semanal mensurável")
 
-        if not strengths:
-            strengths.append("Motivação clara sobre o objetivo de carreira escolhido")
-        if len(gaps) < 2:
-            gaps.append("Persistência relacional — modelagem e SQL aplicado")
+        goal_gaps = {
+            "fullstack": ["HTTP/APIs e integração frontend-backend"],
+            "data": ["SQL aplicado e pipelines de dados"],
+            "ai-ml": ["Fundamentos de ML e experimentação reprodutível"],
+            "web3": ["Smart contracts e segurança básica on-chain"],
+        }
+        gaps.extend(goal_gaps.get(intake.goal_id, ["Fundamentos de engenharia de software"])[:1])
 
-        priorities = []
-        for node_id, key in (
-            ("http", "http_apis"),
-            ("git", "git"),
-            ("db", "database"),
-        ):
-            if belief.dimensions[key].confidence < 0.7:
-                priorities.append(node_id)
-        if not priorities:
-            priorities = ["http", "git", "db"]
-
-        label = "Iniciante em transição para backend"
-        if intake.goal_id == "backend":
-            label = "Iniciante focado em backend"
+        priorities = ["http", "git", "db"]
+        if intake.goal_id == "data":
+            priorities = ["db", "http", "git"]
+        elif intake.goal_id == "ai-ml":
+            priorities = ["http", "db", "git"]
 
         return DiagnosisResponse(
             profile=DiagnosisProfile(
-                label=label,
-                track_id="backend-beginner",
+                label=f"Iniciante em transição — {intake.goal_id}",
+                track_id=track_id,
                 persona_slug="transicao_iniciante",
             ),
             strengths=strengths[:3],

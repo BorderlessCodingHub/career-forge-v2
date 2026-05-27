@@ -6,9 +6,23 @@ import type {
 } from "@/types/contracts";
 
 /** Mirror backend diagnosis_interview.py interview limits. */
-export const MAX_INTERVIEW_ROUNDS = 5;
+export const MAX_INTERVIEW_ROUNDS = 2;
 export const MAX_QUESTIONS_PER_TURN = 2;
 export const MIN_ANSWER_LENGTH = 8;
+
+/** Deterministic round titles — mirror backend interview/script.py */
+export const INTERVIEW_ROUND_LABELS = [
+  "Prática e rotina",
+  "Contexto e limitações",
+] as const;
+
+export function interviewRoundLabel(roundCount: number): string {
+  const index = Math.max(
+    0,
+    Math.min(roundCount - 1, INTERVIEW_ROUND_LABELS.length - 1),
+  );
+  return INTERVIEW_ROUND_LABELS[index];
+}
 
 export function toInterviewCv(cv: CvAttachment): DiagnosisInterviewCvAttachment {
   if (cv.mimeType !== "application/pdf") {

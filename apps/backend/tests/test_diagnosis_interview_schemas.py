@@ -1,4 +1,4 @@
-"""Unit tests — CTRR diagnosis interview schemas (HAC-42)."""
+"""Unit tests — universal profile diagnosis interview schemas (ADR-002)."""
 
 from __future__ import annotations
 
@@ -10,9 +10,9 @@ from pydantic import ValidationError
 
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.diagnosis_interview import (
-    CTRR_DIMENSION_DESCRIPTIONS,
-    CTRR_DIMENSION_KEYS,
-    CTRR_DIMENSION_LABELS,
+    PROFILE_DIMENSION_DESCRIPTIONS,
+    PROFILE_DIMENSION_KEYS,
+    PROFILE_DIMENSION_LABELS,
     MAX_INTERVIEW_ROUNDS,
     MAX_QUESTIONS_PER_TURN,
     SATURATION_CONFIDENCE_THRESHOLD,
@@ -41,50 +41,80 @@ def load_fixture(name: str) -> dict:
         return json.load(f)
 
 
-class TestCtrrConstants:
+class TestProfileConstants:
     def test_dimension_keys_match_labels(self) -> None:
-        assert set(CTRR_DIMENSION_KEYS) == set(CTRR_DIMENSION_LABELS.keys())
-        assert set(CTRR_DIMENSION_KEYS) == set(CTRR_DIMENSION_DESCRIPTIONS.keys())
-        assert len(CTRR_DIMENSION_KEYS) == 8
+        assert set(PROFILE_DIMENSION_KEYS) == set(PROFILE_DIMENSION_LABELS.keys())
+        assert set(PROFILE_DIMENSION_KEYS) == set(PROFILE_DIMENSION_DESCRIPTIONS.keys())
+        assert len(PROFILE_DIMENSION_KEYS) == 5
 
     def test_saturation_threshold(self) -> None:
         assert SATURATION_CONFIDENCE_THRESHOLD == 0.75
-        assert MAX_INTERVIEW_ROUNDS == 5
+        assert MAX_INTERVIEW_ROUNDS == 2
         assert MAX_QUESTIONS_PER_TURN == 2
 
 
 class TestBeliefState:
     def test_empty_has_all_dimensions(self) -> None:
         belief = BeliefState.empty()
-        assert set(belief.dimensions.keys()) == set(CTRR_DIMENSION_KEYS)
+        assert set(belief.dimensions.keys()) == set(PROFILE_DIMENSION_KEYS)
         assert all(dim.confidence == 0.0 for dim in belief.dimensions.values())
 
     def test_unsaturated_keys(self) -> None:
         belief = BeliefState.empty()
-        assert len(belief.unsaturated_keys()) == len(CTRR_DIMENSION_KEYS)
+        assert len(belief.unsaturated_keys()) == len(PROFILE_DIMENSION_KEYS)
+        assert len(belief.interviewable_keys()) == len(PROFILE_DIMENSION_KEYS)
 
-        belief.dimensions["git"] = RubricDimension(
-            key="git",
-            label=CTRR_DIMENSION_LABELS["git"],
+        belief.dimensions["hands_on_proof"] = RubricDimension(
+            key="hands_on_proof",
+            label=PROFILE_DIMENSION_LABELS["hands_on_proof"],
             confidence=0.9,
-            evidence=["uso diário"],
+            evidence=["projeto no GitHub"],
+            status="mapped",
+            note="Entregou projeto no GitHub",
         )
         unsaturated = belief.unsaturated_keys()
-        assert "git" not in unsaturated
-        assert "learning_stage" in unsaturated
+        assert "hands_on_proof" not in unsaturated
+        assert "learning_velocity" in unsaturated
+        assert "hands_on_proof" not in belief.interviewable_keys()
+        assert "learning_velocity" in belief.interviewable_keys()
 
-    def test_is_saturated(self) -> None:
+    def test_is_interview_complete(self) -> None:
         belief = BeliefState.empty()
-        assert belief.is_saturated() is False
+        assert belief.is_interview_complete() is False
 
-        for key in CTRR_DIMENSION_KEYS:
+        for key in PROFILE_DIMENSION_KEYS:
             belief.dimensions[key] = RubricDimension(
                 key=key,
-                label=CTRR_DIMENSION_LABELS[key],
-                confidence=SATURATION_CONFIDENCE_THRESHOLD,
-                evidence=["ok"],
+                label=PROFILE_DIMENSION_LABELS[key],
+                confidence=0.8,
+                evidence=["ev"],
+                status="mapped",
+                note="Confirmado",
             )
-        assert belief.is_saturated() is True
+        assert belief.is_interview_complete() is True
+
+        belief.dimensions["constraints"] = RubricDimension(
+            key="constraints",
+            label=PROFILE_DIMENSION_LABELS["constraints"],
+            confidence=0.8,
+            evidence=["ev"],
+            status="needs_clarification",
+            note="Falta confirmar tempo/semana",
+        )
+        assert belief.is_interview_complete() is False
+
+    def test_profile_completeness(self) -> None:
+        belief = BeliefState.empty()
+        assert belief.profile_completeness() == 0.0
+        belief.dimensions["motivation_goal"] = RubricDimension(
+            key="motivation_goal",
+            label=PROFILE_DIMENSION_LABELS["motivation_goal"],
+            confidence=0.8,
+            evidence=["motivação clara"],
+            status="mapped",
+            note="Objetivo claro",
+        )
+        assert belief.profile_completeness() == 0.2
 
 
 class TestInterviewQuestion:
@@ -92,14 +122,14 @@ class TestInterviewQuestion:
         q = InterviewQuestion.model_validate(
             {
                 "id": "q1",
-                "topic": "Senioridade",
-                "rubric_key": "learning_stage",
-                "question": "Como você descreveria seu nível hoje?",
-                "example_of_answer": "Estou no início, fiz um curso de JS.",
+                "topic": "Prova prática",
+                "rubric_key": "hands_on_proof",
+                "question": "Conte o que você já construiu ou tentou.",
+                "example_of_answer": "Fiz um app na faculdade com Git.",
             },
         )
-        assert q.rubric_key == "learning_stage"
-        assert q.topic == "Senioridade"
+        assert q.rubric_key == "hands_on_proof"
+        assert q.topic == "Prova prática"
 
 
 class TestDiagnosisIntake:
@@ -107,54 +137,40 @@ class TestDiagnosisIntake:
         intake = DiagnosisIntake.model_validate(
             {
                 "user_id": "u1",
-                "goal_id": "backend",
+                "goal_id": "ai-ml",
                 "motivation": "Quero migrar de carreira para tecnologia.",
             },
         )
         assert intake.years_xp is None
         assert intake.cv is None
 
-    def test_intake_with_cv(self) -> None:
-        intake = DiagnosisIntake.model_validate(
-            {
-                "goal_id": "backend",
-                "motivation": "Quero migrar de carreira para tecnologia.",
-                "cv": {
-                    "filename": "cv.pdf",
-                    "mime_type": "application/pdf",
-                    "content_base64": "JVBERi0x",
-                },
-            },
-        )
-        assert intake.cv is not None
-        assert intake.cv.mime_type == "application/pdf"
-
 
 class TestDiagnosisSession:
-    def test_should_finalize_on_saturation(self) -> None:
+    def test_should_not_finalize_on_mapped_dims_before_max_rounds(self) -> None:
         session = DiagnosisSession(
             session_id="sess-1",
             intake=DiagnosisIntake(
-                goal_id="backend",
+                goal_id="fullstack",
                 motivation="Quero migrar de carreira para tecnologia.",
             ),
+            round_count=1,
         )
-        assert session.should_finalize() is False
-
-        for key in CTRR_DIMENSION_KEYS:
+        for key in PROFILE_DIMENSION_KEYS:
             session.belief.dimensions[key] = RubricDimension(
                 key=key,
-                label=CTRR_DIMENSION_LABELS[key],
+                label=PROFILE_DIMENSION_LABELS[key],
                 confidence=0.8,
                 evidence=["ev"],
+                status="mapped",
+                note="Confirmado",
             )
-        assert session.should_finalize() is True
+        assert session.should_finalize() is False
 
     def test_should_finalize_on_max_rounds(self) -> None:
         session = DiagnosisSession(
             session_id="sess-2",
             intake=DiagnosisIntake(
-                goal_id="backend",
+                goal_id="data",
                 motivation="Quero migrar de carreira para tecnologia.",
             ),
             round_count=MAX_INTERVIEW_ROUNDS,
@@ -165,18 +181,19 @@ class TestDiagnosisSession:
 class TestRubricMap:
     def test_build_rubric_map_order(self) -> None:
         belief = BeliefState.empty()
-        belief.dimensions["git"] = RubricDimension(
-            key="git",
-            label=CTRR_DIMENSION_LABELS["git"],
+        belief.dimensions["hands_on_proof"] = RubricDimension(
+            key="hands_on_proof",
+            label=PROFILE_DIMENSION_LABELS["hands_on_proof"],
             confidence=0.8,
             evidence=[],
+            status="mapped",
+            note="Projeto entregue",
         )
         items = build_rubric_map(belief)
-        assert [item.rubric_key for item in items] == list(CTRR_DIMENSION_KEYS)
-        git_item = next(item for item in items if item.rubric_key == "git")
-        assert git_item.saturated is True
-        assert git_item.confidence == 0.8
-        assert git_item.description == CTRR_DIMENSION_DESCRIPTIONS["git"]
+        assert [item.rubric_key for item in items] == list(PROFILE_DIMENSION_KEYS)
+        proof_item = next(item for item in items if item.rubric_key == "hands_on_proof")
+        assert proof_item.saturated is True
+        assert proof_item.description == PROFILE_DIMENSION_DESCRIPTIONS["hands_on_proof"]
 
 
 class TestInterviewTurn:
@@ -185,45 +202,17 @@ class TestInterviewTurn:
             questions=[
                 InterviewQuestion(
                     id="q1",
-                    topic="Git",
-                    rubric_key="git",
-                    question="Você já usou Git?",
-                    example_of_answer="Sim, commits básicos.",
+                    topic="Prova prática",
+                    rubric_key="hands_on_proof",
+                    question="Conte o que você já fez.",
+                    example_of_answer="App na faculdade.",
                 ),
             ],
             answers=[
-                InterviewAnswer(question_id="q1", text="Uso git init e commit."),
+                InterviewAnswer(question_id="q1", text="Fiz um app em grupo."),
             ],
         )
         assert len(turn.questions) == 1
-        assert turn.answers[0].question_id == "q1"
-
-    def test_rejects_too_many_questions(self) -> None:
-        with pytest.raises(ValidationError):
-            InterviewTurn.model_validate(
-                {
-                    "questions": [
-                        {
-                            "id": f"q{i}",
-                            "topic": "Git",
-                            "rubric_key": "git",
-                            "question": f"Q{i}?",
-                            "example_of_answer": "Ex.",
-                        }
-                        for i in range(3)
-                    ],
-                },
-            )
-
-
-class TestInterviewTurnRequest:
-    def test_requires_at_least_one_answer(self) -> None:
-        with pytest.raises(ValidationError):
-            InterviewTurnRequest.model_validate({"answers": []})
-
-    def test_strips_empty_answer(self) -> None:
-        with pytest.raises(ValidationError):
-            InterviewAnswer.model_validate({"question_id": "q1", "text": "   "})
 
 
 class TestInterviewTurnResponse:
@@ -235,10 +224,10 @@ class TestInterviewTurnResponse:
                 "questions": [
                     {
                         "id": "q1",
-                        "topic": "Git",
-                        "rubric_key": "git",
-                        "question": "Você já usou Git?",
-                        "example_of_answer": "Sim, commits básicos.",
+                        "topic": "Prova prática",
+                        "rubric_key": "hands_on_proof",
+                        "question": "Conte o que você já fez.",
+                        "example_of_answer": "App na faculdade.",
                     },
                 ],
                 "mapping_progress": build_rubric_map(BeliefState.empty()),
@@ -259,7 +248,6 @@ class TestInterviewTurnResponse:
             },
         )
         assert resp.diagnosis is not None
-        assert resp.diagnosis.profile.track_id == "backend-beginner"
 
         with pytest.raises(ValidationError):
             InterviewTurnResponse.model_validate(

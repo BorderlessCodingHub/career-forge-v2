@@ -4,31 +4,13 @@ import { Button } from "@/components/ui";
 import { OnboardingRecapSidebar } from "@/components/diagnosis/OnboardingRecapSidebar";
 import { CAREER_GOALS } from "@/lib/onboarding-data";
 import { getCvAttachment } from "@/lib/onboarding-session";
+import { interviewRoundLabel } from "@/lib/diagnosis-interview";
 import { useDiagnosisInterview } from "@/lib/hooks/useDiagnosisInterview";
 
 import { PillRound } from "./PillRound";
 
-function QuestionSkeleton() {
-  return (
-    <div className="space-y-4">
-      {[0, 1].map((index) => (
-        <div
-          key={index}
-          className="rounded-md border border-border-soft bg-surface-elevated p-4"
-        >
-          <div className="mb-3 flex items-center gap-2">
-            <div className="h-6 w-24 animate-pulse rounded-full bg-border" />
-            <div className="h-4 flex-1 animate-pulse rounded bg-border" />
-          </div>
-          <div className="h-24 animate-pulse rounded-md bg-border/60" />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const ROUND_INTRO =
-  "Sem certo ou errado — quanto mais honesto, mais útil sua trilha. A IA escolhe as próximas perguntas com base no que já sabe sobre você.";
+  "Sem certo ou errado — são 2 etapas fixas. Quanto mais concreto, melhor a IA mapeia seu perfil.";
 
 export function DiagnosticPills() {
   const {
@@ -39,6 +21,9 @@ export function DiagnosticPills() {
     roundCount,
     bootstrapping,
     submitting,
+    streaming,
+    streamPhaseLabel,
+    analyzingKey,
     error,
     activeKeys,
     roundComplete,
@@ -55,10 +40,7 @@ export function DiagnosticPills() {
     intake.goalId;
   const cvAttachment = getCvAttachment();
 
-  const roundTitle =
-    questions.length === 1
-      ? (questions[0]?.topic ?? "Diagnóstico adaptativo")
-      : "Diagnóstico adaptativo";
+  const roundTitle = interviewRoundLabel(roundCount);
 
   return (
     <main
@@ -72,21 +54,23 @@ export function DiagnosticPills() {
           yearsXp={intake.yearsXp}
           cvAttachment={cvAttachment}
           bootstrapping={bootstrapping}
+          streaming={streaming}
+          streamPhaseLabel={streamPhaseLabel}
           roundCount={roundCount}
           progressPct={progressPct}
           mappingProgress={mappingProgress}
           activeKeys={activeKeys}
+          analyzingKey={analyzingKey}
         />
 
         <section className="rounded-md border border-border bg-surface p-6">
           {bootstrapping ? (
-            <>
-              <div className="flex items-center gap-3 text-sm text-text-secondary">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-                Preparando entrevista adaptativa…
-              </div>
-              <QuestionSkeleton />
-            </>
+            <div className="space-y-4" data-testid="diagnosis-bootstrapping">
+              <div className="h-6 w-40 animate-pulse rounded bg-surface-elevated" />
+              <div className="h-4 w-full max-w-md animate-pulse rounded bg-surface-elevated" />
+              <div className="mt-6 h-32 animate-pulse rounded-card bg-surface-elevated" />
+              <p className="text-sm text-text-muted">{streamPhaseLabel}</p>
+            </div>
           ) : (
             <>
               <div className="flex flex-wrap items-center gap-3">

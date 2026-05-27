@@ -309,7 +309,7 @@ type EditableDiagnosisProps = {
 export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) {
   const router = useRouter();
   const [diagnosis, setDiagnosis] = useState<DiagnosisResponse | null>(
-    initialDiagnosis ?? null,
+    () => initialDiagnosis ?? getStoredDiagnosis(),
   );
 
   useEffect(() => {

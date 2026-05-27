@@ -4,18 +4,29 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  startDiagnosisInterview,
-  submitDiagnosisTurn,
+  getDiagnosisInterviewSession,
+  streamDiagnosisInterviewStart,
+  streamDiagnosisInterviewTurn,
 } from "@/lib/api-client";
-import { buildSkeletonMappingProgress } from "@/lib/ctrr-dimensions";
+import {
+  applyDiagnosisStreamEvent,
+  createInitialDiagnosisStreamState,
+  diagnosisStreamPhaseLabel,
+  firstPendingAnalyzingKey,
+  hydrateMappingFromResponse,
+  type DiagnosisStreamUiState,
+} from "@/lib/diagnosis-stream";
 import {
   buildInterviewIntake,
   MAX_INTERVIEW_ROUNDS,
-  MAX_QUESTIONS_PER_TURN,
   MIN_ANSWER_LENGTH,
 } from "@/lib/diagnosis-interview";
+import { buildSkeletonMappingProgress, profileCompletenessPct } from "@/lib/profile-dimensions";
 import {
+  clearDiagnosisSessionId,
+  clearStoredDiagnosis,
   getCvAttachment,
+  getDiagnosisSessionId,
   getMotivation,
   getSelectedGoal,
   getStoredDiagnosis,
@@ -25,6 +36,7 @@ import {
   setStoredDiagnosis,
 } from "@/lib/onboarding-session";
 import type {
+  DiagnosisStreamEvent,
   InterviewQuestion,
   InterviewTurnResponse,
   RubricDimensionKey,
@@ -37,6 +49,8 @@ type OnboardingIntake = {
   yearsXp: NonNullable<ReturnType<typeof getYearsXp>>;
 };
 
+type InterviewPhase = "bootstrapping" | "ready" | "submitting" | "complete";
+
 function readOnboardingIntake(): OnboardingIntake | null {
   const goalId = getSelectedGoal();
   const motivation = getMotivation().trim();
@@ -45,20 +59,48 @@ function readOnboardingIntake(): OnboardingIntake | null {
   return { goalId, motivation, yearsXp };
 }
 
+function answersForQuestions(
+  questions: InterviewQuestion[],
+  answers: Record<string, string>,
+): Record<string, string> {
+  return Object.fromEntries(
+    questions.map((question) => [question.id, answers[question.id]?.trim() ?? ""]),
+  );
+}
+
+function hydrateInterviewResponse(response: InterviewTurnResponse): {
+  mappingProgress: RubricMapItem[];
+  questions: InterviewQuestion[];
+  answers: Record<string, string>;
+  roundCount: number;
+} {
+  return {
+    mappingProgress: hydrateMappingFromResponse(response),
+    questions: response.questions,
+    answers: Object.fromEntries(
+      response.questions.map((question) => [question.id, ""]),
+    ),
+    roundCount: Math.max(1, response.round_count || 1),
+  };
+}
+
 export function useDiagnosisInterview() {
   const router = useRouter();
   const intake = useMemo(() => readOnboardingIntake(), []);
 
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(() =>
+    getDiagnosisSessionId(),
+  );
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
-  const [mappingProgress, setMappingProgress] = useState<RubricMapItem[]>(
-    buildSkeletonMappingProgress,
+  const [streamUi, setStreamUi] = useState<DiagnosisStreamUiState>(
+    createInitialDiagnosisStreamState,
   );
   const [answers, setAnswersState] = useState<Record<string, string>>({});
   const [roundCount, setRoundCount] = useState(0);
-  const [bootstrapping, setBootstrapping] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  const [phase, setPhase] = useState<InterviewPhase>("bootstrapping");
   const [error, setError] = useState<string | null>(null);
+
+  const { mappingProgress, streamPhase, analyzingKey } = streamUi;
 
   useEffect(() => {
     if (!intake) {
@@ -70,43 +112,118 @@ export function useDiagnosisInterview() {
     }
   }, [intake, router]);
 
-  const applyTurnResponse = useCallback((response: InterviewTurnResponse) => {
-    setSessionId(response.session_id);
-    setDiagnosisSessionId(response.session_id);
-    setQuestions(response.questions);
-    setMappingProgress(response.mapping_progress);
-    setAnswersState((current) => {
-      const next = { ...current };
-      response.questions.forEach((question) => {
-        if (next[question.id] === undefined) {
-          next[question.id] = "";
-        }
-      });
-      return next;
-    });
+  const dispatchStreamEvent = useCallback((event: DiagnosisStreamEvent) => {
+    setStreamUi((current) => applyDiagnosisStreamEvent(current, event));
   }, []);
+
+  const finishWithDiagnosis = useCallback(
+    (diagnosis: NonNullable<InterviewTurnResponse["diagnosis"]>) => {
+      setStoredDiagnosis(diagnosis);
+      clearDiagnosisSessionId();
+      setPhase("complete");
+      router.push("/onboarding/edit");
+    },
+    [router],
+  );
+
+  const applyTurnResponse = useCallback(
+    (
+      response: InterviewTurnResponse,
+      options?: { preserveMapping?: boolean },
+    ): boolean => {
+      setSessionId(response.session_id);
+      setDiagnosisSessionId(response.session_id);
+
+      setStreamUi((current) => ({
+        ...current,
+        streamPhase: null,
+        analyzingKey: null,
+        mappingProgress: hydrateMappingFromResponse(
+          response,
+          options?.preserveMapping ? current.mappingProgress : undefined,
+        ),
+      }));
+
+      if (response.status === "complete" && response.diagnosis) {
+        finishWithDiagnosis(response.diagnosis);
+        return true;
+      }
+
+      const hydrated = hydrateInterviewResponse(response);
+      setQuestions(hydrated.questions);
+      setAnswersState(hydrated.answers);
+      setRoundCount(hydrated.roundCount);
+      return false;
+    },
+    [finishWithDiagnosis],
+  );
 
   useEffect(() => {
     if (!intake || getStoredDiagnosis()) return;
-    const readyIntake = intake;
 
+    const readyIntake = intake;
     let cancelled = false;
 
     async function bootstrap() {
-      setBootstrapping(true);
+      const existingSessionId = getDiagnosisSessionId();
+      if (existingSessionId) {
+        setPhase("bootstrapping");
+        setError(null);
+        try {
+          const response = await getDiagnosisInterviewSession(existingSessionId);
+          if (cancelled) return;
+
+          if (response.status === "complete" && response.diagnosis) {
+            finishWithDiagnosis(response.diagnosis);
+            return;
+          }
+
+          const hydrated = hydrateInterviewResponse(response);
+          setSessionId(response.session_id);
+          setStreamUi({
+            streamPhase: null,
+            analyzingKey: null,
+            mappingProgress: hydrated.mappingProgress,
+          });
+          setQuestions(hydrated.questions);
+          setAnswersState(hydrated.answers);
+          setRoundCount(hydrated.roundCount);
+          setPhase("ready");
+          return;
+        } catch {
+          if (cancelled) return;
+          clearDiagnosisSessionId();
+        }
+      }
+
+      setPhase("bootstrapping");
+      setStreamUi({
+        streamPhase: "analyzing_intake",
+        analyzingKey: "motivation_goal",
+        mappingProgress: buildSkeletonMappingProgress(),
+      });
       setError(null);
+      clearStoredDiagnosis();
+
       try {
-        const response = await startDiagnosisInterview(
+        const response = await streamDiagnosisInterviewStart(
           buildInterviewIntake({
             goalId: readyIntake.goalId,
             motivation: readyIntake.motivation,
             yearsXp: readyIntake.yearsXp,
             cv: getCvAttachment(),
           }),
+          (event) => {
+            if (cancelled) return;
+            dispatchStreamEvent(event);
+          },
         );
         if (cancelled) return;
-        applyTurnResponse(response);
-        setRoundCount(1);
+
+        const completed = applyTurnResponse(response);
+        if (completed) return;
+
+        setPhase("ready");
       } catch (cause) {
         if (cancelled) return;
         setError(
@@ -114,8 +231,7 @@ export function useDiagnosisInterview() {
             ? cause.message
             : "Não foi possível iniciar o diagnóstico.",
         );
-      } finally {
-        if (!cancelled) setBootstrapping(false);
+        setPhase("ready");
       }
     }
 
@@ -123,7 +239,7 @@ export function useDiagnosisInterview() {
     return () => {
       cancelled = true;
     };
-  }, [applyTurnResponse, intake]);
+  }, [applyTurnResponse, dispatchStreamEvent, finishWithDiagnosis, intake, router]);
 
   const activeKeys = useMemo(
     () => new Set(questions.map((question) => question.rubric_key)),
@@ -134,18 +250,9 @@ export function useDiagnosisInterview() {
     (question) => (answers[question.id]?.trim().length ?? 0) >= MIN_ANSWER_LENGTH,
   );
 
-  const answeredInRound = questions.filter(
-    (question) => (answers[question.id]?.trim().length ?? 0) >= MIN_ANSWER_LENGTH,
-  ).length;
-
-  const totalExpectedQuestions = Math.min(
-    MAX_INTERVIEW_ROUNDS * MAX_QUESTIONS_PER_TURN,
-    10,
-  );
-  const answeredTotal = (roundCount - 1) * MAX_QUESTIONS_PER_TURN + answeredInRound;
-  const progressPct = Math.min(
-    100,
-    Math.round((answeredTotal / totalExpectedQuestions) * 100),
+  const progressPct = useMemo(
+    () => profileCompletenessPct(mappingProgress),
+    [mappingProgress],
   );
 
   const setAnswer = useCallback((questionId: string, text: string) => {
@@ -153,9 +260,14 @@ export function useDiagnosisInterview() {
   }, []);
 
   const submitRound = useCallback(async () => {
-    if (!roundComplete || submitting || !sessionId) return;
+    if (!roundComplete || phase !== "ready" || !sessionId) return;
 
-    setSubmitting(true);
+    setPhase("submitting");
+    setStreamUi((current) => ({
+      ...current,
+      streamPhase: "processing_answers",
+      analyzingKey: firstPendingAnalyzingKey(current.mappingProgress),
+    }));
     setError(null);
 
     const turnAnswers = questions.map((question) => ({
@@ -163,38 +275,49 @@ export function useDiagnosisInterview() {
       text: answers[question.id]?.trim() ?? "",
     }));
 
-    setAnswers(answers);
+    let finished = false;
 
     try {
-      const response = await submitDiagnosisTurn(sessionId, {
-        answers: turnAnswers,
-      });
+      setAnswers(answersForQuestions(questions, answers));
+
+      const response = await streamDiagnosisInterviewTurn(
+        sessionId,
+        { answers: turnAnswers },
+        (event) => dispatchStreamEvent(event),
+      );
 
       if (response.status === "complete" && response.diagnosis) {
-        setStoredDiagnosis(response.diagnosis);
-        router.push("/onboarding/edit");
+        finished = true;
+        finishWithDiagnosis(response.diagnosis);
         return;
       }
 
-      applyTurnResponse(response);
-      setRoundCount((count) => count + 1);
-      setSubmitting(false);
+      applyTurnResponse(response, { preserveMapping: true });
     } catch (cause) {
       setError(
         cause instanceof Error
           ? cause.message
           : "Não foi possível enviar suas respostas. Tente novamente.",
       );
-      setSubmitting(false);
+    } finally {
+      if (!finished) {
+        setPhase("ready");
+        setStreamUi((current) => ({
+          ...current,
+          streamPhase: null,
+          analyzingKey: null,
+        }));
+      }
     }
   }, [
     answers,
     applyTurnResponse,
+    dispatchStreamEvent,
+    finishWithDiagnosis,
+    phase,
     questions,
     roundComplete,
-    router,
     sessionId,
-    submitting,
   ]);
 
   return {
@@ -203,8 +326,11 @@ export function useDiagnosisInterview() {
     mappingProgress,
     answers,
     roundCount,
-    bootstrapping,
-    submitting,
+    bootstrapping: phase === "bootstrapping",
+    submitting: phase === "submitting",
+    streaming: phase === "bootstrapping" || phase === "submitting",
+    streamPhaseLabel: diagnosisStreamPhaseLabel(streamPhase),
+    analyzingKey,
     error,
     activeKeys: activeKeys as Set<RubricDimensionKey>,
     roundComplete,

@@ -247,27 +247,21 @@ export type DiagnosisRunResponse = {
   diagnosis: DiagnosisResponse;
 };
 
-/** CTRR rubric dimension keys — mirrors backend diagnosis_interview.py */
+/** Universal profile dimension keys — mirrors backend PROFILE_DIMENSION_KEYS (ADR-002). */
 export type RubricDimensionKey =
-  | "learning_stage"
-  | "project_scope"
-  | "background_context"
-  | "hands_on_evidence"
-  | "git"
-  | "client_server"
-  | "http_apis"
-  | "database";
+  | "motivation_goal"
+  | "background_transfer"
+  | "learning_velocity"
+  | "hands_on_proof"
+  | "constraints";
 
-/** Ordered CTRR keys — must match backend CTRR_DIMENSION_KEYS. */
-export const CTRR_DIMENSION_KEYS = [
-  "learning_stage",
-  "project_scope",
-  "background_context",
-  "hands_on_evidence",
-  "git",
-  "client_server",
-  "http_apis",
-  "database",
+/** Ordered profile keys — must match backend PROFILE_DIMENSION_KEYS. */
+export const PROFILE_DIMENSION_KEYS = [
+  "motivation_goal",
+  "background_transfer",
+  "learning_velocity",
+  "hands_on_proof",
+  "constraints",
 ] as const satisfies readonly RubricDimensionKey[];
 
 export type InterviewQuestion = {
@@ -283,12 +277,16 @@ export type InterviewAnswer = {
   text: string;
 };
 
+export type RubricDimensionStatus = "pending" | "mapped" | "needs_clarification";
+
 export type RubricMapItem = {
   rubric_key: RubricDimensionKey;
   label: string;
   description: string;
   confidence: number;
   saturated: boolean;
+  status: RubricDimensionStatus;
+  note: string;
 };
 
 export type DiagnosisInterviewCvAttachment = {
@@ -313,10 +311,35 @@ export type InterviewTurnRequest = {
 export type InterviewTurnResponse = {
   session_id: string;
   status: "asking" | "complete";
+  round_count: number;
   questions: InterviewQuestion[];
   mapping_progress: RubricMapItem[];
   diagnosis?: DiagnosisResponse;
 };
+
+export type DiagnosisInterviewStatusPhase =
+  | "analyzing_intake"
+  | "analyzing_cv"
+  | "judging"
+  | "loading_questions"
+  | "planning_questions"
+  | "processing_answers"
+  | "finalizing";
+
+export type DiagnosisStreamEvent =
+  | { type: "interview_status"; phase: DiagnosisInterviewStatusPhase }
+  | {
+      type: "mapping_dimension";
+      item: RubricMapItem;
+      index: number;
+      total: number;
+    }
+  | {
+      type: "graph_complete";
+      graph_name: string;
+      output: InterviewTurnResponse & { session?: unknown };
+    }
+  | { type: "error"; message: string };
 
 export type ForgeRunResponse = {
   run_id: string;

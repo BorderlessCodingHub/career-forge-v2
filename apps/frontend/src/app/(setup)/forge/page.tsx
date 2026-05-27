@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ForgeEventLine, ForgeTimeline } from "@/components/forge";
 import { Button } from "@/components/ui";
-import { forgeStreamUrl, startForgeRun } from "@/lib/api-client";
+import { startForgeRun, streamForgeRun } from "@/lib/api-client";
 import {
   extractGraphFromEvents,
   setForgeGraph,
@@ -14,11 +14,6 @@ import {
 } from "@/lib/forge-session";
 import { getStoredDiagnosis } from "@/lib/onboarding-session";
 import type { RoadmapForgeEvent } from "@/types/contracts";
-
-function parseForgeEvent(raw: Record<string, unknown>): RoadmapForgeEvent | null {
-  if (typeof raw.type !== "string") return null;
-  return raw as RoadmapForgeEvent;
-}
 
 export default function ForgePage() {
   const router = useRouter();
@@ -45,47 +40,22 @@ export default function ForgePage() {
   const connectStream = useCallback(
     async (runId: string) => {
       setStatus("streaming");
-      const res = await fetch(forgeStreamUrl(runId), {
-        headers: { Accept: "text/event-stream" },
+
+      const collected = await streamForgeRun(runId, {
+        onEvent: (event) => {
+          setEvents((previous) => [...previous, event]);
+        },
+        onComplete: (allEvents) => {
+          finishForge(allEvents);
+        },
+        onError: (message) => {
+          setError(message);
+        },
       });
-      if (!res.ok || !res.body) {
-        setError(`Stream falhou: ${res.status}`);
-        setStatus("error");
-        return;
+
+      if (collected.length > 0 && !collected.some((event) => event.type === "graph_ready")) {
+        finishForge(collected);
       }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      const collected: RoadmapForgeEvent[] = [];
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const parts = buffer.split("\n\n");
-        buffer = parts.pop() ?? "";
-        for (const part of parts) {
-          const line = part.split("\n").find((row) => row.startsWith("data:"));
-          if (!line) continue;
-          const json = line.replace(/^data:\s*/, "");
-          try {
-            const raw = JSON.parse(json) as Record<string, unknown>;
-            const parsed = parseForgeEvent(raw);
-            if (!parsed) continue;
-            collected.push(parsed);
-            setEvents((prev) => [...prev, parsed]);
-            if (parsed.type === "graph_ready") {
-              finishForge(collected);
-              return;
-            }
-          } catch {
-            /* skip */
-          }
-        }
-      }
-
-      if (collected.length) finishForge(collected);
     },
     [finishForge],
   );

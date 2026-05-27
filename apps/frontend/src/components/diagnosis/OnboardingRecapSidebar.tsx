@@ -8,10 +8,13 @@ type OnboardingRecapSidebarProps = {
   yearsXp: YearsXpRange;
   cvAttachment: CvAttachment | null;
   bootstrapping: boolean;
+  streaming: boolean;
+  streamPhaseLabel: string;
   roundCount: number;
   progressPct: number;
   mappingProgress: RubricMapItem[];
   activeKeys: Set<RubricDimensionKey>;
+  analyzingKey: RubricDimensionKey | null;
 };
 
 export function OnboardingRecapSidebar({
@@ -20,10 +23,13 @@ export function OnboardingRecapSidebar({
   yearsXp,
   cvAttachment,
   bootstrapping,
+  streaming,
+  streamPhaseLabel,
   roundCount,
   progressPct,
   mappingProgress,
   activeKeys,
+  analyzingKey,
 }: OnboardingRecapSidebarProps) {
   return (
     <aside className="rounded-md border border-border bg-surface p-6">
@@ -51,7 +57,7 @@ export function OnboardingRecapSidebar({
       {!bootstrapping && roundCount > 0 && (
         <div className="mt-6">
           <div className="flex items-center justify-between text-xs text-text-muted">
-            <span>Progresso</span>
+            <span>Perfil completo</span>
             <span>{progressPct}%</span>
           </div>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-elevated">
@@ -67,15 +73,17 @@ export function OnboardingRecapSidebar({
         <div className="text-xs uppercase tracking-wide text-text-muted">
           O que a IA está mapeando
         </div>
-        {bootstrapping && (
-          <p className="mt-1 text-xs text-text-muted">
-            Analisando seu perfil e preparando perguntas…
+        {streaming && (
+          <p className="mt-1 flex items-center gap-2 text-xs text-accent">
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+            {streamPhaseLabel}
           </p>
         )}
         <MappingDimensionList
           items={mappingProgress}
           activeKeys={activeKeys}
-          loading={bootstrapping}
+          analyzingKey={analyzingKey}
+          streaming={streaming}
         />
       </div>
     </aside>

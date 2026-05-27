@@ -9,7 +9,7 @@ from career_forge.ai.llm.diagnosis_interview import (
     reset_diagnosis_interview_llm,
     set_diagnosis_interview_llm,
 )
-from career_forge.schemas.diagnosis_interview import MAX_INTERVIEW_ROUNDS
+from career_forge.schemas.diagnosis_interview import MAX_INTERVIEW_ROUNDS, PROFILE_DIMENSION_KEYS
 from career_forge.services.diagnosis_session import (
     DiagnosisSessionService,
     InMemoryDiagnosisSessionStore,
@@ -20,7 +20,7 @@ from tests.mocks.diagnosis_interview_llm import MockDiagnosisInterviewLlm
 
 START_BODY = {
     "user_id": "test-user",
-    "goal_id": "backend",
+    "goal_id": "fullstack",
     "motivation": "Quero migrar de carreira para tecnologia e construir APIs.",
     "years_xp": "0-1",
 }
@@ -42,8 +42,23 @@ def test_post_interview_start_returns_questions(client) -> None:
     payload = response.json()
     assert payload["status"] == "asking"
     assert payload["session_id"]
+    assert payload["round_count"] == 1
     assert 1 <= len(payload["questions"]) <= 2
-    assert len(payload["mapping_progress"]) == 8
+    assert len(payload["mapping_progress"]) == len(PROFILE_DIMENSION_KEYS)
+
+
+def test_get_interview_session_resumes_open_turn(client) -> None:
+    start = client.post("/diagnosis/interview/start", json=START_BODY)
+    session_id = start.json()["session_id"]
+
+    resume = client.get(f"/diagnosis/interview/{session_id}")
+    assert resume.status_code == 200
+    payload = resume.json()
+    assert payload["session_id"] == session_id
+    assert payload["status"] == "asking"
+    assert payload["round_count"] == 1
+    assert len(payload["questions"]) >= 1
+    assert len(payload["mapping_progress"]) == len(PROFILE_DIMENSION_KEYS)
 
 
 def test_interview_turn_until_complete(client) -> None:
@@ -57,7 +72,10 @@ def test_interview_turn_until_complete(client) -> None:
         answers = [
             {
                 "question_id": question["id"],
-                "text": "Resposta detalhada com contexto sobre minha jornada de aprendizado.",
+                "text": (
+                    "Montei um app na faculdade com GitHub, estudo 6h por semana "
+                    "e uso tutoriais em inglês."
+                ),
             }
             for question in payload["questions"]
         ]
@@ -65,13 +83,13 @@ def test_interview_turn_until_complete(client) -> None:
             f"/diagnosis/interview/{session_id}/turn",
             json={"answers": answers},
         )
-        assert turn.status_code == 200
+        assert turn.status_code == 200, turn.text
         payload = turn.json()
         rounds += 1
 
     assert payload["status"] == "complete"
     assert payload["diagnosis"] is not None
-    assert payload["diagnosis"]["profile"]["track_id"] == "backend-beginner"
+    assert payload["diagnosis"]["profile"]["track_id"] == "fullstack-beginner"
 
 
 def test_turn_unknown_session_404(client) -> None:

@@ -5,6 +5,7 @@ Immutable **business + architecture decisions** for Career Forge. Agents must re
 | ADR | Status | Topic |
 |-----|--------|-------|
 | [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) | **Accepted** | Adaptive diagnosis interview (CTRR + Interviewer/Judge) |
+| [ADR-002](./ADR-002-universal-profile-framework.md) | **Proposed** | Universal 5-dimension profile (replaces 8-dim CTRR scope) |
 
 ## When to add an ADR
 

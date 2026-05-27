@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import os
+from collections.abc import AsyncIterator
 from typing import Protocol, runtime_checkable
 from uuid import UUID, uuid4
 
 from career_forge.ai.executor import GraphExecutor, get_graph_executor
 from career_forge.ai.llm.diagnosis_interview import DiagnosisInterviewLlmError
 from career_forge.ai.run import GraphRun, GraphRunResult, GraphRunStore, get_graph_run_store
+from career_forge.ai.streaming.sse import events_to_sse
 from career_forge.persistence.store_mode import resolve_persistence_backend
 from career_forge.db.models.diagnosis_session import DiagnosisSessionRecord
 from career_forge.db.session import SessionLocal
@@ -162,15 +164,32 @@ def _extract_graph_output(result: GraphRunResult) -> dict:
     raise DiagnosisInterviewLlmError(msg)
 
 
+def _session_to_turn_response(session: DiagnosisSession) -> InterviewTurnResponse:
+    questions: list[InterviewQuestion] = []
+    if session.status == "asking" and session.transcript:
+        open_turn = session.transcript[-1]
+        if not open_turn.answers:
+            questions = open_turn.questions[:MAX_QUESTIONS_PER_TURN]
+
+    return InterviewTurnResponse(
+        session_id=session.session_id,
+        status=session.status,
+        round_count=session.round_count,
+        questions=questions,
+        mapping_progress=build_rubric_map(session.belief),
+        diagnosis=session.diagnosis,
+    )
+
+
 def _graph_output_to_response(graph_output: dict) -> InterviewTurnResponse:
-    return InterviewTurnResponse.model_validate(
-        {
-            "session_id": graph_output["session_id"],
-            "status": graph_output["status"],
-            "questions": graph_output.get("questions") or [],
-            "mapping_progress": graph_output.get("mapping_progress") or [],
-            "diagnosis": graph_output.get("diagnosis"),
-        },
+    session = DiagnosisSession.model_validate(graph_output["session"])
+    return InterviewTurnResponse(
+        session_id=graph_output["session_id"],
+        status=graph_output["status"],
+        round_count=session.round_count,
+        questions=graph_output.get("questions") or [],
+        mapping_progress=graph_output.get("mapping_progress") or [],
+        diagnosis=graph_output.get("diagnosis"),
     )
 
 
@@ -209,6 +228,86 @@ class DiagnosisSessionService:
         self._sessions.save(updated)
         return _graph_output_to_response(graph_output)
 
+    async def stream_interview_start(
+        self,
+        body: InterviewStartRequest,
+    ) -> AsyncIterator[str]:
+        intake = body.model_copy(deep=True)
+        if intake.cv is not None:
+            intake = intake.model_copy(update={"cv": enrich_cv_attachment(intake.cv)})
+
+        session_id = str(uuid4())
+        session = DiagnosisSession(
+            session_id=session_id,
+            intake=intake,
+        )
+        self._sessions.save(session)
+
+        async for line in self._stream_graph(
+            phase="start",
+            session=session,
+            answers=None,
+        ):
+            yield line
+
+    async def stream_interview_turn(
+        self,
+        session_id: str,
+        body: InterviewTurnRequest,
+    ) -> AsyncIterator[str]:
+        session = self._sessions.get(session_id)
+        if session is None:
+            raise DiagnosisSessionNotFoundError(session_id)
+        if session.is_complete():
+            raise DiagnosisSessionCompleteError(session_id)
+
+        self._validate_turn(session, body)
+
+        async for line in self._stream_graph(
+            phase="turn",
+            session=session,
+            answers=body.answers,
+        ):
+            yield line
+
+    async def _stream_graph(
+        self,
+        *,
+        phase: str,
+        session: DiagnosisSession,
+        answers: list | None,
+    ) -> AsyncIterator[str]:
+        run = GraphRun(
+            graph_name="diagnosis_interview",
+            user_id=session.intake.user_id,
+            input={
+                "phase": phase,
+                "session": session.model_dump(),
+                "answers": [answer.model_dump() for answer in answers or []],
+            },
+        )
+        self._graph_store.save(run)
+        event_iter = await self._executor.execute(run, stream=True)
+        assert not isinstance(event_iter, GraphRunResult)
+
+        async def _events() -> AsyncIterator[dict]:
+            async for event in event_iter:
+                if event.get("type") == "graph_complete":
+                    graph_output = event.get("output") or {}
+                    if isinstance(graph_output, dict) and "session" in graph_output:
+                        updated = DiagnosisSession.model_validate(graph_output["session"])
+                        self._sessions.save(updated)
+                yield event
+
+        async for line in events_to_sse(_events()):
+            yield line
+
+    def get_session(self, session_id: str) -> InterviewTurnResponse:
+        session = self._sessions.get(session_id)
+        if session is None:
+            raise DiagnosisSessionNotFoundError(session_id)
+        return _session_to_turn_response(session)
+
     async def submit_turn(
         self,
         session_id: str,
@@ -236,11 +335,6 @@ class DiagnosisSessionService:
         session: DiagnosisSession,
         body: InterviewTurnRequest,
     ) -> None:
-        if session.round_count >= MAX_INTERVIEW_ROUNDS and session.should_finalize():
-            raise DiagnosisInterviewTurnError(
-                "Sessão atingiu o máximo de rodadas.",
-            )
-
         if not session.transcript:
             raise DiagnosisInterviewTurnError("Nenhuma pergunta aberta nesta sessão.")
 

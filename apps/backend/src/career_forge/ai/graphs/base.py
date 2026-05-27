@@ -6,7 +6,14 @@ import json
 from collections.abc import AsyncIterator
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
-from uuid import uuid4
+
+from career_forge.ai.streaming.langchain_events import (
+    LangChainStreamEvent,
+    emit_chain_end,
+    emit_chain_start,
+    emit_chain_stream,
+    new_run_id,
+)
 
 FIXTURES_DIR = (
     Path(__file__).resolve().parents[2] / "fixtures"
@@ -24,7 +31,7 @@ class GraphRunnable(Protocol):
         input_data: dict[str, Any],
         *,
         version: str = "v2",
-    ) -> AsyncIterator[dict[str, Any]]: ...
+    ) -> AsyncIterator[LangChainStreamEvent]: ...
 
 
 @runtime_checkable
@@ -57,51 +64,34 @@ class MockGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
-    ) -> AsyncIterator[dict[str, Any]]:
-        run_id = str(uuid4())
-        yield _lc_event("on_chain_start", self.graph_name, run_id, {})
+    ) -> AsyncIterator[LangChainStreamEvent]:
+        del version
+        run_id = new_run_id()
+        yield emit_chain_start(self.graph_name, run_id)
 
         if self._stream_fixture:
             events = _load_fixture_list(self._stream_fixture)
             for payload in events:
-                yield _lc_event(
-                    "on_chain_stream",
+                yield emit_chain_stream(
                     "emit_forge_event",
                     run_id,
-                    {"chunk": {"forge_event": payload}},
+                    {"forge_event": payload},
                 )
             if events and events[-1].get("type") == "graph_ready":
                 self._end_output = events[-1]
         else:
-            yield _lc_event(
-                "on_chain_stream",
+            yield emit_chain_stream(
                 self.graph_name,
                 run_id,
-                {"chunk": {"type": "progress", "graph_name": self.graph_name}},
+                {"type": "progress", "graph_name": self.graph_name},
             )
 
-        yield _lc_event(
-            "on_chain_end",
+        yield emit_chain_end(
             self.graph_name,
             run_id,
-            {"output": self._end_output, "input": input_data},
+            output=self._end_output,
+            input_data=input_data,
         )
-
-
-def _lc_event(
-    event: str,
-    name: str,
-    run_id: str,
-    data: dict[str, Any],
-) -> dict[str, Any]:
-    return {
-        "event": event,
-        "name": name,
-        "run_id": run_id,
-        "tags": [],
-        "metadata": {},
-        "data": data,
-    }
 
 
 def _load_fixture_list(name: str) -> list[dict[str, Any]]:

@@ -5,8 +5,13 @@ from __future__ import annotations
 import re
 from collections.abc import AsyncIterator
 from typing import Any
-from uuid import uuid4
-
+from career_forge.ai.streaming.langchain_events import (
+    LangChainStreamEvent,
+    emit_chain_end,
+    emit_chain_start,
+    emit_chain_stream,
+    new_run_id,
+)
 from career_forge.schemas.diagnosis import DiagnosisProfile, DiagnosisRequest, DiagnosisResponse
 
 GOAL_TRACKS: dict[str, str] = {
@@ -84,22 +89,6 @@ YEARS_XP_BOOST: dict[str, int] = {
     "3-5": 8,
     "5+": 12,
 }
-
-
-def _lc_event(
-    event: str,
-    name: str,
-    run_id: str,
-    data: dict[str, Any],
-) -> dict[str, Any]:
-    return {
-        "event": event,
-        "name": name,
-        "run_id": run_id,
-        "tags": [],
-        "metadata": {},
-        "data": data,
-    }
 
 
 def _score_text(text: str, keywords: tuple[str, ...]) -> int:
@@ -205,33 +194,30 @@ class DiagnosisGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncIterator[LangChainStreamEvent]:
         del version
         payload = DiagnosisRequest.model_validate(input_data)
         diagnosis = build_diagnosis_response(payload)
-        run_id = str(uuid4())
+        run_id = new_run_id()
 
-        yield _lc_event("on_chain_start", self.graph_name, run_id, {})
+        yield emit_chain_start(self.graph_name, run_id)
 
-        yield _lc_event(
-            "on_chain_stream",
+        yield emit_chain_stream(
             "analyze_signals",
             run_id,
             {
-                "chunk": {
-                    "type": "progress",
-                    "step": "analyze_signals",
-                    "message": "Mapeando sinais nas respostas do onboarding",
-                },
+                "type": "progress",
+                "step": "analyze_signals",
+                "message": "Mapeando sinais nas respostas do onboarding",
             },
         )
 
         output = diagnosis.model_dump()
-        yield _lc_event(
-            "on_chain_end",
+        yield emit_chain_end(
             self.graph_name,
             run_id,
-            {"output": output, "input": input_data},
+            output=output,
+            input_data=input_data,
         )
 
 

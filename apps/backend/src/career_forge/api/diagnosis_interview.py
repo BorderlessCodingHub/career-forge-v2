@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 
 from career_forge.ai.llm.diagnosis_interview import DiagnosisInterviewLlmError
+from career_forge.ai.streaming.sse import format_sse
 from career_forge.schemas.diagnosis_interview import (
     InterviewStartRequest,
     InterviewTurnRequest,
@@ -35,6 +37,33 @@ async def start_diagnosis_interview(
         ) from exc
 
 
+@router.post("/interview/start/stream")
+async def start_diagnosis_interview_stream(
+    body: InterviewStartRequest,
+) -> StreamingResponse:
+    """SSE stream — live mapping progress while starting the interview."""
+    service = get_diagnosis_session_service()
+
+    async def sse_body():
+        try:
+            async for line in service.stream_interview_start(body):
+                yield line
+        except DiagnosisInterviewLlmError as exc:
+            yield format_sse({"type": "error", "message": exc.retry_message})
+
+    return StreamingResponse(sse_body(), media_type="text/event-stream")
+
+
+@router.get("/interview/{session_id}", response_model=InterviewTurnResponse)
+async def get_diagnosis_session(session_id: str) -> InterviewTurnResponse:
+    """Resume an in-progress or completed diagnosis interview session."""
+    service = get_diagnosis_session_service()
+    try:
+        return service.get_session(session_id)
+    except DiagnosisSessionNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Sessão não encontrada.") from exc
+
+
 @router.post("/interview/{session_id}/turn", response_model=InterviewTurnResponse)
 async def submit_diagnosis_turn(
     session_id: str,
@@ -55,3 +84,27 @@ async def submit_diagnosis_turn(
             status_code=503,
             detail={"message": exc.retry_message, "retry": True},
         ) from exc
+
+
+@router.post("/interview/{session_id}/turn/stream")
+async def submit_diagnosis_turn_stream(
+    session_id: str,
+    body: InterviewTurnRequest,
+) -> StreamingResponse:
+    """SSE stream — live mapping progress while processing a turn."""
+    service = get_diagnosis_session_service()
+
+    async def sse_body():
+        try:
+            async for line in service.stream_interview_turn(session_id, body):
+                yield line
+        except DiagnosisSessionNotFoundError:
+            yield format_sse({"type": "error", "message": "Sessão não encontrada."})
+        except DiagnosisSessionCompleteError:
+            yield format_sse({"type": "error", "message": "Sessão já finalizada."})
+        except DiagnosisInterviewTurnError as exc:
+            yield format_sse({"type": "error", "message": exc.message})
+        except DiagnosisInterviewLlmError as exc:
+            yield format_sse({"type": "error", "message": exc.retry_message})
+
+    return StreamingResponse(sse_body(), media_type="text/event-stream")

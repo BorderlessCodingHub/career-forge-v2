@@ -1,19 +1,28 @@
-"""Diagnosis interview LLM — OpenAI via langchain."""
+"""Diagnosis interview LLM — OpenAI via LangChain structured output."""
 
 from __future__ import annotations
 
-import json
 import logging
 import os
-import re
-from typing import Any, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 from uuid import uuid4
 
+from career_forge.ai.llm.client import StructuredLlmClient
+from career_forge.ai.llm.errors import DiagnosisInterviewLlmError, RETRY_MESSAGE
+from career_forge.ai.payloads.diagnosis_interview import (
+    apply_transcript_overrides,
+    build_interviewer_user_message,
+    build_judge_user_message,
+    closed_dimensions_from_transcript,
+)
+from career_forge.ai.prompts.diagnosis_interview import (
+    FINALIZE_SYSTEM,
+    INTERVIEWER_SYSTEM,
+    JUDGE_SYSTEM,
+)
 from career_forge.config import settings
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.diagnosis_interview import (
-    CTRR_DIMENSION_LABELS,
-    CTRR_DIMENSION_KEYS,
     MAX_QUESTIONS_PER_TURN,
     BeliefState,
     CvSignals,
@@ -21,22 +30,14 @@ from career_forge.schemas.diagnosis_interview import (
     InterviewAnswer,
     InterviewQuestion,
     InterviewTurn,
-    RubricDimension,
+)
+from career_forge.schemas.llm_outputs import (
+    FinalizeDiagnosisOutput,
+    InterviewerOutput,
+    JudgeBeliefOutput,
 )
 
 logger = logging.getLogger(__name__)
-
-RETRY_MESSAGE = (
-    "A IA não respondeu agora. Tente novamente em alguns segundos — suas respostas foram salvas."
-)
-
-
-class DiagnosisInterviewLlmError(Exception):
-    """LLM call failed — API should surface retry message."""
-
-    def __init__(self, message: str = RETRY_MESSAGE) -> None:
-        super().__init__(message)
-        self.retry_message = message
 
 
 @runtime_checkable
@@ -71,88 +72,40 @@ class DiagnosisInterviewLlm(Protocol):
     ) -> DiagnosisResponse: ...
 
 
-def _parse_json_payload(raw: str) -> Any:
-    text = raw.strip()
-    fence = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
-    if fence:
-        text = fence.group(1).strip()
-    return json.loads(text)
+def _filter_interview_questions(
+    belief: BeliefState,
+    questions: list[InterviewQuestion],
+    transcript: list[InterviewTurn],
+) -> list[InterviewQuestion]:
+    """Drop questions targeting closed or non-interviewable dimensions."""
+    interviewable = set(belief.interviewable_keys())
+    closed = closed_dimensions_from_transcript(transcript)
+    filtered = [
+        question
+        for question in questions
+        if question.rubric_key in interviewable and question.rubric_key not in closed
+    ]
+    return filtered[:MAX_QUESTIONS_PER_TURN]
 
 
-def _belief_from_dict(payload: dict[str, Any]) -> BeliefState:
-    dims_raw = payload.get("dimensions") or payload
-    base = BeliefState.empty()
-    for key in CTRR_DIMENSION_KEYS:
-        if key in dims_raw and isinstance(dims_raw[key], dict):
-            item = dims_raw[key]
-            base.dimensions[key] = RubricDimension(
-                key=key,
-                label=str(item.get("label") or CTRR_DIMENSION_LABELS[key]),
-                confidence=min(1.0, max(0.0, float(item.get("confidence", 0)))),
-                evidence=[str(e) for e in item.get("evidence") or []],
-            )
-    return base
-
-
-def _questions_from_list(payload: list[Any], round_count: int) -> list[InterviewQuestion]:
-    questions: list[InterviewQuestion] = []
-    for index, item in enumerate(payload[:MAX_QUESTIONS_PER_TURN]):
-        if not isinstance(item, dict):
-            continue
-        rubric_key = item.get("rubric_key")
-        if rubric_key not in CTRR_DIMENSION_KEYS:
-            continue
-        question_text = item.get("question")
-        example_text = item.get("example_of_answer")
-        if not question_text or not example_text:
-            raise DiagnosisInterviewLlmError(
-                "A IA retornou perguntas incompletas. Tente novamente em alguns segundos.",
-            )
-        qid = str(item.get("id") or f"q-r{round_count + 1}-{index + 1}")
-        questions.append(
-            InterviewQuestion(
-                id=qid,
-                topic=str(item.get("topic") or CTRR_DIMENSION_LABELS[rubric_key]),
-                rubric_key=rubric_key,
-                question=str(question_text),
-                example_of_answer=str(example_text),
-            ),
-        )
-    return questions
+def _effective_interviewable(
+    belief: BeliefState,
+    transcript: list[InterviewTurn],
+) -> list[str]:
+    closed = closed_dimensions_from_transcript(transcript)
+    return [key for key in belief.interviewable_keys() if key not in closed]
 
 
 class OpenAiDiagnosisInterviewLlm:
-    """OpenAI-backed Judge + Interviewer via langchain."""
+    """OpenAI-backed Judge + Interviewer using with_structured_output."""
 
     def __init__(self, model: str) -> None:
-        if not model.strip():
+        try:
+            self._client = StructuredLlmClient(model)
+        except ValueError as exc:
             raise DiagnosisInterviewLlmError(
                 "DIAGNOSIS_INTERVIEW_MODEL não configurado. Defina em .env.",
-            )
-        self._model = model.strip()
-
-    def _chat(self):
-        from langchain_openai import ChatOpenAI
-
-        return ChatOpenAI(model=self._model, temperature=0.2)
-
-    async def _invoke_json(self, system: str, user: str) -> Any:
-        from langchain_core.messages import HumanMessage, SystemMessage
-
-        try:
-            response = await self._chat().ainvoke(
-                [SystemMessage(content=system), HumanMessage(content=user)],
-            )
-            content = response.content
-            if not isinstance(content, str):
-                msg = "LLM returned non-text content"
-                raise DiagnosisInterviewLlmError(msg)
-            return _parse_json_payload(content)
-        except DiagnosisInterviewLlmError:
-            raise
-        except Exception as exc:
-            logger.exception("Diagnosis interview LLM call failed")
-            raise DiagnosisInterviewLlmError(RETRY_MESSAGE) from exc
+            ) from exc
 
     async def initialize_belief(
         self,
@@ -160,20 +113,19 @@ class OpenAiDiagnosisInterviewLlm:
         cv_signals: CvSignals | None,
         cv_text: str | None,
     ) -> BeliefState:
-        from career_forge.ai.prompts.diagnosis_interview import JUDGE_SYSTEM
-
-        payload = {
-            "intake": intake.model_dump(exclude={"cv"}),
-            "cv_signals": cv_signals.model_dump() if cv_signals else None,
-            "cv_text_excerpt": (cv_text or "")[:2000],
-            "task": "initialize_belief",
-        }
-        parsed = await self._invoke_json(JUDGE_SYSTEM, json.dumps(payload, ensure_ascii=False))
-        if not isinstance(parsed, dict):
-            raise DiagnosisInterviewLlmError(
-                "A IA retornou um mapa de competências inválido. Tente novamente.",
-            )
-        return _belief_from_dict(parsed)
+        payload = build_judge_user_message(
+            task="initialize_belief",
+            intake=intake,
+            cv_signals=cv_signals.model_dump() if cv_signals else None,
+            cv_text_excerpt=(cv_text or "")[:2000],
+        )
+        output = await self._client.invoke(
+            system=JUDGE_SYSTEM,
+            user=payload,
+            schema=JudgeBeliefOutput,
+            error_type=DiagnosisInterviewLlmError,
+        )
+        return output.to_belief_state()
 
     async def update_belief(
         self,
@@ -182,21 +134,21 @@ class OpenAiDiagnosisInterviewLlm:
         transcript: list[InterviewTurn],
         answers: list[InterviewAnswer],
     ) -> BeliefState:
-        from career_forge.ai.prompts.diagnosis_interview import JUDGE_SYSTEM
-
-        payload = {
-            "intake": intake.model_dump(exclude={"cv"}),
-            "belief": belief.model_dump(),
-            "transcript": [turn.model_dump() for turn in transcript],
-            "new_answers": [answer.model_dump() for answer in answers],
-            "task": "update_belief",
-        }
-        parsed = await self._invoke_json(JUDGE_SYSTEM, json.dumps(payload, ensure_ascii=False))
-        if not isinstance(parsed, dict):
-            raise DiagnosisInterviewLlmError(
-                "A IA retornou um mapa de competências inválido. Tente novamente.",
-            )
-        return _belief_from_dict(parsed)
+        payload = build_judge_user_message(
+            task="update_belief",
+            intake=intake,
+            belief=belief,
+            transcript=transcript,
+            new_answers=answers,
+        )
+        output = await self._client.invoke(
+            system=JUDGE_SYSTEM,
+            user=payload,
+            schema=JudgeBeliefOutput,
+            error_type=DiagnosisInterviewLlmError,
+        )
+        updated = output.to_belief_state()
+        return apply_transcript_overrides(updated, transcript)
 
     async def plan_questions(
         self,
@@ -205,30 +157,34 @@ class OpenAiDiagnosisInterviewLlm:
         transcript: list[InterviewTurn],
         round_count: int,
     ) -> list[InterviewQuestion]:
-        from career_forge.ai.prompts.diagnosis_interview import INTERVIEWER_SYSTEM
+        effective = _effective_interviewable(belief, transcript)
+        if not effective:
+            return []
 
-        payload = {
-            "intake": intake.model_dump(exclude={"cv"}),
-            "belief": belief.model_dump(),
-            "transcript": [turn.model_dump() for turn in transcript],
-            "round_count": round_count,
-            "max_questions": MAX_QUESTIONS_PER_TURN,
-            "unsaturated": belief.unsaturated_keys(),
-        }
-        parsed = await self._invoke_json(
-            INTERVIEWER_SYSTEM,
-            json.dumps(payload, ensure_ascii=False),
+        payload = build_interviewer_user_message(
+            intake=intake,
+            belief=belief,
+            transcript=transcript,
+            round_count=round_count,
+            max_questions=MAX_QUESTIONS_PER_TURN,
         )
-        if isinstance(parsed, dict) and "questions" in parsed:
-            parsed = parsed["questions"]
-        if not isinstance(parsed, list):
-            raise DiagnosisInterviewLlmError(
-                "A IA retornou perguntas inválidas. Tente novamente em alguns segundos.",
-            )
-        questions = _questions_from_list(parsed, round_count)
-        if not questions and belief.unsaturated_keys():
+        output = await self._client.invoke(
+            system=INTERVIEWER_SYSTEM,
+            user=payload,
+            schema=InterviewerOutput,
+            error_type=DiagnosisInterviewLlmError,
+        )
+        questions = _filter_interview_questions(belief, output.questions, transcript)
+
+        if not questions and not output.questions:
             raise DiagnosisInterviewLlmError(
                 "A IA não gerou perguntas para continuar. Tente novamente em alguns segundos.",
+            )
+        if not questions and output.questions:
+            logger.warning(
+                "Interviewer returned %d question(s) but all were filtered (closed dims=%s)",
+                len(output.questions),
+                sorted(closed_dimensions_from_transcript(transcript)),
             )
         return questions
 
@@ -237,20 +193,18 @@ class OpenAiDiagnosisInterviewLlm:
         belief: BeliefState,
         intake: DiagnosisIntake,
     ) -> DiagnosisResponse:
-        from career_forge.ai.prompts.diagnosis_interview import FINALIZE_SYSTEM
-
-        payload = {
-            "intake": intake.model_dump(exclude={"cv"}),
-            "belief": belief.model_dump(),
-            "task": "finalize_diagnosis",
-        }
-        parsed = await self._invoke_json(
-            FINALIZE_SYSTEM,
-            json.dumps(payload, ensure_ascii=False),
+        payload = build_judge_user_message(
+            task="finalize_diagnosis",
+            intake=intake,
+            belief=belief,
         )
-        if not isinstance(parsed, dict):
-            raise DiagnosisInterviewLlmError
-        return DiagnosisResponse.model_validate(parsed)
+        output = await self._client.invoke(
+            system=FINALIZE_SYSTEM,
+            user=payload,
+            schema=FinalizeDiagnosisOutput,
+            error_type=DiagnosisInterviewLlmError,
+        )
+        return output.to_diagnosis_response()
 
 
 _override_llm: DiagnosisInterviewLlm | None = None
@@ -279,3 +233,15 @@ def get_diagnosis_interview_llm() -> DiagnosisInterviewLlm:
 
 def new_question_id(prefix: str = "q") -> str:
     return f"{prefix}-{uuid4().hex[:8]}"
+
+
+# Backward-compatible re-export
+__all__ = [
+    "DiagnosisInterviewLlm",
+    "DiagnosisInterviewLlmError",
+    "RETRY_MESSAGE",
+    "get_diagnosis_interview_llm",
+    "new_question_id",
+    "reset_diagnosis_interview_llm",
+    "set_diagnosis_interview_llm",
+]
