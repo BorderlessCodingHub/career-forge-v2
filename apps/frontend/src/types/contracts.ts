@@ -16,6 +16,9 @@ export type RoadmapSyncNode = {
   mastery_score: number;
   priority?: string | null;
   rationale?: string | null;
+  prerequisites?: string[];
+  tasks?: Array<Record<string, string>>;
+  references?: Array<Record<string, string>>;
 };
 
 /** Forge session graph node — same contract as RoadmapSyncNode. */
@@ -96,6 +99,8 @@ export type RoadmapNode = {
   mastery_score: number;
   priority?: string | null;
   rationale?: string | null;
+  tasks: Array<Record<string, string>>;
+  references: Array<Record<string, string>>;
 };
 
 export type RoadmapResponse = {

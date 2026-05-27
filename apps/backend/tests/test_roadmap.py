@@ -53,3 +53,4 @@ def test_sync_roadmap_api(client) -> None:
     payload = response.json()
     http = next(n for n in payload["nodes"] if n["node_id"] == "http")
     assert http["mastery_score"] == 55
+
