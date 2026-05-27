@@ -166,7 +166,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Forge during stream | Timeline only, no graph | Split timeline + graph skeleton | Implemented | **Docs win** — timeline-only wow | HAC-18 |
 | Steady state | Vertical roadmap + optional AI sidebar | Skill graph dashboard | Implemented (HAC-9) | **Docs win** — roadmap.sh layout | HAC-9 |
 | Reveal | Items fly into vertical layout | Graph panel reveal | Implemented | **Docs win** | HAC-18 |
-| Monorepo UI | Full flow per UX-FLOW | Old hash routes in HTML | Mostly implemented | HAC-57 pending confirm→save→forge API | HAC-52 |
+| Monorepo UI | Full flow per UX-FLOW | Old hash routes in HTML | Mostly implemented | HAC-52 API done (`/diagnosis/confirm`, forge loads profile); **HAC-57** wires confirm button | HAC-52 |
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
 
@@ -193,4 +193,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: HAC-53 + HAC-58 merges — diagnosis UX shipped, prod Postgres stores, implementation notes refreshed*
+*Last updated: HAC-52 API merge — no UI paradigm change; HAC-53 UX notes + confirm flow target documented*

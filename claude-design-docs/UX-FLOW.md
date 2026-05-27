@@ -71,6 +71,7 @@ Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → F
 | **Why** | Tela de confirmação era dead-end — sem feedback, sem agency |
 | **Route** | `/onboarding/edit` · `data-testid="editable-diagnosis"` |
 | **Shipped** | HAC-53 — view/edit modes per item; strengths/gaps editable; priorities reorderable |
+| **On confirm (target)** | `POST /diagnosis/confirm` persiste perfil no Postgres → `POST /forge` (202 + run_id) → SSE. **API:** HAC-52 ✅ · **FE wire:** HAC-57 pending |
 
 **Sections (editable lists):**
 - Pontos fortes

@@ -20,6 +20,11 @@ logs/
 # OS
 .DS_Store
 .thumbnail
+# macOS Finder duplicate copies
+* 2.*
+* 3.*
+* 2
+* 3
 
 # IDE
 .idea/
