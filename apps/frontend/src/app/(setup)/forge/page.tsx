@@ -25,6 +25,7 @@ export default function ForgePage() {
   const [elapsedSec, setElapsedSec] = useState(0);
   const startedRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const redirectRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const finishForge = useCallback(
     (collected: RoadmapForgeEvent[]) => {
@@ -32,7 +33,9 @@ export default function ForgePage() {
       if (graph) setForgeGraph(graph);
       setStatus("done");
       if (timerRef.current) clearInterval(timerRef.current);
-      router.push("/forge/complete");
+      redirectRef.current = setTimeout(() => {
+        router.push("/forge/complete");
+      }, 3500);
     },
     [router],
   );
@@ -89,6 +92,7 @@ export default function ForgePage() {
     void startForge();
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (redirectRef.current) clearTimeout(redirectRef.current);
     };
   }, [startForge]);
 
@@ -117,6 +121,11 @@ export default function ForgePage() {
             <span>{completedSteps} etapas concluídas</span>
             <span className="capitalize">{status}</span>
           </div>
+          {status === "done" && (
+            <p className="mt-3 text-sm text-accent-mint">
+              Grafo pronto — levando você para a trilha em alguns segundos…
+            </p>
+          )}
         </div>
 
         {error && (
