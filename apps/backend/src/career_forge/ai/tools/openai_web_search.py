@@ -57,7 +57,7 @@ class OpenAiNativeWebSearchClient:
             raise WebSearchConfigurationError(
                 msg,
             )
-        self._model = model or os.getenv("FORGE_SEARCH_MODEL", "gpt-5.4-mini")
+        self._model = model or os.getenv("FORGE_SEARCH_MODEL", "gpt-5.4")
         self._llm = ChatOpenAI(
             model=self._model,
             api_key=resolved_key,

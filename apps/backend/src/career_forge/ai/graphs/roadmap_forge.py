@@ -22,10 +22,15 @@ from career_forge.ai.tools.openai_web_search import (
 from career_forge.paths import roadmap_json_path
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
+from career_forge.services.forge_context import (
+    LearnerForgeContext,
+    build_forge_context_from_input,
+)
 
 ROADMAP_PATH = roadmap_json_path()
 
 STREAM_DELAY_SEC = 0.12
+MAX_RESEARCH_ITERATIONS = 3
 
 FORGE_STEPS = (
     "load_topics",
@@ -93,6 +98,15 @@ def build_forge_timeline(
     research_artifacts: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """Ordered forge SSE payloads for the four pipeline steps."""
+    return [
+        *build_forge_intro_events(diagnosis),
+        *(research_artifacts or []),
+        *build_forge_tail_events(diagnosis),
+    ]
+
+
+def build_forge_intro_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any]]:
+    """Events up to the start of research_enrich."""
     persona = diagnosis.profile.persona_slug or "perfil"
     track = diagnosis.profile.track_id
     top_strength = diagnosis.strengths[0] if diagnosis.strengths else "motivação clara"
@@ -144,44 +158,82 @@ def build_forge_timeline(
             "step": "research_enrich",
         },
     )
-    events.extend(research_artifacts or [])
-    events.extend(
-        [
-            {
-                "type": "step_complete",
-                "step": "research_enrich",
-                "iteration": 1,
-            },
-            {
-                "type": "reasoning_delta",
-                "text": "Consolidando grafo acumulado com pré-requisitos e prioridades…",
-                "step": "accumulate_graph",
-            },
-            {
-                "type": "step_complete",
-                "step": "accumulate_graph",
-                "iteration": 2,
-            },
-            {
-                "type": "graph_ready",
-                "graph": [n.model_dump() for n in graph],
-            },
-        ],
-    )
     return events
 
 
-def build_research_prompt(diagnosis: DiagnosisResponse, input_data: dict[str, Any]) -> str:
-    goal = input_data.get("goal_id") or diagnosis.profile.track_id
-    priorities = ", ".join(diagnosis.starting_priorities[:3]) or "primeiros fundamentos"
-    gaps = "; ".join(diagnosis.gaps[:3]) or "lacunas iniciais"
+def build_forge_tail_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any]]:
+    """Events after research is complete."""
+    graph = build_accumulated_graph(diagnosis)
+    return [
+        {
+            "type": "step_complete",
+            "step": "research_enrich",
+            "iteration": 1,
+        },
+        {
+            "type": "reasoning_delta",
+            "text": "Consolidando grafo acumulado com pré-requisitos e prioridades…",
+            "step": "accumulate_graph",
+        },
+        {
+            "type": "step_complete",
+            "step": "accumulate_graph",
+            "iteration": 2,
+        },
+        {
+            "type": "graph_ready",
+            "graph": [n.model_dump() for n in graph],
+        },
+    ]
+
+
+def build_research_prompts(context: LearnerForgeContext) -> list[str]:
+    """Focused prompts for a visible multi-step native search loop."""
+    summary = context.compact_summary()
+    return [
+        build_research_prompt(
+            context,
+            focus="roteiro oficial e pré-requisitos",
+            instruction=(
+                "Encontre fontes oficiais para estruturar a jornada do objetivo do aluno. "
+                "Priorize roadmap.sh, docs oficiais de linguagem/framework e fundamentos."
+            ),
+            summary=summary,
+        ),
+        build_research_prompt(
+            context,
+            focus="projetos hands-on e evidência prática",
+            instruction=(
+                "Encontre fontes oficiais ou exemplos canônicos que ajudem o aluno a sair "
+                "de zero prática para projetos demonstráveis."
+            ),
+            summary=summary,
+        ),
+        build_research_prompt(
+            context,
+            focus="APIs e produto real com IA",
+            instruction=(
+                "Encontre documentação oficial para construir APIs/produtos com IA, "
+                "incluindo OpenAI API quando fizer sentido."
+            ),
+            summary=summary,
+        ),
+    ][:MAX_RESEARCH_ITERATIONS]
+
+
+def build_research_prompt(
+    context: LearnerForgeContext,
+    *,
+    focus: str,
+    instruction: str,
+    summary: str,
+) -> str:
     return (
-        "Use web_search obrigatoriamente para encontrar fontes oficiais de estudo. "
-        "Priorize documentação oficial (OpenAI, FastAPI, MDN, Python, Next.js, PostgreSQL, roadmap.sh) "
-        "quando relevante. Responda em português com um resumo curto e cite as fontes.\n\n"
-        f"Objetivo do aluno: {goal}\n"
-        f"Lacunas: {gaps}\n"
-        f"Prioridades iniciais: {priorities}\n"
+        "Use web_search obrigatoriamente. Faça uma busca focada, cite as fontes e "
+        "responda em português com no máximo 2 frases úteis para a UI.\n\n"
+        f"Foco desta busca: {focus}\n"
+        f"Instrução: {instruction}\n\n"
+        f"Contexto do aluno:\n{summary}\n"
     )
 
 
@@ -190,21 +242,41 @@ async def research_enrichment_events(
     input_data: dict[str, Any],
     search_client: WebSearchClient,
 ) -> list[dict[str, Any]]:
-    result = await search_client.search(build_research_prompt(diagnosis, input_data))
-    return [_research_artifact(result)]
+    context = build_forge_context_from_input(user_id="forge-user", input_data=input_data)
+    return [
+        event
+        async for event in iter_research_enrichment_events(context, search_client)
+    ]
 
 
-def _research_artifact(result: WebSearchResult) -> dict[str, Any]:
+async def iter_research_enrichment_events(
+    context: LearnerForgeContext,
+    search_client: WebSearchClient,
+) -> AsyncIterator[dict[str, Any]]:
+    for index, prompt in enumerate(build_research_prompts(context), start=1):
+        result = await search_client.search(prompt)
+        yield _research_artifact(result, iteration=index)
+
+
+def _research_artifact(result: WebSearchResult, *, iteration: int = 1) -> dict[str, Any]:
     return {
         "type": "artifact_found",
-        "label": "Pesquisa ao vivo: fontes oficiais",
-        "detail": result.summary or f"{len(result.sources)} fontes encontradas",
+        "label": f"Pesquisa ao vivo {iteration}/{MAX_RESEARCH_ITERATIONS}: fontes oficiais",
+        "detail": _compact_summary(result.summary)
+        or f"{len(result.sources)} fontes encontradas",
         "query": result.query,
         "sources": [
             {"title": source.title, "url": source.url, "snippet": source.snippet}
             for source in result.sources
         ],
     }
+
+
+def _compact_summary(summary: str, *, limit: int = 520) -> str:
+    cleaned = " ".join(summary.split())
+    if len(cleaned) <= limit:
+        return cleaned
+    return f"{cleaned[: limit - 1].rstrip()}…"
 
 
 class RoadmapForgeGraphRunnable:
@@ -224,22 +296,12 @@ class RoadmapForgeGraphRunnable:
         del version
         raw_diagnosis = input_data.get("diagnosis") or input_data
         diagnosis = DiagnosisResponse.model_validate(raw_diagnosis)
+        context = build_forge_context_from_input(user_id="forge-user", input_data=input_data)
         run_id = new_run_id()
 
         yield emit_chain_start(self.graph_name, run_id)
 
-        search_client = self._search_client or build_openai_web_search_client_from_env()
-        research_artifacts = await research_enrichment_events(
-            diagnosis,
-            input_data,
-            search_client,
-        )
-        timeline = build_forge_timeline(
-            diagnosis,
-            research_artifacts=research_artifacts,
-        )
-
-        for payload in timeline:
+        for payload in build_forge_intro_events(diagnosis):
             await asyncio.sleep(STREAM_DELAY_SEC)
             yield emit_chain_stream(
                 payload.get("step", "emit_forge_event"),
@@ -247,10 +309,29 @@ class RoadmapForgeGraphRunnable:
                 {"forge_event": payload},
             )
 
+        search_client = self._search_client or build_openai_web_search_client_from_env()
+        async for payload in iter_research_enrichment_events(context, search_client):
+            await asyncio.sleep(STREAM_DELAY_SEC)
+            yield emit_chain_stream(
+                payload.get("step", "emit_forge_event"),
+                run_id,
+                {"forge_event": payload},
+            )
+
+        tail_events = build_forge_tail_events(diagnosis)
+        for payload in tail_events:
+            await asyncio.sleep(STREAM_DELAY_SEC)
+            yield emit_chain_stream(
+                payload.get("step", "emit_forge_event"),
+                run_id,
+                {"forge_event": payload},
+            )
+
+        output = tail_events[-1]
         yield emit_chain_end(
             self.graph_name,
             run_id,
-            output=timeline[-1],
+            output=output,
             input_data=input_data,
         )
 

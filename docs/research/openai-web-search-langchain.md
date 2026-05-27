@@ -142,7 +142,7 @@ Mapping:
 ## Suggested Implementation Plan
 
 1. Add `career_forge/ai/tools/openai_web_search.py`.
-2. Use `langchain_openai.ChatOpenAI` with `model=os.getenv("FORGE_SEARCH_MODEL", "gpt-5.4-mini")`.
+2. Use `langchain_openai.ChatOpenAI` with `model=os.getenv("FORGE_SEARCH_MODEL", "gpt-5.4")`.
 3. Pass `tools=[{"type": "web_search"}]` as LangChain invocation parameters (or `bind(..., tools=[...])`), with `tool_choice="required"` for mandatory search.
 4. Invoke with a prompt that asks for study sources for the selected goal, gaps, and first priorities.
 5. Parse only `AIMessage.content_blocks`.
@@ -160,6 +160,19 @@ Render search as "Pesquisa ao vivo" rows in the forge timeline:
 - Keep graph hidden until `graph_ready`.
 
 This gives the demo the "AI is researching now" moment without leaking implementation details.
+
+## Follow-up Research — Looping and Streaming
+
+OpenAI Responses `web_search` is model-directed. With `tool_choice="required"` the model must use a tool, and with reasoning models it can perform `search`, plus deeper `open_page` / `find_in_page` actions when supported. For long-running multi-search tasks, OpenAI documents background/WebSocket/`previous_response_id` patterns.
+
+For this hackathon UX, use an application-level loop first:
+
+1. Generate 2-3 focused research prompts from `LearnerForgeContext`.
+2. Call `ChatOpenAI(..., use_responses_api=True)` with `tools=[{"type": "web_search"}]`, `tool_choice="required"` for each focus.
+3. Emit one `artifact_found` per completed search result immediately.
+4. Keep sources stream-only for HAC-54; persist and evaluate in HAC-55.
+
+This produces visible live feedback now without adopting WebSocket mode or background polling.
 
 ## Open Questions Before Coding
 
