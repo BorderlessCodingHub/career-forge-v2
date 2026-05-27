@@ -43,7 +43,7 @@ class DiagnosisConfirmRequest(BaseModel):
     goal_id: str = Field(min_length=1)
     motivation: str = Field(min_length=1, max_length=280)
     years_xp: YearsXpRange | None = None
-    cv: DiagnosisIntake.model_fields["cv"].annotation | None = None
+    cv: CvAttachment | None = None
     answers: dict[str, str] = Field(default_factory=dict)
     cv_signals: CvSignals | None = None
     display_name: str | None = Field(default=None, max_length=120)
