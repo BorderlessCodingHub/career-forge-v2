@@ -71,7 +71,7 @@
 | Layout | **Timeline only** — full width or centered column |
 | During stream | **NO skill graph, NO map, NO split panel** |
 | Steps | Numbered 1, 2, 3, 4… (or N) **only during generation** |
-| Event types | `reasoning_delta`, `artifact_found`, `decision` visual language; `artifact_found` may include query + official source cards |
+| Event types | `reasoning_delta`, `artifact_found`, `decision` visual language; `artifact_found` may include query, official source cards, planner/evaluator verdicts |
 | Feedback | Sequential timeline items — **no generic spinner as primary UX** |
 | Header | "Forjando sua trilha personalizada" + elapsed / passos |
 | Exit | On `graph_ready` → brief visible "grafo pronto" hold → animation reveal |

@@ -14,7 +14,12 @@ from career_forge.ai.graphs.roadmap_forge import (
 )
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
 from career_forge.ai.tools.openai_web_search import WebSearchResult, WebSearchSource
-from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
+from career_forge.schemas.study_plan import (
+    StudyPlan,
+    StudyPlanEvaluation,
+    StudyPlanNode,
+    StudyPlanTask,
+)
 from career_forge.schemas.diagnosis import DiagnosisRequest
 
 _SAMPLE = DiagnosisRequest(
@@ -61,6 +66,7 @@ def executor() -> GraphExecutor:
         "roadmap_forge",
         lambda: RoadmapForgeGraphRunnable(
             search_client=FakeSearchClient(),
+            planner=FakePlanner(),
             evaluator=FakeEvaluator(),
         ),
     )
@@ -88,6 +94,48 @@ class FakeEvaluator:
             verdict="ship",
             strengths=["sequência inicial clara"],
         )
+
+
+class FakePlanner:
+    async def create_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+    ) -> StudyPlan:
+        return _fake_plan()
+
+    async def revise_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+        plan: StudyPlan,
+        evaluation: StudyPlanEvaluation,
+    ) -> StudyPlan:
+        return _fake_plan(strategy="Plano revisado")
+
+
+def _fake_plan(strategy: str = "Plano inicial") -> StudyPlan:
+    return StudyPlan(
+        goal="backend",
+        learner_context_summary="summary",
+        strategy=strategy,
+        nodes=[
+            StudyPlanNode(
+                node_id="http",
+                title="HTTP básico",
+                why_now="Base para APIs.",
+                tasks=[
+                    StudyPlanTask(
+                        title="Ler docs",
+                        outcome="Explicar request/response.",
+                        evidence_prompt="Responder entrevista curta.",
+                    ),
+                ],
+            ),
+        ],
+    )
 
 
 @pytest.mark.asyncio
@@ -126,3 +174,64 @@ def test_post_forge_api(client, diagnosis_dict: dict) -> None:
     assert payload["status"] == "pending"
     assert payload["run_id"]
     assert payload["events"] == []
+
+
+@pytest.mark.asyncio
+async def test_evaluator_feedback_triggers_plan_revision(diagnosis_dict: dict) -> None:
+    planner = CountingPlanner()
+    evaluator = RevisingEvaluator()
+    factory = AgentFactory()
+    factory.register(
+        "roadmap_forge",
+        lambda: RoadmapForgeGraphRunnable(
+            search_client=FakeSearchClient(),
+            planner=planner,
+            evaluator=evaluator,
+        ),
+    )
+    executor = GraphExecutor(factory=factory, store=InMemoryGraphRunStore())
+    result = await executor.execute(
+        GraphRun(
+            graph_name="roadmap_forge",
+            user_id="test-user",
+            input={"diagnosis": diagnosis_dict},
+        ),
+        stream=False,
+    )
+
+    assert isinstance(result, GraphRunResult)
+    assert planner.revision_count == 1
+    assert any(
+        event["type"] == "reasoning_delta" and event["step"] == "revise_plan"
+        for event in result.events
+    )
+
+
+class CountingPlanner(FakePlanner):
+    def __init__(self) -> None:
+        self.revision_count = 0
+
+    async def revise_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+        plan: StudyPlan,
+        evaluation: StudyPlanEvaluation,
+    ) -> StudyPlan:
+        self.revision_count += 1
+        return _fake_plan(strategy="Plano revisado")
+
+
+class RevisingEvaluator:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+        self.calls += 1
+        if self.calls == 1:
+            return StudyPlanEvaluation(
+                verdict="revise",
+                required_changes=["Adicionar projeto prático"],
+            )
+        return StudyPlanEvaluation(verdict="ship")

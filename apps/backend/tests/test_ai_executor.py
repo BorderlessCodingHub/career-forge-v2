@@ -11,7 +11,12 @@ from career_forge.ai.graphs.roadmap_forge import RoadmapForgeGraphRunnable
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
 from career_forge.ai.tools.openai_web_search import WebSearchResult, WebSearchSource
 from career_forge.schemas.diagnosis import DiagnosisRequest
-from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
+from career_forge.schemas.study_plan import (
+    StudyPlan,
+    StudyPlanEvaluation,
+    StudyPlanNode,
+    StudyPlanTask,
+)
 
 _FORGE_DIAGNOSIS = build_diagnosis_response(
     DiagnosisRequest(
@@ -32,6 +37,7 @@ def executor() -> GraphExecutor:
         "roadmap_forge",
         lambda: RoadmapForgeGraphRunnable(
             search_client=FakeSearchClient(),
+            planner=FakePlanner(),
             evaluator=FakeEvaluator(),
         ),
     )
@@ -59,6 +65,48 @@ class FakeEvaluator:
             verdict="ship",
             strengths=["plano testável"],
         )
+
+
+class FakePlanner:
+    async def create_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+    ) -> StudyPlan:
+        return _fake_plan()
+
+    async def revise_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+        plan: StudyPlan,
+        evaluation: StudyPlanEvaluation,
+    ) -> StudyPlan:
+        return _fake_plan(strategy="Plano revisado")
+
+
+def _fake_plan(strategy: str = "Plano inicial") -> StudyPlan:
+    return StudyPlan(
+        goal="backend",
+        learner_context_summary="summary",
+        strategy=strategy,
+        nodes=[
+            StudyPlanNode(
+                node_id="http",
+                title="HTTP básico",
+                why_now="Base para APIs.",
+                tasks=[
+                    StudyPlanTask(
+                        title="Ler docs",
+                        outcome="Explicar request/response.",
+                        evidence_prompt="Responder entrevista curta.",
+                    ),
+                ],
+            ),
+        ],
+    )
 
 
 @pytest.mark.asyncio

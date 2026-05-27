@@ -23,12 +23,16 @@ from career_forge.ai.tools.study_plan_evaluator import (
     StudyPlanEvaluator,
     build_study_plan_evaluator_from_env,
 )
+from career_forge.ai.tools.study_plan_planner import (
+    StudyPlanPlanner,
+    build_study_plan_planner_from_env,
+)
 from career_forge.paths import roadmap_json_path
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.services.forge_planning import (
     build_draft_study_plan,
-    evaluate_study_plan_event,
+    evaluation_artifact,
 )
 from career_forge.services.forge_context import (
     LearnerForgeContext,
@@ -39,6 +43,7 @@ ROADMAP_PATH = roadmap_json_path()
 
 STREAM_DELAY_SEC = 0.12
 MAX_RESEARCH_ITERATIONS = 3
+MAX_EVALUATION_ITERATIONS = 2
 
 FORGE_STEPS = (
     "load_topics",
@@ -287,6 +292,14 @@ def _compact_summary(summary: str, *, limit: int = 520) -> str:
     return f"{cleaned[: limit - 1].rstrip()}…"
 
 
+def _planner_artifact(iteration: int) -> dict[str, Any]:
+    return {
+        "type": "artifact_found",
+        "label": f"Planner do roadmap: versão {iteration}",
+        "detail": "Plano de estudo estruturado com contexto, fontes e tarefas práticas.",
+    }
+
+
 class RoadmapForgeGraphRunnable:
     """GraphRunnable — load_topics → analyze_gaps → research_enrich → accumulate_graph."""
 
@@ -295,9 +308,11 @@ class RoadmapForgeGraphRunnable:
     def __init__(
         self,
         search_client: WebSearchClient | None = None,
+        planner: StudyPlanPlanner | None = None,
         evaluator: StudyPlanEvaluator | None = None,
     ) -> None:
         self._search_client = search_client
+        self._planner = planner
         self._evaluator = evaluator
 
     async def astream_events(
@@ -333,6 +348,7 @@ class RoadmapForgeGraphRunnable:
                 {"forge_event": payload},
             )
 
+        planner = self._planner or build_study_plan_planner_from_env()
         evaluator = self._evaluator or build_study_plan_evaluator_from_env()
         graph = build_accumulated_graph(diagnosis)
         plan = build_draft_study_plan(
@@ -341,12 +357,45 @@ class RoadmapForgeGraphRunnable:
             graph=graph,
             research_events=research_events,
         )
-        evaluation_payload = await evaluate_study_plan_event(plan, evaluator)
-        yield emit_chain_stream(
-            "evaluate_plan",
-            run_id,
-            {"forge_event": evaluation_payload},
-        )
+
+        for iteration in range(1, MAX_EVALUATION_ITERATIONS + 1):
+            if iteration == 1:
+                plan = await planner.create_plan(
+                    context=context,
+                    research_events=research_events,
+                )
+            yield emit_chain_stream(
+                "plan_study_graph",
+                run_id,
+                {"forge_event": _planner_artifact(iteration)},
+            )
+
+            evaluation = await evaluator.evaluate(plan)
+            yield emit_chain_stream(
+                "evaluate_plan",
+                run_id,
+                {"forge_event": evaluation_artifact(evaluation)},
+            )
+            if evaluation.verdict == "ship":
+                break
+            if iteration < MAX_EVALUATION_ITERATIONS:
+                yield emit_chain_stream(
+                    "revise_plan",
+                    run_id,
+                    {
+                        "forge_event": {
+                            "type": "reasoning_delta",
+                            "step": "revise_plan",
+                            "text": "Aplicando feedback do avaliador ao plano de estudos…",
+                        },
+                    },
+                )
+                plan = await planner.revise_plan(
+                    context=context,
+                    research_events=research_events,
+                    plan=plan,
+                    evaluation=evaluation,
+                )
 
         tail_events = build_forge_tail_events(diagnosis)
         for payload in tail_events:

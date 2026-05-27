@@ -50,6 +50,8 @@ class SkillGraphState(TypedDict):
 | `load_topics` | Carrega catálogo + perfil do Postgres | evento `step_complete` |
 | `analyze_gaps` | LLM compara perfil vs catálogo; identifica lacunas/redundâncias | `reasoning_delta` (token stream) |
 | `research_enrich` | OpenAI native `web_search` via LangChain content blocks; enriquece prioridades/recursos com fontes oficiais | `artifact_found`, `reasoning_delta` |
+| `plan_study_graph` | Planner LLM cria `StudyPlan` com estratégia, tarefas, evidências e recursos | `artifact_found` |
+| `evaluate_plan` | Evaluator mini revisa gaps; se `revise`, feedback volta ao planner com estado completo | `artifact_found`, `reasoning_delta` |
 | `accumulate_graph` | **Código Python** merge nodes (status, mastery, priority) — NÃO confia na LLM | `node_updated` por nó |
 | `should_continue` | Conditional edge: iteration < max AND gaps significativos | — |
 | `emit_final` | Persiste `user_skill_nodes` + emite `graph_ready` | `graph_ready` |
@@ -92,6 +94,8 @@ type RoadmapForgeEvent =
 ```
 
 `ResearchSource` vem de citações nos `AIMessage.content_blocks` do LangChain, não de HTTP manual para search APIs externas.
+
+HAC-54 inicia o loop de qualidade: o planner recebe contexto do aluno + fontes; o evaluator retorna `ship|revise`; em caso de `revise`, o planner recebe `previous_plan + evaluator_feedback + research_state + learner_context` para uma nova iteração antes de `graph_ready`.
 
 Implementação: `GraphExecutor` com `astream_events` v2 + normalização em `ai/streaming/events.py`.
 

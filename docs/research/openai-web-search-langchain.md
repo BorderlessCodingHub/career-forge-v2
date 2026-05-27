@@ -170,7 +170,10 @@ For this hackathon UX, use an application-level loop first:
 1. Generate 2-3 focused research prompts from `LearnerForgeContext`.
 2. Call `ChatOpenAI(..., use_responses_api=True)` with `tools=[{"type": "web_search"}]`, `tool_choice="required"` for each focus.
 3. Emit one `artifact_found` per completed search result immediately.
-4. Keep sources stream-only for HAC-54; persist and evaluate in HAC-55.
+4. Build a structured `StudyPlan`.
+5. Run a mini evaluator (`FORGE_EVALUATOR_MODEL`) over the plan.
+6. If evaluator returns `revise`, pass `previous_plan + evaluator_feedback + research_state + learner_context` back into the planner and retry up to a small iteration cap.
+7. Keep sources stream-only for HAC-54; persist final plan/graph in HAC-55.
 
 This produces visible live feedback now without adopting WebSocket mode or background polling.
 
