@@ -21,6 +21,12 @@
 | 5 | [CURSOR-CLOUD.md](./CURSOR-CLOUD.md) | Cloud agent bootstrap · Linear MCP secrets |
 | 6 | [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md) | Forge LangGraph spec |
 
+## Research notes
+
+| Doc | Purpose |
+|-----|---------|
+| [OpenAI web search + LangChain](./research/openai-web-search-langchain.md) | HAC-54 provider research: native OpenAI `web_search`, LangChain `content_blocks`, citations, UX extraction |
+
 ## Product decisions (ADRs)
 
 | Doc | Purpose |
