@@ -31,10 +31,16 @@ import {
 } from "@/lib/forge-stream";
 import { getUserId } from "@/lib/user-session";
 
-const backendUrl =
-  process.env.NEXT_PUBLIC_BACKEND_URL ??
-  process.env.NEXT_PUBLIC_API_URL ??
-  "http://localhost:8000";
+/** Public API base, or "" for same-origin (Next rewrites → API_INTERNAL_URL on the server). */
+function resolveBackendUrl(): string {
+  const fromEnv =
+    process.env.NEXT_PUBLIC_BACKEND_URL?.trim() ||
+    process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (fromEnv) return fromEnv.replace(/\/$/, "");
+  return "";
+}
+
+const backendUrl = resolveBackendUrl();
 
 async function readApiErrorMessage(res: Response): Promise<string> {
   try {

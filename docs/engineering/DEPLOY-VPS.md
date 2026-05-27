@@ -209,6 +209,7 @@ docker compose -f docker-compose.prod.yml up -d
 | `invalid number of arguments in proxy_set_header` | Bare `envsubst` wiped `$host` | Use updated `render-nginx.sh` (restricted substitution) |
 | `python: command not found` in deploy job | SSH health check used Python | Fixed in workflow: uses `curl -fsS https://$API_DOMAIN/health` |
 | `failed to fetch` in browser | CORS | `CORS_ORIGINS=https://$APP_DOMAIN` and restart backend |
+| Onboarding SSE 404 on `/diagnosis/interview/.../stream` | Frontend CI built with empty `NEXT_PUBLIC_*` — browser calls API path on **app** domain (Next 404) | Fixed in repo: Next rewrites via `API_INTERNAL_URL` + same-origin client. Re-deploy frontend. Optional: set GitHub vars `NEXT_PUBLIC_BACKEND_URL=https://$API_DOMAIN` |
 | Forge/roadmap empty or 500 after deploy | Missing catalog seed / `roadmap.json` | Ensure `data/roadmap.json` exists on VPS; check backend logs for seed errors; restart backend after fixing mount |
 
 ## Notes
