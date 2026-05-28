@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-27** · Last merge: **HAC-55** (generated roadmap persistence + references)
+Last updated: **2026-05-28** · Last merge: **HAC-63** (`aa33482` — roadmap drawer checklist progress + canvas compact bar)
 
 ---
 
@@ -46,6 +46,7 @@ Last updated: **2026-05-27** · Last merge: **HAC-55** (generated roadmap persis
 | Diagnosis confirm + forge motor API | ✅ Done | HAC-52 — `POST /diagnosis/confirm`, `POST /forge` loads profile (202 + run_id) |
 | Forge web search + StudyPlan loop | ✅ Done | HAC-54 — OpenAI native `web_search`, progressive source cards, planner/evaluator loop, `graph_ready` from approved StudyPlan |
 | Generated roadmap persistence + references | ✅ Done | HAC-55 — approved StudyPlan persists as dynamic roadmap nodes with tasks, references, prerequisites, and stable ordering |
+| Roadmap drawer checklist progress | ✅ Done | HAC-63 — task/reference checkboxes, study progress bar, `PATCH /roadmap/nodes/{id}/checklist`, compact bar on canvas cards |
 
 ---
 
@@ -61,7 +62,7 @@ Last updated: **2026-05-27** · Last merge: **HAC-55** (generated roadmap persis
 | **HAC-54** | Web search enrichment — live study sources | **Done** |
 | **HAC-55** | LLM graph persistence + references | **Done** |
 | **HAC-57** | Diagnosis confirm → save → forge (Arthur) | **Ready** (wire FE to HAC-52) |
-| **HAC-63** | Roadmap drawer progress (checklist + `PATCH /roadmap/nodes/{id}/checklist`) | **Done** (branch) |
+| **HAC-63** | Roadmap drawer progress (checklist + `PATCH /roadmap/nodes/{id}/checklist`) | **Done** |
 
 ### Previous ops batch
 
