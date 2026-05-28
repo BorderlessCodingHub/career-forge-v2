@@ -88,6 +88,24 @@ def study_plan_to_graph(plan: StudyPlan) -> list[UserSkillNode]:
                 mastery_score=0,
                 priority=_priority_for_index(index),
                 rationale=node.why_now,
+                prerequisites=node.prerequisites,
+                tasks=[
+                    {
+                        "title": task.title,
+                        "outcome": task.outcome,
+                        "evidence_prompt": task.evidence_prompt,
+                    }
+                    for task in node.tasks
+                ],
+                references=[
+                    {
+                        "title": resource.title,
+                        "url": resource.url,
+                        "snippet": resource.snippet,
+                        "source_type": resource.source_type,
+                    }
+                    for resource in node.resources
+                ],
             ),
         )
     return graph

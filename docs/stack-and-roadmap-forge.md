@@ -95,7 +95,7 @@ type RoadmapForgeEvent =
 
 `ResearchSource` vem de citações nos `AIMessage.content_blocks` do LangChain, não de HTTP manual para search APIs externas. Queries ficam internas ao planner/research state; a UI renderiza resumo + cards de referência.
 
-HAC-54 inicia o loop de qualidade: o planner recebe contexto do aluno + fontes; o evaluator retorna `ship|revise`; em caso de `revise`, o planner recebe `previous_plan + evaluator_feedback + research_state + learner_context` para uma nova iteração antes de `graph_ready`. O `graph_ready` já usa o `StudyPlan` aprovado como fonte do grafo; o catálogo estático fica como fallback/estrutura auxiliar.
+HAC-54 inicia o loop de qualidade: o planner recebe contexto do aluno + fontes; o evaluator retorna `ship|revise`; em caso de `revise`, o planner recebe `previous_plan + evaluator_feedback + research_state + learner_context` para uma nova iteração antes de `graph_ready`. HAC-55 persiste o `StudyPlan` aprovado como nós dinâmicos (`user_skill_nodes` + `skill_nodes` gerados) com `tasks[]`, `references[]` e prerequisites para reload pós-forge.
 
 Implementação: `GraphExecutor` com `astream_events` v2 + normalização em `ai/streaming/events.py`.
 

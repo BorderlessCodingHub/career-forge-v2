@@ -37,6 +37,8 @@ class RoadmapNode(BaseModel):
     mastery_score: int = Field(ge=0, le=100, default=0)
     priority: Priority | None = None
     rationale: str | None = None
+    tasks: list[dict[str, str]] = Field(default_factory=list)
+    references: list[dict[str, str]] = Field(default_factory=list)
 
 
 class RoadmapResponse(BaseModel):

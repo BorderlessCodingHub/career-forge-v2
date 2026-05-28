@@ -67,7 +67,9 @@ services:
     volumes:
       - ./apps/frontend:/app
       - frontend-node-modules:/app/node_modules
+      - frontend-next-cache:/app/.next
 
 volumes:
   postgres-data:
   frontend-node-modules:
+  frontend-next-cache:

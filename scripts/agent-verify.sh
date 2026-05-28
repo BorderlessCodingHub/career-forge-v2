@@ -57,19 +57,17 @@ check test -f docker-compose.yml
 
 # No legacy app paths (exclude harness docs that mention the ban)
 LEGACY_EXCLUDE='(REPO-STRUCTURE|end-task-workflow|AGENT-LIFECYCLE|AGENT-DELIVERY|agent-verify\.sh)'
-if find . -type f \( -name "*.md" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" -o -name "Makefile" -o -name "*.mdc" -o -name "*.toml" -o -name "*.json" \) \
-  ! -path "./.git/*" \
-  -exec grep -lE 'apps/(api|web)' {} + 2>/dev/null | grep -vE "${LEGACY_EXCLUDE}" | grep -q .; then
+LEGACY_FILES=$(git grep -IlE 'apps/(api|web)' -- '*.md' '*.yml' '*.yaml' '*.sh' 'Makefile' '*.mdc' '*.toml' '*.json' 2>/dev/null | grep -vE "${LEGACY_EXCLUDE}" || true)
+if [ -n "${LEGACY_FILES}" ]; then
   echo "  FAIL: legacy apps/api or apps/web references found"
-  find . -type f \( -name "*.md" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" -o -name "Makefile" -o -name "*.mdc" -o -name "*.toml" -o -name "*.json" \) \
-    ! -path "./.git/*" \
-    -exec grep -lE 'apps/(api|web)' {} + 2>/dev/null | grep -vE "${LEGACY_EXCLUDE}" || true
+  echo "${LEGACY_FILES}"
   exit 1
 else
   checks=$((checks + 1))
   passed=$((passed + 1))
   echo "  OK: no legacy apps/api or apps/web references"
 fi
+
 
 API_URL="${BACKEND_URL:-${API_URL:-http://localhost:8000}}"
 if curl -sf "${API_URL}/health" >/dev/null 2>&1; then
