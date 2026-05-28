@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { ChecklistProgress, getChecklistProgress } from "@/components/roadmap/ChecklistProgress";
 import { Button } from "@/components/ui";
@@ -28,8 +28,48 @@ const STATUS_LABELS: Record<string, string> = {
   revisar: "Revisar",
 };
 
+type DrawerSectionProps = {
+  title: string;
+  defaultOpen?: boolean;
+  children: ReactNode;
+};
+
+function DrawerSection({ title, defaultOpen = true, children }: DrawerSectionProps) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="border-b border-border-soft pb-4 last:border-b-0 last:pb-0">
+      <button
+        type="button"
+        className="flex w-full items-center justify-between gap-2 text-left"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+      >
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
+          {title}
+        </h3>
+        <span className="text-sm text-text-muted" aria-hidden>
+          {open ? "−" : "+"}
+        </span>
+      </button>
+      {open && <div className="mt-3">{children}</div>}
+    </div>
+  );
+}
+
 export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: NodeDrawerProps) {
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!node) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [node, onClose]);
 
   if (!node) return null;
 
@@ -63,11 +103,16 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
       <aside
         className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col border-l border-border bg-surface-elevated shadow-xl"
         data-testid="node-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="node-drawer-title"
       >
-        <div className="flex items-start justify-between border-b border-border px-6 py-5">
+        <div className="flex shrink-0 items-start justify-between border-b border-border px-6 py-5">
           <div>
             <p className="text-xs uppercase tracking-widest text-text-muted">{node.category}</p>
-            <h2 className="mt-1 text-xl font-semibold text-text-primary">{node.title}</h2>
+            <h2 id="node-drawer-title" className="mt-1 text-xl font-semibold text-text-primary">
+              {node.title}
+            </h2>
           </div>
           <button
             type="button"
@@ -79,8 +124,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
           </button>
         </div>
 
-        <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5">
-
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-md border border-border bg-surface px-3 py-2">
               <p className="text-xs text-text-muted">Status</p>
@@ -97,17 +141,14 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
           {showChecklistProgress && <ChecklistProgress variant="full" node={node} />}
 
           {node.rationale && (
-            <div className="rounded-md border border-accent/30 bg-accent/10 bg-surface px-3 py-2 text-sm text-text-primary">
+            <div className="rounded-md border border-accent/30 bg-surface px-3 py-2 text-sm text-text-primary">
               {node.rationale}
             </div>
           )}
 
           {node.outcomes.length > 0 && (
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-                Resultados esperados
-              </h3>
-              <ul className="mt-2 space-y-2">
+            <DrawerSection title="Resultados esperados" defaultOpen={false}>
+              <ul className="space-y-2">
                 {node.outcomes.map((outcome) => (
                   <li
                     key={outcome}
@@ -117,15 +158,12 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
                   </li>
                 ))}
               </ul>
-            </div>
+            </DrawerSection>
           )}
 
           {node.tasks.length > 0 && (
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-                Tarefas práticas
-              </h3>
-              <ul className="mt-2 space-y-2">
+            <DrawerSection title="Tarefas práticas" defaultOpen>
+              <ul className="space-y-2">
                 {node.tasks.map((task) => (
                   <li
                     key={task.id}
@@ -157,15 +195,12 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
                   </li>
                 ))}
               </ul>
-            </div>
+            </DrawerSection>
           )}
 
           {node.references.length > 0 && (
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-                Referências
-              </h3>
-              <div className="mt-2 space-y-2">
+            <DrawerSection title="Referências" defaultOpen={false}>
+              <div className="space-y-2">
                 {node.references.map((reference) => (
                   <div
                     key={reference.id}
@@ -208,28 +243,25 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
                   </div>
                 ))}
               </div>
-            </div>
+            </DrawerSection>
           )}
 
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-              Mentor contextual
-            </h3>
-            <p className="mt-2 text-sm text-text-secondary">
-              Peça referências, esclareça lacunas da validação ou como praticar este tópico.
+          <div className="flex items-center justify-between gap-3 rounded-md border border-border bg-surface px-3 py-3">
+            <p className="text-sm text-text-secondary">
+              Mentor contextual — tire dúvidas sobre este tópico.
             </p>
             <Button
               variant="ghost"
-              className="mt-3"
+              className="shrink-0"
               onClick={onOpenMentor}
               data-testid="open-mentor-drawer"
             >
-              Abrir chat com mentor →
+              Chat →
             </Button>
           </div>
         </div>
 
-        <div className="border-t border-border px-6 py-4">
+        <div className="shrink-0 border-t border-border bg-surface-elevated px-6 py-4">
           <Link href={`/validate?node=${node.node_id}&mode=loop`}>
             <Button className="w-full" data-testid="validate-node-cta">
               Mock interview — validar mastery →

@@ -140,7 +140,18 @@ UX flow from [UX-FLOW.md](./UX-FLOW.md) does **not** change:
 | Editable diagnosis | Full-width content inside shell or simplified chrome |
 | Forge stream | Timeline column; **hide canvas nodes** until reveal |
 | Reveal | Canvas fades in; nodes materialize from stream |
-| Steady `/roadmap` | Full shell + canvas + optional AI right panel |
+| Steady `/roadmap` | `ArtifactShell` topbar (track name, mentor CTA, relatório, optional trail study summary) + vertical spine canvas; mentor drawer/slide-over; **no** duplicate page `<h1>` |
+
+### Artifact topbar + mentor (Next.js — 2026-05-28)
+
+| Element | Spec |
+|---------|------|
+| **`MentorAvatar`** | `bg-gradient-to-br from-accent-mint to-accent` — brand ribbon; used in `mentor-cta` and `MentorDrawer` header |
+| **`trail-study-summary`** | `text-accent-mint text-xs` — aggregate checklist topics started (`x/y tópicos com estudo iniciado`); not mastery % |
+| **Spine selection** | Active row dot: `border-accent-mint`, `shadow-[0_0_12px_var(--mint-glow)]` |
+| **Loading** | `vertical-spine-skeleton` pulse placeholders — not a lone text spinner |
+
+See [design-tokens.md](./design-tokens.md) · Implementation notes in [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md).
 
 ---
 
@@ -175,4 +186,4 @@ UX flow from [UX-FLOW.md](./UX-FLOW.md) does **not** change:
 
 ---
 
-*HAC-23 — Borderless visual language for Career Forge · 2026-05-25*
+*HAC-23 — Borderless visual language for Career Forge · 2026-05-25 · artifact topbar + mentor avatar: 2026-05-28*

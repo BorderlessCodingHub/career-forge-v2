@@ -103,9 +103,10 @@
 | Layout | Full-width vertical spine; nodes alternating left/right; category headers |
 | Reference | [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) |
 | Chrome | **No** onboarding stepper (01 Objetivo … 07 Adaptação); **no** fixed progress/evidence/mentor sidebar |
-| Top bar | Career Forge logo + track name only |
+| Top bar | Career Forge logo + **Sua trilha** track name; **`mentor-cta`** + Relatório mentor; optional **`trail-study-summary`** (aggregate study progress, not mastery %) |
+| Page intro | Subtitle/hint only — **no** duplicate track `<h1>` on canvas |
 | Canvas nodes | **Uniform** Borderless purple cards — compact **study** progress (`x/y` + mint bar) when checklist items exist; **mastery %** and status detail stay in **node drawer** only |
-| Interaction | **Click node** → right drawer: title (description on **canvas card** only), red **✕** dismiss in header (`aria-label="Fechar detalhes"`), status/mastery, study checklist + progress bar, rationale callout, tasks/references, **Ask AI**, CTA **Mock interview — validar mastery** |
+| Interaction | **Click node** → right drawer: title (description on **canvas card** only), red **✕** dismiss, Escape to close, status/mastery, study progress, collapsible outcomes/refs/tasks, compact mentor **Chat →**, sticky CTA **Mock interview — validar mastery** |
 | Personalization | Graph state still adaptive (backend recalibrates) — visible in drawer, not canvas pollution |
 | Forbidden | Forge streaming as steady state; MissionBanner hero on artifact canvas; status-colored node grid |
 

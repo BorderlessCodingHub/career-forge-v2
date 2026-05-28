@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui";
+import { MentorAvatar } from "@/components/ui/MentorAvatar";
 import { getMentorContext, sendMentorMessage } from "@/lib/api-client";
 import type { MentorContextSnapshot, MentorMessage, RoadmapNode } from "@/types/contracts";
 
@@ -74,9 +75,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-indigo-500 text-sm font-semibold text-white">
-              RT
-            </div>
+            <MentorAvatar className="h-9 w-9 text-sm" />
             <div>
               <p className="text-sm font-semibold text-text-primary">Mentor contextual</p>
               <p className="text-xs text-accent-mint">
