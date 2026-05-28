@@ -32,6 +32,20 @@ import {
 
 type Tone = "strength" | "gap" | "priority";
 
+const NODE_LABELS: Record<string, string> = {
+  js: "JavaScript base",
+  git: "Git e GitHub",
+  http: "HTTP básico",
+  db: "Banco relacional",
+  rest: "APIs REST",
+  auth: "Autenticação JWT",
+  final: "Projeto: API CRUD",
+};
+
+function resolveLabel(value: string): string {
+  return NODE_LABELS[value] ?? value;
+}
+
 const TONE_CLASSES: Record<Tone, string> = {
   strength: "border-success/20 bg-success/5",
   gap: "border-warning/20 bg-warning/5",
@@ -219,8 +233,9 @@ function SortableItem({ id, value }: { id: string; value: string }) {
   } = useSortable({ id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
@@ -228,19 +243,19 @@ function SortableItem({ id, value }: { id: string; value: string }) {
       ref={setNodeRef}
       style={style}
       className={`flex items-center gap-3 rounded-md border px-3 py-2 ${TONE_ITEM_CLASSES.priority} ${
-        isDragging ? "z-10 shadow-lg opacity-90" : ""
+        isDragging ? "z-10 shadow-lg" : ""
       }`}
     >
       <button
         type="button"
-        className="cursor-grab touch-none text-accent-mint/50 transition hover:text-accent-mint active:cursor-grabbing"
+        className="cursor-grab touch-none text-accent-mint/50 hover:text-accent-mint active:cursor-grabbing"
         aria-label="Arrastar para reordenar"
         {...attributes}
         {...listeners}
       >
         <GripVertical size={14} />
       </button>
-      <span className="text-sm text-text-primary">{value}</span>
+      <span className="text-sm text-text-primary">{resolveLabel(value)}</span>
     </div>
   );
 }
@@ -254,7 +269,18 @@ function ReorderableList({
   items: string[];
   onChange: (items: string[]) => void;
 }) {
-  const ids = items.map((_, i) => `priority-${i}`);
+  const stableIdsRef = useRef<Map<string, string>>(new Map());
+  const counterRef = useRef(0);
+
+  const getStableId = (value: string): string => {
+    const existing = stableIdsRef.current.get(value);
+    if (existing) return existing;
+    const id = `priority-${counterRef.current++}`;
+    stableIdsRef.current.set(value, id);
+    return id;
+  };
+
+  const ids = items.map(getStableId);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
