@@ -143,7 +143,7 @@ Após animação → navega para steady state (`/roadmap`).
 **Canvas cards:** quando há `tasks[]` / `references[]`, barra mint compacta + fração `x/y` no card (sem disclaimer).
 
 **Node drawer:**
-- Título + descrição do domínio
+- Título no header (descrição longa fica no **card** do canvas, não repetida no drawer)
 - Seção **Tarefas práticas** quando o grafo vem de `StudyPlan` — checkbox por item (opcional, não bloqueia mastery)
 - Seção **Referências** (links reais quando vindos de web search) — marcar como lidas
 - Barra **Progresso de estudo** (`x/y` concluídos) quando há itens; copy deixa claro que isso não substitui validação por IA

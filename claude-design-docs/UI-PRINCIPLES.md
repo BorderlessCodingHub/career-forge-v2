@@ -122,7 +122,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `PrimaryButton` / `GhostButton` | Actions |
 | `DeployBadge` | Global fixed footer — deploy SHA/time (CI build) + live API health dot; `local dev` label when build env unset |
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); driven by `checklist_completed` / `checklist_total` |
-| `NodeDrawer` study checklist | Right drawer on `/roadmap`: optional checkboxes on tasks/references, `ChecklistProgress` full variant; **does not** gate `validate-node-cta` |
+| `NodeDrawer` study checklist | Right drawer on `/roadmap`: header title only (description on canvas card); status/mastery, `ChecklistProgress` full, rationale callout, task/reference checkboxes; **does not** gate `validate-node-cta` |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
 
 When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), document it in [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes.

@@ -79,7 +79,6 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
         </div>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5">
-          <p className="text-sm text-text-secondary">{node.description}</p>
 
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-md border border-border bg-surface px-3 py-2">
@@ -97,7 +96,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
           {showChecklistProgress && <ChecklistProgress variant="full" node={node} />}
 
           {node.rationale && (
-            <div className="rounded-md border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-text-secondary">
+            <div className="rounded-md border border-accent/30 bg-accent/10 bg-surface px-3 py-2 text-sm text-text-primary">
               {node.rationale}
             </div>
           )}
