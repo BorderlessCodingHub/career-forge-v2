@@ -33,6 +33,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
 
   if (!node) return null;
 
+  const nodeId = node.node_id;
   const { total: checklistTotal } = getChecklistProgress(node);
   const showChecklistProgress = checklistTotal > 0;
 
@@ -44,7 +45,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
     if (!onChecklistToggle) return;
     setPendingItemId(item.id);
     try {
-      await onChecklistToggle(node.node_id, itemType, item.id, nextDone);
+      await onChecklistToggle(nodeId, itemType, item.id, nextDone);
     } finally {
       setPendingItemId(null);
     }
