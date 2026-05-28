@@ -119,6 +119,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-63** — Roadmap drawer progress (check tasks/references, progress bar, `PATCH /roadmap/nodes/{id}/checklist`)
 - [x] **HAC-64** — Mock interview + validation for generated StudyPlan nodes (resolve ai-generated context, preserve checklist evidence, recalibrate graph)
 - [x] **HAC-65** — Agent-generated MCQ mock interview (LLM A–D + server-side answer key, deterministic scoring, InterviewLoop pills)
+- [x] **HAC-57** — Diagnosis confirm → save DB → profile-only `POST /forge` → SSE redirect
 
 ---
 

@@ -6,19 +6,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ForgeEventLine, ForgeTimeline } from "@/components/forge";
 import { Button } from "@/components/ui";
-import { startForgeRun, streamForgeRun } from "@/lib/api-client";
+import { startForgeRunFromProfile, streamForgeRun } from "@/lib/api-client";
 import {
   extractGraphFromEvents,
+  getForgeRunId,
   setForgeGraph,
   setForgeRunId,
+  clearForgeSession,
 } from "@/lib/forge-session";
-import {
-  getAnswers,
-  getMotivation,
-  getSelectedGoal,
-  getStoredDiagnosis,
-  getYearsXp,
-} from "@/lib/onboarding-session";
 import type { RoadmapForgeEvent } from "@/types/contracts";
 
 export default function ForgePage() {
@@ -65,29 +60,31 @@ export default function ForgePage() {
     [finishForge],
   );
 
-  const startForge = useCallback(async () => {
-    const diagnosis = getStoredDiagnosis();
-    if (!diagnosis) {
-      router.replace("/onboarding/edit");
-      return;
-    }
-
+  const startForge = useCallback(async (forceNewRun = false) => {
     setStatus("starting");
     setError(null);
     setEvents([]);
     timerRef.current = setInterval(() => setElapsedSec((s) => s + 1), 1000);
 
     try {
-      const result = await startForgeRun(diagnosis, undefined, {
-        goal_id: getSelectedGoal(),
-        motivation: getMotivation(),
-        years_xp: getYearsXp(),
-        answers: getAnswers(),
-      });
-      setForgeRunId(result.run_id);
-      await connectStream(result.run_id);
+      const existingRunId = forceNewRun ? null : getForgeRunId();
+      const runId = existingRunId
+        ? existingRunId
+        : (await startForgeRunFromProfile()).run_id;
+
+      if (!existingRunId) {
+        setForgeRunId(runId);
+      }
+
+      await connectStream(runId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao iniciar forge");
+      const message =
+        err instanceof Error ? err.message : "Falha ao iniciar forge";
+      if (message.includes("404")) {
+        router.replace("/onboarding/edit");
+        return;
+      }
+      setError(message);
       setStatus("error");
       if (timerRef.current) clearInterval(timerRef.current);
     }
@@ -153,7 +150,14 @@ export default function ForgePage() {
 
         {status === "error" && (
           <div className="mt-8 flex gap-4">
-            <Button onClick={() => void startForge()}>Tentar novamente</Button>
+            <Button
+              onClick={() => {
+                clearForgeSession();
+                void startForge(true);
+              }}
+            >
+              Tentar novamente
+            </Button>
             <Link href="/onboarding/edit">
               <Button variant="ghost">Voltar ao diagnóstico</Button>
             </Link>
