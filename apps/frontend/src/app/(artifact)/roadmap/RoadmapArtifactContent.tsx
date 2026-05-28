@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 import { MissionBanner, MentorDrawer, NodeDrawer, VerticalSpine, VerticalSpineShell } from "@/components/roadmap";
 import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session";
-import { getRoadmap, syncRoadmap } from "@/lib/api-client";
+import { getRoadmap, patchRoadmapChecklist, syncRoadmap } from "@/lib/api-client";
 import { clearForgeGraph, getForgeGraph } from "@/lib/forge-session";
 import { getStoredDiagnosis } from "@/lib/onboarding-session";
 import type {
@@ -97,6 +97,56 @@ export default function RoadmapArtifactPageContent() {
   const selectedNode: RoadmapNode | null =
     roadmap?.nodes.find((node) => node.node_id === selectedNodeId) ?? null;
 
+  const handleChecklistToggle = useCallback(
+    async (
+      nodeId: string,
+      itemType: "task" | "reference",
+      itemId: string,
+      done: boolean,
+    ) => {
+      if (adaptiveMode && !adaptiveSessionMissing) {
+        setRoadmap((current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            nodes: current.nodes.map((node) => {
+              if (node.node_id !== nodeId) return node;
+              const updateItems = (items: RoadmapNode["tasks"]) =>
+                items.map((item) =>
+                  item.id === itemId ? { ...item, done } : item,
+                );
+              const tasks =
+                itemType === "task" ? updateItems(node.tasks) : node.tasks;
+              const references =
+                itemType === "reference"
+                  ? updateItems(node.references)
+                  : node.references;
+              const checklist_completed = [...tasks, ...references].filter(
+                (item) => item.done,
+              ).length;
+              return {
+                ...node,
+                tasks,
+                references,
+                checklist_completed,
+                checklist_total: tasks.length + references.length,
+              };
+            }),
+          };
+        });
+        return;
+      }
+
+      const updated = await patchRoadmapChecklist(nodeId, {
+        item_type: itemType,
+        item_id: itemId,
+        done,
+      });
+      setRoadmap(updated);
+    },
+    [adaptiveMode, adaptiveSessionMissing],
+  );
+
   return (
     <VerticalSpineShell>
       <main
@@ -176,6 +226,7 @@ export default function RoadmapArtifactPageContent() {
           onOpenMentor={() => {
             setMentorOpen(true);
           }}
+          onChecklistToggle={handleChecklistToggle}
         />
 
         <MentorDrawer

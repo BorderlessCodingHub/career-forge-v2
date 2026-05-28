@@ -37,8 +37,19 @@ class RoadmapNode(BaseModel):
     mastery_score: int = Field(ge=0, le=100, default=0)
     priority: Priority | None = None
     rationale: str | None = None
-    tasks: list[dict[str, str]] = Field(default_factory=list)
-    references: list[dict[str, str]] = Field(default_factory=list)
+    tasks: list[dict[str, str | bool]] = Field(default_factory=list)
+    references: list[dict[str, str | bool]] = Field(default_factory=list)
+    checklist_completed: int = Field(ge=0, default=0)
+    checklist_total: int = Field(ge=0, default=0)
+
+
+class ChecklistToggleRequest(BaseModel):
+    """Toggle lightweight study progress for a task or reference item."""
+
+    user_id: str = Field(default="demo-ana")
+    item_type: Literal["task", "reference"]
+    item_id: str = Field(min_length=1)
+    done: bool
 
 
 class RoadmapResponse(BaseModel):

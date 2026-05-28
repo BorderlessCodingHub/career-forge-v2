@@ -61,7 +61,7 @@ Last updated: **2026-05-27** · Last merge: **HAC-55** (generated roadmap persis
 | **HAC-54** | Web search enrichment — live study sources | **Done** |
 | **HAC-55** | LLM graph persistence + references | **Done** |
 | **HAC-57** | Diagnosis confirm → save → forge (Arthur) | **Ready** (wire FE to HAC-52) |
-| **HAC-63** | Roadmap drawer progress | **Next** |
+| **HAC-63** | Roadmap drawer progress (checklist + `PATCH /roadmap/nodes/{id}/checklist`) | **Done** (branch) |
 
 ### Previous ops batch
 

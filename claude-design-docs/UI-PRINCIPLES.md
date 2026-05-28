@@ -121,6 +121,9 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ChatBubble` | Onboarding + mentor |
 | `PrimaryButton` / `GhostButton` | Actions |
 | `DeployBadge` | Global fixed footer — deploy SHA/time (CI build) + live API health dot; `local dev` label when build env unset |
+| `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); driven by `checklist_completed` / `checklist_total` |
+| `NodeDrawer` study checklist | Right drawer on `/roadmap`: optional checkboxes on tasks/references, `ChecklistProgress` full variant; **does not** gate `validate-node-cta` |
+| `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
 
 When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), document it in [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes.
 
@@ -135,7 +138,7 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 | Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes |
-| Roadmap steady state | Borderless shell + canvas nodes + **optional** AI sidebar |
+| Roadmap steady state | Borderless shell + canvas nodes (compact study bar on card when applicable) + **optional** AI sidebar; **click node** → drawer with status/mastery, full study checklist (HAC-63), mentor CTA, validation CTA |
 | Validation | Focus mode — question card dominant, minimal chrome |
 | Mentor | AI sidebar or drawer on roadmap — contextual, not full page |
 

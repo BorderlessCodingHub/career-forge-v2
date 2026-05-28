@@ -72,6 +72,8 @@ Entry: `cd claude-design-docs/prototype && python3 -m http.server 8765` → `htt
 - [x] Remove default sidebar clutter (progress, evidence, mentor) from artifact canvas
 - [x] Uniform purple nodes on canvas (`uniform` prop)
 - [x] Click node → right drawer (description, references, Ask AI, validate CTA)
+- [x] Drawer study checklist — task/reference checkboxes + progress bar (HAC-63; Next.js only, prototype lags)
+- [x] Canvas card compact study progress (`x/y` + mint bar via `ChecklistProgress` compact; Next.js only)
 - [ ] Cyan progress bar on nodes (deferred — status lives in drawer per HAC-25)
 - [ ] Dot grid background + zoom/minimap stubs
 - [ ] Full Borderless app shell (Phase 2)
