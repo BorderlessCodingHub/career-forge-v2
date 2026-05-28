@@ -71,15 +71,15 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
           </div>
           <button
             type="button"
+            aria-label="Fechar detalhes"
             onClick={onClose}
-            className="rounded-md px-2 py-1 text-text-muted hover:bg-surface hover:text-text-primary"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sm font-medium text-red-400 transition-all duration-200 hover:bg-red-900/60 hover:text-red-300 focus-visible:bg-red-900/60 focus-visible:text-red-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-500/50 active:bg-red-800/60"
           >
             ✕
           </button>
         </div>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5">
-          <p className="text-sm text-text-secondary">{node.description}</p>
 
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-md border border-border bg-surface px-3 py-2">
@@ -97,7 +97,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
           {showChecklistProgress && <ChecklistProgress variant="full" node={node} />}
 
           {node.rationale && (
-            <div className="rounded-md border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-text-secondary">
+            <div className="rounded-md border border-accent/30 bg-accent/10 bg-surface px-3 py-2 text-sm text-text-primary">
               {node.rationale}
             </div>
           )}

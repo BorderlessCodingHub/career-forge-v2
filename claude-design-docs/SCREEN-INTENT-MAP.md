@@ -65,7 +65,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Canvas cards:** When `checklist_total > 0`, `SkillNode` shows compact `ChecklistProgress` (`roadmap-node-{id}-checklist-progress`) — `x/y` + thin mint bar only.
 
-**Node drawer (HAC-63):** When `tasks[]` / `references[]` exist, show checkboxes (read/done), full mint progress block (`x/y concluídos`), and copy that study tracking does **not** replace IA mastery validation. CTA remains **Mock interview — validar mastery**. Persist toggles via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive session: local-only).
+**Node drawer (HAC-63):** Header title + red dismiss **✕** (not muted prototype close). Description on canvas card only. Status/mastery grid, optional study checklist + progress, rationale callout, tasks/references with checkboxes. CTA **Mock interview — validar mastery**. Persist toggles via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive session: local-only).
 
 ### 6. Mastery Validation (`/validate/:topic`)
 Interview + score. Unchanged.
@@ -118,4 +118,4 @@ See [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md).
 
 ---
 
-*Last updated: HAC-63 (drawer study checklist)*
+*Last updated: 2026-05-28 — drawer layout polish (no duplicate description, red dismiss)*

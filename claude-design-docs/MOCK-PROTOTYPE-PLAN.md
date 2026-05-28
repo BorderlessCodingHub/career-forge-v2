@@ -73,6 +73,7 @@ Entry: `cd claude-design-docs/prototype && python3 -m http.server 8765` → `htt
 - [x] Uniform purple nodes on canvas (`uniform` prop)
 - [x] Click node → right drawer (description, references, Ask AI, validate CTA)
 - [x] Drawer study checklist — task/reference checkboxes + progress bar (HAC-63; Next.js only, prototype lags)
+- [ ] Drawer UX polish in HTML prototype — red dismiss **✕**, no duplicate description in drawer (shipped in Next.js `NodeDrawer`; prototype still uses muted `.slideover-close`)
 - [x] Canvas card compact study progress (`x/y` + mint bar via `ChecklistProgress` compact; Next.js only)
 - [ ] Cyan progress bar on nodes (deferred — status lives in drawer per HAC-25)
 - [ ] Dot grid background + zoom/minimap stubs

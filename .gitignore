@@ -31,6 +31,9 @@ logs/
 .idea/
 .vscode/
 
+# Cursor (local editor settings — keep rules/mcp.json tracked)
+.cursor/settings.json
+
 # Claude Code
 .claude/settings.local.json
 
