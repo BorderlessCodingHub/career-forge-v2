@@ -148,7 +148,7 @@ UX flow from [UX-FLOW.md](./UX-FLOW.md) does **not** change:
 |---------|------|
 | **`MentorAvatar`** | `bg-gradient-to-br from-accent-mint to-accent` — brand ribbon; used in `mentor-cta` and `MentorDrawer` header |
 | **`trail-study-summary`** | `text-accent-mint text-xs` — aggregate checklist topics started (`x/y tópicos com estudo iniciado`); not mastery % |
-| **Topbar ghost actions** | Shared `topbarActionClass` — `h-9` bordered pill, `hover:bg-surface`; `h-7` leading slot (`MentorAvatar` or centered `FileText` in `h-7 w-7` box) so both controls match height |
+| **Topbar ghost actions** | Shared `topbarActionClass` — `h-9` bordered pill, `hover:bg-surface`; `h-7` leading slot (`MentorAvatar` or centered `FileText`); paired in `flex items-center` group; right cluster `items-end` so actions align to track title baseline |
 | **Spine selection** | Active row dot: `border-accent-mint`, `shadow-[0_0_12px_var(--mint-glow)]` |
 | **Loading** | `vertical-spine-skeleton` pulse placeholders — not a lone text spinner |
 

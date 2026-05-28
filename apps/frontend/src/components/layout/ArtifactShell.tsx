@@ -45,24 +45,26 @@ export function ArtifactShell({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-          {onOpenMentor && (
-            <button
-              type="button"
-              onClick={onOpenMentor}
-              className={topbarActionClass}
-              data-testid="mentor-cta"
-            >
-              <MentorAvatar />
-              <span>Mentor</span>
-            </button>
-          )}
-          <Link href="/report" className={topbarActionClass} data-testid="mentor-report-link">
-            <span className={topbarActionIconSlotClass} aria-hidden>
-              <FileText className="h-4 w-4" />
-            </span>
-            <span>Relatório mentor</span>
-          </Link>
+        <div className="flex flex-wrap items-end justify-end gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {onOpenMentor && (
+              <button
+                type="button"
+                onClick={onOpenMentor}
+                className={topbarActionClass}
+                data-testid="mentor-cta"
+              >
+                <MentorAvatar />
+                <span>Mentor</span>
+              </button>
+            )}
+            <Link href="/report" className={topbarActionClass} data-testid="mentor-report-link">
+              <span className={topbarActionIconSlotClass} aria-hidden>
+                <FileText className="h-4 w-4" />
+              </span>
+              <span>Relatório mentor</span>
+            </Link>
+          </div>
           <div className="text-right">
             {trailSummary && (
               <p
