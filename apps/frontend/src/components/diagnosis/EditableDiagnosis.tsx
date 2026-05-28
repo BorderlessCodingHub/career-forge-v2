@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -23,10 +22,15 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui";
+import { confirmDiagnosis } from "@/lib/api-client";
 import type { DiagnosisResponse } from "@/types/contracts";
 import {
   clearStoredDiagnosis,
+  getAnswers,
+  getMotivation,
+  getSelectedGoal,
   getStoredDiagnosis,
+  getYearsXp,
   setStoredDiagnosis,
 } from "@/lib/onboarding-session";
 
@@ -365,6 +369,34 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
     });
   };
 
+  const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleConfirmAndForge = async () => {
+    const goalId = getSelectedGoal();
+    const motivation = getMotivation();
+    if (!goalId || !motivation) {
+      setError("Dados de onboarding incompletos. Refaça o diagnóstico.");
+      return;
+    }
+
+    setConfirming(true);
+    setError(null);
+    try {
+      await confirmDiagnosis({
+        diagnosis,
+        goal_id: goalId,
+        motivation,
+        years_xp: getYearsXp() ?? undefined,
+        answers: getAnswers(),
+      });
+      router.push("/forge");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao confirmar diagnóstico.");
+      setConfirming(false);
+    }
+  };
+
   const handleRestart = () => {
     clearStoredDiagnosis();
     router.push("/");
@@ -415,13 +447,23 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
           entendimento numa entrevista com a IA.
         </div>
 
+        {error && (
+          <p className="mt-6 rounded-md border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
+            {error}
+          </p>
+        )}
+
         <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Button variant="ghost" onClick={handleRestart}>
+          <Button variant="ghost" onClick={handleRestart} disabled={confirming}>
             Refazer diagnóstico
           </Button>
-          <Link href="/forge" data-testid="generate-roadmap">
-            <Button>Gerar roadmap →</Button>
-          </Link>
+          <Button
+            data-testid="generate-roadmap"
+            onClick={() => void handleConfirmAndForge()}
+            disabled={confirming}
+          >
+            {confirming ? "Confirmando…" : "Gerar roadmap →"}
+          </Button>
         </div>
       </div>
     </main>
