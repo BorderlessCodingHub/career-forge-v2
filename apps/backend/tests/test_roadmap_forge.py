@@ -14,6 +14,7 @@ from career_forge.ai.graphs.roadmap_forge import (
 )
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
 from career_forge.ai.tools.openai_web_search import WebSearchResult, WebSearchSource
+from career_forge.services.forge_persistence import persist_graph_ready
 from career_forge.schemas.study_plan import (
     StudyPlan,
     StudyPlanEvaluation,
@@ -188,6 +189,11 @@ def test_post_forge_api(client, diagnosis_dict: dict) -> None:
     assert payload["status"] == "pending"
     assert payload["run_id"]
     assert payload["events"] == []
+
+
+def test_persist_graph_ready_ignores_empty_payload() -> None:
+    assert persist_graph_ready("user", None) is None
+    assert persist_graph_ready("user", {"type": "artifact_found"}) is None
 
 
 @pytest.mark.asyncio

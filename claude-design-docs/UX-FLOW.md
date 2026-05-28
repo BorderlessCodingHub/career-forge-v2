@@ -133,7 +133,7 @@ Após animação → navega para steady state (`/roadmap`).
 | | |
 |---|---|
 | **Old** | Stepper 01–07 + sidebar progresso/evidências/mentor + nós coloridos por status |
-| **New** | **`artifact` mode:** top bar mínima (logo + trilha); canvas full-width; nós **uniformes** (roxo Borderless); **click → drawer direita** com descrição, referências, Ask AI, validar |
+| **New** | **`artifact` mode:** top bar mínima (logo + trilha); canvas full-width; nós **uniformes** (roxo Borderless); **click → drawer direita** com descrição, tarefas práticas, referências, Ask AI, validar |
 | **Route** | `/roadmap` · `data-screen="vertical-roadmap"` · `data-mode="artifact"` |
 
 **References:** [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [trail-dashboard-polluted-current.png](./references/trail-dashboard-polluted-current.png) (anti-pattern)
@@ -142,7 +142,8 @@ Após animação → navega para steady state (`/roadmap`).
 
 **Node drawer:**
 - Título + descrição do domínio
-- Seção **Referências** (links mock)
+- Seção **Tarefas práticas** quando o grafo vem de `StudyPlan`
+- Seção **Referências** (links reais quando vindos de web search)
 - **Perguntar à IA** — mini chat estilo roadmap.sh tutor
 - CTA **Validar com IA** (quando aplicável)
 

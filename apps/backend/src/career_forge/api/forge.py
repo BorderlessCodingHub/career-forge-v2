@@ -11,9 +11,10 @@ from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
-from career_forge.ai.streaming.sse import events_to_sse
+from career_forge.ai.streaming.sse import events_to_sse, format_sse
 from career_forge.db.session import get_db
 from career_forge.schemas.diagnosis import DiagnosisResponse
+from career_forge.services.forge_persistence import persist_graph_ready
 from career_forge.services.profile_diagnosis import load_forge_motor_input
 
 router = APIRouter()
@@ -121,7 +122,11 @@ async def forge_stream(run_id: str) -> StreamingResponse:
     assert not isinstance(event_iter, GraphRunResult)
 
     async def sse_body():
-        async for line in events_to_sse(event_iter):
-            yield line
+        graph_ready_event: dict[str, Any] | None = None
+        async for event in event_iter:
+            if isinstance(event, dict) and event.get("type") == "graph_ready":
+                graph_ready_event = event
+            yield format_sse(event)
+        persist_graph_ready(run.user_id, graph_ready_event)
 
     return StreamingResponse(sse_body(), media_type="text/event-stream")

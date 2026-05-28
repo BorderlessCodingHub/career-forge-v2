@@ -115,6 +115,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-53** — Diagnosis screen UX (view-first edit, dnd-kit reorder)
 - [x] **HAC-52** — Roadmap motor API (`POST /diagnosis/confirm`, forge loads profile, 202 + run_id)
 - [x] **HAC-54** — Web search enrichment (OpenAI native `web_search`, live source cards, planner/evaluator StudyPlan loop)
+- [x] **HAC-55** — LLM learning graph persistence (dynamic StudyPlan nodes, references/tasks, reload order)
 
 ---
 

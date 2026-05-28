@@ -75,7 +75,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
           {node.outcomes.length > 0 && (
             <div>
               <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-                Referências / outcomes
+                Resultados esperados
               </h3>
               <ul className="mt-2 space-y-2">
                 {node.outcomes.map((outcome) => (
@@ -87,6 +87,58 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {node.tasks.length > 0 && (
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
+                Tarefas práticas
+              </h3>
+              <ul className="mt-2 space-y-2">
+                {node.tasks.map((task, index) => (
+                  <li
+                    key={`${task.title}-${index}`}
+                    className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-secondary"
+                  >
+                    <p className="font-medium text-text-primary">{task.title}</p>
+                    {task.outcome && <p className="mt-1">{task.outcome}</p>}
+                    {task.evidence_prompt && (
+                      <p className="mt-1 text-xs text-accent-mint">
+                        Evidência: {task.evidence_prompt}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {node.references.length > 0 && (
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
+                Referências
+              </h3>
+              <div className="mt-2 space-y-2">
+                {node.references.map((reference, index) => (
+                  <a
+                    key={`${reference.url}-${index}`}
+                    href={reference.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block rounded-md border border-border bg-surface px-3 py-2 text-sm transition hover:border-accent/60 hover:bg-surface-elevated"
+                  >
+                    <span className="font-medium text-text-primary">
+                      {reference.title}
+                    </span>
+                    {reference.url && (
+                      <span className="mt-1 block text-xs text-accent-mint">
+                        {hostname(reference.url)}
+                      </span>
+                    )}
+                  </a>
+                ))}
+              </div>
             </div>
           )}
 
@@ -118,4 +170,12 @@ export function NodeDrawer({ node, onClose, onOpenMentor }: NodeDrawerProps) {
       </aside>
     </>
   );
+}
+
+function hostname(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 }
