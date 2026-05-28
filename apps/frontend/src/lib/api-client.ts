@@ -15,6 +15,7 @@ import type {
   MockInterviewQuestionsResponse,
   MockInterviewRequest,
   MockInterviewRunResponse,
+  ChecklistToggleRequest,
   RoadmapResponse,
   RoadmapForgeEvent,
   RoadmapSyncNode,
@@ -284,6 +285,21 @@ export async function syncRoadmap(
     method: "POST",
     body: JSON.stringify({ user_id: resolvedUserId, nodes }),
   });
+}
+
+export async function patchRoadmapChecklist(
+  nodeId: string,
+  body: Omit<ChecklistToggleRequest, "user_id">,
+  userId?: string,
+): Promise<RoadmapResponse> {
+  const resolvedUserId = userId ?? getUserId();
+  return apiFetch<RoadmapResponse>(
+    `/roadmap/nodes/${encodeURIComponent(nodeId)}/checklist`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ user_id: resolvedUserId, ...body }),
+    },
+  );
 }
 
 export async function getValidationQuestions(

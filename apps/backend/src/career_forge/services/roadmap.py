@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from pathlib import Path
+from typing import Any, Literal
 
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -57,8 +59,10 @@ def _merge_node(
 ) -> RoadmapNode:
     state = fallback or {}
     evidence: list[dict[str, Any]] = []
+    checklist_progress: dict[str, Any] = {}
     if user_row is not None:
         evidence = user_row.evidence or []
+        checklist_progress = user_row.checklist_progress or {}
         state = {
             "status": user_row.status,
             "mastery_score": user_row.mastery_score,
@@ -69,6 +73,14 @@ def _merge_node(
     status = SkillStatus(state.get("status", SkillStatus.BLOQUEADO))
     priority_raw = state.get("priority")
     priority = Priority(priority_raw) if priority_raw else None
+
+    tasks = _enrich_checklist_items(_evidence_items(evidence, "task"), "tasks", checklist_progress)
+    references = _enrich_checklist_items(
+        _evidence_items(evidence, "reference"),
+        "references",
+        checklist_progress,
+    )
+    completed, total = _checklist_counts(tasks, references)
 
     return RoadmapNode(
         node_id=catalog_node["id"],
@@ -85,8 +97,10 @@ def _merge_node(
         mastery_score=int(state.get("mastery_score", 0)),
         priority=priority,
         rationale=state.get("rationale"),
-        tasks=_evidence_items(evidence, "task"),
-        references=_evidence_items(evidence, "reference"),
+        tasks=tasks,
+        references=references,
+        checklist_completed=completed,
+        checklist_total=total,
     )
 
 
@@ -181,16 +195,66 @@ def sync_user_graph(
         }
         if row:
             for key, value in payload.items():
+                if key == "checklist_progress":
+                    continue
                 setattr(row, key, value)
         else:
             session.add(
                 UserSkillNodeRow(
                     user_id=user.id,
                     skill_node_id=node.node_id,
+                    checklist_progress={},
                     **payload,
                 ),
             )
 
+    session.commit()
+    return get_user_roadmap(session, user_id)
+
+
+def toggle_checklist_item(
+    session: Session,
+    user_id: str,
+    node_id: str,
+    item_type: Literal["task", "reference"],
+    item_id: str,
+    done: bool,
+) -> RoadmapResponse:
+    """Persist lightweight checklist progress for a single task or reference item."""
+    user = _resolve_user(session, user_id)
+    if user is None:
+        user = User(
+            external_id=user_id,
+            display_name=user_id.replace("-", " ").title(),
+            email=f"{user_id}@demo.careerforge.local",
+        )
+        session.add(user)
+        session.flush()
+
+    roadmap = get_user_roadmap(session, user_id)
+    node = next((item for item in roadmap.nodes if item.node_id == node_id), None)
+    if node is None:
+        raise HTTPException(status_code=404, detail=f"Node {node_id} not found")
+
+    items = node.tasks if item_type == "task" else node.references
+    if not any(str(item.get("id")) == item_id for item in items):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown {item_type} item_id {item_id} for node {node_id}",
+        )
+
+    existing = _user_state_map(session, user)
+    row = existing.get(node_id)
+    if row is None:
+        row = _ensure_user_row_for_catalog_node(session, user, node_id, roadmap)
+        existing[node_id] = row
+
+    progress = dict(row.checklist_progress or {})
+    bucket_key = "tasks" if item_type == "task" else "references"
+    bucket = dict(progress.get(bucket_key) or {})
+    bucket[item_id] = done
+    progress[bucket_key] = bucket
+    row.checklist_progress = progress
     session.commit()
     return get_user_roadmap(session, user_id)
 
@@ -213,6 +277,77 @@ def _evidence_items(evidence: list[dict[str, Any]], item_type: str) -> list[dict
         for item in evidence
         if isinstance(item, dict) and item.get("type") == item_type
     ]
+
+
+def _stable_item_id(item_type: str, index: int) -> str:
+    prefix = "task" if item_type == "task" else "ref"
+    return f"{prefix}-{index}"
+
+
+def _enrich_checklist_items(
+    items: list[dict[str, str]],
+    bucket_key: str,
+    checklist_progress: dict[str, Any],
+) -> list[dict[str, str | bool]]:
+    bucket = checklist_progress.get(bucket_key) or {}
+    enriched: list[dict[str, str | bool]] = []
+    item_type = "task" if bucket_key == "tasks" else "reference"
+    for index, item in enumerate(items):
+        item_id = item.get("id") or _stable_item_id(item_type, index)
+        done = bool(bucket.get(item_id, False))
+        enriched.append({**item, "id": item_id, "done": done})
+    return enriched
+
+
+def _checklist_counts(
+    tasks: list[dict[str, str | bool]],
+    references: list[dict[str, str | bool]],
+) -> tuple[int, int]:
+    items = [*tasks, *references]
+    total = len(items)
+    completed = sum(1 for item in items if item.get("done"))
+    return completed, total
+
+
+def _ensure_user_row_for_catalog_node(
+    session: Session,
+    user: User,
+    node_id: str,
+    roadmap: RoadmapResponse,
+) -> UserSkillNodeRow:
+    node = next(item for item in roadmap.nodes if item.node_id == node_id)
+    catalog = load_roadmap_catalog()
+    catalog_node = next(
+        (item for item in catalog["nodes"] if item["id"] == node_id),
+        None,
+    )
+    if catalog_node is not None:
+        _ensure_skill_node(
+            session,
+            UserSkillNode(
+                node_id=node_id,
+                title=node.title,
+                status=node.status,
+                mastery_score=node.mastery_score,
+                priority=node.priority,
+                rationale=node.rationale,
+                prerequisites=node.prerequisites,
+            ),
+            sort_order=catalog_node.get("sort_order", 0),
+        )
+    row = UserSkillNodeRow(
+        user_id=user.id,
+        skill_node_id=node_id,
+        status=node.status.value if isinstance(node.status, SkillStatus) else node.status,
+        mastery_score=node.mastery_score,
+        priority=node.priority.value if node.priority else None,
+        rationale=node.rationale,
+        evidence=[],
+        checklist_progress={},
+    )
+    session.add(row)
+    session.flush()
+    return row
 
 
 def _evidence_from_node(node: UserSkillNode, *, sort_order: int) -> list[dict[str, Any]]:

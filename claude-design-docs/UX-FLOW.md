@@ -29,7 +29,7 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 | Entrada no forge | Auto-jump ou CTA passivo após confirmação | **Explícito** — só após "Gerar roadmap" |
 | Forge durante stream | Split 40/60: timeline + skill graph skeleton enchendo | **Só timeline** — passos numerados 1, 2, 3, 4… (reasoning stream). **Sem grafo visível** |
 | Fim do forge | Reveal inline com grafo completo + MissionBanner | **Animação** — cada frase/item do stream **voa para lugar** no layout vertical |
-| Steady state pós-forge | Skill graph dashboard (nós conectados, sidebar fixa) | **`artifact` mode** — roadmap vertical full-width estilo [roadmap.sh](https://roadmap.sh); **click node → drawer** (referências + Ask AI); sem stepper nem sidebar de progresso |
+| Steady state pós-forge | Skill graph dashboard (nós conectados, sidebar fixa) | **`artifact` mode** — roadmap vertical full-width estilo [roadmap.sh](https://roadmap.sh); **click node → drawer** (tarefas/referências com checklist opcional, progresso de estudo, Ask AI, validar mastery); sem stepper nem sidebar de progresso |
 | Numeração de passos | Implícita na timeline | **1–N só durante geração** — não aparece no steady state |
 | App modes | Single chrome | **`setup`** (goal → forge) vs **`artifact`** (trilha pronta) |
 | IA no dashboard | Mentor drawer contextual (P1) | **Ask AI** no drawer do nó (roadmap.sh tutor style); mentor full drawer = P1 opcional |
@@ -142,10 +142,11 @@ Após animação → navega para steady state (`/roadmap`).
 
 **Node drawer:**
 - Título + descrição do domínio
-- Seção **Tarefas práticas** quando o grafo vem de `StudyPlan`
-- Seção **Referências** (links reais quando vindos de web search)
+- Seção **Tarefas práticas** quando o grafo vem de `StudyPlan` — checkbox por item (opcional, não bloqueia mastery)
+- Seção **Referências** (links reais quando vindos de web search) — marcar como lidas
+- Barra **Progresso de estudo** (`x/y` concluídos) quando há itens; copy deixa claro que isso não substitui validação por IA
 - **Perguntar à IA** — mini chat estilo roadmap.sh tutor
-- CTA **Validar com IA** (quando aplicável)
+- CTA **Mock interview — validar mastery** (prova real de aprendizado)
 
 ---
 

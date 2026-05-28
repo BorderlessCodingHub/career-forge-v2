@@ -84,6 +84,15 @@ export type RoadmapCategory = {
   label: string;
 };
 
+export type RoadmapChecklistItem = {
+  id: string;
+  done: boolean;
+  title?: string;
+  outcome?: string;
+  evidence_prompt?: string;
+  url?: string;
+};
+
 export type RoadmapNode = {
   node_id: string;
   title: string;
@@ -99,8 +108,17 @@ export type RoadmapNode = {
   mastery_score: number;
   priority?: string | null;
   rationale?: string | null;
-  tasks: Array<Record<string, string>>;
-  references: Array<Record<string, string>>;
+  tasks: RoadmapChecklistItem[];
+  references: RoadmapChecklistItem[];
+  checklist_completed: number;
+  checklist_total: number;
+};
+
+export type ChecklistToggleRequest = {
+  user_id?: string;
+  item_type: "task" | "reference";
+  item_id: string;
+  done: boolean;
 };
 
 export type RoadmapResponse = {

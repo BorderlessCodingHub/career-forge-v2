@@ -105,7 +105,7 @@
 | Chrome | **No** onboarding stepper (01 Objetivo … 07 Adaptação); **no** fixed progress/evidence/mentor sidebar |
 | Top bar | Career Forge logo + track name only |
 | Canvas nodes | **Uniform** Borderless purple cards on graph — status/mastery in **node drawer**, not on cards |
-| Interaction | **Click node** → right drawer: title, description, generated tasks/references when present, **Ask AI** mini chat, CTA validar |
+| Interaction | **Click node** → right drawer: title, description, generated tasks/references with optional checkboxes + study progress bar (non-blocking), **Ask AI** mini chat, CTA **Mock interview — validar mastery** |
 | Personalization | Graph state still adaptive (backend recalibrates) — visible in drawer, not canvas pollution |
 | Forbidden | Forge streaming as steady state; MissionBanner hero on artifact canvas; status-colored node grid |
 

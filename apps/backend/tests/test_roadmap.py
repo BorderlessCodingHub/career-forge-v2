@@ -9,7 +9,9 @@ from career_forge.schemas.roadmap import RoadmapCategory, RoadmapNode, RoadmapRe
 from career_forge.services.planning import _roadmap_to_graph, _apply_graph_to_roadmap
 from career_forge.services.roadmap import (
     _catalog_node_from_generated_row,
+    _checklist_counts,
     _delete_stale_generated_rows,
+    _enrich_checklist_items,
     _generated_row_sort_order,
     build_roadmap_from_catalog,
 )
@@ -136,4 +138,83 @@ def test_planning_roundtrip_preserves_tasks_and_references() -> None:
     assert graph[0].references[0]["title"] == "Python docs"
     assert updated.nodes[0].tasks == [{"title": "Criar notebook"}]
     assert updated.nodes[0].references[0]["url"] == "https://docs.python.org"
+
+
+def test_enrich_checklist_items_adds_ids_and_done_state() -> None:
+    items = [{"title": "Ler docs"}]
+    progress = {"tasks": {"task-0": True}}
+    enriched = _enrich_checklist_items(items, "tasks", progress)
+    assert enriched[0]["id"] == "task-0"
+    assert enriched[0]["done"] is True
+
+
+def test_checklist_counts_completed_items() -> None:
+    tasks = [{"id": "task-0", "done": True, "title": "A"}]
+    references = [{"id": "ref-0", "done": False, "title": "B", "url": "https://x"}]
+    completed, total = _checklist_counts(tasks, references)
+    assert completed == 1
+    assert total == 2
+
+
+def test_patch_checklist_api_persists_progress(client) -> None:
+    nodes = [
+        UserSkillNode(
+            node_id="http",
+            title="HTTP básico",
+            status=SkillStatus.RECOMENDADO,
+            mastery_score=10,
+            tasks=[{"title": "Montar request"}],
+            references=[{"title": "MDN HTTP", "url": "https://developer.mozilla.org"}],
+        ),
+    ]
+    sync_response = client.post(
+        "/roadmap/sync",
+        json={"user_id": "checklist-user", "nodes": [n.model_dump() for n in nodes]},
+    )
+    assert sync_response.status_code == 200
+    synced = sync_response.json()
+    http = next(n for n in synced["nodes"] if n["node_id"] == "http")
+    task_id = http["tasks"][0]["id"]
+    ref_id = http["references"][0]["id"]
+
+    toggle_task = client.patch(
+        "/roadmap/nodes/http/checklist",
+        json={
+            "user_id": "checklist-user",
+            "item_type": "task",
+            "item_id": task_id,
+            "done": True,
+        },
+    )
+    assert toggle_task.status_code == 200
+    after_task = next(n for n in toggle_task.json()["nodes"] if n["node_id"] == "http")
+    assert after_task["checklist_completed"] == 1
+    assert after_task["tasks"][0]["done"] is True
+
+    toggle_ref = client.patch(
+        "/roadmap/nodes/http/checklist",
+        json={
+            "user_id": "checklist-user",
+            "item_type": "reference",
+            "item_id": ref_id,
+            "done": True,
+        },
+    )
+    assert toggle_ref.status_code == 200
+    after_ref = next(n for n in toggle_ref.json()["nodes"] if n["node_id"] == "http")
+    assert after_ref["checklist_completed"] == 2
+    assert after_ref["checklist_total"] == 2
+
+
+def test_patch_checklist_rejects_unknown_item(client) -> None:
+    response = client.patch(
+        "/roadmap/nodes/http/checklist",
+        json={
+            "user_id": "demo-ana",
+            "item_type": "task",
+            "item_id": "missing-task",
+            "done": True,
+        },
+    )
+    assert response.status_code == 400
 
