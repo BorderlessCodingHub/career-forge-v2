@@ -172,6 +172,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Generated roadmap details | Drawer can show references/outcomes | Prototype lacks generated StudyPlan fields | HAC-55 — dynamic nodes reload from backend with `tasks[]` and `references[]` | **Code wins** — richer graph data | HAC-55 |
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
+| Deploy badge (global footer) | Not in prototype | N/A | Fixed bottom strip on all routes — `DeployBadge` in root layout; `local dev` when `NEXT_PUBLIC_BUILD_*` unset; prod shows `deploy {sha} · {time}` from CI; health dot polls `GET /health` | **Code wins** — operational debug chrome, not pitch UX; does not replace demo script checks | 2026-05-27 |
 
 ---
 
@@ -196,4 +197,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: 2026-05-27 — diagnosis short-answer validation + HAC-54 source cards*
+*Last updated: 2026-05-27 — deploy badge footer (build SHA + API health)*
