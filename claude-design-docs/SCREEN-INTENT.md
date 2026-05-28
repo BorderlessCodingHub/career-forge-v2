@@ -105,7 +105,7 @@
 | Chrome | **No** onboarding stepper (01 Objetivo … 07 Adaptação); **no** fixed progress/evidence/mentor sidebar |
 | Top bar | Career Forge logo + track name only |
 | Canvas nodes | **Uniform** Borderless purple cards — compact **study** progress (`x/y` + mint bar) when checklist items exist; **mastery %** and status detail stay in **node drawer** only |
-| Interaction | **Click node** → right drawer: title (description on **canvas card** only), status/mastery, study checklist + progress bar, rationale callout, tasks/references, **Ask AI**, CTA **Mock interview — validar mastery** |
+| Interaction | **Click node** → right drawer: title (description on **canvas card** only), red **✕** dismiss in header (`aria-label="Fechar detalhes"`), status/mastery, study checklist + progress bar, rationale callout, tasks/references, **Ask AI**, CTA **Mock interview — validar mastery** |
 | Personalization | Graph state still adaptive (backend recalibrates) — visible in drawer, not canvas pollution |
 | Forbidden | Forge streaming as steady state; MissionBanner hero on artifact canvas; status-colored node grid |
 

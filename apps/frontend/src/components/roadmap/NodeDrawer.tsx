@@ -71,8 +71,9 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
           </div>
           <button
             type="button"
+            aria-label="Fechar detalhes"
             onClick={onClose}
-            className="rounded-md px-2 py-1 text-text-muted hover:bg-surface hover:text-text-primary"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sm font-medium text-red-400 transition-all duration-200 hover:bg-red-900/60 hover:text-red-300 focus-visible:bg-red-900/60 focus-visible:text-red-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-500/50 active:bg-red-800/60"
           >
             ✕
           </button>

@@ -26,6 +26,18 @@ Extracted from Borderless Community reference (Code Breakers dashboard + logo). 
 | `locked` | `#4B5563` | Nó bloqueado |
 | `evidence` | `#2DD4BF` | Evidências, artifacts (mint) |
 
+### Dismiss / destructive icon (implemented — dark UI)
+
+Not separate hex tokens; Tailwind red scale on `surface-elevated`:
+
+| Role | Classes (Next.js) | Use |
+|------|-------------------|-----|
+| Default | `text-red-400` | Drawer/modal close **✕** |
+| Hover / focus bg | `hover:bg-red-900/60`, `focus-visible:ring-red-500/50` | `NodeDrawer` header close |
+| Row delete (lighter) | `text-red-500`, `hover:bg-red-500/10` | `EditableDiagnosis` pencil/trash |
+
+Prototype still uses muted `.slideover-close` — intentional drift; see [PRODUCT-SOURCE-OF-TRUTH](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes.
+
 ### CSS variables (`prototype/styles.css`)
 
 ```css

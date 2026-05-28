@@ -122,8 +122,9 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `PrimaryButton` / `GhostButton` | Actions |
 | `DeployBadge` | Global fixed footer — deploy SHA/time (CI build) + live API health dot; `local dev` label when build env unset |
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); driven by `checklist_completed` / `checklist_total` |
-| `NodeDrawer` study checklist | Right drawer on `/roadmap`: header title only (description on canvas card); status/mastery, `ChecklistProgress` full, rationale callout, task/reference checkboxes; **does not** gate `validate-node-cta` |
+| `NodeDrawer` study checklist | Right drawer on `/roadmap`: header title only (description on canvas card); red **✕** dismiss (`h-9 w-9`, `aria-label="Fechar detalhes"`); status/mastery, `ChecklistProgress` full, rationale callout, task/reference checkboxes; **does not** gate `validate-node-cta` |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
+| Dismiss icon button | Square `h-9 w-9`, `text-red-400`, hover/focus `red-900/60` on dark elevated surfaces (drawer close); row delete uses lighter `text-red-500` + `red-500/10` (`EditableDiagnosis`) — same family, different weight |
 
 When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), document it in [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes.
 
