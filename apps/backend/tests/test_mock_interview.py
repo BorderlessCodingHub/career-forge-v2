@@ -9,10 +9,45 @@ from career_forge.ai.factory import AgentFactory
 from career_forge.ai.graphs.mock_interview import build_mock_interview_response
 from career_forge.ai.graphs.validation import PASS_THRESHOLD
 from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
-from career_forge.schemas.common import ValidationStatus
+from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode, ValidationStatus
 from career_forge.schemas.mock_interview import MockInterviewRequest
 from career_forge.schemas.validation import ValidationAnswer, ValidationResponse
 from career_forge.services.mock_interview import build_mock_interview_questions
+
+GENERATED_NODE_ID = "gen-llm-apis"
+
+
+def _generated_node() -> UserSkillNode:
+    return UserSkillNode(
+        node_id=GENERATED_NODE_ID,
+        title="APIs para LLMs",
+        status=SkillStatus.RECOMENDADO,
+        mastery_score=0,
+        priority=Priority.HIGH,
+        tasks=[
+            {
+                "title": "Construir um wrapper de provider",
+                "outcome": "Wrapper publicado com testes",
+                "evidence_prompt": "Mostre como você estrutura chamadas a um provedor de LLM",
+            },
+            {
+                "title": "Tratar rate limits",
+                "outcome": "Retry com backoff exponencial",
+                "evidence_prompt": "Explique sua estratégia de retry e backoff",
+            },
+            {
+                "title": "Cache de respostas",
+                "outcome": "Cache reduz custo de tokens",
+                "evidence_prompt": "Como você decide o que cachear e por quanto tempo?",
+            },
+            {
+                "title": "Streaming token a token",
+                "outcome": "Stream SSE no cliente",
+                "evidence_prompt": "Descreva como você faz streaming token a token via SSE",
+            },
+        ],
+        references=[{"title": "OpenAI docs", "url": "https://platform.openai.com/docs"}],
+    )
 
 STRONG_REST_ANSWERS = [
     ValidationAnswer(
@@ -184,3 +219,58 @@ def test_post_mock_interview_rejects_too_few_answers(client) -> None:
     body["answers"] = body["answers"][:3]
     response = client.post("/mock-interview", json=body)
     assert response.status_code == 422
+
+
+def _sync_generated_node(client, user_id: str) -> None:
+    response = client.post(
+        "/roadmap/sync",
+        json={"user_id": user_id, "nodes": [_generated_node().model_dump()]},
+    )
+    assert response.status_code == 200
+
+
+def test_get_mock_interview_questions_generated_node(client) -> None:
+    """HAC-64 — questions resolve from a persisted AI-generated StudyPlan node."""
+    _sync_generated_node(client, "gen-mi-questions")
+
+    response = client.get("/mock-interview/questions", params={"node_id": GENERATED_NODE_ID})
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["node_id"] == GENERATED_NODE_ID
+    assert payload["node_title"] == "APIs para LLMs"
+    assert 5 <= len(payload["questions"]) <= 7
+    phases = {question["phase"] for question in payload["questions"]}
+    assert {"base", "gap_probe", "scenario"} <= phases
+    base_prompts = " ".join(q["prompt"] for q in payload["questions"] if q["phase"] == "base")
+    assert "estrutura chamadas a um provedor de LLM" in base_prompts
+
+
+def test_post_mock_interview_generated_node_recalibrates(client) -> None:
+    """HAC-64 — submit + recalibration works end-to-end for generated nodes."""
+    _sync_generated_node(client, "gen-mi-submit")
+
+    body = {
+        "user_id": "gen-mi-submit",
+        "node_id": GENERATED_NODE_ID,
+        "node_title": "APIs para LLMs",
+        "answers": [
+            {
+                "question_id": f"{GENERATED_NODE_ID}-mi-q{index}",
+                "answer": (
+                    "Estruturo chamadas ao provedor de LLM com um cliente único, trato rate "
+                    "limits com retry e backoff exponencial, faço cache de respostas e streaming "
+                    "token a token via SSE no endpoint."
+                ),
+            }
+            for index in range(1, 8)
+        ],
+    }
+    response = client.post("/mock-interview", json=body)
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["node_id"] == GENERATED_NODE_ID
+    assert payload["node_status"] in ("aprovado", "revisar")
+    assert payload["roadmap"] is not None
+    generated = [n for n in payload["roadmap"]["nodes"] if n["node_id"] == GENERATED_NODE_ID]
+    assert generated
+    assert generated[0]["tasks"]

@@ -18,7 +18,7 @@ from career_forge.schemas.mock_interview import (
     MockInterviewRequest,
 )
 from career_forge.schemas.validation import ValidationResponse
-from career_forge.services.roadmap import load_roadmap_catalog
+from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
 from career_forge.services.validation import (
     QUESTION_HINTS,
     QUESTION_LABELS,
@@ -40,15 +40,6 @@ SCENARIO_TEMPLATES = (
 )
 
 
-def _get_catalog_node(node_id: str) -> dict[str, Any]:
-    catalog = load_roadmap_catalog()
-    for node in catalog["nodes"]:
-        if node["id"] == node_id:
-            return node
-    msg = f"Unknown skill node: {node_id}"
-    raise ValueError(msg)
-
-
 def _pad_rubric(rubric: list[str], node_title: str, count: int) -> list[str]:
     padded = list(rubric)
     while len(padded) < count:
@@ -56,14 +47,34 @@ def _pad_rubric(rubric: list[str], node_title: str, count: int) -> list[str]:
     return padded
 
 
-def build_mock_interview_questions(node_id: str) -> MockInterviewQuestionsResponse:
-    """Generate 5–7 contextual mock interview questions from rubric, gaps, and outcomes."""
-    node = _get_catalog_node(node_id)
-    rubric = _pad_rubric(node.get("rubric") or [], node["title"], 3)
+def _gap_criteria_for(node: dict[str, Any], raw_rubric: list[str]) -> list[str]:
+    """Gap-probe criteria: static rubric gaps, then extra StudyPlan rubric items,
+    then a generic fallback. Keeps generated nodes (no static gaps) contextual.
+    """
+    criteria = list(RUBRIC_GAPS.get(node["id"], []))[:2]
+    for extra in raw_rubric[3:]:
+        if len(criteria) >= 2:
+            break
+        criteria.append(extra)
+    while len(criteria) < 2:
+        criteria.append(f"Evidência concreta sobre {node['title']}")
+    return criteria
+
+
+def build_mock_interview_questions(
+    node_id: str,
+    session: Session | None = None,
+) -> MockInterviewQuestionsResponse:
+    """Generate 5–7 contextual mock interview questions from rubric, gaps, and outcomes.
+
+    Resolves catalog nodes and persisted AI-generated StudyPlan nodes (HAC-64),
+    where the rubric maps to per-task evidence prompts and outcomes to task results.
+    """
+    node = get_skill_node_context(session, node_id)
+    raw_rubric: list[str] = node.get("rubric") or []
+    rubric = _pad_rubric(raw_rubric, node["title"], 3)
     outcomes: list[str] = node.get("outcomes") or []
-    gap_criteria = RUBRIC_GAPS.get(node_id, [])[:2]
-    while len(gap_criteria) < 2:
-        gap_criteria.append(f"Evidência concreta sobre {node['title']}")
+    gap_criteria = _gap_criteria_for(node, raw_rubric)
 
     questions: list[MockInterviewQuestion] = []
 
@@ -159,15 +170,16 @@ def persist_mock_interview_result(
     passed = result.status == ValidationStatus.APROVADO
     new_status = SkillStatus.APROVADO if passed else SkillStatus.REVISAR
 
-    question_payload = build_mock_interview_questions(payload.node_id)
+    question_payload = build_mock_interview_questions(payload.node_id, session)
     user_skill.status = new_status.value
     user_skill.mastery_score = result.score
-    user_skill.evidence = {
-        "strengths": result.strengths,
-        "gaps": result.gaps,
-        "next_action": result.next_action,
-        "mock_interview": True,
-    }
+    user_skill.evidence = merge_validation_evidence(
+        user_skill.evidence,
+        strengths=result.strengths,
+        gaps=result.gaps,
+        next_action=result.next_action,
+        mock_interview=True,
+    )
 
     validation = Validation(
         user_id=user.id,

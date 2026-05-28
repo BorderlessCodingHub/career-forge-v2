@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -17,7 +15,7 @@ from career_forge.schemas.validation import (
     ValidationRequest,
     ValidationResponse,
 )
-from career_forge.services.roadmap import load_roadmap_catalog
+from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
 
 QUESTION_LABELS = ("conceito", "aplicação", "aprofundamento")
 QUESTION_TEMPLATES = (
@@ -37,18 +35,13 @@ def _resolve_user(session: Session, external_id: str) -> User | None:
     return session.scalar(select(User).where(User.external_id == external_id))
 
 
-def _get_catalog_node(node_id: str) -> dict[str, Any]:
-    catalog = load_roadmap_catalog()
-    for node in catalog["nodes"]:
-        if node["id"] == node_id:
-            return node
-    msg = f"Unknown skill node: {node_id}"
-    raise ValueError(msg)
-
-
-def build_validation_questions(node_id: str) -> ValidationQuestionsResponse:
-    """Generate three interview questions from roadmap rubric."""
-    node = _get_catalog_node(node_id)
+def build_validation_questions(
+    node_id: str,
+    session: Session | None = None,
+) -> ValidationQuestionsResponse:
+    """Generate three interview questions from the rubric of a catalog or
+    persisted AI-generated StudyPlan node (HAC-64)."""
+    node = get_skill_node_context(session, node_id)
     rubric: list[str] = node.get("rubric") or []
     while len(rubric) < 3:
         rubric.append(f"Demonstrar domínio prático de {node['title']}")
@@ -108,14 +101,15 @@ def persist_validation_result(
     passed = result.status == ValidationStatus.APROVADO
     new_status = SkillStatus.APROVADO if passed else SkillStatus.REVISAR
 
-    question_payload = build_validation_questions(payload.node_id)
+    question_payload = build_validation_questions(payload.node_id, session)
     user_skill.status = new_status.value
     user_skill.mastery_score = result.score
-    user_skill.evidence = {
-        "strengths": result.strengths,
-        "gaps": result.gaps,
-        "next_action": result.next_action,
-    }
+    user_skill.evidence = merge_validation_evidence(
+        user_skill.evidence,
+        strengths=result.strengths,
+        gaps=result.gaps,
+        next_action=result.next_action,
+    )
 
     validation = Validation(
         user_id=user.id,

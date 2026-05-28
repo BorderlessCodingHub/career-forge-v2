@@ -36,9 +36,10 @@ def _extract_validation(output: dict[str, Any] | None) -> ValidationResponse:
 @router.get("/questions", response_model=ValidationQuestionsResponse)
 def get_validation_questions(
     node_id: str = Query(..., min_length=1),
+    db: Session = Depends(get_db),
 ) -> ValidationQuestionsResponse:
     try:
-        return validation_service.build_validation_questions(node_id)
+        return validation_service.build_validation_questions(node_id, db)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -51,7 +52,7 @@ async def run_validation(
     """Run mastery interview evaluation — collect via GraphExecutor."""
     if not body.rubric:
         try:
-            questions = validation_service.build_validation_questions(body.node_id)
+            questions = validation_service.build_validation_questions(body.node_id, db)
             body = body.model_copy(
                 update={"rubric": [question.rubric_criterion for question in questions.questions]},
             )

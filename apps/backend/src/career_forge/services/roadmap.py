@@ -41,6 +41,35 @@ def load_roadmap_catalog(path: Path = ROADMAP_PATH) -> dict[str, Any]:
         return json.load(handle)
 
 
+def get_skill_node_context(session: Session | None, node_id: str) -> dict[str, Any]:
+    """Resolve a node's question-building context from the static catalog or a
+    persisted AI-generated row (`track_id=ai-generated`), so downstream features
+    (mock interview, validation) work for both seeded and StudyPlan nodes.
+    """
+    for node in load_roadmap_catalog()["nodes"]:
+        if node["id"] == node_id:
+            return node
+
+    if session is not None:
+        row = session.get(SkillNode, node_id)
+        if row is not None:
+            return {
+                "id": row.id,
+                "title": row.title,
+                "category": row.category,
+                "description": row.description or "",
+                "icon": row.icon or "sparkles",
+                "side": row.side or "left",
+                "sort_order": row.sort_order,
+                "prerequisites": list(row.prerequisites or []),
+                "outcomes": list(row.outcomes or []),
+                "rubric": list(row.rubric or []),
+            }
+
+    msg = f"Unknown skill node: {node_id}"
+    raise ValueError(msg)
+
+
 def _resolve_user(session: Session, external_id: str) -> User | None:
     return session.scalar(select(User).where(User.external_id == external_id))
 
@@ -277,6 +306,40 @@ def _evidence_items(evidence: list[dict[str, Any]], item_type: str) -> list[dict
         for item in evidence
         if isinstance(item, dict) and item.get("type") == item_type
     ]
+
+
+def merge_validation_evidence(
+    existing: list | dict | None,
+    *,
+    strengths: list[str],
+    gaps: list[str],
+    next_action: str,
+    mock_interview: bool = False,
+) -> list | dict:
+    """Persist validation feedback without dropping StudyPlan checklist evidence."""
+    summary: dict[str, Any] = {
+        "type": "validation",
+        "strengths": strengths,
+        "gaps": gaps,
+        "next_action": next_action,
+    }
+    if mock_interview:
+        summary["mock_interview"] = True
+
+    if isinstance(existing, list):
+        kept = [
+            item
+            for item in existing
+            if isinstance(item, dict) and item.get("type") in ("metadata", "task", "reference")
+        ]
+        return [*kept, summary]
+
+    return {
+        "strengths": strengths,
+        "gaps": gaps,
+        "next_action": next_action,
+        **({"mock_interview": True} if mock_interview else {}),
+    }
 
 
 def _stable_item_id(item_type: str, index: int) -> str:
