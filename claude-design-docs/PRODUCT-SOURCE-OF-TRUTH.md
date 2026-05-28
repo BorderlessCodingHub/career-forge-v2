@@ -128,7 +128,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | `/onboarding/edit` | **Editable** fortes/lacunas/prioridades + **"Gerar roadmap"** | HAC-53: view-first, pencil/trash, dnd-kit reorder, refazer diagnóstico |
 | `/roadmap/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; manual **"Ver roadmap"** CTA after `graph_ready` | SSE wiring, scroll behavior |
 | `/roadmap/forge/complete` | Stream items fly into vertical layout | Motion implementation |
-| `/roadmap` | **Vertical roadmap** steady state + optional AI sidebar | Node detail panel, sidebar UX |
+| `/roadmap` | **Vertical roadmap** steady state + optional AI sidebar; node drawer shows generated tasks + references when present | Node detail panel, sidebar UX |
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |
 | `/roadmap` (adaptive) | Roadmap state change + mentor/AI context | Drawer vs sidebar |
 
@@ -169,6 +169,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Reveal | Items fly into vertical layout | Graph panel reveal | Implemented | **Docs win** | HAC-18 |
 | Monorepo UI | Full flow per UX-FLOW | Old hash routes in HTML | Mostly implemented | HAC-52 API done (`/diagnosis/confirm`, forge loads profile); **HAC-57** wires confirm button | HAC-52 |
 | Forge research + evaluation | Timeline-only stream with `artifact_found` rows | Mock artifacts without live sources | HAC-54 — OpenAI native `web_search` citations, planner artifact, evaluator verdict, paced instant steps, then manual **Ver roadmap** CTA | **Code + docs aligned** — no third-party search adapter | HAC-54 |
+| Generated roadmap details | Drawer can show references/outcomes | Prototype lacks generated StudyPlan fields | HAC-55 — dynamic nodes reload from backend with `tasks[]` and `references[]` | **Code wins** — richer graph data | HAC-55 |
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
 

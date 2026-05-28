@@ -5,8 +5,14 @@ from __future__ import annotations
 import pytest
 
 from career_forge.ai.tools.study_plan_evaluator import OpenAiStudyPlanEvaluator
-from career_forge.schemas.study_plan import StudyPlanEvaluation, StudyResource
-from career_forge.services.forge_planning import evaluation_artifact
+from career_forge.schemas.study_plan import (
+    StudyPlan,
+    StudyPlanEvaluation,
+    StudyPlanNode,
+    StudyPlanTask,
+    StudyResource,
+)
+from career_forge.services.forge_planning import evaluation_artifact, study_plan_to_graph
 
 
 def test_evaluation_artifact_for_revision() -> None:
@@ -38,3 +44,38 @@ def test_study_resource_uses_plain_string_url_for_openai_schema() -> None:
     assert resource.url == "https://platform.openai.com/docs"
     assert schema["properties"]["url"]["type"] == "string"
     assert "format" not in schema["properties"]["url"]
+
+
+def test_study_plan_to_graph_preserves_references_and_tasks() -> None:
+    plan = StudyPlan(
+        goal="AI Engineer",
+        learner_context_summary="summary",
+        strategy="strategy",
+        nodes=[
+            StudyPlanNode(
+                node_id="python-ai",
+                title="Python para IA",
+                why_now="Base para IA.",
+                prerequisites=["setup"],
+                tasks=[
+                    StudyPlanTask(
+                        title="Criar notebook",
+                        outcome="Publicar notebook",
+                        evidence_prompt="Explique o notebook.",
+                    ),
+                ],
+                resources=[
+                    StudyResource(
+                        title="Python docs",
+                        url="https://docs.python.org/3/tutorial/",
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    graph = study_plan_to_graph(plan)
+    assert graph[0].node_id == "python-ai"
+    assert graph[0].prerequisites == ["setup"]
+    assert graph[0].tasks[0]["title"] == "Criar notebook"
+    assert graph[0].references[0]["title"] == "Python docs"

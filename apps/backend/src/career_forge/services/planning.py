@@ -55,6 +55,9 @@ def _roadmap_to_graph(roadmap: RoadmapResponse) -> list[UserSkillNode]:
             mastery_score=node.mastery_score,
             priority=node.priority,
             rationale=node.rationale,
+            prerequisites=node.prerequisites,
+            tasks=node.tasks,
+            references=node.references,
         )
         for node in roadmap.nodes
     ]
@@ -196,6 +199,8 @@ def _apply_graph_to_roadmap(
                     "mastery_score": updated.mastery_score,
                     "priority": updated.priority.value if updated.priority else None,
                     "rationale": updated.rationale,
+                    "tasks": updated.tasks,
+                    "references": updated.references,
                 },
             ),
         )

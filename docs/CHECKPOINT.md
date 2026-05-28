@@ -122,7 +122,7 @@ Post-onboarding LangGraph loop:
 3. `research_enrich` — OpenAI native `web_search` + official source citations
 4. `plan_study_graph` — planner LLM creates a structured `StudyPlan`
 5. `evaluate_plan` — mini evaluator returns `ship|revise`; feedback can loop back into planner
-6. `accumulate_graph` — converts approved `StudyPlan` into `graph_ready` nodes
+6. `accumulate_graph` — converts approved `StudyPlan` into `graph_ready` nodes with tasks/references/prerequisites
 7. `emit_final` — SSE `graph_ready`
 
 SSE events: `reasoning_delta`, `artifact_found` (with `sources[]` for web search), `node_updated`, `step_complete`, `graph_ready`

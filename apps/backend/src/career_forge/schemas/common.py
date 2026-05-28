@@ -59,6 +59,9 @@ class UserSkillNode(BaseModel):
     mastery_score: int = Field(ge=0, le=100, description="0–100 mastery %")
     priority: Priority | None = None
     rationale: str | None = None
+    prerequisites: list[str] = Field(default_factory=list)
+    tasks: list[dict[str, str]] = Field(default_factory=list)
+    references: list[dict[str, str]] = Field(default_factory=list)
 
 
 class UserSkillNodePartial(BaseModel):
@@ -70,6 +73,9 @@ class UserSkillNodePartial(BaseModel):
     mastery_score: int | None = Field(default=None, ge=0, le=100)
     priority: Priority | None = None
     rationale: str | None = None
+    prerequisites: list[str] | None = None
+    tasks: list[dict[str, str]] | None = None
+    references: list[dict[str, str]] | None = None
 
 
 class ReasoningEntry(BaseModel):
