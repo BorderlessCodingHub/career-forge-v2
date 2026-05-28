@@ -123,7 +123,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `DeployBadge` | Global fixed footer (`z-auto`) — deploy SHA/time + API health dot; stays **below** drawers (`z-40`/`z-50`); `local dev` when build env unset |
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); driven by `checklist_completed` / `checklist_total` |
 | `ArtifactChromeContext` | Client provider in `ArtifactShellLayout`; `/roadmap` sets `onOpenMentor` + `trailSummary` for topbar |
-| `ArtifactShell` topbar | Reads chrome context: `mentor-cta`, optional `trail-study-summary`; track name right; no page-level mentor card |
+| `ArtifactShell` topbar | Paired ghost actions share `topbarActionClass` (`h-9`): `mentor-cta` (`MentorAvatar` `h-7` + label) and `mentor-report-link` (`h-7 w-7` icon slot + `FileText` + label); optional `trail-study-summary`; track name right |
 | `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — mentor topbar + `MentorDrawer` |
 | `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) |
 | `NodeDrawer` study checklist | Right drawer: collapsible sections, compact mentor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |

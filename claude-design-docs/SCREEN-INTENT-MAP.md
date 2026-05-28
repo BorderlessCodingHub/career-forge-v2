@@ -65,7 +65,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Canvas cards:** When `checklist_total > 0`, `SkillNode` shows compact `ChecklistProgress` (`roadmap-node-{id}-checklist-progress`) — `x/y` + thin mint bar only.
 
-**Artifact topbar:** `artifact-topbar` — track name, `mentor-cta` (roadmap route via `ArtifactChromeContext`), `mentor-report-link`, optional `trail-study-summary`.
+**Artifact topbar:** `artifact-topbar` — track name; paired `h-9` actions `mentor-cta` (`h-7` avatar) + `mentor-report-link` (`h-7` slot + `FileText`, shared `topbarActionClass`); optional `trail-study-summary`.
 
 **Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description on canvas card only. Status/mastery, study progress, collapsible outcomes/refs/tasks, compact `open-mentor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
 

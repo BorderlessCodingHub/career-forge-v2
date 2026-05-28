@@ -2,10 +2,17 @@
 
 import type { HTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
+import { FileText } from "lucide-react";
 
 import { MentorAvatar } from "@/components/ui/MentorAvatar";
 
 import { useArtifactChromeOptional } from "./ArtifactChromeContext";
+
+const topbarActionClass =
+  "inline-flex h-9 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium text-text-secondary transition hover:border-accent/40 hover:bg-surface hover:text-text-primary";
+
+const topbarActionIconSlotClass =
+  "flex h-7 w-7 shrink-0 items-center justify-center";
 
 type ArtifactShellProps = HTMLAttributes<HTMLDivElement> & {
   trackName?: string;
@@ -43,19 +50,18 @@ export function ArtifactShell({
             <button
               type="button"
               onClick={onOpenMentor}
-              className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-accent/40 hover:bg-surface hover:text-text-primary"
+              className={topbarActionClass}
               data-testid="mentor-cta"
             >
               <MentorAvatar />
               <span>Mentor</span>
             </button>
           )}
-          <Link
-            href="/report"
-            className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-accent hover:text-accent"
-            data-testid="mentor-report-link"
-          >
-            Relatório mentor
+          <Link href="/report" className={topbarActionClass} data-testid="mentor-report-link">
+            <span className={topbarActionIconSlotClass} aria-hidden>
+              <FileText className="h-4 w-4" />
+            </span>
+            <span>Relatório mentor</span>
           </Link>
           <div className="text-right">
             {trailSummary && (
