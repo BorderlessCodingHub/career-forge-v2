@@ -32,6 +32,20 @@ import {
 
 type Tone = "strength" | "gap" | "priority";
 
+const NODE_LABELS: Record<string, string> = {
+  js: "JavaScript base",
+  git: "Git e GitHub",
+  http: "HTTP básico",
+  db: "Banco relacional",
+  rest: "APIs REST",
+  auth: "Autenticação JWT",
+  final: "Projeto: API CRUD",
+};
+
+function resolveLabel(value: string): string {
+  return NODE_LABELS[value] ?? value;
+}
+
 const TONE_CLASSES: Record<Tone, string> = {
   strength: "border-success/20 bg-success/5",
   gap: "border-warning/20 bg-warning/5",
@@ -241,7 +255,7 @@ function SortableItem({ id, value }: { id: string; value: string }) {
       >
         <GripVertical size={14} />
       </button>
-      <span className="text-sm text-text-primary">{value}</span>
+      <span className="text-sm text-text-primary">{resolveLabel(value)}</span>
     </div>
   );
 }
