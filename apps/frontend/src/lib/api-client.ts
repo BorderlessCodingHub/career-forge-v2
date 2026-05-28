@@ -1,5 +1,7 @@
 import type {
+  CvAttachment,
   DemoAnaResponse,
+  DiagnosisConfirmResponse,
   DiagnosisIntake,
   DiagnosisRequest,
   DiagnosisResponse,
@@ -24,6 +26,7 @@ import type {
   ValidationRunResponse,
 } from "@/types/contracts";
 import { consumeFetchEventStream } from "@/lib/sse/consume";
+import { toInterviewCv } from "@/lib/diagnosis-interview";
 import {
   applyForgeStreamEvent,
   createInitialForgeStreamState,
@@ -214,15 +217,36 @@ export async function confirmDiagnosis(payload: {
   goal_id: string;
   motivation: string;
   years_xp?: DiagnosisIntake["years_xp"];
-  cv?: DiagnosisIntake["cv"];
+  cv?: CvAttachment | null;
   answers?: Record<string, string>;
-}): Promise<{ user_id: string; profile_id: string; status: "confirmed" }> {
-  return apiFetch("/diagnosis/confirm", {
+}): Promise<DiagnosisConfirmResponse> {
+  const cv = payload.cv ? toInterviewCv(payload.cv) : undefined;
+  return apiFetch<DiagnosisConfirmResponse>("/diagnosis/confirm", {
     method: "POST",
-    body: JSON.stringify({ user_id: getUserId(), ...payload }),
+    body: JSON.stringify({
+      user_id: getUserId(),
+      diagnosis: payload.diagnosis,
+      goal_id: payload.goal_id,
+      motivation: payload.motivation,
+      years_xp: payload.years_xp,
+      answers: payload.answers,
+      cv,
+    }),
   });
 }
 
+/** HAC-52/57 — enqueue forge from persisted profile (no inline diagnosis). */
+export async function startForgeRunFromProfile(
+  userId?: string,
+): Promise<ForgeRunResponse> {
+  const resolvedUserId = userId ?? getUserId();
+  return apiFetch<ForgeRunResponse>("/forge", {
+    method: "POST",
+    body: JSON.stringify({ user_id: resolvedUserId }),
+  });
+}
+
+/** Legacy inline-diagnosis forge start (demo / tests). */
 export async function startForgeRun(
   diagnosis: DiagnosisResponse,
   userId?: string,

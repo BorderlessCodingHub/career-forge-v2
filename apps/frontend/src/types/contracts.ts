@@ -390,6 +390,12 @@ export type ForgeRunResponse = {
   output: Record<string, unknown> | null;
 };
 
+export type DiagnosisConfirmResponse = {
+  user_id: string;
+  profile_id: string;
+  status: "confirmed";
+};
+
 export type ValidationRequest = {
   user_id?: string;
   node_id: string;

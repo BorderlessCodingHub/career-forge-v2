@@ -22,11 +22,13 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui";
-import { confirmDiagnosis } from "@/lib/api-client";
+import { confirmDiagnosis, startForgeRunFromProfile } from "@/lib/api-client";
+import { setForgeRunId } from "@/lib/forge-session";
 import type { DiagnosisResponse } from "@/types/contracts";
 import {
   clearStoredDiagnosis,
   getAnswers,
+  getCvAttachment,
   getMotivation,
   getSelectedGoal,
   getStoredDiagnosis,
@@ -388,10 +390,17 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
         motivation,
         years_xp: getYearsXp() ?? undefined,
         answers: getAnswers(),
+        cv: getCvAttachment(),
       });
+      const forge = await startForgeRunFromProfile();
+      setForgeRunId(forge.run_id);
       router.push("/forge");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao confirmar diagnóstico.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Falha ao confirmar diagnóstico ou iniciar o forge.",
+      );
       setConfirming(false);
     }
   };
@@ -461,7 +470,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
             onClick={() => void handleConfirmAndForge()}
             disabled={confirming}
           >
-            {confirming ? "Confirmando…" : "Gerar roadmap →"}
+            {confirming ? "Salvando e iniciando forge…" : "Gerar roadmap →"}
           </Button>
         </div>
       </div>

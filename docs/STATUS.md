@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-28** · Last merge: **HAC-65** (agent-generated MCQ mock interview)
+Last updated: **2026-05-28** · Last merge: **HAC-57** (diagnosis confirm → forge motor wire)
 
 ---
 
@@ -49,12 +49,13 @@ Last updated: **2026-05-28** · Last merge: **HAC-65** (agent-generated MCQ mock
 | Roadmap drawer checklist progress | ✅ Done | HAC-63 — task/reference checkboxes, study progress bar, `PATCH /roadmap/nodes/{id}/checklist`, compact bar on canvas cards |
 | Mock interview on generated StudyPlan nodes | ✅ Done | HAC-64 — `/mock-interview` + `/validation/questions` resolve ai-generated nodes; evidence/tasks preserved through recalibration |
 | MCQ mock interview (agent-generated) | ✅ Done | HAC-65 — LLM MCQ A–D + server-side answer key; deterministic score on submit; InterviewLoop mode=loop pills |
+| Diagnosis confirm → forge motor (FE wire) | ✅ Done | HAC-57 — confirm saves profile; `POST /forge` profile-only; `/forge` SSE from stored run_id |
 
 ---
 
 ## Current sprint
 
-**Sprint 7 — Sync 2026-05-26 production push** — in progress
+**Sprint 7 — Sync 2026-05-26 production push** — ✅ complete
 
 | Issue | Title | State |
 |-------|-------|-------|
@@ -63,10 +64,13 @@ Last updated: **2026-05-28** · Last merge: **HAC-65** (agent-generated MCQ mock
 | **HAC-52** | Roadmap motor API — persist + forge | **Done** |
 | **HAC-54** | Web search enrichment — live study sources | **Done** |
 | **HAC-55** | LLM graph persistence + references | **Done** |
-| **HAC-57** | Diagnosis confirm → save → forge (Arthur) | **Ready** (wire FE to HAC-52) |
+| **HAC-57** | Diagnosis confirm → save → forge (Arthur) | **Done** |
 | **HAC-63** | Roadmap drawer progress (checklist + `PATCH /roadmap/nodes/{id}/checklist`) | **Done** |
 | **HAC-64** | Mock interview + validation on generated StudyPlan nodes | **Done** |
 | **HAC-65** | Agent-generated MCQ mock interview with answer-key scoring | **Done** |
+| **HAC-57** | Diagnosis confirm → save → forge (FE wire to HAC-52) | **Done** |
+
+**Sprint 7 complete** — all issues merged.
 
 ### Previous ops batch
 
