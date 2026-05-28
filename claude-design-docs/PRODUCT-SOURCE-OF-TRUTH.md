@@ -128,7 +128,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | `/onboarding/edit` | **Editable** fortes/lacunas/prioridades + **"Gerar roadmap"** | HAC-53: view-first, pencil/trash, dnd-kit reorder, refazer diagnóstico |
 | `/roadmap/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; manual **"Ver roadmap"** CTA after `graph_ready` | SSE wiring, scroll behavior |
 | `/roadmap/forge/complete` | Stream items fly into vertical layout | Motion implementation |
-| `/roadmap` | **Vertical roadmap** steady state + optional AI sidebar; node drawer shows tasks/references with optional study checklist (non-blocking) + progress bar | Node detail panel, sidebar UX |
+| `/roadmap` | **Vertical roadmap** steady state + optional AI sidebar; canvas cards show compact study progress (`x/y` + mint bar) when checklist items exist; drawer has full checklist + progress | Node detail panel, sidebar UX |
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |
 | `/roadmap` (adaptive) | Roadmap state change + mentor/AI context | Drawer vs sidebar |
 
@@ -171,6 +171,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Forge research + evaluation | Timeline-only stream with `artifact_found` rows | Mock artifacts without live sources | HAC-54 — OpenAI native `web_search` citations, planner artifact, evaluator verdict, paced instant steps, then manual **Ver roadmap** CTA | **Code + docs aligned** — no third-party search adapter | HAC-54 |
 | Generated roadmap details | Drawer can show references/outcomes | Prototype lacks generated StudyPlan fields | HAC-55 — dynamic nodes reload from backend with `tasks[]` and `references[]` | **Code wins** — richer graph data | HAC-55 |
 | Drawer study checklist | Optional read/practice tracking | Prototype has no per-item progress | **HAC-63** — `NodeDrawer`: checkboxes (`checklist-task-{id}`, `checklist-reference-{id}`), progress block (`node-checklist-progress`, `checklist-non-blocking-copy`), mint bar; `PATCH /roadmap/nodes/{node_id}/checklist` persists `checklist_progress` JSONB per user+node; adaptive `?adaptive=1` updates local state only | **Code wins** — study aid only; `validate-node-cta` unchanged | 2026-05-28 |
+| Canvas study progress | Progress only in drawer | Prototype has no card progress | **`ChecklistProgress`** shared component (`compact` on `SkillNode`, `full` in drawer); card shows `roadmap-node-{id}-checklist-progress` with `x/y` + thin mint bar when `checklist_total > 0`; mastery % stays drawer-only | **Code wins** — at-a-glance study tracking, not mastery on canvas | 2026-05-28 |
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
 | Deploy badge (global footer) | Not in prototype | N/A | Fixed bottom strip on all routes — `DeployBadge` in root layout; `local dev` when `NEXT_PUBLIC_BUILD_*` unset; prod shows `deploy {sha} · {time}` from CI; health dot polls `GET /health` | **Code wins** — operational debug chrome, not pitch UX; does not replace demo script checks | 2026-05-27 |

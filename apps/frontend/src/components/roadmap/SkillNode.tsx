@@ -1,3 +1,4 @@
+import { ChecklistProgress, getChecklistProgress } from "@/components/roadmap/ChecklistProgress";
 import type { RoadmapNode } from "@/types/contracts";
 
 type SkillNodeProps = {
@@ -8,12 +9,19 @@ type SkillNodeProps = {
 
 export function SkillNode({ node, selected = false, onSelect }: SkillNodeProps) {
   const isReview = node.status === "revisar";
+  const { total: checklistTotal, completed: checklistCompleted } = getChecklistProgress(node);
+  const showChecklistProgress = checklistTotal > 0;
+
+  const ariaLabel = showChecklistProgress
+    ? `${node.title}. ${checklistCompleted} de ${checklistTotal} itens de estudo concluídos.`
+    : node.title;
 
   return (
     <button
       type="button"
       data-testid={`roadmap-node-${node.node_id}`}
       data-status={node.status}
+      aria-label={ariaLabel}
       onClick={() => onSelect?.(node.node_id)}
       className={`w-full max-w-[260px] rounded-node border px-4 py-3 text-left transition-all ${
         isReview
@@ -35,6 +43,14 @@ export function SkillNode({ node, selected = false, onSelect }: SkillNodeProps) 
         )}
       </div>
       <p className="mt-1 line-clamp-2 text-xs text-text-secondary">{node.description}</p>
+      {showChecklistProgress && (
+        <div
+          className="mt-2"
+          data-testid={`roadmap-node-${node.node_id}-checklist-progress`}
+        >
+          <ChecklistProgress variant="compact" node={node} />
+        </div>
+      )}
     </button>
   );
 }

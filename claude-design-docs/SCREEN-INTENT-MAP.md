@@ -25,7 +25,7 @@ Breadcrumb: **Objetivo → Diagnóstico → Revisar → Forjar → Explorar → 
 | 3 | `/onboarding/edit` | `result` ⚠️ | `diagnosis-editable` | — | **Editable** lists, add/remove, CTA **"Gerar roadmap"** | Drag-reorder, autosave |
 | 4 | `/roadmap/forge` | `forge` ⚠️ | `forge-stream` | **P0** | **Timeline only**, numbered steps, **no graph during stream** | SSE reconnect, scroll |
 | 4b | `/roadmap/forge/complete` | (inline reveal) ⚠️ | `forge-reveal` | **P0** | Items fly into vertical layout | Animation library |
-| 5 | `/roadmap` | `roadmap` ⚠️ | `vertical-roadmap` | **P0** | Vertical spine, categories, optional AI sidebar; node drawer with tasks/references checklists + study progress bar (non-blocking) | Node detail panel, sidebar UX |
+| 5 | `/roadmap` | `roadmap` ⚠️ | `vertical-roadmap` | **P0** | Vertical spine; cards show compact study `x/y` + mint bar when checklist items exist; drawer has full checklist + progress | Node detail panel, sidebar UX |
 | 6 | `/validate/:topic` | `validate` | `validation` | **P0** | Interview headline, Q progress, ScoreRing result | Question count (3±) |
 | 7 | `/roadmap` | `adaptive` | `adaptive-state` | **P0** | Roadmap diff after fail, mentor/AI context | Drawer vs sidebar |
 
@@ -63,7 +63,9 @@ Stream items animate into vertical roadmap positions.
 ### 5. Vertical Roadmap (`/roadmap`) ⭐ REDESIGNED
 Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Reference: [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png)
 
-**Node drawer (HAC-63):** When `tasks[]` / `references[]` exist, show checkboxes (read/done), mint progress bar (`x/y concluídos`), and copy that study tracking does **not** replace IA mastery validation. CTA remains **Mock interview — validar mastery**. Persist toggles via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive session: local-only).
+**Canvas cards:** When `checklist_total > 0`, `SkillNode` shows compact `ChecklistProgress` (`roadmap-node-{id}-checklist-progress`) — `x/y` + thin mint bar only.
+
+**Node drawer (HAC-63):** When `tasks[]` / `references[]` exist, show checkboxes (read/done), full mint progress block (`x/y concluídos`), and copy that study tracking does **not** replace IA mastery validation. CTA remains **Mock interview — validar mastery**. Persist toggles via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive session: local-only).
 
 ### 6. Mastery Validation (`/validate/:topic`)
 Interview + score. Unchanged.
@@ -107,6 +109,7 @@ Playwright Gate B targets:
 - `data-testid="diagnosis-editable"`
 - `data-testid="forge-timeline"`
 - `data-testid="vertical-roadmap"`
+- `data-testid="roadmap-node-{id}-checklist-progress"` (canvas card compact bar)
 - `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
 - `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="validate-node-cta"`
 - `data-testid="validation-score"`

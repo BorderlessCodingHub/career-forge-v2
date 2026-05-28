@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { ChecklistProgress, getChecklistProgress } from "@/components/roadmap/ChecklistProgress";
 import { Button } from "@/components/ui";
 import type { RoadmapChecklistItem, RoadmapNode } from "@/types/contracts";
 
@@ -32,14 +33,8 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
 
   if (!node) return null;
 
-  const checklistTotal =
-    node.checklist_total ?? node.tasks.length + node.references.length;
-  const checklistCompleted =
-    node.checklist_completed ??
-    [...node.tasks, ...node.references].filter((item) => item.done).length;
+  const { total: checklistTotal } = getChecklistProgress(node);
   const showChecklistProgress = checklistTotal > 0;
-  const progressPercent =
-    checklistTotal > 0 ? Math.round((checklistCompleted / checklistTotal) * 100) : 0;
 
   async function handleToggle(
     itemType: "task" | "reference",
@@ -98,35 +93,7 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
             </div>
           </div>
 
-          {showChecklistProgress && (
-            <div
-              className="rounded-md border border-border bg-surface px-3 py-3"
-              data-testid="node-checklist-progress"
-            >
-              <div className="flex items-center justify-between text-xs text-text-muted">
-                <span>Progresso de estudo</span>
-                <span className="font-mono text-text-primary">
-                  {checklistCompleted}/{checklistTotal} concluídos
-                </span>
-              </div>
-              <div
-                className="mt-2 h-2 overflow-hidden rounded-full bg-surface-elevated"
-                role="progressbar"
-                aria-valuenow={checklistCompleted}
-                aria-valuemin={0}
-                aria-valuemax={checklistTotal}
-              >
-                <div
-                  className="h-full rounded-full bg-accent-mint transition-all"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-              <p className="mt-2 text-xs text-text-muted" data-testid="checklist-non-blocking-copy">
-                Marcar leitura e prática ajuda a acompanhar o estudo — é opcional e não substitui
-                a validação por IA. A prova real de mastery continua sendo o mock interview.
-              </p>
-            </div>
-          )}
+          {showChecklistProgress && <ChecklistProgress variant="full" node={node} />}
 
           {node.rationale && (
             <div className="rounded-md border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-text-secondary">

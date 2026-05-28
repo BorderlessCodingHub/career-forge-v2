@@ -29,7 +29,7 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 | Entrada no forge | Auto-jump ou CTA passivo após confirmação | **Explícito** — só após "Gerar roadmap" |
 | Forge durante stream | Split 40/60: timeline + skill graph skeleton enchendo | **Só timeline** — passos numerados 1, 2, 3, 4… (reasoning stream). **Sem grafo visível** |
 | Fim do forge | Reveal inline com grafo completo + MissionBanner | **Animação** — cada frase/item do stream **voa para lugar** no layout vertical |
-| Steady state pós-forge | Skill graph dashboard (nós conectados, sidebar fixa) | **`artifact` mode** — roadmap vertical full-width estilo [roadmap.sh](https://roadmap.sh); **click node → drawer** (tarefas/referências com checklist opcional, progresso de estudo, Ask AI, validar mastery); sem stepper nem sidebar de progresso |
+| Steady state pós-forge | Skill graph dashboard (nós conectados, sidebar fixa) | **`artifact` mode** — roadmap vertical full-width estilo [roadmap.sh](https://roadmap.sh); cards show compact study `x/y` + mint bar when há itens; **click node → drawer** (checklist completo, progresso de estudo, Ask AI, validar mastery); sem stepper nem sidebar de progresso |
 | Numeração de passos | Implícita na timeline | **1–N só durante geração** — não aparece no steady state |
 | App modes | Single chrome | **`setup`** (goal → forge) vs **`artifact`** (trilha pronta) |
 | IA no dashboard | Mentor drawer contextual (P1) | **Ask AI** no drawer do nó (roadmap.sh tutor style); mentor full drawer = P1 opcional |
@@ -139,6 +139,8 @@ Após animação → navega para steady state (`/roadmap`).
 **References:** [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [trail-dashboard-polluted-current.png](./references/trail-dashboard-polluted-current.png) (anti-pattern)
 
 **Career Forge difference:** Trilha adaptativa — status/mastery aparecem no **drawer do nó**, não poluindo o canvas.
+
+**Canvas cards:** quando há `tasks[]` / `references[]`, barra mint compacta + fração `x/y` no card (sem disclaimer).
 
 **Node drawer:**
 - Título + descrição do domínio
