@@ -96,13 +96,17 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
     setPhase("loading");
     setError(null);
     try {
-      const payload =
-        mode === "loop"
-          ? await getMockInterviewQuestions(nodeId)
-          : await getValidationQuestions(nodeId);
-      setQuestions(payload.questions);
-      setNodeTitle(payload.node_title);
-      setSessionId(mode === "loop" ? payload.session_id ?? null : null);
+      if (mode === "loop") {
+        const payload = await getMockInterviewQuestions(nodeId);
+        setQuestions(payload.questions);
+        setNodeTitle(payload.node_title);
+        setSessionId(payload.session_id ?? null);
+      } else {
+        const payload = await getValidationQuestions(nodeId);
+        setQuestions(payload.questions);
+        setNodeTitle(payload.node_title);
+        setSessionId(null);
+      }
       setCurrentIndex(0);
       setAnswers({});
       setDraft("");
@@ -143,10 +147,9 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
     setPhase("submitting");
     setError(null);
     try {
-      const payload = {
+      const base = {
         node_id: nodeId,
         node_title: nodeTitle,
-        session_id: sessionId,
         rubric: questions.map((question) => question.rubric_criterion),
         answers: questions.map((question) => ({
           question_id: question.id,
@@ -154,7 +157,9 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
         })),
       };
       const response =
-        mode === "loop" ? await submitMockInterview(payload) : await submitValidation(payload);
+        mode === "loop"
+          ? await submitMockInterview({ ...base, session_id: sessionId })
+          : await submitValidation(base);
       setResult(response.validation);
       if (response.plan_update && response.roadmap) {
         setPlanUpdate(response.plan_update);
