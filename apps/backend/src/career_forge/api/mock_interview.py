@@ -36,9 +36,10 @@ def _extract_validation(output: dict[str, Any] | None) -> ValidationResponse:
 @router.get("/questions", response_model=MockInterviewQuestionsResponse)
 def get_mock_interview_questions(
     node_id: str = Query(..., min_length=1),
+    db: Session = Depends(get_db),
 ) -> MockInterviewQuestionsResponse:
     try:
-        return mock_interview_service.build_mock_interview_questions(node_id)
+        return mock_interview_service.build_mock_interview_questions(node_id, db)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -51,7 +52,7 @@ async def run_mock_interview(
     """Run mock interview loop — evaluate 5–7 answers and recalibrate trail."""
     if not body.rubric:
         try:
-            questions = mock_interview_service.build_mock_interview_questions(body.node_id)
+            questions = mock_interview_service.build_mock_interview_questions(body.node_id, db)
             body = body.model_copy(
                 update={"rubric": [question.rubric_criterion for question in questions.questions]},
             )

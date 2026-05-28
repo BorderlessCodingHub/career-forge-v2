@@ -46,6 +46,39 @@ def _status_map(nodes: list[UserSkillNode]) -> dict[str, SkillStatus]:
     return {node.node_id: node.status for node in nodes}
 
 
+def _persistable_checklist_items(items: list[dict]) -> list[dict[str, str]]:
+    """Strip UI-only checklist fields (e.g. done) before UserSkillNode validation."""
+    return [
+        {str(key): str(value) for key, value in item.items() if key != "done" and value is not None}
+        for item in items
+    ]
+
+
+def _nodes_meta(current_graph: list[UserSkillNode]) -> list[dict[str, Any]]:
+    """Unified node metadata: static catalog plus persisted AI-generated nodes
+    from the user's current graph, so dependency math works for both (HAC-64)."""
+    catalog_nodes = _catalog_nodes()
+    catalog_ids = {node["id"] for node in catalog_nodes}
+    meta = [
+        {
+            "id": node["id"],
+            "title": node["title"],
+            "prerequisites": node.get("prerequisites") or [],
+        }
+        for node in catalog_nodes
+    ]
+    meta.extend(
+        {
+            "id": node.node_id,
+            "title": node.title or node.node_id,
+            "prerequisites": list(node.prerequisites or []),
+        }
+        for node in current_graph
+        if node.node_id not in catalog_ids
+    )
+    return meta
+
+
 def _roadmap_to_graph(roadmap: RoadmapResponse) -> list[UserSkillNode]:
     return [
         UserSkillNode(
@@ -56,8 +89,8 @@ def _roadmap_to_graph(roadmap: RoadmapResponse) -> list[UserSkillNode]:
             priority=node.priority,
             rationale=node.rationale,
             prerequisites=node.prerequisites,
-            tasks=node.tasks,
-            references=node.references,
+            tasks=_persistable_checklist_items(node.tasks),
+            references=_persistable_checklist_items(node.references),
         )
         for node in roadmap.nodes
     ]
@@ -69,15 +102,19 @@ def build_adaptive_patch(
     current_graph: list[UserSkillNode],
 ) -> GraphPatch:
     """Build deterministic GraphPatch from validation outcome."""
-    catalog_nodes = _catalog_nodes()
-    catalog_by_id = {node["id"]: node for node in catalog_nodes}
+    nodes_meta = _nodes_meta(current_graph)
+    meta_by_id = {node["id"]: node for node in nodes_meta}
     status_by_id = _status_map(current_graph)
     current_by_id = {node.node_id: node for node in current_graph}
 
-    failed_node = catalog_by_id.get(node_id)
+    failed_node = meta_by_id.get(node_id)
     if failed_node is None:
-        msg = f"Unknown skill node: {node_id}"
-        raise ValueError(msg)
+        existing = current_by_id.get(node_id)
+        failed_node = {
+            "id": node_id,
+            "title": existing.title if existing and existing.title else node_id,
+            "prerequisites": [],
+        }
 
     patches: list[NodePatch] = []
     passed = validation.status.value == SkillStatus.APROVADO.value
@@ -94,7 +131,7 @@ def build_adaptive_patch(
             ),
         )
 
-        for node in catalog_nodes:
+        for node in nodes_meta:
             if node["id"] == node_id:
                 continue
             prereqs = node.get("prerequisites") or []
@@ -131,8 +168,8 @@ def build_adaptive_patch(
             ),
         )
 
-        for dependent_id in _transitive_dependents(node_id, catalog_nodes):
-            dependent = catalog_by_id[dependent_id]
+        for dependent_id in _transitive_dependents(node_id, nodes_meta):
+            dependent = meta_by_id[dependent_id]
             existing = current_by_id.get(dependent_id)
             patches.append(
                 NodePatch(
@@ -146,7 +183,7 @@ def build_adaptive_patch(
 
         summary = (
             f"Falha em {failed_node['title']} — trilha repriorizou revisão "
-            f"e bloqueou {len(_transitive_dependents(node_id, catalog_nodes))} nós dependentes."
+            f"e bloqueou {len(_transitive_dependents(node_id, nodes_meta))} nós dependentes."
         )
 
     return GraphPatch(

@@ -110,6 +110,50 @@ class TestAdaptivePatch:
         assert patch.continue_research is False
 
 
+def _generated_graph():
+    from career_forge.schemas.common import UserSkillNode
+
+    return [
+        UserSkillNode(
+            node_id="gen-fundamentos",
+            title="Fundamentos de IA",
+            status=SkillStatus.EM_ESTUDO,
+            mastery_score=20,
+            prerequisites=[],
+        ),
+        UserSkillNode(
+            node_id="gen-avancado",
+            title="Tópicos avançados",
+            status=SkillStatus.BLOQUEADO,
+            mastery_score=0,
+            prerequisites=["gen-fundamentos"],
+        ),
+    ]
+
+
+class TestAdaptivePatchGeneratedNodes:
+    """HAC-64 — recalibration must not crash on AI-generated (non-catalog) ids."""
+
+    def test_generated_failure_does_not_raise_and_blocks_dependent(self) -> None:
+        patch = build_adaptive_patch("gen-fundamentos", _failed_validation(), _generated_graph())
+
+        failed = next(item for item in patch.patches if item.node_id == "gen-fundamentos")
+        assert failed.status == SkillStatus.REVISAR
+
+        blocked = {item.node_id for item in patch.patches if item.status == SkillStatus.BLOQUEADO}
+        assert "gen-avancado" in blocked
+
+    def test_generated_pass_unlocks_dependent(self) -> None:
+        patch = build_adaptive_patch("gen-fundamentos", _passed_validation(), _generated_graph())
+
+        approved = next(item for item in patch.patches if item.node_id == "gen-fundamentos")
+        assert approved.status == SkillStatus.APROVADO
+
+        dependent = next((item for item in patch.patches if item.node_id == "gen-avancado"), None)
+        assert dependent is not None
+        assert dependent.status == SkillStatus.VALIDAR
+
+
 class TestPlanUpdate:
     def test_build_plan_update_for_failure(self) -> None:
         plan = build_plan_update("rest", "APIs REST", _failed_validation())
