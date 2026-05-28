@@ -341,6 +341,8 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
   const [diagnosis, setDiagnosis] = useState<DiagnosisResponse | null>(
     () => initialDiagnosis ?? getStoredDiagnosis(),
   );
+  const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (diagnosis) return;
@@ -368,9 +370,6 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
       return next;
     });
   };
-
-  const [confirming, setConfirming] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleConfirmAndForge = async () => {
     const goalId = getSelectedGoal();
