@@ -172,19 +172,33 @@ export type ValidationRunResponse = {
   roadmap?: RoadmapResponse | null;
 };
 
+export type MockInterviewOption = {
+  letter: "A" | "B" | "C" | "D";
+  text: string;
+};
+
 export type MockInterviewQuestion = ValidationQuestion & {
   phase: "base" | "gap_probe" | "scenario";
+  options?: MockInterviewOption[] | null;
 };
 
 export type MockInterviewQuestionsResponse = {
   node_id: string;
   node_title: string;
   node_icon: string;
+  session_id?: string | null;
+  format?: "open" | "mcq";
   total_questions: number;
   questions: MockInterviewQuestion[];
 };
 
-export type MockInterviewRunResponse = ValidationRunResponse;
+export type MockInterviewRunResponse = ValidationRunResponse & {
+  run_id?: string | null;
+};
+
+export type MockInterviewRequest = ValidationRequest & {
+  session_id?: string | null;
+};
 
 export type TodayFocus = {
   node_id: string;
@@ -383,8 +397,6 @@ export type ValidationRequest = {
   rubric: string[];
   answers: ValidationAnswer[];
 };
-
-export type MockInterviewRequest = ValidationRequest;
 
 export type DemoValidationSummary = {
   node_id: string;

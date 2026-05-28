@@ -323,9 +323,11 @@ export async function submitValidation(
 
 export async function getMockInterviewQuestions(
   nodeId: string,
+  userId?: string,
 ): Promise<MockInterviewQuestionsResponse> {
+  const resolvedUserId = userId ?? getUserId();
   return apiFetch<MockInterviewQuestionsResponse>(
-    `/mock-interview/questions?node_id=${encodeURIComponent(nodeId)}`,
+    `/mock-interview/questions?node_id=${encodeURIComponent(nodeId)}&user_id=${encodeURIComponent(resolvedUserId)}`,
   );
 }
 
