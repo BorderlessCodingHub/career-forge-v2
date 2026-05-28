@@ -18,6 +18,11 @@ from career_forge.schemas.mock_interview import (
     MockInterviewRequest,
 )
 from career_forge.schemas.validation import ValidationResponse
+from career_forge.services.mock_interview_session import (
+    MockInterviewSessionRecord,
+    consume_mock_interview_session,
+    get_mock_interview_session,
+)
 from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
 from career_forge.services.validation import (
     QUESTION_HINTS,
@@ -137,6 +142,8 @@ def persist_mock_interview_result(
     session: Session,
     payload: MockInterviewRequest,
     result: ValidationResponse,
+    *,
+    stored_questions: list[dict] | None = None,
 ) -> tuple[Validation, UserSkillNodeRow]:
     """Store mock interview attempt with full 5–7 Q/A and update user skill node."""
     from career_forge.services.validation import _resolve_user
@@ -171,6 +178,7 @@ def persist_mock_interview_result(
     new_status = SkillStatus.APROVADO if passed else SkillStatus.REVISAR
 
     question_payload = build_mock_interview_questions(payload.node_id, session)
+    question_rows = stored_questions or [question.model_dump() for question in question_payload.questions]
     user_skill.status = new_status.value
     user_skill.mastery_score = result.score
     user_skill.evidence = merge_validation_evidence(
@@ -188,7 +196,7 @@ def persist_mock_interview_result(
         score=result.score,
         passed=passed,
         feedback=result.mentor_summary,
-        questions=[question.model_dump() for question in question_payload.questions],
+        questions=question_rows,
         answers=[answer.model_dump() for answer in payload.answers],
     )
     session.add(validation)
@@ -196,3 +204,73 @@ def persist_mock_interview_result(
     session.refresh(validation)
     session.refresh(user_skill)
     return validation, user_skill
+
+
+def evaluate_mcq_session(payload: MockInterviewRequest) -> tuple[ValidationResponse, MockInterviewSessionRecord]:
+    """Score MCQ answers deterministically against server-side gabarito (HAC-65)."""
+    from career_forge.ai.graphs.validation import PASS_THRESHOLD
+
+    if not payload.session_id:
+        msg = "session_id is required for MCQ mock interview"
+        raise ValueError(msg)
+
+    session = get_mock_interview_session(payload.session_id)
+    if session.user_id != payload.user_id or session.node_id != payload.node_id:
+        msg = "Mock interview session does not match user/node"
+        raise ValueError(msg)
+
+    answers_by_id = {
+        answer.question_id: answer.answer.strip().upper()
+        for answer in payload.answers
+    }
+    total = len(session.answer_key)
+    correct_count = 0
+    gaps: list[str] = []
+    strengths: list[str] = []
+
+    for index, (question_id, expected) in enumerate(session.answer_key.items()):
+        selected = answers_by_id.get(question_id, "")
+        if selected not in {"A", "B", "C", "D"}:
+            gaps.append(f"Sem resposta válida para {question_id}")
+            continue
+        criterion = session.rubric[index] if index < len(session.rubric) else question_id
+        if selected == expected:
+            correct_count += 1
+            strengths.append(f"Acertou: {criterion[:72]}")
+        else:
+            gaps.append(f"Errou ({criterion[:72]}): marcou {selected}, gabarito {expected}")
+
+    score = round(100 * correct_count / max(total, 1))
+    status = ValidationStatus.APROVADO if score >= PASS_THRESHOLD else ValidationStatus.REVISAR
+
+    if not strengths:
+        strengths.append(f"Completou o mock interview MCQ de {payload.node_title}")
+
+    if not gaps and status == ValidationStatus.REVISAR:
+        gaps.append(f"Score {score}/100 abaixo do threshold — revise o bloco {payload.node_title}")
+
+    next_action = (
+        f"Revise as lacunas de {payload.node_title} e refaça o mock interview."
+        if status == ValidationStatus.REVISAR
+        else f"Mastery validado em {payload.node_title} — avance para o próximo bloco."
+    )
+
+    mentor_summary = (
+        f"Mock interview MCQ de {payload.node_title} ({payload.node_id}) — "
+        f"{correct_count}/{total} acertos, score {score}/100 ({status.value}). "
+    )
+    if gaps:
+        mentor_summary += f"Lacunas: {'; '.join(gaps[:3])}. "
+    if strengths:
+        mentor_summary += f"Acertos: {strengths[0]}. "
+    mentor_summary += next_action
+
+    validation = ValidationResponse(
+        score=score,
+        status=status,
+        strengths=strengths[:4],
+        gaps=gaps[:5],
+        next_action=next_action,
+        mentor_summary=mentor_summary,
+    )
+    return validation, session

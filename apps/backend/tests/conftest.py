@@ -24,6 +24,9 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("DIAGNOSIS_SESSION_STORE", "memory")
     monkeypatch.setenv("GRAPH_RUN_STORE", "memory")
     monkeypatch.setenv("FORGE_STREAM_DELAY_SEC", "0")
+    from career_forge.services.mock_interview_session import reset_mock_interview_sessions
+
+    reset_mock_interview_sessions()
     set_graph_run_store(None)
     set_diagnosis_session_store(None)
     set_diagnosis_interview_llm(MockDiagnosisInterviewLlm())
@@ -31,6 +34,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
         DiagnosisSessionService(session_store=InMemoryDiagnosisSessionStore()),
     )
     yield
+    reset_mock_interview_sessions()
     reset_diagnosis_interview_llm()
     set_graph_run_store(None)
     set_diagnosis_session_store(None)

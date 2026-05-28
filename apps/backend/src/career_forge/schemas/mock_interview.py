@@ -1,6 +1,8 @@
-"""Mock interview loop contracts (HAC-14)."""
+"""Mock interview loop contracts (HAC-14, HAC-65 MCQ)."""
 
 from __future__ import annotations
+
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -8,6 +10,13 @@ from career_forge.schemas.forge import GraphPatch
 from career_forge.schemas.planning import PlanUpdateResponse
 from career_forge.schemas.roadmap import RoadmapResponse
 from career_forge.schemas.validation import ValidationAnswer, ValidationResponse
+
+MCQ_LETTERS = frozenset({"A", "B", "C", "D"})
+
+
+class MockInterviewOption(BaseModel):
+    letter: Literal["A", "B", "C", "D"]
+    text: str = Field(min_length=1)
 
 
 class MockInterviewQuestion(BaseModel):
@@ -20,6 +29,7 @@ class MockInterviewQuestion(BaseModel):
     hint: str | None = None
     rubric_criterion: str
     phase: str = Field(description="base | gap_probe | scenario")
+    options: list[MockInterviewOption] | None = None
 
 
 class MockInterviewQuestionsResponse(BaseModel):
@@ -28,6 +38,8 @@ class MockInterviewQuestionsResponse(BaseModel):
     node_id: str
     node_title: str
     node_icon: str = "code"
+    session_id: str | None = None
+    format: Literal["open", "mcq"] = "open"
     total_questions: int = Field(ge=5, le=7)
     questions: list[MockInterviewQuestion] = Field(min_length=5, max_length=7)
 
@@ -38,6 +50,7 @@ class MockInterviewRequest(BaseModel):
     user_id: str = "demo-ana"
     node_id: str
     node_title: str
+    session_id: str | None = None
     rubric: list[str] = Field(default_factory=list)
     answers: list[ValidationAnswer] = Field(min_length=5, max_length=7)
 
@@ -53,9 +66,9 @@ class MockInterviewRequest(BaseModel):
 class MockInterviewRunResponse(BaseModel):
     """GraphExecutor collect result + adaptive recalibration after mock interview."""
 
-    run_id: str
+    run_id: str | None = None
     status: str
-    events: list[dict]
+    events: list[dict] = Field(default_factory=list)
     validation: ValidationResponse
     node_id: str
     node_status: str

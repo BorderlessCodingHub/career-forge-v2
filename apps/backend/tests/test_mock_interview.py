@@ -12,7 +12,15 @@ from career_forge.ai.run import GraphRun, GraphRunResult, InMemoryGraphRunStore
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode, ValidationStatus
 from career_forge.schemas.mock_interview import MockInterviewRequest
 from career_forge.schemas.validation import ValidationAnswer, ValidationResponse
-from career_forge.services.mock_interview import build_mock_interview_questions
+from career_forge.services.mock_interview import (
+    build_mock_interview_questions,
+    evaluate_mcq_session,
+)
+from career_forge.services.mock_interview_session import (
+    MockInterviewSessionRecord,
+    reset_mock_interview_sessions,
+    save_mock_interview_session,
+)
 
 GENERATED_NODE_ID = "gen-llm-apis"
 
@@ -124,6 +132,25 @@ SAMPLE_PAYLOAD = MockInterviewRequest(
 )
 
 
+def _mcq_payload_from_questions(client, node_id: str, user_id: str = "demo-ana") -> dict:
+    response = client.get(
+        "/mock-interview/questions",
+        params={"node_id": node_id, "user_id": user_id},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    return {
+        "user_id": user_id,
+        "node_id": node_id,
+        "node_title": payload["node_title"],
+        "session_id": payload["session_id"],
+        "answers": [
+            {"question_id": question["id"], "answer": "A"}
+            for question in payload["questions"]
+        ],
+    }
+
+
 class TestMockInterviewEngine:
     def test_build_response_matches_contract(self) -> None:
         result = build_mock_interview_response(SAMPLE_PAYLOAD)
@@ -151,6 +178,38 @@ class TestMockInterviewEngine:
         )
         if strong.score >= PASS_THRESHOLD:
             assert strong.status == ValidationStatus.APROVADO
+
+
+class TestMockInterviewMcq:
+    def test_evaluate_mcq_perfect_score(self) -> None:
+        reset_mock_interview_sessions()
+        save_mock_interview_session(
+            MockInterviewSessionRecord(
+                session_id="sess-1",
+                user_id="demo-ana",
+                node_id="rest",
+                node_title="APIs REST",
+                rubric=["c1", "c2"],
+                answer_key={"rest-mi-q1": "A", "rest-mi-q2": "B"},
+                questions_public=[],
+            ),
+        )
+        payload = MockInterviewRequest(
+            user_id="demo-ana",
+            node_id="rest",
+            node_title="APIs REST",
+            session_id="sess-1",
+            answers=[
+                ValidationAnswer(question_id="rest-mi-q1", answer="A"),
+                ValidationAnswer(question_id="rest-mi-q2", answer="B"),
+                ValidationAnswer(question_id="rest-mi-q3", answer="A"),
+                ValidationAnswer(question_id="rest-mi-q4", answer="A"),
+                ValidationAnswer(question_id="rest-mi-q5", answer="A"),
+            ],
+        )
+        result, _ = evaluate_mcq_session(payload)
+        assert result.score == 100
+        assert result.status == ValidationStatus.APROVADO
 
 
 class TestMockInterviewQuestions:
@@ -195,7 +254,13 @@ def test_get_mock_interview_questions_api(client) -> None:
     assert response.status_code == 200
     payload = response.json()
     assert payload["node_id"] == "rest"
+    assert payload["format"] == "mcq"
+    assert payload["session_id"]
     assert 5 <= len(payload["questions"]) <= 7
+    first = payload["questions"][0]
+    assert first["options"]
+    assert len(first["options"]) == 4
+    assert "correct_option" not in first
 
 
 def test_get_mock_interview_questions_unknown_node(client) -> None:
@@ -204,11 +269,11 @@ def test_get_mock_interview_questions_unknown_node(client) -> None:
 
 
 def test_post_mock_interview_api(client) -> None:
-    response = client.post("/mock-interview", json=SAMPLE_PAYLOAD.model_dump())
+    body = _mcq_payload_from_questions(client, "rest")
+    response = client.post("/mock-interview", json=body)
     assert response.status_code == 200
     payload = response.json()
     assert payload["status"] == "completed"
-    assert payload["run_id"]
     assert payload["validation"]["score"] >= 0
     assert payload["node_id"] == "rest"
     assert payload["node_status"] in ("aprovado", "revisar")
@@ -230,41 +295,27 @@ def _sync_generated_node(client, user_id: str) -> None:
 
 
 def test_get_mock_interview_questions_generated_node(client) -> None:
-    """HAC-64 — questions resolve from a persisted AI-generated StudyPlan node."""
+    """HAC-64/65 — MCQ questions resolve from a persisted AI-generated StudyPlan node."""
     _sync_generated_node(client, "gen-mi-questions")
 
-    response = client.get("/mock-interview/questions", params={"node_id": GENERATED_NODE_ID})
+    response = client.get(
+        "/mock-interview/questions",
+        params={"node_id": GENERATED_NODE_ID, "user_id": "gen-mi-questions"},
+    )
     assert response.status_code == 200
     payload = response.json()
     assert payload["node_id"] == GENERATED_NODE_ID
-    assert payload["node_title"] == "APIs para LLMs"
+    assert payload["format"] == "mcq"
+    assert payload["session_id"]
     assert 5 <= len(payload["questions"]) <= 7
-    phases = {question["phase"] for question in payload["questions"]}
-    assert {"base", "gap_probe", "scenario"} <= phases
-    base_prompts = " ".join(q["prompt"] for q in payload["questions"] if q["phase"] == "base")
-    assert "estrutura chamadas a um provedor de LLM" in base_prompts
+    assert payload["questions"][0]["options"]
 
 
 def test_post_mock_interview_generated_node_recalibrates(client) -> None:
-    """HAC-64 — submit + recalibration works end-to-end for generated nodes."""
+    """HAC-64/65 — MCQ submit + recalibration works end-to-end for generated nodes."""
     _sync_generated_node(client, "gen-mi-submit")
 
-    body = {
-        "user_id": "gen-mi-submit",
-        "node_id": GENERATED_NODE_ID,
-        "node_title": "APIs para LLMs",
-        "answers": [
-            {
-                "question_id": f"{GENERATED_NODE_ID}-mi-q{index}",
-                "answer": (
-                    "Estruturo chamadas ao provedor de LLM com um cliente único, trato rate "
-                    "limits com retry e backoff exponencial, faço cache de respostas e streaming "
-                    "token a token via SSE no endpoint."
-                ),
-            }
-            for index in range(1, 8)
-        ],
-    }
+    body = _mcq_payload_from_questions(client, GENERATED_NODE_ID, user_id="gen-mi-submit")
     response = client.post("/mock-interview", json=body)
     assert response.status_code == 200
     payload = response.json()

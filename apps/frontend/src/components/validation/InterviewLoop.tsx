@@ -49,9 +49,9 @@ const MODE_COPY: Record<
     screen: "mock-interview-loop",
     title: "Mock interview — validação profunda",
     subtitle:
-      "5–7 perguntas contextuais antes de liberar o próximo tópico. Suas respostas recalibram a trilha automaticamente.",
+      "5–7 perguntas de múltipla escolha contextualizadas no seu bloco de estudo. O gabarito é validado na hora e recalibra a trilha.",
     badge: "MI",
-    loading: "Preparando mock interview…",
+    loading: "Gerando perguntas contextualizadas…",
     loadError: "Falha ao carregar mock interview",
     footer: "Mock interview retroalimenta o plano — lacunas detectadas recalibram a trilha",
     answerTestId: "mock-interview-answer",
@@ -75,11 +75,16 @@ function isMockQuestion(question: InterviewQuestion): question is MockInterviewQ
   return "phase" in question;
 }
 
+function hasMcqOptions(question: InterviewQuestion | undefined): question is MockInterviewQuestion {
+  return Boolean(question && "options" in question && question.options && question.options.length > 0);
+}
+
 export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
   const copy = MODE_COPY[mode];
   const [phase, setPhase] = useState<Phase>("loading");
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [nodeTitle, setNodeTitle] = useState("");
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [draft, setDraft] = useState("");
@@ -97,6 +102,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
           : await getValidationQuestions(nodeId);
       setQuestions(payload.questions);
       setNodeTitle(payload.node_title);
+      setSessionId(mode === "loop" ? payload.session_id ?? null : null);
       setCurrentIndex(0);
       setAnswers({});
       setDraft("");
@@ -115,11 +121,13 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
 
   const currentQuestion = questions[currentIndex];
   const totalQuestions = questions.length;
-  const canAdvance = phase !== "submitting" && draft.trim().length >= 10;
+  const isMcq = mode === "loop" && hasMcqOptions(currentQuestion);
+  const canAdvance =
+    phase !== "submitting" && (isMcq ? draft.trim().length === 1 : draft.trim().length >= 10);
 
   const goNext = () => {
     if (!currentQuestion || !canAdvance) return;
-    const nextAnswers = { ...answers, [currentQuestion.id]: draft.trim() };
+    const nextAnswers = { ...answers, [currentQuestion.id]: draft.trim().toUpperCase() };
     setAnswers(nextAnswers);
     setDraft("");
 
@@ -138,6 +146,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
       const payload = {
         node_id: nodeId,
         node_title: nodeTitle,
+        session_id: sessionId,
         rubric: questions.map((question) => question.rubric_criterion),
         answers: questions.map((question) => ({
           question_id: question.id,
@@ -249,19 +258,46 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
           </div>
 
           <div className="mt-4">
-            <textarea
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={handleAnswerKeyDown}
-              placeholder="Comece pela sua intuição..."
-              disabled={phase === "submitting"}
-              className="min-h-[160px] w-full resize-none rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-muted"
-              data-testid={copy.answerTestId}
-            />
-            <div className="mt-2 flex justify-between text-xs text-text-muted">
-              <span>{draft.length} caracteres · sem limite</span>
-              <span>Enter para avançar · Shift+Enter nova linha</span>
-            </div>
+            {isMcq && currentQuestion.options ? (
+              <div className="space-y-3" data-testid={copy.answerTestId}>
+                {currentQuestion.options.map((option) => {
+                  const selected = draft.toUpperCase() === option.letter;
+                  return (
+                    <button
+                      key={option.letter}
+                      type="button"
+                      disabled={phase === "submitting"}
+                      onClick={() => setDraft(option.letter)}
+                      className={`flex w-full items-start gap-3 rounded-md border px-4 py-3 text-left text-sm transition ${
+                        selected
+                          ? "border-accent bg-accent/10 text-text-primary"
+                          : "border-border bg-surface text-text-secondary hover:border-accent/60"
+                      }`}
+                      data-testid={`mock-interview-option-${option.letter}`}
+                    >
+                      <span className="font-mono font-semibold text-accent">{option.letter}</span>
+                      <span>{option.text}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <>
+                <textarea
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
+                  onKeyDown={handleAnswerKeyDown}
+                  placeholder="Comece pela sua intuição..."
+                  disabled={phase === "submitting"}
+                  className="min-h-[160px] w-full resize-none rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-muted"
+                  data-testid={copy.answerTestId}
+                />
+                <div className="mt-2 flex justify-between text-xs text-text-muted">
+                  <span>{draft.length} caracteres · sem limite</span>
+                  <span>Enter para avançar · Shift+Enter nova linha</span>
+                </div>
+              </>
+            )}
           </div>
         </>
       )}
