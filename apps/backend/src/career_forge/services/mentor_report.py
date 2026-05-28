@@ -14,6 +14,7 @@ from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNod
 from career_forge.db.models.validation import Validation
 from career_forge.schemas.common import ValidationStatus
 from career_forge.schemas.diagnosis import DiagnosisResponse
+from career_forge.schemas.profile_diagnosis import diagnosis_response_from_profile
 from career_forge.schemas.mentor_report import MentorReportResponse, MentorReportValidationEntry
 from career_forge.services.roadmap import load_roadmap_catalog
 
@@ -54,7 +55,9 @@ def get_mentor_report(session: Session, user_id: str) -> MentorReportResponse:
 
     profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
     diagnosis_raw = profile.diagnosis if profile and profile.diagnosis else load_demo_diagnosis()
-    diagnosis = DiagnosisResponse.model_validate(diagnosis_raw)
+    diagnosis = diagnosis_response_from_profile(diagnosis_raw)
+    if diagnosis is None:
+        diagnosis = DiagnosisResponse.model_validate(diagnosis_raw)
 
     catalog = load_roadmap_catalog()
     track_title = catalog.get("track", {}).get("title", "Backend Developer")
