@@ -65,7 +65,11 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Canvas cards:** When `checklist_total > 0`, `SkillNode` shows compact `ChecklistProgress` (`roadmap-node-{id}-checklist-progress`) — `x/y` + thin mint bar only.
 
-**Node drawer (HAC-63):** Header title + red dismiss **✕** (not muted prototype close). Description on canvas card only. Status/mastery grid, optional study checklist + progress, rationale callout, tasks/references with checkboxes. CTA **Mock interview — validar mastery**. Persist toggles via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive session: local-only).
+**Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; paired `h-9` actions in `flex items-center` group (`mentor-cta`, `mentor-report-link` + `FileText`); optional `trail-study-summary`.
+
+**Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description on canvas card only. Status/mastery, study progress, collapsible outcomes/refs/tasks, compact `open-mentor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
+
+**Loading:** `vertical-spine-skeleton` placeholder spine (no lone text spinner as primary feedback).
 
 ### 6. Mastery Validation (`/validate/:topic`)
 Interview + score. Unchanged.
@@ -110,12 +114,13 @@ Playwright Gate B targets:
 - `data-testid="forge-timeline"`
 - `data-testid="vertical-roadmap"`
 - `data-testid="roadmap-node-{id}-checklist-progress"` (canvas card compact bar)
-- `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
-- `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="validate-node-cta"`
+- `data-testid="artifact-topbar"` · `data-testid="mentor-cta"` (topbar on `/roadmap`) · `data-testid="trail-study-summary"`
+- `data-testid="vertical-spine-skeleton"` · `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
+- `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-mentor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
 - `data-testid="validation-score"`
 
 See [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md).
 
 ---
 
-*Last updated: 2026-05-28 — drawer layout polish (no duplicate description, red dismiss)*
+*Last updated: 2026-05-28 — artifact roadmap chrome + drawer UX polish*

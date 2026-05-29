@@ -46,7 +46,7 @@ export function DeployBadge() {
 
   return (
     <footer
-      className="pointer-events-auto fixed inset-x-0 bottom-0 z-50 flex items-center justify-center gap-2 border-t border-border bg-surface/90 px-3 py-1.5 text-xs text-text-muted backdrop-blur-sm"
+      className="pointer-events-auto fixed inset-x-0 bottom-0 z-auto flex items-center justify-center gap-2 border-t border-border bg-surface/90 px-3 py-1.5 text-xs text-text-muted backdrop-blur-sm"
       data-testid="deploy-badge"
       aria-label={`${label}. ${apiHealthLabel(health)}`}
     >

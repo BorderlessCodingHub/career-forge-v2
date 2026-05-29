@@ -38,6 +38,27 @@ Not separate hex tokens; Tailwind red scale on `surface-elevated`:
 
 Prototype still uses muted `.slideover-close` — intentional drift; see [PRODUCT-SOURCE-OF-TRUTH](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes.
 
+### Mentor avatar (brand ribbon — Next.js)
+
+| Role | Classes | Use |
+|------|---------|-----|
+| Avatar fill | `bg-gradient-to-br from-accent-mint to-accent` | `MentorAvatar` in artifact topbar `mentor-cta` + `MentorDrawer` header |
+
+Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; replaces legacy `sky-400` / `indigo-500` mentor chips.
+
+### Artifact topbar ghost actions (Next.js)
+
+| Role | Classes | Use |
+|------|---------|-----|
+| Control shell | `h-9`, `topbarActionClass` | `mentor-cta` + `mentor-report-link` — equal height |
+| Leading slot | `h-7 w-7` | `MentorAvatar` or icon box with centered `FileText` (`h-4 w-4`) |
+
+### Trail study summary (topbar micro-copy)
+
+| Role | Classes | Use |
+|------|---------|-----|
+| Summary text | `text-accent-mint`, `text-xs` | `trail-study-summary` in artifact topbar — aggregate checklist topics started, not mastery % |
+
 ### CSS variables (`prototype/styles.css`)
 
 ```css

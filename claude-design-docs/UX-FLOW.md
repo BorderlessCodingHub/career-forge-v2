@@ -17,7 +17,7 @@ Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → F
 
 ### Global operational chrome (all routes)
 
-Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA + build time in production (`NEXT_PUBLIC_BUILD_*` from CI); `local dev` when unset; colored dot from live `GET /health`. Low-contrast, does not replace pitch demo checks. See [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes · [DEPLOY-VPS.md](../docs/engineering/DEPLOY-VPS.md).
+Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA + build time in production (`NEXT_PUBLIC_BUILD_*` from CI); `local dev` when unset; colored dot from live `GET /health`. **`z-auto`** so node/mentor drawers (`z-50`) are never covered by the footer. Low-contrast, does not replace pitch demo checks. See [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) Implementation notes · [DEPLOY-VPS.md](../docs/engineering/DEPLOY-VPS.md).
 
 ---
 
@@ -142,9 +142,15 @@ Após animação → navega para steady state (`/roadmap`).
 
 **Canvas cards:** quando há `tasks[]` / `references[]`, barra mint compacta + fração `x/y` no card (sem disclaimer).
 
+**Artifact topbar (`/roadmap`):**
+- Nome da trilha só no topbar (`Sua trilha`) — página sem `<h1>` duplicado
+- **`mentor-cta`** no topbar (avatar mint→roxo); resumo opcional `trail-study-summary` (estudo iniciado, não mastery %)
+
 **Node drawer:**
-- Título no header + **✕** vermelho para fechar (`aria-label="Fechar detalhes"`) — não usar close neutro/cinza
+- Título no header + **✕** vermelho (`aria-label="Fechar detalhes"`) + **Escape** para fechar
 - Descrição longa fica no **card** do canvas, não repetida no drawer
+- Seções colapsáveis — **Resultados esperados** e **Referências** fechados por padrão; **Tarefas práticas** abertas; CTA validar fixo no rodapé
+- `computeTrailStudySummary` alimenta `trail-study-summary` no topbar (tópicos com checklist e pelo menos 1 item marcado)
 - Seção **Tarefas práticas** quando o grafo vem de `StudyPlan` — checkbox por item (opcional, não bloqueia mastery)
 - Seção **Referências** (links reais quando vindos de web search) — marcar como lidas
 - Barra **Progresso de estudo** (`x/y` concluídos) quando há itens; copy deixa claro que isso não substitui validação por IA
@@ -198,4 +204,4 @@ Implementation target: this doc + [SCREEN-INTENT.md](./SCREEN-INTENT.md).
 
 ---
 
-*Last updated: HAC-25 — artifact mode paradigm*
+*Last updated: 2026-05-28 — artifact topbar chrome, trail study summary, drawer accordions*

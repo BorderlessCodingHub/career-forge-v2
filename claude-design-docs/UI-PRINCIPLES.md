@@ -120,9 +120,13 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ForgeTimelineItem` | reasoning / artifact / decision rows |
 | `ChatBubble` | Onboarding + mentor |
 | `PrimaryButton` / `GhostButton` | Actions |
-| `DeployBadge` | Global fixed footer — deploy SHA/time (CI build) + live API health dot; `local dev` label when build env unset |
+| `DeployBadge` | Global fixed footer (`z-auto`) — deploy SHA/time + API health dot; stays **below** drawers (`z-40`/`z-50`); `local dev` when build env unset |
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); driven by `checklist_completed` / `checklist_total` |
-| `NodeDrawer` study checklist | Right drawer on `/roadmap`: header title only (description on canvas card); red **✕** dismiss (`h-9 w-9`, `aria-label="Fechar detalhes"`); status/mastery, `ChecklistProgress` full, rationale callout, task/reference checkboxes; **does not** gate `validate-node-cta` |
+| `ArtifactChromeContext` | Client provider in `ArtifactShellLayout`; `/roadmap` sets `onOpenMentor` + `trailSummary` for topbar |
+| `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); paired ghost actions in `flex items-center` group, share `topbarActionClass` (`h-9`); optional `trail-study-summary`; track name right |
+| `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — mentor topbar + `MentorDrawer` |
+| `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) |
+| `NodeDrawer` study checklist | Right drawer: collapsible sections, compact mentor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
 | Dismiss icon button | Square `h-9 w-9`, `text-red-400`, hover/focus `red-900/60` on dark elevated surfaces (drawer close); row delete uses lighter `text-red-500` + `red-500/10` (`EditableDiagnosis`) — same family, different weight |
 
@@ -134,12 +138,12 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 
 | Screen type | Layout |
 |-------------|--------|
-| **All routes** | Fixed bottom `DeployBadge` (~32px); root `body` uses `pb-8` so CTAs are not covered; mono SHA, muted text, health dot (success / warning / muted) |
+| **All routes** | Fixed bottom `DeployBadge` (~32px, `z-auto`); root `body` uses `pb-8` so CTAs are not covered; overlays (node drawer, mentor drawer) use `z-40`/`z-50` and stack above the badge |
 | Marketing/entry | Centered hero, max-width ~720px |
 | Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes |
-| Roadmap steady state | Borderless shell + canvas nodes (compact study bar on card when applicable) + **optional** AI sidebar; **click node** → drawer with status/mastery, full study checklist (HAC-63), mentor CTA, validation CTA |
+| Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-cta`, optional `trail-study-summary`; page subtitle only (no duplicate `<h1>`); `VerticalSpineSkeleton` loading; spine + uniform nodes; **click node** → accordion drawer + sticky validate CTA; mentor also via topbar / compact drawer link |
 | Validation | Focus mode — question card dominant, minimal chrome |
 | Mentor | AI sidebar or drawer on roadmap — contextual, not full page |
 
