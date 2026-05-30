@@ -153,6 +153,8 @@ Após animação → navega para steady state (`/roadmap`).
 - Rótulo **Progresso de estudo** abaixo do anel
 - `getTrailChecklistProgressPct` alimenta o anel — mesma matemática de `getChecklistProgress` por tópico, somando concluídos/total em pool (ex.: 11+9+5=25 itens; não média de % por tópico)
 
+**Relatório mentor (`/report`):** acessível via **`mentor-report-link`** no topbar — títulos humanos por tópico; resumo estruturado (lacunas, acertos, próximo passo) por validação.
+
 **Node drawer:**
 - Título no header + **✕** vermelho (`aria-label="Fechar detalhes"`) + **Escape** para fechar
 - Callout de **descrição** no drawer quando não há lacunas de conhecimento; bloco de lacunas substitui o callout após validação falha

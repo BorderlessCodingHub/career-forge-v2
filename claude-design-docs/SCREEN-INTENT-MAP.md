@@ -75,10 +75,15 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Loading:** `vertical-spine-skeleton` placeholder spine with connector stubs (no lone text spinner as primary feedback).
 
-### 6. Mastery Validation (`/validate/:topic`)
+### 6. Mentor evidence report (`/report`)
+Borderless learning evidence for embaixadores. Entry: artifact topbar **`mentor-report-link`**.
+
+**Validation cards:** human topic title (`formatNodeTitleForDisplay`); score + status; structured **Resumo para mentor** (lacunas / acertos / próximo passo) — `data-testid="mentor-report-entry-{node_id}"`.
+
+### 7. Mastery Validation (`/validate/:topic`)
 Interview + score. Unchanged.
 
-### 7. Adaptive Roadmap (`/roadmap` updated)
+### 8. Adaptive Roadmap (`/roadmap` updated)
 Roadmap reacts post-validation. Subtitle + highlighted node on spine; no mission banner on canvas. Mentor via node drawer only. `?adaptive=1` without stored session → silent server fallback.
 
 ---
@@ -121,6 +126,7 @@ Playwright Gate B targets:
 - `data-testid="artifact-topbar"` · `data-testid="mentor-report-link"`
 - `data-testid="vertical-roadmap"` · `data-testid="trail-progress-ring"` (page intro, not topbar)
 - `data-testid="roadmap-connector-{id}"` · `data-testid="vertical-spine"`
+- `data-testid="mentor-report"` · `data-testid="mentor-report-entry-{node_id}"`
 - `data-testid="vertical-spine-skeleton"` · `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
 - `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-tutor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
 - `data-testid="validation-score"`
@@ -129,4 +135,4 @@ See [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md).
 
 ---
 
-*Last updated: 2026-05-28 — artifact roadmap chrome + drawer UX polish*
+*Last updated: 2026-05-30 — `/report` mentor evidence + structured resumo testids*

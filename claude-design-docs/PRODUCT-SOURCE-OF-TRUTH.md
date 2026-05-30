@@ -29,7 +29,7 @@ Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → F
 | Mode | Screens | Chrome |
 |------|---------|--------|
 | `setup` | Goal, diagnostic, diagnosis edit, forge, validation | Onboarding stepper (01–07) optional/minimal |
-| `artifact` | Steady `/roadmap`, adaptive recalibration | `ArtifactShell` topbar: logo; right cluster `items-end`; `mentor-report-link` + track block; `topbarActionClass`; page intro = subtitle + optional `trail-progress-ring`; spine canvas = alternating nodes + solid `roadmap-connector-{id}` lines; **no** stepper; **no** fixed progress sidebar |
+| `artifact` | Steady `/roadmap`, adaptive recalibration, **`/report`** mentor evidence | `ArtifactShell` topbar: logo; right cluster `items-end`; `mentor-report-link` → `/report` + track block; `topbarActionClass`; page intro = subtitle + optional `trail-progress-ring`; spine canvas = alternating nodes + solid `roadmap-connector-{id}` lines; **no** stepper; **no** fixed progress sidebar |
 
 Full screen-by-screen: [UX-FLOW.md](./UX-FLOW.md) · Must-match: [SCREEN-INTENT.md](./SCREEN-INTENT.md)
 
@@ -132,6 +132,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | `/roadmap` | **Vertical roadmap** steady state; track name in **artifact topbar** only; right cluster `items-end`; `mentor-report-link` bottom-aligned to track title; page intro (`pt-6`) = subtitle + centered **`trail-progress-ring`** when checklist items exist; spine nodes alternate left/right with solid **`roadmap-connector-{id}`** lines to spine dot; canvas compact study progress; drawer accordions + sticky validate CTA | Node detail panel, full AI sidebar (P2) |
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |
 | `/roadmap` (adaptive) | Roadmap state change + mentor/AI context | Drawer vs sidebar |
+| `/report` | **Mentor evidence report** — human topic titles (not raw slugs); structured resumo per validation (lacunas / acertos / próximo passo bullets); score header; entry via topbar `mentor-report-link` | Export PDF, mentor filters |
 
 Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype/README.md`](./prototype/README.md) — run `python3 -m http.server 8765` in `prototype/` → `http://localhost:8765/`
 
@@ -176,6 +177,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Node drawer layout | Drawer repeats title + long description; muted `slideover-close` | Card shows description; drawer lists status/mastery | **NodeDrawer** — header title only; `description` callout in drawer when no knowledge gaps (otherwise gaps block); header **✕** = red dismiss icon (`h-9 w-9`, `text-red-400`, hover/focus `red-900/60`, `aria-label="Fechar detalhes"`); Escape closes + focus returns to card; collapsible sections default open (outcomes, tasks, refs; user can collapse via header toggle); optional tutor row; sticky `validate-node-cta` footer — **no** in-drawer mentor chat row | **Code wins** — less redundancy; dismiss reads as exit/destructive, not neutral chrome | 2026-05-30 |
 | Artifact roadmap chrome | Centered page `<h1>` + inline mentor card | Topbar track name + actions | **`ArtifactShell`** topbar (`artifact-topbar`): right cluster `items-end` — single `mentor-report-link` (`h-9`, `FileText` icon slot) + track name block (no ring in topbar); **`TrailProgressRing`** (`trail-progress-ring`, ~44px, mint stroke) centered in **page intro** below subtitle when checklist items exist — `getTrailChecklistProgressPct` item-pooled; label **Progresso de estudo**; adaptive view (`?adaptive=1`) = subtitle + highlighted spine node only — **no** `MissionBanner` on canvas; without session → silent server fallback | **Code wins** — de-cluttered topbar; trail progress on canvas intro | 2026-05-30 |
 | Spine card connectors | Dashed SVG branches (`prototype/skill-graph.jsx`) | Dashed grey graph edges (Code Breakers ref) | **`VerticalSpine`** / **`VerticalSpineSkeleton`**: 3-zone flex row — card + solid **`roadmap-connector-{id}`** (2px, `min-w-6 max-w-[120px]`) + spine dot; colors: `bg-border` default, `bg-warning` when `revisar`, `bg-accent-mint` when selected; skeleton connector stubs match loaded layout; `scrollIntoView` on select; selected dot mint glow | **Code wins** — solid status-colored branches on vertical artifact canvas | 2026-05-30 |
+| Mentor evidence report | Dense paragraph `mentor_summary`; slug as headline | N/A | **`/report`** — `MentorReportView`: `formatNodeTitleForDisplay` (API title via `get_skill_node_context`, else humanized slug); structured **Resumo para mentor** — lacunas principais + evidências positivas + próximo passo bullets; legacy `mentor_summary` split into lines when structured fields empty; backend reads validation evidence from list-shaped StudyPlan rows | **Code wins** — mentor scan UX | 2026-05-30 |
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
 | Deploy badge (global footer) | Not in prototype | N/A | Fixed bottom strip on all routes — `DeployBadge` in root layout (`z-auto`, not `z-50`) so `NodeDrawer` / `MentorDrawer` (`z-40` backdrop, `z-50` panel) paint above; `local dev` when `NEXT_PUBLIC_BUILD_*` unset; prod `deploy {sha} · {time}`; health dot polls `GET /health` | **Code wins** — operational debug chrome below modals; not pitch UX | 2026-05-28 |
@@ -203,4 +205,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: 2026-05-30 — spine connector prototype drift documented; trail ring in page intro (not topbar)*
+*Last updated: 2026-05-30 — mentor report structured resumo + human topic titles on `/report`*

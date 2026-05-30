@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from sqlalchemy import select
@@ -16,7 +17,9 @@ from career_forge.schemas.common import ValidationStatus
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.profile_diagnosis import diagnosis_response_from_profile
 from career_forge.schemas.mentor_report import MentorReportResponse, MentorReportValidationEntry
-from career_forge.services.roadmap import load_roadmap_catalog
+from career_forge.services.roadmap import get_skill_node_context, load_roadmap_catalog
+
+_NODE_ID_PREFIX = re.compile(r"^node-\d+-", re.IGNORECASE)
 
 
 def _resolve_user(session: Session, external_id: str) -> User | None:
@@ -38,15 +41,30 @@ def _ensure_demo_user(session: Session, external_id: str) -> User:
     raise ValueError(msg)
 
 
-def _node_title_map() -> dict[str, str]:
-    catalog = load_roadmap_catalog()
-    return {node["id"]: node["title"] for node in catalog["nodes"]}
+def _humanize_node_id(node_id: str) -> str:
+    """Display-only fallback when catalog/DB title lookup fails."""
+    slug = _NODE_ID_PREFIX.sub("", node_id)
+    readable = slug.replace("-", " ").replace("_", " ").strip()
+    return readable.title() if readable else node_id
+
+
+def _resolve_node_title(session: Session, node_id: str) -> str:
+    try:
+        return str(get_skill_node_context(session, node_id)["title"])
+    except ValueError:
+        return _humanize_node_id(node_id)
 
 
 def _evidence_from_skill_row(row: UserSkillNodeRow | None) -> dict[str, Any]:
-    if row is None or not isinstance(row.evidence, dict):
+    if row is None or row.evidence is None:
         return {}
-    return row.evidence
+    if isinstance(row.evidence, dict):
+        return row.evidence
+    if isinstance(row.evidence, list):
+        for item in reversed(row.evidence):
+            if isinstance(item, dict) and item.get("type") == "validation":
+                return item
+    return {}
 
 
 def get_mentor_report(session: Session, user_id: str) -> MentorReportResponse:
@@ -74,7 +92,6 @@ def get_mentor_report(session: Session, user_id: str) -> MentorReportResponse:
         .order_by(Validation.created_at.asc()),
     ).all()
 
-    titles = _node_title_map()
     entries: list[MentorReportValidationEntry] = []
     for row in validations:
         evidence = _evidence_from_skill_row(skill_by_node.get(row.skill_node_id))
@@ -88,7 +105,7 @@ def get_mentor_report(session: Session, user_id: str) -> MentorReportResponse:
         entries.append(
             MentorReportValidationEntry(
                 node_id=row.skill_node_id,
-                node_title=titles.get(row.skill_node_id, row.skill_node_id),
+                node_title=_resolve_node_title(session, row.skill_node_id),
                 score=row.score,
                 status=status,
                 strengths=strengths,

@@ -256,7 +256,7 @@ def evaluate_mcq_session(payload: MockInterviewRequest) -> tuple[ValidationRespo
     )
 
     mentor_summary = (
-        f"Mock interview MCQ de {payload.node_title} ({payload.node_id}) — "
+        f"Mock interview MCQ de {payload.node_title} — "
         f"{correct_count}/{total} acertos, score {score}/100 ({status.value}). "
     )
     if gaps:
