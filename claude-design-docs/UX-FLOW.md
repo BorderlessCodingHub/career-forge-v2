@@ -179,7 +179,7 @@ Após animação → navega para steady state (`/roadmap`).
 | | |
 |---|---|
 | **Old** | Graph diff + mentor drawer |
-| **New** | Vertical roadmap atualiza nós/status; mentor via drawer do nó (`open-mentor-drawer`); `?adaptive=1` sem sessão → fallback silencioso para trilha do servidor (sem banner de aviso) |
+| **New** | Vertical roadmap atualiza nós/status; mentor via drawer do nó (`open-mentor-drawer`); adaptive signal = subtitle + spine highlight + node drawer (sem `MissionBanner` no canvas); `?adaptive=1` sem sessão → fallback silencioso para trilha do servidor |
 | **Route** | `/roadmap` · `data-screen="adaptive-state"` |
 
 ---

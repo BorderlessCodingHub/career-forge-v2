@@ -116,7 +116,6 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `SkillNodeCard` | Graph nodes + detail panel |
 | `StatusPill` | All six status enums |
 | `ScoreRing` | Validation result 0–100 |
-| `MissionBanner` | Top-of-dashboard next action |
 | `ForgeTimelineItem` | reasoning / artifact / decision rows |
 | `ChatBubble` | Onboarding + mentor |
 | `PrimaryButton` / `GhostButton` | Actions |

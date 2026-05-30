@@ -134,7 +134,7 @@
 |------------|--------|
 | Trigger | Failed validation → node `revisar` |
 | Visual | Failed topic amber/pulse; priority bump visible |
-| Mission | Banner reflects validation gap |
+| Mission | Gap context on validation result + highlighted node on spine — **no** mission banner on artifact canvas |
 | Mentor | Contextual plan referencing **specific** failed validation |
 
 **Can evolve:** drawer vs AI sidebar extension (P1 HAC-13)

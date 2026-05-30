@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 
 import { useArtifactChrome } from "@/components/layout/ArtifactChromeContext";
 import {
-  MissionBanner,
   MentorDrawer,
   NodeDrawer,
   TutorDrawer,
@@ -19,7 +18,6 @@ import { clearForgeGraph, getForgeGraph } from "@/lib/forge-session";
 import { computeTrailStudySummary } from "@/lib/trail-study-summary";
 import type {
   ForgeGraphNode,
-  PlanUpdateResponse,
   RoadmapNode,
   RoadmapResponse,
   RoadmapSyncNode,
@@ -40,7 +38,6 @@ export default function RoadmapArtifactPageContent() {
   const { setChrome, clearChrome } = useArtifactChrome();
 
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
-  const [planUpdate, setPlanUpdate] = useState<PlanUpdateResponse | null>(null);
   const [highlightNodeId, setHighlightNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [mentorOpen, setMentorOpen] = useState(false);
@@ -80,7 +77,6 @@ export default function RoadmapArtifactPageContent() {
         const adaptiveSession = getAdaptiveSession();
         if (adaptiveSession) {
           setRoadmap(adaptiveSession.roadmap);
-          setPlanUpdate(adaptiveSession.plan);
           setHighlightNodeId(adaptiveSession.nodeId);
           setSelectedNodeId(adaptiveSession.nodeId);
           return;
@@ -95,7 +91,6 @@ export default function RoadmapArtifactPageContent() {
       }
       const data = await getRoadmap();
       setRoadmap(data);
-      setPlanUpdate(null);
       if (nodeFromQuery) {
         setHighlightNodeId(nodeFromQuery);
         setSelectedNodeId(nodeFromQuery);
@@ -196,8 +191,6 @@ export default function RoadmapArtifactPageContent() {
               : "Clique em um nó para ver status, referências e validar mastery."}
           </p>
         </div>
-
-        {planUpdate && showingAdaptiveView && <MissionBanner plan={planUpdate} />}
 
         {loading && <VerticalSpineSkeleton />}
 

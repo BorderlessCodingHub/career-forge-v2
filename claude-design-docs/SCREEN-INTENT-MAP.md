@@ -75,7 +75,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 Interview + score. Unchanged.
 
 ### 7. Adaptive Roadmap (`/roadmap` updated)
-Roadmap reacts post-validation. Mentor via node drawer only. `?adaptive=1` without stored session → silent server fallback (no warning banner).
+Roadmap reacts post-validation. Subtitle + highlighted node on spine; no mission banner on canvas. Mentor via node drawer only. `?adaptive=1` without stored session → silent server fallback.
 
 ---
 
