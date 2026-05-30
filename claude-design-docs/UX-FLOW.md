@@ -148,13 +148,13 @@ Após animação → navega para steady state (`/roadmap`).
 
 **Node drawer:**
 - Título no header + **✕** vermelho (`aria-label="Fechar detalhes"`) + **Escape** para fechar
-- Descrição longa fica no **card** do canvas, não repetida no drawer
+- Callout de **descrição** no drawer quando não há lacunas de conhecimento; bloco de lacunas substitui o callout após validação falha
 - Seções colapsáveis — **Resultados esperados**, **Tarefas práticas** e **Referências** abertas por padrão (usuário pode recolher); CTA validar fixo no rodapé
 - `computeTrailStudySummary` alimenta `trail-study-summary` no topbar (tópicos com checklist e pelo menos 1 item marcado)
 - Seção **Tarefas práticas** quando o grafo vem de `StudyPlan` — checkbox por item (opcional, não bloqueia mastery)
 - Seção **Referências** (links reais quando vindos de web search) — marcar como lidas
 - Barra **Progresso de estudo** (`x/y` concluídos) quando há itens; copy deixa claro que isso não substitui validação por IA
-- **Perguntar à IA** — mini chat estilo roadmap.sh tutor
+- **Tutor do capítulo** (`open-tutor-drawer`) — Q&A técnico opcional; sem chat mentor inline no drawer
 - CTA **Mock interview — validar mastery** (prova real de aprendizado)
 
 ---
