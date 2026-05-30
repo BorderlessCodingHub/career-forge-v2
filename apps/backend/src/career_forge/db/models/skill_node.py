@@ -23,6 +23,7 @@ class SkillNode(Base):
     prerequisites: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     outcomes: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     rubric: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    key_concepts: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

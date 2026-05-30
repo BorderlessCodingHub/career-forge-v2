@@ -60,6 +60,7 @@ class UserSkillNode(BaseModel):
     priority: Priority | None = None
     rationale: str | None = None
     prerequisites: list[str] = Field(default_factory=list)
+    key_concepts: list[str] = Field(default_factory=list)
     tasks: list[dict[str, str]] = Field(default_factory=list)
     references: list[dict[str, str]] = Field(default_factory=list)
 

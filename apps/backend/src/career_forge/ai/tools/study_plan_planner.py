@@ -91,7 +91,11 @@ class OpenAiStudyPlanPlanner:
                     "Você é o planner do Career Forge. Gere um StudyPlan robusto, "
                     "prático, sequenciado e baseado em fontes. Dê liberdade à IA, "
                     "mas mantenha qualidade: pré-requisitos, tarefas, evidência prática "
-                    "e aderência ao contexto do aluno.",
+                    "e aderência ao contexto do aluno. Para cada nó preencha "
+                    "`key_concepts`: 3 a 6 conceitos TÉCNICOS atômicos que o capítulo "
+                    "ensina (ex: 'list comprehension', 'idempotência de PUT', 'np.reshape'). "
+                    "Nunca logística de estudo — esses conceitos viram a base de mock "
+                    "interviews e do tutor de Q&A.",
                 ),
                 (
                     "user",
