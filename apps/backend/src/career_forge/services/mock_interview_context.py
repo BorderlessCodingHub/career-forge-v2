@@ -60,25 +60,27 @@ def format_context_for_prompt(
     learner: LearnerForgeContext | None,
 ) -> str:
     lines = [
-        "## Bloco de estudo",
-        f"Título: {study_block['title']}",
+        "## Capítulo de estudo",
+        f"Título (pode conter logística — extraia o tema técnico): {study_block['title']}",
         f"Descrição: {study_block.get('description') or '—'}",
     ]
     if study_block.get("rationale"):
         lines.append(f"Rationale: {study_block['rationale']}")
     if study_block.get("tasks"):
-        lines.append("Tarefas práticas:")
+        lines.append("Tarefas práticas (sinal do conteúdo técnico):")
         for task in study_block["tasks"]:
             title = task.get("title", "Tarefa")
             outcome = task.get("outcome", "")
             evidence = task.get("evidence_prompt", "")
             lines.append(f"- {title} | outcome: {outcome} | evidência: {evidence}")
     if study_block.get("references"):
-        lines.append("Referências:")
+        lines.append("Referências oficiais (use para ancorar perguntas):")
         for ref in study_block["references"]:
-            lines.append(f"- {ref.get('title', 'Ref')} ({ref.get('url', '')})")
+            snippet = ref.get("snippet") or ref.get("description") or ""
+            suffix = f" — {snippet}" if snippet else ""
+            lines.append(f"- {ref.get('title', 'Ref')} ({ref.get('url', '')}){suffix}")
     if study_block.get("outcomes"):
-        lines.append("Outcomes: " + "; ".join(study_block["outcomes"]))
+        lines.append("Outcomes esperados: " + "; ".join(study_block["outcomes"]))
     if learner is not None:
         lines.extend(["", "## Perfil do learner", learner.compact_summary()])
     return "\n".join(lines)

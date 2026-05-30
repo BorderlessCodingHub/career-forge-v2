@@ -28,6 +28,10 @@ class MockInterviewQuestion(BaseModel):
     prompt: str
     hint: str | None = None
     rubric_criterion: str
+    concept: str | None = Field(
+        default=None,
+        description="Technical concept this question probes (feeds the knowledge-gap ledger)",
+    )
     phase: str = Field(description="base | gap_probe | scenario")
     options: list[MockInterviewOption] | None = None
 
