@@ -18,6 +18,7 @@ def test_factory_returns_registered_names() -> None:
         "mentor",
         "mock_interview",
         "roadmap_forge",
+        "tutor",
         "validation",
     ]
 

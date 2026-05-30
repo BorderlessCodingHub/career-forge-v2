@@ -64,6 +64,7 @@ def get_skill_node_context(session: Session | None, node_id: str) -> dict[str, A
                 "prerequisites": list(row.prerequisites or []),
                 "outcomes": list(row.outcomes or []),
                 "rubric": list(row.rubric or []),
+                "key_concepts": list(row.key_concepts or []),
             }
 
     msg = f"Unknown skill node: {node_id}"
@@ -433,6 +434,7 @@ def _ensure_skill_node(session: Session, node: UserSkillNode, *, sort_order: int
             existing.description = node.rationale
             existing.sort_order = sort_order
             existing.prerequisites = node.prerequisites
+            existing.key_concepts = list(node.key_concepts or [])
             existing.outcomes = [
                 task.get("outcome", "") for task in node.tasks if task.get("outcome")
             ]
@@ -453,6 +455,7 @@ def _ensure_skill_node(session: Session, node: UserSkillNode, *, sort_order: int
             side="left" if sort_order % 2 == 0 else "right",
             sort_order=sort_order,
             prerequisites=node.prerequisites,
+            key_concepts=list(node.key_concepts or []),
             outcomes=[task.get("outcome", "") for task in node.tasks if task.get("outcome")],
             rubric=[
                 task.get("evidence_prompt", "")

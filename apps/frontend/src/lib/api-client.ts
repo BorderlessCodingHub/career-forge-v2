@@ -18,6 +18,9 @@ import type {
   MockInterviewQuestionsResponse,
   MockInterviewRequest,
   MockInterviewRunResponse,
+  TutorContext,
+  TutorRequest,
+  TutorRunResponse,
   ChecklistToggleRequest,
   RoadmapResponse,
   RoadmapForgeEvent,
@@ -396,6 +399,29 @@ export async function sendMentorMessage(
 ): Promise<MentorRunResponse> {
   const resolvedUserId = userId ?? getUserId();
   return apiFetch<MentorRunResponse>("/mentor", {
+    method: "POST",
+    body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
+  });
+}
+
+export async function getTutorContext(
+  nodeId?: string | null,
+  nodeTitle?: string | null,
+  userId?: string,
+): Promise<TutorContext> {
+  const resolvedUserId = userId ?? getUserId();
+  const params = new URLSearchParams({ user_id: resolvedUserId });
+  if (nodeId) params.set("node_id", nodeId);
+  if (nodeTitle) params.set("node_title", nodeTitle);
+  return apiFetch<TutorContext>(`/tutor/context?${params.toString()}`);
+}
+
+export async function sendTutorMessage(
+  payload: TutorRequest,
+  userId?: string,
+): Promise<TutorRunResponse> {
+  const resolvedUserId = userId ?? getUserId();
+  return apiFetch<TutorRunResponse>("/tutor", {
     method: "POST",
     body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
   });

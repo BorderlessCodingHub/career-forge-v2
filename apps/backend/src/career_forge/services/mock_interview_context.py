@@ -55,6 +55,7 @@ def build_mock_interview_context(
         "references": references,
         "outcomes": node.get("outcomes") or [],
         "rubric": node.get("rubric") or [],
+        "key_concepts": node.get("key_concepts") or [],
         "open_gaps": open_gaps,
     }
 
@@ -79,6 +80,13 @@ def format_context_for_prompt(
     ]
     if study_block.get("rationale"):
         lines.append(f"Rationale: {study_block['rationale']}")
+    if study_block.get("key_concepts"):
+        lines.extend(
+            [
+                "Conceitos-chave canônicos do capítulo (USE como base direta das perguntas):",
+                "; ".join(study_block["key_concepts"]),
+            ],
+        )
     if study_block.get("tasks"):
         lines.append("Tarefas práticas (sinal do conteúdo técnico):")
         for task in study_block["tasks"]:

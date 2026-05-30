@@ -12,6 +12,7 @@ type NodeDrawerProps = {
   node: RoadmapNode | null;
   onClose: () => void;
   onOpenMentor: () => void;
+  onOpenTutor?: () => void;
   onChecklistToggle?: (
     nodeId: string,
     itemType: "task" | "reference",
@@ -58,7 +59,13 @@ function DrawerSection({ title, defaultOpen = true, children }: DrawerSectionPro
   );
 }
 
-export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: NodeDrawerProps) {
+export function NodeDrawer({
+  node,
+  onClose,
+  onOpenMentor,
+  onOpenTutor,
+  onChecklistToggle,
+}: NodeDrawerProps) {
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
   const [gaps, setGaps] = useState<KnowledgeGapItem[]>([]);
 
@@ -310,6 +317,22 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
               Chat →
             </Button>
           </div>
+
+          {onOpenTutor && (
+            <div className="flex items-center justify-between gap-3 rounded-md border border-accent/30 bg-surface px-3 py-3">
+              <p className="text-sm text-text-secondary">
+                Tutor do capítulo — Q&A técnico ancorado nos conceitos e nas suas lacunas.
+              </p>
+              <Button
+                variant="ghost"
+                className="shrink-0"
+                onClick={onOpenTutor}
+                data-testid="open-tutor-drawer"
+              >
+                Tutor →
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="shrink-0 border-t border-border bg-surface-elevated px-6 py-4">

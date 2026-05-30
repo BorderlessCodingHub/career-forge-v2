@@ -89,6 +89,7 @@ def study_plan_to_graph(plan: StudyPlan) -> list[UserSkillNode]:
                 priority=_priority_for_index(index),
                 rationale=node.why_now,
                 prerequisites=node.prerequisites,
+                key_concepts=node.key_concepts,
                 tasks=[
                     {
                         "title": task.title,
