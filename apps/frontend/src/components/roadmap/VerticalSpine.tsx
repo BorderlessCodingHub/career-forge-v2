@@ -17,6 +17,27 @@ function nodesForCategory(nodes: RoadmapNode[], categoryId: string) {
   return nodes.filter((node) => node.category === categoryId);
 }
 
+function connectorColorClass(node: RoadmapNode, selected: boolean): string {
+  if (node.status === "revisar") return "bg-warning";
+  if (selected) return "bg-accent-mint";
+  return "bg-border";
+}
+
+type SpineConnectorProps = {
+  node: RoadmapNode;
+  selected: boolean;
+};
+
+function SpineConnector({ node, selected }: SpineConnectorProps) {
+  return (
+    <div
+      className={`h-[2px] min-w-6 max-w-[120px] flex-1 transition-colors ${connectorColorClass(node, selected)}`}
+      aria-hidden
+      data-testid={`roadmap-connector-${node.node_id}`}
+    />
+  );
+}
+
 export function VerticalSpine({
   categories,
   nodes,
@@ -82,20 +103,31 @@ function SpineRow({ node, selected, onSelect, ref }: SpineRowProps) {
   const isLeft = node.side === "left";
 
   return (
-    <li
-      ref={ref}
-      className={`relative flex ${isLeft ? "justify-start pr-[52%]" : "justify-end pl-[52%]"}`}
-      data-side={node.side}
-    >
+    <li ref={ref} className="relative flex items-center" data-side={node.side}>
+      <div className="flex min-w-0 flex-1 items-center justify-end">
+        {isLeft && (
+          <>
+            <SkillNode node={node} selected={selected} onSelect={onSelect} />
+            <SpineConnector node={node} selected={selected} />
+          </>
+        )}
+      </div>
       <div
-        className={`absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition-colors ${
+        className={`relative z-10 h-3 w-3 shrink-0 rounded-full border-2 transition-colors ${
           selected
             ? "border-accent-mint bg-accent shadow-[0_0_12px_var(--mint-glow)]"
             : "border-border bg-bg"
         }`}
         aria-hidden
       />
-      <SkillNode node={node} selected={selected} onSelect={onSelect} />
+      <div className="flex min-w-0 flex-1 items-center justify-start">
+        {!isLeft && (
+          <>
+            <SpineConnector node={node} selected={selected} />
+            <SkillNode node={node} selected={selected} onSelect={onSelect} />
+          </>
+        )}
+      </div>
     </li>
   );
 }

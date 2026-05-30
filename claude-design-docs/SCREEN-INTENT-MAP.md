@@ -71,7 +71,9 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description callout when no knowledge gaps. Status/mastery, study progress, collapsible outcomes/refs/tasks (default expanded), optional `open-tutor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
 
-**Loading:** `vertical-spine-skeleton` placeholder spine (no lone text spinner as primary feedback).
+**Canvas spine:** nodes alternate left/right; solid `roadmap-connector-{id}` links each card to spine dot (`border` / `warning` revisar / `accent-mint` selected).
+
+**Loading:** `vertical-spine-skeleton` placeholder spine with connector stubs (no lone text spinner as primary feedback).
 
 ### 6. Mastery Validation (`/validate/:topic`)
 Interview + score. Unchanged.
@@ -118,6 +120,7 @@ Playwright Gate B targets:
 - `data-testid="roadmap-node-{id}-checklist-progress"` (canvas card compact bar)
 - `data-testid="artifact-topbar"` · `data-testid="mentor-report-link"`
 - `data-testid="vertical-roadmap"` · `data-testid="trail-progress-ring"` (page intro, not topbar)
+- `data-testid="roadmap-connector-{id}"` · `data-testid="vertical-spine"`
 - `data-testid="vertical-spine-skeleton"` · `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
 - `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-tutor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
 - `data-testid="validation-score"`

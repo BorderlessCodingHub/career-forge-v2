@@ -15,7 +15,7 @@ Career Forge lives inside the **Borderless** ecosystem. Steady-state UI should m
 | Background | `#0D0B14` deep purple-black — not navy `#0B0F19` |
 | Nodes | Vibrant purple cards `#6B4CE6` with cyan/mint progress `#2DD4BF` |
 | Accent | Logo purple `#7C3AED` — CTAs, active nav pill |
-| Connections | Dashed grey lines with arrowheads |
+| Connections | Code Breakers graph ref: dashed grey lines with arrowheads; **artifact vertical spine (shipped):** solid 2px status-colored card↔dot connectors (`roadmap-connector-{id}`) |
 | Canvas | Dot grid; zoom controls bottom-left; minimap bottom-right |
 
 **References:** [borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) · [borderless-logo-brand.png](./references/borderless-logo-brand.png)
@@ -47,7 +47,7 @@ Full token table + component specs: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING
 ### Steady-state roadmap canvas (HAC-21 + Borderless + HAC-24)
 
 - **Code Breakers–style canvas** — purple rounded topic nodes, progress bar at bottom, dashed dependency lines
-- **Vertical spine layout (HAC-24)** — central dashed spine, nodes alternate left/right, category headers on spine (Fundamentos → Backend Core → Integração)
+- **Vertical spine layout (HAC-24)** — central spine, nodes alternate left/right, **solid horizontal branch connectors** card ↔ dot (status-colored), category headers on spine
 - Layout combines roadmap.sh spine with Borderless node styling
 - Each node: title, status pill, mastery % / progress bar when known
 - Locked nodes dimmed; current focus highlighted (purple glow + mint accent)
@@ -125,7 +125,8 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); single `mentor-report-link` ghost action (`topbarActionClass`, `h-9`); track name right — **no** progress ring |
 | `TrailProgressRing` | Compact ~44px SVG ring in **page intro** (below subtitle) — item-pooled checklist % (`accent-mint` stroke); **Progresso de estudo** label; hidden when no checklist items |
 | `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — `MentorDrawer` header only |
-| `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) |
+| `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) — connector stubs match loaded layout |
+| `VerticalSpine` connectors | Solid 2px `roadmap-connector-{id}` — `border` default, `warning` revisar, `accent-mint` selected |
 | `NodeDrawer` study checklist | Right drawer: collapsible sections default open, optional tutor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
 | Dismiss icon button | Square `h-9 w-9`, `text-red-400`, hover/focus `red-900/60` on dark elevated surfaces (drawer close); row delete uses lighter `text-red-500` + `red-500/10` (`EditableDiagnosis`) — same family, different weight |
@@ -143,7 +144,7 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 | Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes |
-| Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-report-link` only; page intro = subtitle + optional centered `trail-progress-ring`; `VerticalSpineSkeleton` loading; spine + uniform nodes; **click node** → accordion drawer + sticky validate CTA; optional tutor row in drawer |
+| Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-report-link` only; page intro = subtitle + optional centered `trail-progress-ring`; spine + uniform nodes + solid card↔dot connectors; **click node** → accordion drawer + sticky validate CTA; optional tutor row in drawer |
 | Validation | Focus mode — question card dominant, minimal chrome |
 | Mentor | Relatório via topbar `mentor-report-link`; no contextual chat drawer on artifact canvas |
 

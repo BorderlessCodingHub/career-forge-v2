@@ -140,7 +140,7 @@ UX flow from [UX-FLOW.md](./UX-FLOW.md) does **not** change:
 | Editable diagnosis | Full-width content inside shell or simplified chrome |
 | Forge stream | Timeline column; **hide canvas nodes** until reveal |
 | Reveal | Canvas fades in; nodes materialize from stream |
-| Steady `/roadmap` | `ArtifactShell` topbar (track name, `mentor-report-link` only) + page intro `trail-progress-ring` + vertical spine canvas; mentor via node drawer; **no** duplicate page `<h1>` |
+| Steady `/roadmap` | `ArtifactShell` topbar (track name, `mentor-report-link` only) + page intro `trail-progress-ring` + vertical spine canvas with solid card↔dot connectors; mentor via node drawer; **no** duplicate page `<h1>` |
 
 ### Artifact topbar + mentor (Next.js — 2026-05-28)
 
@@ -150,7 +150,8 @@ UX flow from [UX-FLOW.md](./UX-FLOW.md) does **not** change:
 | **`trail-progress-ring`** | ~44px compact SVG ring, `accent-mint` stroke, center `%` — centered in page intro below subtitle; `getTrailChecklistProgressPct`: per-topic `getChecklistProgress` stats item-pooled; **Progresso de estudo** label; hidden when no checklist items |
 | **Topbar ghost actions** | Shared `topbarActionClass` — `h-9` bordered pill, `hover:bg-surface`; `h-7` leading slot (centered `FileText`); right cluster `items-end` so actions align to track title baseline |
 | **Spine selection** | Active row dot: `border-accent-mint`, `shadow-[0_0_12px_var(--mint-glow)]` |
-| **Loading** | `vertical-spine-skeleton` pulse placeholders — not a lone text spinner |
+| **Spine branch connector** | Solid 2px horizontal line card ↔ spine dot — `border` default, `warning` revisar, `accent-mint` selected; `roadmap-connector-{id}` |
+| **Loading** | `vertical-spine-skeleton` pulse placeholders with connector stubs — not a lone text spinner |
 
 See [design-tokens.md](./design-tokens.md) · Implementation notes in [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md).
 

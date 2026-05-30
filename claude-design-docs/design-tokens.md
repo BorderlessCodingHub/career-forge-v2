@@ -53,7 +53,15 @@ Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; r
 | Control shell | `h-9`, `topbarActionClass` | `mentor-report-link` in artifact topbar |
 | Leading slot | `h-7 w-7` | Icon box with centered `FileText` (`h-4 w-4`) |
 
-### Trail progress ring (artifact topbar)
+### Spine branch connectors (artifact canvas — Next.js)
+
+| Role | Spec | Use |
+|------|------|-----|
+| Default | 2px solid `bg-border` | `roadmap-connector-{id}` — card to spine dot |
+| Revisar | 2px solid `bg-warning` | Node status `revisar` |
+| Selected | 2px solid `bg-accent-mint` | Active spine row selection |
+
+### Trail progress ring (artifact page intro)
 
 | Role | Classes | Use |
 |------|---------|-----|
@@ -103,7 +111,7 @@ Grid 4px: 4, 8, 12, 16, 24, 32, 48
 ## Canvas
 
 - Dot grid: 24px spacing, `rgba(255,255,255,0.04)` dots on `--bg`
-- Connection lines: dashed `#4B5563` or `--border`
+- Connection lines: solid 2px branch connectors card ↔ spine dot on artifact canvas; central spine 1px `border`
 
 ## Componentes reutilizáveis (prototype)
 
