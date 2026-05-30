@@ -150,7 +150,7 @@ Após animação → navega para steady state (`/roadmap`).
 **Node drawer:**
 - Título no header + **✕** vermelho (`aria-label="Fechar detalhes"`) + **Escape** para fechar
 - Descrição longa fica no **card** do canvas, não repetida no drawer
-- Seções colapsáveis — **Resultados esperados** e **Referências** fechados por padrão; **Tarefas práticas** abertas; CTA validar fixo no rodapé
+- Seções colapsáveis — **Resultados esperados**, **Tarefas práticas** e **Referências** abertas por padrão (usuário pode recolher); CTA validar fixo no rodapé
 - `computeTrailStudySummary` alimenta `trail-study-summary` no topbar (tópicos com checklist e pelo menos 1 item marcado)
 - Seção **Tarefas práticas** quando o grafo vem de `StudyPlan` — checkbox por item (opcional, não bloqueia mastery)
 - Seção **Referências** (links reais quando vindos de web search) — marcar como lidas

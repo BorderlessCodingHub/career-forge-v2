@@ -197,7 +197,7 @@ export function NodeDrawer({
           )}
 
           {node.outcomes.length > 0 && (
-            <DrawerSection title="Resultados esperados" defaultOpen={false}>
+            <DrawerSection title="Resultados esperados">
               <ul className="space-y-2">
                 {node.outcomes.map((outcome) => (
                   <li
@@ -212,7 +212,7 @@ export function NodeDrawer({
           )}
 
           {node.tasks.length > 0 && (
-            <DrawerSection title="Tarefas práticas" defaultOpen>
+            <DrawerSection title="Tarefas práticas">
               <ul className="space-y-2">
                 {node.tasks.map((task) => (
                   <li
@@ -257,7 +257,7 @@ export function NodeDrawer({
           )}
 
           {node.references.length > 0 && (
-            <DrawerSection title="Referências" defaultOpen={false}>
+            <DrawerSection title="Referências">
               <div className="space-y-2">
                 {node.references.map((reference) => (
                   <div

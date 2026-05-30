@@ -67,7 +67,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; single `h-9` action `mentor-report-link` + `FileText`; optional `trail-study-summary`.
 
-**Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description on canvas card only. Status/mastery, study progress, collapsible outcomes/refs/tasks, compact `open-mentor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
+**Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description on canvas card only. Status/mastery, study progress, collapsible outcomes/refs/tasks (default expanded), compact `open-mentor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
 
 **Loading:** `vertical-spine-skeleton` placeholder spine (no lone text spinner as primary feedback).
 

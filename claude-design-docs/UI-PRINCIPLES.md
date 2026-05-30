@@ -126,7 +126,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); single `mentor-report-link` ghost action (`topbarActionClass`, `h-9`); optional `trail-study-summary`; track name right |
 | `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — `MentorDrawer` header only |
 | `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) |
-| `NodeDrawer` study checklist | Right drawer: collapsible sections, compact mentor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
+| `NodeDrawer` study checklist | Right drawer: collapsible sections default open, compact mentor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
 | Dismiss icon button | Square `h-9 w-9`, `text-red-400`, hover/focus `red-900/60` on dark elevated surfaces (drawer close); row delete uses lighter `text-red-500` + `red-500/10` (`EditableDiagnosis`) — same family, different weight |
 
