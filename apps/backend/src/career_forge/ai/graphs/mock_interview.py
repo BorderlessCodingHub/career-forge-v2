@@ -108,7 +108,7 @@ def build_mock_interview_response(payload: MockInterviewRequest) -> ValidationRe
     )
 
     mentor_summary = (
-        f"Para o mentor: mock interview de {payload.node_title} ({payload.node_id}) — "
+        f"Para o mentor: mock interview de {payload.node_title} — "
         f"{answer_count} perguntas contextuais, score {score}/100 ({status.value}). "
     )
     if gaps:

@@ -5,12 +5,100 @@ import Link from "next/link";
 import { Button } from "@/components/ui";
 import type { MentorReportResponse, MentorReportValidationEntry } from "@/types/contracts";
 
+import {
+  formatLegacyMentorSummary,
+  formatGoalForDisplay,
+  formatNodeTitleForDisplay,
+  hasStructuredEvidence,
+} from "./format-node-title";
+
 type MentorReportViewProps = {
   report: MentorReportResponse;
 };
 
+function EvidenceBulletList({
+  items,
+  tone,
+}: {
+  items: string[];
+  tone: "success" | "warning";
+}) {
+  const toneClass = tone === "success" ? "text-success" : "text-warning";
+
+  return (
+    <ul className="mt-2 space-y-2 text-sm text-text-secondary">
+      {items.map((item) => (
+        <li key={item} className="flex gap-2">
+          <span className={toneClass}>•</span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
+  const structured = hasStructuredEvidence(entry);
+
+  if (structured) {
+    return (
+      <div className="mt-5 rounded-md border border-border bg-surface p-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
+          Resumo para mentor
+        </p>
+
+        {entry.gaps.length > 0 && (
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-warning">
+              Lacunas principais
+            </p>
+            <EvidenceBulletList items={entry.gaps} tone="warning" />
+          </div>
+        )}
+
+        {entry.strengths.length > 0 && (
+          <div className="mt-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-success">
+              Evidências positivas
+            </p>
+            <EvidenceBulletList items={entry.strengths} tone="success" />
+          </div>
+        )}
+
+        {entry.recommended_intervention.trim() && (
+          <div className="mt-4 rounded-md border border-accent/30 bg-accent/10 p-3">
+            <p className="text-xs font-semibold uppercase tracking-widest text-accent">
+              Próximo passo
+            </p>
+            <p className="mt-2 text-sm text-text-secondary">
+              {entry.recommended_intervention}
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (!entry.mentor_summary.trim()) return null;
+
+  const legacyLines = formatLegacyMentorSummary(entry.mentor_summary);
+  return (
+    <div className="mt-5 rounded-md border border-border bg-surface p-4">
+      <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
+        Resumo para mentor
+      </p>
+      <div className="mt-2 space-y-2 text-sm text-text-secondary">
+        {legacyLines.map((line) => (
+          <p key={line}>{line}</p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
   const passed = entry.status === "aprovado";
+  const displayTitle = formatNodeTitleForDisplay(entry.node_title, entry.node_id);
 
   return (
     <article
@@ -20,7 +108,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-widest text-text-muted">Tópico avaliado</p>
-          <h3 className="text-lg font-semibold text-text-primary">{entry.node_title}</h3>
+          <h3 className="text-lg font-semibold text-text-primary">{displayTitle}</h3>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-text-primary">{entry.score}/100</p>
@@ -34,65 +122,14 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
         </div>
       </div>
 
-      {(entry.strengths.length > 0 || entry.gaps.length > 0) && (
-        <div className="mt-5 grid gap-4 md:grid-cols-2">
-          {entry.strengths.length > 0 && (
-            <div className="rounded-md border border-success/30 bg-success/5 p-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-success">
-                Evidências positivas
-              </p>
-              <ul className="mt-3 space-y-2 text-sm text-text-secondary">
-                {entry.strengths.map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <span className="text-success">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {entry.gaps.length > 0 && (
-            <div className="rounded-md border border-warning/30 bg-warning/5 p-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-warning">
-                Lacunas observadas
-              </p>
-              <ul className="mt-3 space-y-2 text-sm text-text-secondary">
-                {entry.gaps.map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <span className="text-warning">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-
-      {entry.mentor_summary && (
-        <div className="mt-4 rounded-md border border-border bg-surface p-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-            Resumo para mentor
-          </p>
-          <p className="mt-2 text-sm text-text-secondary">{entry.mentor_summary}</p>
-        </div>
-      )}
-
-      {entry.recommended_intervention && (
-        <div className="mt-4 rounded-md border border-accent/30 bg-accent/10 p-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-            Intervenção recomendada
-          </p>
-          <p className="mt-2 text-sm text-text-secondary">{entry.recommended_intervention}</p>
-        </div>
-      )}
+      <MentorSummaryBlock entry={entry} />
     </article>
   );
 }
 
 export function MentorReportView({ report }: MentorReportViewProps) {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10" data-screen="mentor-report">
+    <div className="mx-auto max-w-4xl px-4 py-10" data-screen="mentor-report" data-testid="mentor-report">
       <div className="mb-8 rounded-md border border-border bg-surface px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">
           Relatório Borderless
@@ -112,7 +149,9 @@ export function MentorReportView({ report }: MentorReportViewProps) {
         </div>
         <div>
           <p className="text-xs uppercase tracking-widest text-text-muted">Objetivo</p>
-          <p className="mt-1 text-lg font-medium text-text-primary">{report.goal}</p>
+          <p className="mt-1 text-lg font-medium text-text-primary">
+            {formatGoalForDisplay(report.goal)}
+          </p>
         </div>
         <div>
           <p className="text-xs uppercase tracking-widest text-text-muted">Trilha</p>
