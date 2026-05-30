@@ -106,7 +106,7 @@
 | Top bar | Career Forge logo + **Sua trilha** track name; right cluster **`items-end`** — **`mentor-report-link`** action bottom-aligned with track title line; same `topbarActionClass` (`h-9`); relatório = `h-7` icon slot + `FileText` + label; optional **`trail-study-summary`** above track label (aggregate study progress, not mastery %); mentor via node drawer only |
 | Page intro | Subtitle/hint only — **no** duplicate track `<h1>` on canvas |
 | Canvas nodes | **Uniform** Borderless purple cards — compact **study** progress (`x/y` + mint bar) when checklist items exist; **mastery %** and status detail stay in **node drawer** only |
-| Interaction | **Click node** → right drawer: title (description on **canvas card** only), red **✕** dismiss, Escape to close, status/mastery, study progress, collapsible outcomes/refs/tasks (default expanded), compact mentor **Chat →**, sticky CTA **Mock interview — validar mastery** |
+| Interaction | **Click node** → right drawer: title, red **✕** dismiss, Escape to close, status/mastery, study progress, description callout when no gaps, collapsible outcomes/refs/tasks (default expanded), optional tutor row, sticky CTA **Mock interview — validar mastery** |
 | Personalization | Graph state still adaptive (backend recalibrates) — visible in drawer, not canvas pollution |
 | Forbidden | Forge streaming as steady state; MissionBanner hero on artifact canvas; status-colored node grid |
 

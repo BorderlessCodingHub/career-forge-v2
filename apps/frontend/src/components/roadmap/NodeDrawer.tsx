@@ -190,9 +190,9 @@ export function NodeDrawer({
             </div>
           )}
 
-          {node.rationale && (
+          {gaps.length === 0 && node.description && (
             <div className="rounded-md border border-accent/30 bg-surface px-3 py-2 text-sm text-text-primary">
-              {node.rationale}
+              {node.description}
             </div>
           )}
 
@@ -303,20 +303,6 @@ export function NodeDrawer({
               </div>
             </DrawerSection>
           )}
-
-          <div className="flex items-center justify-between gap-3 rounded-md border border-border bg-surface px-3 py-3">
-            <p className="text-sm text-text-secondary">
-              Mentor contextual — tire dúvidas sobre este tópico.
-            </p>
-            <Button
-              variant="ghost"
-              className="shrink-0"
-              onClick={onOpenMentor}
-              data-testid="open-mentor-drawer"
-            >
-              Chat →
-            </Button>
-          </div>
 
           {onOpenTutor && (
             <div className="flex items-center justify-between gap-3 rounded-md border border-accent/30 bg-surface px-3 py-3">

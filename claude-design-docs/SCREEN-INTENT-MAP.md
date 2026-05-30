@@ -67,7 +67,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; single `h-9` action `mentor-report-link` + `FileText`; optional `trail-study-summary`.
 
-**Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description on canvas card only. Status/mastery, study progress, collapsible outcomes/refs/tasks (default expanded), compact `open-mentor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
+**Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description callout when no knowledge gaps. Status/mastery, study progress, collapsible outcomes/refs/tasks (default expanded), optional `open-tutor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
 
 **Loading:** `vertical-spine-skeleton` placeholder spine (no lone text spinner as primary feedback).
 
@@ -116,7 +116,7 @@ Playwright Gate B targets:
 - `data-testid="roadmap-node-{id}-checklist-progress"` (canvas card compact bar)
 - `data-testid="artifact-topbar"` · `data-testid="trail-study-summary"` · `data-testid="mentor-report-link"`
 - `data-testid="vertical-spine-skeleton"` · `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
-- `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-mentor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
+- `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-tutor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
 - `data-testid="validation-score"`
 
 See [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md).
