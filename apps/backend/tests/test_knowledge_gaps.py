@@ -257,6 +257,81 @@ class TestGapFeedbackLoop:
         assert "rate limiting" in study_block.get("open_gaps", [])
 
 
+class TestRemediationTasks:
+    def _gap_tasks(self, client, user_id: str) -> list[dict]:
+        roadmap = client.get("/roadmap/", params={"user_id": user_id}).json()
+        node = next(n for n in roadmap["nodes"] if n["node_id"] == NODE_ID)
+        return [task for task in node["tasks"] if task.get("source") == "gap"]
+
+    def test_high_gap_injects_remediation_task(self, client) -> None:
+        _sync_node(client, "rem-inject")
+        uid = _user_id("rem-inject")
+        with SessionLocal() as session:
+            svc.upsert_knowledge_gap(
+                session,
+                user_id=uid,
+                skill_node_id=NODE_ID,
+                draft=KnowledgeGapDraft(
+                    concept="streaming SSE",
+                    severity="high",
+                    suggested_remediation="praticar streaming token a token",
+                ),
+            )
+            session.flush()
+            svc.sync_remediation_tasks(session, user_id=uid, skill_node_id=NODE_ID)
+            session.commit()
+
+        gap_tasks = self._gap_tasks(client, "rem-inject")
+        assert len(gap_tasks) == 1
+        assert gap_tasks[0]["title"].startswith("Reforçar")
+        assert "praticar streaming" in gap_tasks[0]["evidence_prompt"]
+
+        # original (non-gap) task is preserved
+        roadmap = client.get("/roadmap/", params={"user_id": "rem-inject"}).json()
+        node = next(n for n in roadmap["nodes"] if n["node_id"] == NODE_ID)
+        assert any(task.get("source") != "gap" for task in node["tasks"])
+
+    def test_remediation_idempotent_then_resolved(self, client) -> None:
+        _sync_node(client, "rem-idem")
+        uid = _user_id("rem-idem")
+        with SessionLocal() as session:
+            svc.upsert_knowledge_gap(
+                session,
+                user_id=uid,
+                skill_node_id=NODE_ID,
+                draft=KnowledgeGapDraft(concept="retry/backoff", severity="high"),
+            )
+            session.flush()
+            svc.sync_remediation_tasks(session, user_id=uid, skill_node_id=NODE_ID)
+            svc.sync_remediation_tasks(session, user_id=uid, skill_node_id=NODE_ID)
+            session.commit()
+        assert len(self._gap_tasks(client, "rem-idem")) == 1
+
+        with SessionLocal() as session:
+            svc.resolve_concepts(
+                session, user_id=uid, skill_node_id=NODE_ID, concepts=["retry/backoff"]
+            )
+            session.flush()
+            svc.sync_remediation_tasks(session, user_id=uid, skill_node_id=NODE_ID)
+            session.commit()
+        assert self._gap_tasks(client, "rem-idem") == []
+
+    def test_medium_gap_does_not_inject(self, client) -> None:
+        _sync_node(client, "rem-medium")
+        uid = _user_id("rem-medium")
+        with SessionLocal() as session:
+            svc.upsert_knowledge_gap(
+                session,
+                user_id=uid,
+                skill_node_id=NODE_ID,
+                draft=KnowledgeGapDraft(concept="cache de respostas", severity="medium"),
+            )
+            session.flush()
+            svc.sync_remediation_tasks(session, user_id=uid, skill_node_id=NODE_ID)
+            session.commit()
+        assert self._gap_tasks(client, "rem-medium") == []
+
+
 class TestMockInterviewGapLoop:
     def test_submit_records_gaps_then_resolves(self, client) -> None:
         """End-to-end: wrong answers create gaps; correct answers resolve them."""

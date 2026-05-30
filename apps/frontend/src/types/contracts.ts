@@ -91,6 +91,7 @@ export type RoadmapChecklistItem = {
   outcome?: string;
   evidence_prompt?: string;
   url?: string;
+  source?: string;
 };
 
 export type RoadmapNode = {

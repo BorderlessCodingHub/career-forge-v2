@@ -226,6 +226,14 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
                       <span className={task.done ? "opacity-70 line-through" : undefined}>
                         <p className="font-medium text-text-primary">
                           {task.title ?? "Tarefa prática"}
+                          {task.source === "gap" && (
+                            <span
+                              className="ml-2 rounded bg-warning/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-warning"
+                              data-testid="task-remediation-badge"
+                            >
+                              Adaptação
+                            </span>
+                          )}
                         </p>
                         {task.outcome && <p className="mt-1">{task.outcome}</p>}
                         {task.evidence_prompt && (
