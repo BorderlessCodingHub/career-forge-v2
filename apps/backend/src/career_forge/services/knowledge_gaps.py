@@ -8,6 +8,7 @@ fire-and-forget background task that opens its own DB session.
 
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import UTC, datetime
 
@@ -18,7 +19,11 @@ from sqlalchemy.orm import Session
 from career_forge.ai.tools.gap_classifier import classify_gaps
 from career_forge.db.models.knowledge_gap import KnowledgeGap
 from career_forge.db.models.user import User
+from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.session import SessionLocal
+
+REMEDIATION_PREFIX = "gap-rem-"
+REMEDIATION_SEVERITY = "high"
 from career_forge.schemas.knowledge_gap import (
     KnowledgeGapDraft,
     KnowledgeGapItem,
@@ -171,6 +176,77 @@ def list_open_gaps(
     ]
 
 
+def _concept_slug(concept: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", concept.lower()).strip("-")
+    return slug[:48] or "conceito"
+
+
+def _remediation_item(item_id: str, gap: KnowledgeGap) -> dict[str, str]:
+    return {
+        "type": "task",
+        "id": item_id,
+        "title": f"Reforçar: {gap.concept}",
+        "outcome": "Fechar a lacuna detectada no mock interview",
+        "evidence_prompt": gap.suggested_remediation or f"Demonstre domínio de {gap.concept}",
+        "source": "gap",
+    }
+
+
+def sync_remediation_tasks(
+    session: Session,
+    *,
+    user_id: uuid.UUID,
+    skill_node_id: str,
+) -> None:
+    """Reconcile remediation tasks on a node against its open high-severity gaps (HAC-69).
+
+    Idempotent (stable id per concept), self-cleaning (drops tasks whose gap resolved),
+    and preserves the node's existing tasks/references. Only mutates list-form evidence.
+    """
+    skill_row = session.scalar(
+        select(UserSkillNodeRow).where(
+            UserSkillNodeRow.user_id == user_id,
+            UserSkillNodeRow.skill_node_id == skill_node_id,
+        ),
+    )
+    if skill_row is None or isinstance(skill_row.evidence, dict):
+        return
+
+    high_gaps = session.scalars(
+        select(KnowledgeGap).where(
+            KnowledgeGap.user_id == user_id,
+            KnowledgeGap.skill_node_id == skill_node_id,
+            KnowledgeGap.status == "open",
+            KnowledgeGap.severity == REMEDIATION_SEVERITY,
+        ),
+    ).all()
+    desired = {f"{REMEDIATION_PREFIX}{_concept_slug(gap.concept)}": gap for gap in high_gaps}
+
+    evidence = list(skill_row.evidence or [])
+    kept: list[dict] = []
+    seen: set[str] = set()
+    for item in evidence:
+        is_remediation = (
+            isinstance(item, dict)
+            and item.get("type") == "task"
+            and str(item.get("id", "")).startswith(REMEDIATION_PREFIX)
+        )
+        if not is_remediation:
+            kept.append(item)
+            continue
+        item_id = str(item.get("id"))
+        if item_id in desired and item_id not in seen:
+            kept.append(_remediation_item(item_id, desired[item_id]))
+            seen.add(item_id)
+
+    for item_id, gap in desired.items():
+        if item_id not in seen:
+            kept.append(_remediation_item(item_id, gap))
+            seen.add(item_id)
+
+    skill_row.evidence = kept
+
+
 def _best_effort_learner_summary(
     session: Session,
     user_id: str,
@@ -225,6 +301,10 @@ def classify_and_store_gaps(
                         skill_node_id=node_id,
                         draft=draft,
                     )
+
+            # Flush so resolved/upserted gaps are visible before reconciling tasks (autoflush off).
+            session.flush()
+            sync_remediation_tasks(session, user_id=user.id, skill_node_id=node_id)
 
             session.commit()
         except Exception:

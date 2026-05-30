@@ -123,6 +123,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-66** — Mock interview on-topic (LLM commits to technical subject, forbids study logistics, grounds in references)
 - [x] **HAC-67** — Knowledge gap ledger + async classifier (`knowledge_gaps` table, fire-and-forget gap classification, searchable memory)
 - [x] **HAC-68** — Close the adaptive loop (mentor reads gaps, next mock weights gaps, drawer "Focos da última tentativa")
+- [x] **HAC-69** — Forge re-plan remediation (high-severity gaps inject self-cleaning remediation tasks into the chapter, "Adaptação" badge)
 
 ---
 

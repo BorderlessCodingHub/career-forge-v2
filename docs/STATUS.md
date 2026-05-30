@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-66/67/68** (adaptive mock interview loop — on-topic MCQ, knowledge gap memory, feedback loop)
+Last updated: **2026-05-30** · Last merge: **HAC-69** (forge re-plan — remediation tasks injected into chapters from knowledge gaps)
 
 ---
 
@@ -53,6 +53,7 @@ Last updated: **2026-05-30** · Last merge: **HAC-66/67/68** (adaptive mock inte
 | Mock interview on-topic | ✅ Done | HAC-66 — generator commits to technical subject, forbids study-logistics questions, grounds in references; per-question concept |
 | Knowledge gap ledger (adaptive memory) | ✅ Done | HAC-67 — `knowledge_gaps` table; async fire-and-forget classifier (concept/severity/remediation); ON CONFLICT upsert; correct answers resolve gaps |
 | Adaptive loop closed | ✅ Done | HAC-68 — mentor reads concept-level gaps, next mock targets open gaps (gap_probe), node drawer shows "Focos da última tentativa", `GET /knowledge-gaps` |
+| Chapter reacts to gaps (remediation) | ✅ Done | HAC-69 — open high-severity gaps inject self-cleaning remediation tasks into the node (stable id, resolved-aware); drawer "Adaptação" badge |
 
 ---
 
