@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { useArtifactChrome } from "@/components/layout/ArtifactChromeContext";
 import {
   getTrailChecklistProgressPct,
   MentorDrawer,
@@ -13,6 +12,7 @@ import {
   VerticalSpineShell,
   VerticalSpineSkeleton,
 } from "@/components/roadmap";
+import { TrailProgressRing } from "@/components/ui/TrailProgressRing";
 import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session";
 import { getRoadmap, patchRoadmapChecklist, syncRoadmap } from "@/lib/api-client";
 import { clearForgeGraph, getForgeGraph } from "@/lib/forge-session";
@@ -35,7 +35,6 @@ export default function RoadmapArtifactPageContent() {
   const adaptiveMode = searchParams.get("adaptive") === "1";
   const nodeFromQuery = searchParams.get("node");
   const prevAdaptiveMode = useRef<boolean | null>(null);
-  const { setChrome, clearChrome } = useArtifactChrome();
 
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
   const [highlightNodeId, setHighlightNodeId] = useState<string | null>(null);
@@ -115,12 +114,7 @@ export default function RoadmapArtifactPageContent() {
     prevAdaptiveMode.current = adaptiveMode;
   }, [adaptiveMode]);
 
-  useEffect(() => {
-    setChrome({
-      trailProgressPct: roadmap ? getTrailChecklistProgressPct(roadmap.nodes) : null,
-    });
-    return () => clearChrome();
-  }, [roadmap, setChrome, clearChrome]);
+  const trailProgressPct = roadmap ? getTrailChecklistProgressPct(roadmap.nodes) : null;
 
   const selectedNode: RoadmapNode | null =
     roadmap?.nodes.find((node) => node.node_id === selectedNodeId) ?? null;
@@ -190,6 +184,14 @@ export default function RoadmapArtifactPageContent() {
               ? "A trilha reagiu ao seu desempenho — revise o nó destacado antes de avançar."
               : "Clique em um nó para ver status, referências e validar mastery."}
           </p>
+          {trailProgressPct != null && (
+            <div className="mt-4 flex flex-col items-center gap-1.5">
+              <TrailProgressRing percent={trailProgressPct} />
+              <p className="text-[10px] uppercase tracking-widest text-text-muted">
+                Progresso de estudo
+              </p>
+            </div>
+          )}
         </div>
 
         {loading && <VerticalSpineSkeleton />}

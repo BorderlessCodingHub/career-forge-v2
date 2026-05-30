@@ -103,8 +103,8 @@
 | Layout | Full-width vertical spine; nodes alternating left/right; category headers |
 | Reference | [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) |
 | Chrome | **No** onboarding stepper (01 Objetivo … 07 Adaptação); **no** fixed progress/evidence/mentor sidebar |
-| Top bar | Career Forge logo + **Sua trilha** track name; right cluster **`items-end`** — **`mentor-report-link`** action bottom-aligned with track title line; same `topbarActionClass` (`h-9`); relatório = `h-7` icon slot + `FileText` + label; optional compact **`trail-progress-ring`** beside track block (`getTrailChecklistProgressPct` — item-pooled checklist %, not mastery %, not topic-average); mentor via node drawer only |
-| Page intro | Subtitle/hint only — **no** duplicate track `<h1>` on canvas |
+| Top bar | Career Forge logo + **Sua trilha** track name; right cluster **`items-end`** — **`mentor-report-link`** action bottom-aligned with track title line; same `topbarActionClass` (`h-9`); relatório = `h-7` icon slot + `FileText` + label; **no** progress ring in topbar; mentor via node drawer only |
+| Page intro | Subtitle/hint + optional centered **`trail-progress-ring`** below subtitle (`getTrailChecklistProgressPct` — item-pooled checklist %, not mastery %, not topic-average) + **Progresso de estudo** label — **no** duplicate track `<h1>` on canvas |
 | Canvas nodes | **Uniform** Borderless purple cards — compact **study** progress (`x/y` + mint bar) when checklist items exist; **mastery %** and status detail stay in **node drawer** only |
 | Interaction | **Click node** → right drawer: title, red **✕** dismiss, Escape to close, status/mastery, study progress, description callout when no gaps, collapsible outcomes/refs/tasks (default expanded), optional tutor row, sticky CTA **Mock interview — validar mastery** |
 | Personalization | Graph state still adaptive (backend recalibrates) — visible in drawer, not canvas pollution |

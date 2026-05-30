@@ -57,7 +57,7 @@ Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; r
 
 | Role | Classes | Use |
 |------|---------|-----|
-| Progress ring | ~44px SVG, `stroke-accent-mint`, center `%` label `text-[10px]` | `trail-progress-ring` in artifact topbar — `getTrailChecklistProgressPct`: same per-topic checklist math as canvas, item-pooled across topics (not mastery %, not topic-average) |
+| Progress ring | ~44px SVG, `stroke-accent-mint`, center `%` label `text-[10px]` | `trail-progress-ring` in **page intro** (below subtitle) — `getTrailChecklistProgressPct`: same per-topic checklist math as canvas, item-pooled across topics (not mastery %, not topic-average) |
 
 ### CSS variables (`prototype/styles.css`)
 

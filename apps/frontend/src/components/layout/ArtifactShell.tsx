@@ -4,10 +4,6 @@ import type { HTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
 import { FileText } from "lucide-react";
 
-import { TrailProgressRing } from "@/components/ui/TrailProgressRing";
-
-import { useArtifactChromeOptional } from "./ArtifactChromeContext";
-
 const topbarActionClass =
   "inline-flex h-9 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium text-text-secondary transition hover:border-accent/40 hover:bg-surface hover:text-text-primary";
 
@@ -25,9 +21,6 @@ export function ArtifactShell({
   children,
   ...props
 }: ArtifactShellProps) {
-  const chrome = useArtifactChromeOptional();
-  const trailProgressPct = chrome?.trailProgressPct ?? null;
-
   return (
     <div className={`flex min-h-screen flex-col bg-bg ${className}`} data-mode="artifact" {...props}>
       <header
@@ -45,22 +38,17 @@ export function ArtifactShell({
         </div>
 
         <div className="flex flex-wrap items-end justify-end gap-2 sm:gap-3">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Link href="/report" className={topbarActionClass} data-testid="mentor-report-link">
-              <span className={topbarActionIconSlotClass} aria-hidden>
-                <FileText className="h-4 w-4" />
-              </span>
-              <span>Relatório mentor</span>
-            </Link>
-          </div>
-          <div className="flex items-end gap-2 sm:gap-3">
-            <div className="text-right">
-              <p className="text-[10px] uppercase tracking-widest text-text-muted">Sua trilha</p>
-              <p className="text-sm font-medium text-text-primary">
-                {trackName ?? "Carregando trilha…"}
-              </p>
-            </div>
-            {trailProgressPct != null && <TrailProgressRing percent={trailProgressPct} />}
+          <Link href="/report" className={topbarActionClass} data-testid="mentor-report-link">
+            <span className={topbarActionIconSlotClass} aria-hidden>
+              <FileText className="h-4 w-4" />
+            </span>
+            <span>Relatório mentor</span>
+          </Link>
+          <div className="text-right">
+            <p className="text-[10px] uppercase tracking-widest text-text-muted">Sua trilha</p>
+            <p className="text-sm font-medium text-text-primary">
+              {trackName ?? "Carregando trilha…"}
+            </p>
           </div>
         </div>
       </header>

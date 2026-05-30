@@ -144,14 +144,17 @@ Após animação → navega para steady state (`/roadmap`).
 
 **Artifact topbar (`/roadmap`):**
 - Nome da trilha só no topbar (`Sua trilha`) — página sem `<h1>` duplicado
-- **`mentor-report-link`** no topbar (`FileText` + label)
-- Anel compacto **`trail-progress-ring`** ao lado do nome da trilha — % de itens de checklist concluídos (não mastery %); oculto quando não há itens
+- **`mentor-report-link`** no topbar (`FileText` + label) — sem anel de progresso no topbar
+
+**Intro da trilha (canvas, abaixo do subtítulo):**
+- Anel compacto **`trail-progress-ring`** centralizado — % de itens de checklist concluídos (não mastery %); oculto quando não há itens
+- Rótulo **Progresso de estudo** abaixo do anel
+- `getTrailChecklistProgressPct` alimenta o anel — mesma matemática de `getChecklistProgress` por tópico, somando concluídos/total em pool (ex.: 11+9+5=25 itens; não média de % por tópico)
 
 **Node drawer:**
 - Título no header + **✕** vermelho (`aria-label="Fechar detalhes"`) + **Escape** para fechar
 - Callout de **descrição** no drawer quando não há lacunas de conhecimento; bloco de lacunas substitui o callout após validação falha
 - Seções colapsáveis — **Resultados esperados**, **Tarefas práticas** e **Referências** abertas por padrão (usuário pode recolher); CTA validar fixo no rodapé
-- `getTrailChecklistProgressPct` alimenta `trail-progress-ring` no topbar — mesma matemática de `getChecklistProgress` por tópico, somando concluídos/total em pool (ex.: 11+9+5=25 itens; não média de % por tópico)
 - Seção **Tarefas práticas** quando o grafo vem de `StudyPlan` — checkbox por item (opcional, não bloqueia mastery)
 - Seção **Referências** (links reais quando vindos de web search) — marcar como lidas
 - Barra **Progresso de estudo** (`x/y` concluídos) quando há itens; copy deixa claro que isso não substitui validação por IA
