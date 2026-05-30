@@ -65,7 +65,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Canvas cards:** When `checklist_total > 0`, `SkillNode` shows compact `ChecklistProgress` (`roadmap-node-{id}-checklist-progress`) — `x/y` + thin mint bar only.
 
-**Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; single `h-9` action `mentor-report-link` + `FileText`; optional `trail-study-summary`.
+**Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; single `h-9` action `mentor-report-link` + `FileText`; optional `trail-progress-ring` beside track block (`getTrailChecklistProgressPct`, item-pooled).
 
 **Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description callout when no knowledge gaps. Status/mastery, study progress, collapsible outcomes/refs/tasks (default expanded), optional `open-tutor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
 
@@ -114,7 +114,7 @@ Playwright Gate B targets:
 - `data-testid="forge-timeline"`
 - `data-testid="vertical-roadmap"`
 - `data-testid="roadmap-node-{id}-checklist-progress"` (canvas card compact bar)
-- `data-testid="artifact-topbar"` · `data-testid="trail-study-summary"` · `data-testid="mentor-report-link"`
+- `data-testid="artifact-topbar"` · `data-testid="trail-progress-ring"` · `data-testid="mentor-report-link"`
 - `data-testid="vertical-spine-skeleton"` · `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
 - `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-tutor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
 - `data-testid="validation-score"`

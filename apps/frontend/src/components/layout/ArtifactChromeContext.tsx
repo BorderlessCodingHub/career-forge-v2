@@ -10,7 +10,7 @@ import {
 } from "react";
 
 export type ArtifactChromeState = {
-  trailSummary?: string | null;
+  trailProgressPct?: number | null;
 };
 
 type ArtifactChromeContextValue = ArtifactChromeState & {

@@ -140,14 +140,14 @@ UX flow from [UX-FLOW.md](./UX-FLOW.md) does **not** change:
 | Editable diagnosis | Full-width content inside shell or simplified chrome |
 | Forge stream | Timeline column; **hide canvas nodes** until reveal |
 | Reveal | Canvas fades in; nodes materialize from stream |
-| Steady `/roadmap` | `ArtifactShell` topbar (track name, `mentor-report-link`, optional trail study summary) + vertical spine canvas; mentor via node drawer; **no** duplicate page `<h1>` |
+| Steady `/roadmap` | `ArtifactShell` topbar (track name, `mentor-report-link`, optional `trail-progress-ring`) + vertical spine canvas; mentor via node drawer; **no** duplicate page `<h1>` |
 
 ### Artifact topbar + mentor (Next.js — 2026-05-28)
 
 | Element | Spec |
 |---------|------|
 | **`MentorAvatar`** | `bg-gradient-to-br from-accent-mint to-accent` — brand ribbon; used in `MentorDrawer` header |
-| **`trail-study-summary`** | `text-accent-mint text-xs` — aggregate checklist topics started (`x/y tópicos com estudo iniciado`); not mastery % |
+| **`trail-progress-ring`** | ~44px compact SVG ring, `accent-mint` stroke, center `%` — `getTrailChecklistProgressPct`: per-topic `getChecklistProgress` stats item-pooled (`sum completed / sum total`); hidden when no checklist items |
 | **Topbar ghost actions** | Shared `topbarActionClass` — `h-9` bordered pill, `hover:bg-surface`; `h-7` leading slot (centered `FileText`); right cluster `items-end` so actions align to track title baseline |
 | **Spine selection** | Active row dot: `border-accent-mint`, `shadow-[0_0_12px_var(--mint-glow)]` |
 | **Loading** | `vertical-spine-skeleton` pulse placeholders — not a lone text spinner |

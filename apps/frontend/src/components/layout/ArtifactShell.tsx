@@ -4,6 +4,8 @@ import type { HTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
 import { FileText } from "lucide-react";
 
+import { TrailProgressRing } from "@/components/ui/TrailProgressRing";
+
 import { useArtifactChromeOptional } from "./ArtifactChromeContext";
 
 const topbarActionClass =
@@ -24,7 +26,7 @@ export function ArtifactShell({
   ...props
 }: ArtifactShellProps) {
   const chrome = useArtifactChromeOptional();
-  const trailSummary = chrome?.trailSummary ?? null;
+  const trailProgressPct = chrome?.trailProgressPct ?? null;
 
   return (
     <div className={`flex min-h-screen flex-col bg-bg ${className}`} data-mode="artifact" {...props}>
@@ -51,19 +53,14 @@ export function ArtifactShell({
               <span>Relatório mentor</span>
             </Link>
           </div>
-          <div className="text-right">
-            {trailSummary && (
-              <p
-                className="mb-0.5 text-xs text-accent-mint"
-                data-testid="trail-study-summary"
-              >
-                {trailSummary}
+          <div className="flex items-end gap-2 sm:gap-3">
+            <div className="text-right">
+              <p className="text-[10px] uppercase tracking-widest text-text-muted">Sua trilha</p>
+              <p className="text-sm font-medium text-text-primary">
+                {trackName ?? "Carregando trilha…"}
               </p>
-            )}
-            <p className="text-[10px] uppercase tracking-widest text-text-muted">Sua trilha</p>
-            <p className="text-sm font-medium text-text-primary">
-              {trackName ?? "Carregando trilha…"}
-            </p>
+            </div>
+            {trailProgressPct != null && <TrailProgressRing percent={trailProgressPct} />}
           </div>
         </div>
       </header>

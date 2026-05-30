@@ -1,19 +1,9 @@
 import type { RoadmapNode } from "@/types/contracts";
 
-export type ChecklistProgressStats = {
-  total: number;
-  completed: number;
-  percent: number;
-};
+import { getChecklistProgress } from "./checklist-progress-stats";
 
-export function getChecklistProgress(node: RoadmapNode): ChecklistProgressStats {
-  const total = node.checklist_total ?? node.tasks.length + node.references.length;
-  const completed =
-    node.checklist_completed ??
-    [...node.tasks, ...node.references].filter((item) => item.done).length;
-  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-  return { total, completed, percent };
-}
+export type { ChecklistProgressStats } from "./checklist-progress-stats";
+export { getChecklistProgress, getTrailChecklistProgressPct } from "./checklist-progress-stats";
 
 type ChecklistProgressProps = {
   node: RoadmapNode;

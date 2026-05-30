@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 import { useArtifactChrome } from "@/components/layout/ArtifactChromeContext";
 import {
+  getTrailChecklistProgressPct,
   MentorDrawer,
   NodeDrawer,
   TutorDrawer,
@@ -15,7 +16,6 @@ import {
 import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session";
 import { getRoadmap, patchRoadmapChecklist, syncRoadmap } from "@/lib/api-client";
 import { clearForgeGraph, getForgeGraph } from "@/lib/forge-session";
-import { computeTrailStudySummary } from "@/lib/trail-study-summary";
 import type {
   ForgeGraphNode,
   RoadmapNode,
@@ -117,7 +117,7 @@ export default function RoadmapArtifactPageContent() {
 
   useEffect(() => {
     setChrome({
-      trailSummary: roadmap ? computeTrailStudySummary(roadmap.nodes) : null,
+      trailProgressPct: roadmap ? getTrailChecklistProgressPct(roadmap.nodes) : null,
     });
     return () => clearChrome();
   }, [roadmap, setChrome, clearChrome]);

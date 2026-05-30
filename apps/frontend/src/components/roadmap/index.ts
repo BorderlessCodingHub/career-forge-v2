@@ -1,4 +1,8 @@
-export { ChecklistProgress, getChecklistProgress } from "./ChecklistProgress";
+export {
+  ChecklistProgress,
+  getChecklistProgress,
+  getTrailChecklistProgressPct,
+} from "./ChecklistProgress";
 export { MentorDrawer } from "./MentorDrawer";
 export { NodeDrawer } from "./NodeDrawer";
 export { SkillNode } from "./SkillNode";
