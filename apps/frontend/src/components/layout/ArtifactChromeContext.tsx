@@ -11,7 +11,6 @@ import {
 
 export type ArtifactChromeState = {
   trailSummary?: string | null;
-  onOpenMentor?: (() => void) | null;
 };
 
 type ArtifactChromeContextValue = ArtifactChromeState & {

@@ -122,11 +122,10 @@ export default function RoadmapArtifactPageContent() {
 
   useEffect(() => {
     setChrome({
-      onOpenMentor: openMentor,
       trailSummary: roadmap ? computeTrailStudySummary(roadmap.nodes) : null,
     });
     return () => clearChrome();
-  }, [roadmap, openMentor, setChrome, clearChrome]);
+  }, [roadmap, setChrome, clearChrome]);
 
   const selectedNode: RoadmapNode | null =
     roadmap?.nodes.find((node) => node.node_id === selectedNodeId) ?? null;
@@ -197,16 +196,6 @@ export default function RoadmapArtifactPageContent() {
               : "Clique em um nó para ver status, referências e validar mastery."}
           </p>
         </div>
-
-        {adaptiveSessionMissing && (
-          <p
-            className="mx-auto mt-4 max-w-lg rounded-md border border-warning/30 bg-warning/10 p-3 text-center text-sm text-warning"
-            data-testid="adaptive-session-missing"
-          >
-            Sessão adaptativa não encontrada — mostrando a trilha atual do servidor. Refaça a
-            validação para gerar uma nova ramificação.
-          </p>
-        )}
 
         {planUpdate && showingAdaptiveView && <MissionBanner plan={planUpdate} />}
 

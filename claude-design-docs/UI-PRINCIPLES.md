@@ -122,9 +122,9 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `PrimaryButton` / `GhostButton` | Actions |
 | `DeployBadge` | Global fixed footer (`z-auto`) — deploy SHA/time + API health dot; stays **below** drawers (`z-40`/`z-50`); `local dev` when build env unset |
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); driven by `checklist_completed` / `checklist_total` |
-| `ArtifactChromeContext` | Client provider in `ArtifactShellLayout`; `/roadmap` sets `onOpenMentor` + `trailSummary` for topbar |
-| `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); paired ghost actions in `flex items-center` group, share `topbarActionClass` (`h-9`); optional `trail-study-summary`; track name right |
-| `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — mentor topbar + `MentorDrawer` |
+| `ArtifactChromeContext` | Client provider in `ArtifactShellLayout`; `/roadmap` sets `trailSummary` for topbar |
+| `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); single `mentor-report-link` ghost action (`topbarActionClass`, `h-9`); optional `trail-study-summary`; track name right |
+| `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — `MentorDrawer` header only |
 | `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) |
 | `NodeDrawer` study checklist | Right drawer: collapsible sections, compact mentor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
@@ -143,7 +143,7 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 | Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes |
-| Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-cta`, optional `trail-study-summary`; page subtitle only (no duplicate `<h1>`); `VerticalSpineSkeleton` loading; spine + uniform nodes; **click node** → accordion drawer + sticky validate CTA; mentor also via topbar / compact drawer link |
+| Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-report-link`, optional `trail-study-summary`; page subtitle only (no duplicate `<h1>`); `VerticalSpineSkeleton` loading; spine + uniform nodes; **click node** → accordion drawer + sticky validate CTA; mentor via compact drawer link only |
 | Validation | Focus mode — question card dominant, minimal chrome |
 | Mentor | AI sidebar or drawer on roadmap — contextual, not full page |
 

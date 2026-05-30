@@ -103,7 +103,7 @@
 | Layout | Full-width vertical spine; nodes alternating left/right; category headers |
 | Reference | [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) |
 | Chrome | **No** onboarding stepper (01 Objetivo … 07 Adaptação); **no** fixed progress/evidence/mentor sidebar |
-| Top bar | Career Forge logo + **Sua trilha** track name; right cluster **`items-end`** — mentor + relatório actions bottom-aligned with track title line; same `topbarActionClass` (`h-9`); mentor = `h-7` avatar + label; relatório = `h-7` icon slot + `FileText` + label; optional **`trail-study-summary`** above track label (aggregate study progress, not mastery %) |
+| Top bar | Career Forge logo + **Sua trilha** track name; right cluster **`items-end`** — **`mentor-report-link`** action bottom-aligned with track title line; same `topbarActionClass` (`h-9`); relatório = `h-7` icon slot + `FileText` + label; optional **`trail-study-summary`** above track label (aggregate study progress, not mastery %); mentor via node drawer only |
 | Page intro | Subtitle/hint only — **no** duplicate track `<h1>` on canvas |
 | Canvas nodes | **Uniform** Borderless purple cards — compact **study** progress (`x/y` + mint bar) when checklist items exist; **mastery %** and status detail stay in **node drawer** only |
 | Interaction | **Click node** → right drawer: title (description on **canvas card** only), red **✕** dismiss, Escape to close, status/mastery, study progress, collapsible outcomes/refs/tasks, compact mentor **Chat →**, sticky CTA **Mock interview — validar mastery** |

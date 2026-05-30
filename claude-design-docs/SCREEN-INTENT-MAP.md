@@ -65,7 +65,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Canvas cards:** When `checklist_total > 0`, `SkillNode` shows compact `ChecklistProgress` (`roadmap-node-{id}-checklist-progress`) — `x/y` + thin mint bar only.
 
-**Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; paired `h-9` actions in `flex items-center` group (`mentor-cta`, `mentor-report-link` + `FileText`); optional `trail-study-summary`.
+**Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; single `h-9` action `mentor-report-link` + `FileText`; optional `trail-study-summary`.
 
 **Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description on canvas card only. Status/mastery, study progress, collapsible outcomes/refs/tasks, compact `open-mentor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
 
@@ -75,7 +75,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 Interview + score. Unchanged.
 
 ### 7. Adaptive Roadmap (`/roadmap` updated)
-Roadmap reacts post-validation. Mentor via drawer or AI sidebar.
+Roadmap reacts post-validation. Mentor via node drawer only. `?adaptive=1` without stored session → silent server fallback (no warning banner).
 
 ---
 
@@ -114,7 +114,7 @@ Playwright Gate B targets:
 - `data-testid="forge-timeline"`
 - `data-testid="vertical-roadmap"`
 - `data-testid="roadmap-node-{id}-checklist-progress"` (canvas card compact bar)
-- `data-testid="artifact-topbar"` · `data-testid="mentor-cta"` (topbar on `/roadmap`) · `data-testid="trail-study-summary"`
+- `data-testid="artifact-topbar"` · `data-testid="trail-study-summary"` · `data-testid="mentor-report-link"`
 - `data-testid="vertical-spine-skeleton"` · `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
 - `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-mentor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
 - `data-testid="validation-score"`

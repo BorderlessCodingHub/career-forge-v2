@@ -144,7 +144,8 @@ Após animação → navega para steady state (`/roadmap`).
 
 **Artifact topbar (`/roadmap`):**
 - Nome da trilha só no topbar (`Sua trilha`) — página sem `<h1>` duplicado
-- **`mentor-cta`** no topbar (avatar mint→roxo); resumo opcional `trail-study-summary` (estudo iniciado, não mastery %)
+- **`mentor-report-link`** no topbar (`FileText` + label); resumo opcional `trail-study-summary` (estudo iniciado, não mastery %)
+- Mentor contextual via **`open-mentor-drawer`** no drawer do nó (sem botão mentor no topbar)
 
 **Node drawer:**
 - Título no header + **✕** vermelho (`aria-label="Fechar detalhes"`) + **Escape** para fechar
@@ -178,7 +179,7 @@ Após animação → navega para steady state (`/roadmap`).
 | | |
 |---|---|
 | **Old** | Graph diff + mentor drawer |
-| **New** | Vertical roadmap atualiza nós/status; mentor pode ser drawer ou extensão do AI sidebar |
+| **New** | Vertical roadmap atualiza nós/status; mentor via drawer do nó (`open-mentor-drawer`); `?adaptive=1` sem sessão → fallback silencioso para trilha do servidor (sem banner de aviso) |
 | **Route** | `/roadmap` · `data-screen="adaptive-state"` |
 
 ---
