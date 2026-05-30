@@ -61,7 +61,7 @@ Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; r
 | Revisar | 2px solid `bg-warning` | Node status `revisar` |
 | Selected | 2px solid `bg-accent-mint` | Active spine row selection |
 
-### Trail progress ring (artifact topbar)
+### Trail progress ring (artifact page intro)
 
 | Role | Classes | Use |
 |------|---------|-----|

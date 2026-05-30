@@ -15,7 +15,7 @@ Career Forge lives inside the **Borderless** ecosystem. Steady-state UI should m
 | Background | `#0D0B14` deep purple-black — not navy `#0B0F19` |
 | Nodes | Vibrant purple cards `#6B4CE6` with cyan/mint progress `#2DD4BF` |
 | Accent | Logo purple `#7C3AED` — CTAs, active nav pill |
-| Connections | Dashed grey lines with arrowheads |
+| Connections | Code Breakers graph ref: dashed grey lines with arrowheads; **artifact vertical spine (shipped):** solid 2px status-colored card↔dot connectors (`roadmap-connector-{id}`) |
 | Canvas | Dot grid; zoom controls bottom-left; minimap bottom-right |
 
 **References:** [borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) · [borderless-logo-brand.png](./references/borderless-logo-brand.png)

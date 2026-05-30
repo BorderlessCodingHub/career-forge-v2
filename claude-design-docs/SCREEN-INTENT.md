@@ -149,8 +149,10 @@
 | Editable diagnosis | `diagnosis-editable` |
 | Forge timeline | `forge-timeline` |
 | Vertical roadmap | `vertical-roadmap` |
+| Trail progress ring | `trail-progress-ring` (page intro, not topbar) |
+| Spine canvas | `vertical-spine` · `roadmap-connector-{id}` |
 | Validation score | `validation-score` |
 
 ---
 
-*Last updated: HAC-25 — artifact mode steady state; HAC-26 backlog audit*
+*Last updated: 2026-05-30 — solid spine connectors + page-intro trail progress ring*
