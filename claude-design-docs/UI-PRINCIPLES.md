@@ -116,17 +116,17 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `SkillNodeCard` | Graph nodes + detail panel |
 | `StatusPill` | All six status enums |
 | `ScoreRing` | Validation result 0–100 |
-| `MissionBanner` | Top-of-dashboard next action |
 | `ForgeTimelineItem` | reasoning / artifact / decision rows |
 | `ChatBubble` | Onboarding + mentor |
 | `PrimaryButton` / `GhostButton` | Actions |
 | `DeployBadge` | Global fixed footer (`z-auto`) — deploy SHA/time + API health dot; stays **below** drawers (`z-40`/`z-50`); `local dev` when build env unset |
-| `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); driven by `checklist_completed` / `checklist_total` |
-| `ArtifactChromeContext` | Client provider in `ArtifactShellLayout`; `/roadmap` sets `onOpenMentor` + `trailSummary` for topbar |
-| `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); paired ghost actions in `flex items-center` group, share `topbarActionClass` (`h-9`); optional `trail-study-summary`; track name right |
-| `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — mentor topbar + `MentorDrawer` |
+| `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); stats from `checklist-progress-stats.ts` |
+| `checklist-progress-stats` | Pure helpers: `getChecklistProgress` (per topic) + `getTrailChecklistProgressPct` (item-pooled across topics via `sum completed / sum total`) |
+| `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); single `mentor-report-link` ghost action (`topbarActionClass`, `h-9`); track name right — **no** progress ring |
+| `TrailProgressRing` | Compact ~44px SVG ring in **page intro** (below subtitle) — item-pooled checklist % (`accent-mint` stroke); **Progresso de estudo** label; hidden when no checklist items |
+| `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — `MentorDrawer` header only |
 | `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) |
-| `NodeDrawer` study checklist | Right drawer: collapsible sections, compact mentor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
+| `NodeDrawer` study checklist | Right drawer: collapsible sections default open, optional tutor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
 | Dismiss icon button | Square `h-9 w-9`, `text-red-400`, hover/focus `red-900/60` on dark elevated surfaces (drawer close); row delete uses lighter `text-red-500` + `red-500/10` (`EditableDiagnosis`) — same family, different weight |
 
@@ -143,9 +143,9 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 | Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes |
-| Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-cta`, optional `trail-study-summary`; page subtitle only (no duplicate `<h1>`); `VerticalSpineSkeleton` loading; spine + uniform nodes; **click node** → accordion drawer + sticky validate CTA; mentor also via topbar / compact drawer link |
+| Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-report-link` only; page intro = subtitle + optional centered `trail-progress-ring`; `VerticalSpineSkeleton` loading; spine + uniform nodes; **click node** → accordion drawer + sticky validate CTA; optional tutor row in drawer |
 | Validation | Focus mode — question card dominant, minimal chrome |
-| Mentor | AI sidebar or drawer on roadmap — contextual, not full page |
+| Mentor | Relatório via topbar `mentor-report-link`; no contextual chat drawer on artifact canvas |
 
 Desktop-first **1280px**. Mobile responsive nice-to-have for hackathon.
 

@@ -3,9 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { useArtifactChrome } from "@/components/layout/ArtifactChromeContext";
 import {
-  MissionBanner,
+  getTrailChecklistProgressPct,
   MentorDrawer,
   NodeDrawer,
   TutorDrawer,
@@ -13,13 +12,12 @@ import {
   VerticalSpineShell,
   VerticalSpineSkeleton,
 } from "@/components/roadmap";
+import { TrailProgressRing } from "@/components/ui/TrailProgressRing";
 import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session";
 import { getRoadmap, patchRoadmapChecklist, syncRoadmap } from "@/lib/api-client";
 import { clearForgeGraph, getForgeGraph } from "@/lib/forge-session";
-import { computeTrailStudySummary } from "@/lib/trail-study-summary";
 import type {
   ForgeGraphNode,
-  PlanUpdateResponse,
   RoadmapNode,
   RoadmapResponse,
   RoadmapSyncNode,
@@ -37,10 +35,8 @@ export default function RoadmapArtifactPageContent() {
   const adaptiveMode = searchParams.get("adaptive") === "1";
   const nodeFromQuery = searchParams.get("node");
   const prevAdaptiveMode = useRef<boolean | null>(null);
-  const { setChrome, clearChrome } = useArtifactChrome();
 
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
-  const [planUpdate, setPlanUpdate] = useState<PlanUpdateResponse | null>(null);
   const [highlightNodeId, setHighlightNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [mentorOpen, setMentorOpen] = useState(false);
@@ -80,7 +76,6 @@ export default function RoadmapArtifactPageContent() {
         const adaptiveSession = getAdaptiveSession();
         if (adaptiveSession) {
           setRoadmap(adaptiveSession.roadmap);
-          setPlanUpdate(adaptiveSession.plan);
           setHighlightNodeId(adaptiveSession.nodeId);
           setSelectedNodeId(adaptiveSession.nodeId);
           return;
@@ -95,7 +90,6 @@ export default function RoadmapArtifactPageContent() {
       }
       const data = await getRoadmap();
       setRoadmap(data);
-      setPlanUpdate(null);
       if (nodeFromQuery) {
         setHighlightNodeId(nodeFromQuery);
         setSelectedNodeId(nodeFromQuery);
@@ -120,13 +114,7 @@ export default function RoadmapArtifactPageContent() {
     prevAdaptiveMode.current = adaptiveMode;
   }, [adaptiveMode]);
 
-  useEffect(() => {
-    setChrome({
-      onOpenMentor: openMentor,
-      trailSummary: roadmap ? computeTrailStudySummary(roadmap.nodes) : null,
-    });
-    return () => clearChrome();
-  }, [roadmap, openMentor, setChrome, clearChrome]);
+  const trailProgressPct = roadmap ? getTrailChecklistProgressPct(roadmap.nodes) : null;
 
   const selectedNode: RoadmapNode | null =
     roadmap?.nodes.find((node) => node.node_id === selectedNodeId) ?? null;
@@ -196,19 +184,15 @@ export default function RoadmapArtifactPageContent() {
               ? "A trilha reagiu ao seu desempenho — revise o nó destacado antes de avançar."
               : "Clique em um nó para ver status, referências e validar mastery."}
           </p>
+          {trailProgressPct != null && (
+            <div className="mt-4 flex flex-col items-center gap-1.5">
+              <TrailProgressRing percent={trailProgressPct} />
+              <p className="text-[10px] uppercase tracking-widest text-text-muted">
+                Progresso de estudo
+              </p>
+            </div>
+          )}
         </div>
-
-        {adaptiveSessionMissing && (
-          <p
-            className="mx-auto mt-4 max-w-lg rounded-md border border-warning/30 bg-warning/10 p-3 text-center text-sm text-warning"
-            data-testid="adaptive-session-missing"
-          >
-            Sessão adaptativa não encontrada — mostrando a trilha atual do servidor. Refaça a
-            validação para gerar uma nova ramificação.
-          </p>
-        )}
-
-        {planUpdate && showingAdaptiveView && <MissionBanner plan={planUpdate} />}
 
         {loading && <VerticalSpineSkeleton />}
 

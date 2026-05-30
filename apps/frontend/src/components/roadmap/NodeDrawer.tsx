@@ -190,14 +190,14 @@ export function NodeDrawer({
             </div>
           )}
 
-          {node.rationale && (
+          {gaps.length === 0 && node.description && (
             <div className="rounded-md border border-accent/30 bg-surface px-3 py-2 text-sm text-text-primary">
-              {node.rationale}
+              {node.description}
             </div>
           )}
 
           {node.outcomes.length > 0 && (
-            <DrawerSection title="Resultados esperados" defaultOpen={false}>
+            <DrawerSection title="Resultados esperados">
               <ul className="space-y-2">
                 {node.outcomes.map((outcome) => (
                   <li
@@ -212,7 +212,7 @@ export function NodeDrawer({
           )}
 
           {node.tasks.length > 0 && (
-            <DrawerSection title="Tarefas práticas" defaultOpen>
+            <DrawerSection title="Tarefas práticas">
               <ul className="space-y-2">
                 {node.tasks.map((task) => (
                   <li
@@ -257,7 +257,7 @@ export function NodeDrawer({
           )}
 
           {node.references.length > 0 && (
-            <DrawerSection title="Referências" defaultOpen={false}>
+            <DrawerSection title="Referências">
               <div className="space-y-2">
                 {node.references.map((reference) => (
                   <div
@@ -303,20 +303,6 @@ export function NodeDrawer({
               </div>
             </DrawerSection>
           )}
-
-          <div className="flex items-center justify-between gap-3 rounded-md border border-border bg-surface px-3 py-3">
-            <p className="text-sm text-text-secondary">
-              Mentor contextual — tire dúvidas sobre este tópico.
-            </p>
-            <Button
-              variant="ghost"
-              className="shrink-0"
-              onClick={onOpenMentor}
-              data-testid="open-mentor-drawer"
-            >
-              Chat →
-            </Button>
-          </div>
 
           {onOpenTutor && (
             <div className="flex items-center justify-between gap-3 rounded-md border border-accent/30 bg-surface px-3 py-3">

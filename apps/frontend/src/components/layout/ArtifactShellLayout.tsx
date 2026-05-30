@@ -5,7 +5,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { getRoadmap } from "@/lib/api-client";
 import { getStoredDiagnosis } from "@/lib/onboarding-session";
 
-import { ArtifactChromeProvider } from "./ArtifactChromeContext";
 import { ArtifactShell } from "./ArtifactShell";
 
 function readTrackNameFromSession(): string | undefined {
@@ -38,9 +37,5 @@ export function ArtifactShellLayout({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return (
-    <ArtifactChromeProvider>
-      <ArtifactShell trackName={trackName}>{children}</ArtifactShell>
-    </ArtifactChromeProvider>
-  );
+  return <ArtifactShell trackName={trackName}>{children}</ArtifactShell>;
 }

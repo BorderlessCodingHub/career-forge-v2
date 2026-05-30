@@ -65,9 +65,11 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Canvas cards:** When `checklist_total > 0`, `SkillNode` shows compact `ChecklistProgress` (`roadmap-node-{id}-checklist-progress`) — `x/y` + thin mint bar only.
 
-**Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; paired `h-9` actions in `flex items-center` group (`mentor-cta`, `mentor-report-link` + `FileText`); optional `trail-study-summary`.
+**Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; single `h-9` action `mentor-report-link` + `FileText` (no progress ring).
 
-**Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description on canvas card only. Status/mastery, study progress, collapsible outcomes/refs/tasks, compact `open-mentor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
+**Page intro:** centered subtitle + optional `trail-progress-ring` below (`getTrailChecklistProgressPct`, item-pooled) + **Progresso de estudo** label.
+
+**Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description callout when no knowledge gaps. Status/mastery, study progress, collapsible outcomes/refs/tasks (default expanded), optional `open-tutor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
 
 **Loading:** `vertical-spine-skeleton` placeholder spine (no lone text spinner as primary feedback).
 
@@ -75,7 +77,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 Interview + score. Unchanged.
 
 ### 7. Adaptive Roadmap (`/roadmap` updated)
-Roadmap reacts post-validation. Mentor via drawer or AI sidebar.
+Roadmap reacts post-validation. Subtitle + highlighted node on spine; no mission banner on canvas. Mentor via node drawer only. `?adaptive=1` without stored session → silent server fallback.
 
 ---
 
@@ -114,9 +116,10 @@ Playwright Gate B targets:
 - `data-testid="forge-timeline"`
 - `data-testid="vertical-roadmap"`
 - `data-testid="roadmap-node-{id}-checklist-progress"` (canvas card compact bar)
-- `data-testid="artifact-topbar"` · `data-testid="mentor-cta"` (topbar on `/roadmap`) · `data-testid="trail-study-summary"`
+- `data-testid="artifact-topbar"` · `data-testid="mentor-report-link"`
+- `data-testid="vertical-roadmap"` · `data-testid="trail-progress-ring"` (page intro, not topbar)
 - `data-testid="vertical-spine-skeleton"` · `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
-- `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-mentor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
+- `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-tutor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
 - `data-testid="validation-score"`
 
 See [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md).

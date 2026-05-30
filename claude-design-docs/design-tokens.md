@@ -42,7 +42,7 @@ Prototype still uses muted `.slideover-close` — intentional drift; see [PRODUC
 
 | Role | Classes | Use |
 |------|---------|-----|
-| Avatar fill | `bg-gradient-to-br from-accent-mint to-accent` | `MentorAvatar` in artifact topbar `mentor-cta` + `MentorDrawer` header |
+| Avatar fill | `bg-gradient-to-br from-accent-mint to-accent` | `MentorAvatar` in `MentorDrawer` header |
 
 Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; replaces legacy `sky-400` / `indigo-500` mentor chips.
 
@@ -50,14 +50,14 @@ Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; r
 
 | Role | Classes | Use |
 |------|---------|-----|
-| Control shell | `h-9`, `topbarActionClass` | `mentor-cta` + `mentor-report-link` — equal height |
-| Leading slot | `h-7 w-7` | `MentorAvatar` or icon box with centered `FileText` (`h-4 w-4`) |
+| Control shell | `h-9`, `topbarActionClass` | `mentor-report-link` in artifact topbar |
+| Leading slot | `h-7 w-7` | Icon box with centered `FileText` (`h-4 w-4`) |
 
-### Trail study summary (topbar micro-copy)
+### Trail progress ring (artifact topbar)
 
 | Role | Classes | Use |
 |------|---------|-----|
-| Summary text | `text-accent-mint`, `text-xs` | `trail-study-summary` in artifact topbar — aggregate checklist topics started, not mastery % |
+| Progress ring | ~44px SVG, `stroke-accent-mint`, center `%` label `text-[10px]` | `trail-progress-ring` in **page intro** (below subtitle) — `getTrailChecklistProgressPct`: same per-topic checklist math as canvas, item-pooled across topics (not mastery %, not topic-average) |
 
 ### CSS variables (`prototype/styles.css`)
 
