@@ -100,7 +100,7 @@
 | Constraint | Detail |
 |------------|--------|
 | App mode | **`artifact`** — finished personalized roadmap.sh page; distinct from **`setup`** (onboarding + forge) |
-| Layout | Full-width vertical spine; nodes alternating left/right; category headers |
+| Layout | Full-width vertical spine; nodes alternating left/right with **solid horizontal connectors** to spine dot (`roadmap-connector-{id}`); category headers |
 | Reference | [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) |
 | Chrome | **No** onboarding stepper (01 Objetivo … 07 Adaptação); **no** fixed progress/evidence/mentor sidebar |
 | Top bar | Career Forge logo + **Sua trilha** track name; right cluster **`items-end`** — **`mentor-report-link`** action bottom-aligned with track title line; same `topbarActionClass` (`h-9`); relatório = `h-7` icon slot + `FileText` + label; **no** progress ring in topbar; mentor via node drawer only |

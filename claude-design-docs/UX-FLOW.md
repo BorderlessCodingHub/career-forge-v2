@@ -142,6 +142,8 @@ Após animação → navega para steady state (`/roadmap`).
 
 **Canvas cards:** quando há `tasks[]` / `references[]`, barra mint compacta + fração `x/y` no card (sem disclaimer).
 
+**Spine connectors:** linha horizontal sólida (`roadmap-connector-{id}`) liga cada card ao ponto central — `border` padrão, `warning` em revisar, `accent-mint` quando selecionado.
+
 **Artifact topbar (`/roadmap`):**
 - Nome da trilha só no topbar (`Sua trilha`) — página sem `<h1>` duplicado
 - **`mentor-report-link`** no topbar (`FileText` + label) — sem anel de progresso no topbar

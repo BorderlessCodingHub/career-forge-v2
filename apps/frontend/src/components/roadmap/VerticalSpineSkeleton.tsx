@@ -1,3 +1,39 @@
+function SkeletonConnectorStub() {
+  return (
+    <div
+      className="h-[2px] min-w-6 max-w-[120px] flex-1 bg-border/40"
+      aria-hidden
+    />
+  );
+}
+
+function SkeletonSpineRow({ isLeft }: { isLeft: boolean }) {
+  return (
+    <li className="relative flex items-center">
+      <div className="flex min-w-0 flex-1 items-center justify-end">
+        {isLeft && (
+          <>
+            <div className="h-[88px] w-full max-w-[260px] animate-pulse rounded-node border border-border/60 bg-surface-node/40" />
+            <SkeletonConnectorStub />
+          </>
+        )}
+      </div>
+      <div
+        className="relative z-10 h-3 w-3 shrink-0 rounded-full border-2 border-border bg-bg"
+        aria-hidden
+      />
+      <div className="flex min-w-0 flex-1 items-center justify-start">
+        {!isLeft && (
+          <>
+            <SkeletonConnectorStub />
+            <div className="h-[88px] w-full max-w-[260px] animate-pulse rounded-node border border-border/60 bg-surface-node/40" />
+          </>
+        )}
+      </div>
+    </li>
+  );
+}
+
 export function VerticalSpineSkeleton() {
   return (
     <div
@@ -18,16 +54,7 @@ export function VerticalSpineSkeleton() {
             </div>
             <ol className="space-y-8">
               {[0, 1, 2].map((row) => (
-                <li
-                  key={row}
-                  className={`relative flex ${row % 2 === 0 ? "justify-start pr-[52%]" : "justify-end pl-[52%]"}`}
-                >
-                  <div
-                    className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-border bg-bg"
-                    aria-hidden
-                  />
-                  <div className="h-[88px] w-full max-w-[260px] animate-pulse rounded-node border border-border/60 bg-surface-node/40" />
-                </li>
+                <SkeletonSpineRow key={row} isLeft={row % 2 === 0} />
               ))}
             </ol>
           </div>
