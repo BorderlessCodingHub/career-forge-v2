@@ -124,6 +124,8 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-67** — Knowledge gap ledger + async classifier (`knowledge_gaps` table, fire-and-forget gap classification, searchable memory)
 - [x] **HAC-68** — Close the adaptive loop (mentor reads gaps, next mock weights gaps, drawer "Focos da última tentativa")
 - [x] **HAC-69** — Forge re-plan remediation (high-severity gaps inject self-cleaning remediation tasks into the chapter, "Adaptação" badge)
+- [x] **HAC-70** — Planner emits `key_concepts` per node (canonical concept source for mock + tutor, persisted via migration 006)
+- [x] **HAC-71** — Chapter Q&A tutor (AI grounded in `key_concepts` + references + open gaps via GraphExecutor, `TutorDrawer`)
 
 ---
 
