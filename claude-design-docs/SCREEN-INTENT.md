@@ -146,6 +146,7 @@
 | Constraint | Detail |
 |------------|--------|
 | Entry | Topbar **`mentor-report-link`** on artifact routes → `/report` |
+| Objetivo | Human career goal label from `CAREER_GOALS` map (`formatGoalForDisplay`) — **never** raw slug (`ai-ml`) |
 | Topic headline | Human-readable title — **never** raw slug (`node-1-…`) as primary label; `formatNodeTitleForDisplay` fallback humanizes hyphens |
 | Validation card | Score + status pill; **`mentor-report-entry-{node_id}`** |
 | Resumo para mentor | Structured sections — **Lacunas principais** (bullets), **Evidências positivas** (bullets when present), **Próximo passo** (intervention callout) — not a single dense paragraph |
@@ -171,4 +172,4 @@
 
 ---
 
-*Last updated: 2026-05-30 — `/report` structured mentor resumo + human topic titles*
+*Last updated: 2026-05-30 — `/report` human Objetivo + topic titles*

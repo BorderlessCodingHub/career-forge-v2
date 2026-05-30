@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  formatGoalForDisplay,
   formatLegacyMentorSummary,
   formatNodeTitleForDisplay,
   hasStructuredEvidence,
@@ -32,6 +33,17 @@ describe("formatNodeTitleForDisplay", () => {
         "node-1-python-data-foundations",
       ),
     ).toBe("Python Data Foundations");
+  });
+});
+
+describe("formatGoalForDisplay", () => {
+  it("maps known goal slug to career goal title", () => {
+    expect(formatGoalForDisplay("ai-ml")).toBe("AI & ML Engineer");
+  });
+
+  it("passes through human goal strings", () => {
+    const human = "Backend para APIs em space tech";
+    expect(formatGoalForDisplay(human)).toBe(human);
   });
 });
 

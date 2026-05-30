@@ -20,6 +20,7 @@ from career_forge.schemas.mentor_report import MentorReportResponse, MentorRepor
 from career_forge.services.mentor_report import (
     _evidence_from_skill_row,
     _humanize_node_id,
+    _resolve_goal_display,
     get_mentor_report,
 )
 
@@ -80,6 +81,35 @@ def _internal_user_id(external_id: str):
 
 def test_humanize_node_id_strips_prefix_and_hyphens() -> None:
     assert _humanize_node_id(GENERATED_NODE_ID) == "Python Data Foundations"
+
+
+def test_resolve_goal_display_maps_known_slug() -> None:
+    assert _resolve_goal_display("ai-ml") == "AI & ML Engineer"
+
+
+def test_resolve_goal_display_passes_through_human_text() -> None:
+    human = "Backend para APIs em space tech"
+    assert _resolve_goal_display(human) == human
+
+
+def test_get_mentor_report_resolves_goal_slug_from_profile(client, diagnosis_dict) -> None:
+    external_id = f"mentor-report-goal-{uuid4().hex[:8]}"
+    confirm = client.post(
+        "/diagnosis/confirm",
+        json={
+            "user_id": external_id,
+            "diagnosis": diagnosis_dict,
+            "goal_id": "ai-ml",
+            "motivation": "APIs para space tech",
+            "years_xp": "0-1",
+            "answers": {"level": "Já programo em JavaScript."},
+        },
+    )
+    assert confirm.status_code == 200
+
+    response = client.get(f"/mentor-report?user_id={external_id}")
+    assert response.status_code == 200
+    assert response.json()["goal"] == "AI & ML Engineer"
 
 
 def test_evidence_from_skill_row_reads_validation_from_list() -> None:

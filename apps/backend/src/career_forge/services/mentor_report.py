@@ -20,6 +20,15 @@ from career_forge.schemas.mentor_report import MentorReportResponse, MentorRepor
 from career_forge.services.roadmap import get_skill_node_context, load_roadmap_catalog
 
 _NODE_ID_PREFIX = re.compile(r"^node-\d+-", re.IGNORECASE)
+_SLUG_PATTERN = re.compile(r"^[a-z0-9-]+$")
+
+GOAL_DISPLAY_LABELS: dict[str, str] = {
+    "fullstack": "Fullstack Engineer",
+    "data": "Data Engineer",
+    "ai-ml": "AI & ML Engineer",
+    "web3": "Web3",
+    "backend": "Backend Developer",
+}
 
 
 def _resolve_user(session: Session, external_id: str) -> User | None:
@@ -46,6 +55,19 @@ def _humanize_node_id(node_id: str) -> str:
     slug = _NODE_ID_PREFIX.sub("", node_id)
     readable = slug.replace("-", " ").replace("_", " ").strip()
     return readable.title() if readable else node_id
+
+
+def _resolve_goal_display(raw: str) -> str:
+    """Map stored goal_id slug to human label for mentor-facing report."""
+    trimmed = raw.strip()
+    if not trimmed:
+        return trimmed
+    mapped = GOAL_DISPLAY_LABELS.get(trimmed)
+    if mapped:
+        return mapped
+    if not _SLUG_PATTERN.match(trimmed):
+        return trimmed
+    return _humanize_node_id(trimmed)
 
 
 def _resolve_node_title(session: Session, node_id: str) -> str:
@@ -79,7 +101,8 @@ def get_mentor_report(session: Session, user_id: str) -> MentorReportResponse:
 
     catalog = load_roadmap_catalog()
     track_title = catalog.get("track", {}).get("title", "Backend Developer")
-    goal = (profile.goal if profile and profile.goal else None) or diagnosis.profile.label
+    raw_goal = (profile.goal if profile and profile.goal else None) or diagnosis.profile.label
+    goal = _resolve_goal_display(raw_goal)
 
     skill_rows = session.scalars(
         select(UserSkillNodeRow).where(UserSkillNodeRow.user_id == user.id),

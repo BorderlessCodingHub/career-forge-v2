@@ -1,4 +1,7 @@
+import { CAREER_GOALS } from "../../lib/onboarding-data";
+
 const NODE_ID_PREFIX = /^node-\d+-/i;
+const SLUG_PATTERN = /^[a-z0-9-]+$/i;
 
 /** Display-only title for mentor report cards — never mutates stored node_id. */
 export function humanizeNodeId(nodeId: string): string {
@@ -11,6 +14,16 @@ export function formatNodeTitleForDisplay(nodeTitle: string, nodeId: string): st
   const trimmed = nodeTitle.trim();
   if (trimmed && trimmed !== nodeId) return trimmed;
   return humanizeNodeId(nodeId);
+}
+
+/** Display-only career goal label for /report Objetivo — never mutates stored goal_id. */
+export function formatGoalForDisplay(goal: string): string {
+  const trimmed = goal.trim();
+  if (!trimmed) return trimmed;
+  const mapped = CAREER_GOALS.find((item) => item.id === trimmed)?.title;
+  if (mapped) return mapped;
+  if (!SLUG_PATTERN.test(trimmed)) return trimmed;
+  return humanizeNodeId(trimmed);
 }
 
 /** Strip legacy `(node-id)` parentheticals and split dense fallback paragraphs. */

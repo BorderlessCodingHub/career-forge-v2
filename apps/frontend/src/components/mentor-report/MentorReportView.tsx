@@ -7,6 +7,7 @@ import type { MentorReportResponse, MentorReportValidationEntry } from "@/types/
 
 import {
   formatLegacyMentorSummary,
+  formatGoalForDisplay,
   formatNodeTitleForDisplay,
   hasStructuredEvidence,
 } from "./format-node-title";
@@ -148,7 +149,9 @@ export function MentorReportView({ report }: MentorReportViewProps) {
         </div>
         <div>
           <p className="text-xs uppercase tracking-widest text-text-muted">Objetivo</p>
-          <p className="mt-1 text-lg font-medium text-text-primary">{report.goal}</p>
+          <p className="mt-1 text-lg font-medium text-text-primary">
+            {formatGoalForDisplay(report.goal)}
+          </p>
         </div>
         <div>
           <p className="text-xs uppercase tracking-widest text-text-muted">Trilha</p>

@@ -128,7 +128,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) — connector stubs match loaded layout |
 | `VerticalSpine` connectors | Solid 2px `roadmap-connector-{id}` — `border` default, `warning` revisar, `accent-mint` selected |
 | `MentorReportView` | `/report` evidence cards — structured resumo (lacunas / acertos / próximo passo); `data-testid="mentor-report"` + `mentor-report-entry-{node_id}` |
-| `format-node-title.ts` | Display-only helpers — `formatNodeTitleForDisplay`, `humanizeNodeId`, `formatLegacyMentorSummary`; never mutates stored `node_id` |
+| `format-node-title.ts` | Display-only helpers — `formatNodeTitleForDisplay`, `formatGoalForDisplay` (Objetivo on `/report`), `humanizeNodeId`, `formatLegacyMentorSummary`; never mutates stored ids |
 | `NodeDrawer` study checklist | Right drawer: collapsible sections default open, optional tutor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
 | Dismiss icon button | Square `h-9 w-9`, `text-red-400`, hover/focus `red-900/60` on dark elevated surfaces (drawer close); row delete uses lighter `text-red-500` + `red-500/10` (`EditableDiagnosis`) — same family, different weight |
@@ -147,7 +147,7 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes |
 | Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-report-link` only; page intro = subtitle + optional centered `trail-progress-ring`; spine + uniform nodes + solid card↔dot connectors; **click node** → accordion drawer + sticky validate CTA; optional tutor row in drawer |
-| Mentor report | `/report` — learner header grid + validation cards; human topic titles; structured resumo per entry; **Voltar à trilha** CTA |
+| Mentor report | `/report` — learner header grid + validation cards; human **Objetivo** + topic titles; structured resumo per entry; **Voltar à trilha** CTA |
 | Validation | Focus mode — question card dominant, minimal chrome |
 | Mentor | Relatório via topbar `mentor-report-link` → `/report` structured evidence cards; no contextual chat drawer on artifact canvas |
 
