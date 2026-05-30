@@ -19,6 +19,16 @@ def _strip_checklist_fields(items: list[dict]) -> list[dict[str, str]]:
     ]
 
 
+def _open_gap_concepts(session: Session, *, user_id: str, node_id: str) -> list[str]:
+    """Unresolved gap concepts for this node — lets the next mock target weak spots (HAC-68)."""
+    try:
+        from career_forge.services.knowledge_gaps import list_open_gaps
+
+        return [gap.concept for gap in list_open_gaps(session, user_id=user_id, skill_node_id=node_id)]
+    except Exception:
+        return []
+
+
 def build_mock_interview_context(
     session: Session,
     *,
@@ -33,6 +43,8 @@ def build_mock_interview_context(
     tasks = _strip_checklist_fields(roadmap_node.tasks if roadmap_node else [])
     references = _strip_checklist_fields(roadmap_node.references if roadmap_node else [])
 
+    open_gaps = _open_gap_concepts(session, user_id=user_id, node_id=node_id)
+
     study_block = {
         "node_id": node_id,
         "title": node.get("title") or node_id,
@@ -43,6 +55,7 @@ def build_mock_interview_context(
         "references": references,
         "outcomes": node.get("outcomes") or [],
         "rubric": node.get("rubric") or [],
+        "open_gaps": open_gaps,
     }
 
     learner: LearnerForgeContext | None = None
@@ -81,6 +94,15 @@ def format_context_for_prompt(
             lines.append(f"- {ref.get('title', 'Ref')} ({ref.get('url', '')}){suffix}")
     if study_block.get("outcomes"):
         lines.append("Outcomes esperados: " + "; ".join(study_block["outcomes"]))
+    if study_block.get("open_gaps"):
+        lines.extend(
+            [
+                "",
+                "## Lacunas abertas do aluno neste capítulo",
+                "Inclua 1-2 perguntas (fase gap_probe) que cubram estes conceitos ainda não dominados:",
+                "; ".join(study_block["open_gaps"]),
+            ],
+        )
     if learner is not None:
         lines.extend(["", "## Perfil do learner", learner.compact_summary()])
     return "\n".join(lines)

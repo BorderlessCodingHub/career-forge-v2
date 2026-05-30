@@ -207,6 +207,56 @@ class TestGapClassifierFallback:
         assert result.gaps[0].suggested_remediation
 
 
+class TestGapFeedbackLoop:
+    def test_list_knowledge_gaps_endpoint(self, client) -> None:
+        _sync_node(client, "gap-endpoint")
+        uid = _user_id("gap-endpoint")
+        with SessionLocal() as session:
+            svc.upsert_knowledge_gap(
+                session,
+                user_id=uid,
+                skill_node_id=NODE_ID,
+                draft=KnowledgeGapDraft(
+                    concept="async/await",
+                    severity="high",
+                    suggested_remediation="praticar 3 exemplos",
+                ),
+            )
+            session.commit()
+
+        resp = client.get(
+            "/knowledge-gaps",
+            params={"user_id": "gap-endpoint", "node_id": NODE_ID},
+        )
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data) == 1
+        assert data[0]["concept"] == "async/await"
+        assert data[0]["severity"] == "high"
+        assert data[0]["status"] == "open"
+        assert data[0]["suggested_remediation"] == "praticar 3 exemplos"
+
+    def test_context_includes_open_gaps_for_next_mock(self, client) -> None:
+        from career_forge.services.mock_interview_context import build_mock_interview_context
+
+        _sync_node(client, "gap-context")
+        uid = _user_id("gap-context")
+        with SessionLocal() as session:
+            svc.upsert_knowledge_gap(
+                session,
+                user_id=uid,
+                skill_node_id=NODE_ID,
+                draft=KnowledgeGapDraft(concept="rate limiting"),
+            )
+            session.commit()
+
+        with SessionLocal() as session:
+            study_block, _ = build_mock_interview_context(
+                session, user_id="gap-context", node_id=NODE_ID
+            )
+        assert "rate limiting" in study_block.get("open_gaps", [])
+
+
 class TestMockInterviewGapLoop:
     def test_submit_records_gaps_then_resolves(self, client) -> None:
         """End-to-end: wrong answers create gaps; correct answers resolve them."""

@@ -96,8 +96,22 @@ def load_mentor_context(
                 last_feedback = row.feedback
             user_skill = session.get(UserSkillNodeRow, row.user_skill_node_id)
             evidence = (user_skill.evidence if user_skill else None) or {}
-            gaps.extend(evidence.get("gaps") or [])
-            strengths.extend(evidence.get("strengths") or [])
+            if isinstance(evidence, dict):
+                gaps.extend(evidence.get("gaps") or [])
+                strengths.extend(evidence.get("strengths") or [])
+
+        # Prefer the structured knowledge-gap ledger (concept-level) over evidence strings (HAC-68).
+        try:
+            from career_forge.services.knowledge_gaps import list_open_gaps
+
+            ledger = list_open_gaps(session, user_id=user_id, skill_node_id=node_id)
+            if not ledger and node_id:
+                ledger = list_open_gaps(session, user_id=user_id)
+            ledger_concepts = [item.concept for item in ledger]
+            if ledger_concepts:
+                gaps = ledger_concepts + [g for g in gaps if g not in ledger_concepts]
+        except Exception:
+            pass
 
         current_status: str | None = None
         current_mastery: int | None = None

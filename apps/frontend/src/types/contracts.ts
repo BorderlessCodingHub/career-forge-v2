@@ -396,6 +396,15 @@ export type DiagnosisConfirmResponse = {
   status: "confirmed";
 };
 
+export type KnowledgeGapItem = {
+  concept: string;
+  severity: "low" | "medium" | "high";
+  status: "open" | "resolved";
+  suggested_remediation: string | null;
+  skill_node_id: string;
+  updated_at: string | null;
+};
+
 export type ValidationRequest = {
   user_id?: string;
   node_id: string;

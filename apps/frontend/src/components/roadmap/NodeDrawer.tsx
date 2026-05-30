@@ -5,7 +5,8 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { ChecklistProgress, getChecklistProgress } from "@/components/roadmap/ChecklistProgress";
 import { Button } from "@/components/ui";
-import type { RoadmapChecklistItem, RoadmapNode } from "@/types/contracts";
+import { getKnowledgeGaps } from "@/lib/api-client";
+import type { KnowledgeGapItem, RoadmapChecklistItem, RoadmapNode } from "@/types/contracts";
 
 type NodeDrawerProps = {
   node: RoadmapNode | null;
@@ -59,6 +60,7 @@ function DrawerSection({ title, defaultOpen = true, children }: DrawerSectionPro
 
 export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: NodeDrawerProps) {
   const [pendingItemId, setPendingItemId] = useState<string | null>(null);
+  const [gaps, setGaps] = useState<KnowledgeGapItem[]>([]);
 
   useEffect(() => {
     if (!node) return;
@@ -70,6 +72,24 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [node, onClose]);
+
+  useEffect(() => {
+    if (!node) {
+      setGaps([]);
+      return;
+    }
+    let cancelled = false;
+    void getKnowledgeGaps(node.node_id)
+      .then((items) => {
+        if (!cancelled) setGaps(items);
+      })
+      .catch(() => {
+        if (!cancelled) setGaps([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [node]);
 
   if (!node) return null;
 
@@ -139,6 +159,29 @@ export function NodeDrawer({ node, onClose, onOpenMentor, onChecklistToggle }: N
           </div>
 
           {showChecklistProgress && <ChecklistProgress variant="full" node={node} />}
+
+          {gaps.length > 0 && (
+            <div
+              className="rounded-md border border-warning/30 bg-warning/5 px-3 py-3"
+              data-testid="node-knowledge-gaps"
+            >
+              <p className="text-xs font-semibold uppercase tracking-widest text-warning">
+                Focos da última tentativa
+              </p>
+              <ul className="mt-2 space-y-2">
+                {gaps.map((gap) => (
+                  <li key={gap.concept} className="text-sm">
+                    <span className="font-medium text-text-primary">{gap.concept}</span>
+                    {gap.suggested_remediation && (
+                      <p className="mt-0.5 text-xs text-text-secondary">
+                        {gap.suggested_remediation}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {node.rationale && (
             <div className="rounded-md border border-accent/30 bg-surface px-3 py-2 text-sm text-text-primary">
