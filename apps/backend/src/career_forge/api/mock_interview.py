@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
@@ -17,6 +17,7 @@ from career_forge.schemas.mock_interview import (
     MockInterviewRunResponse,
 )
 from career_forge.schemas.validation import ValidationResponse
+from career_forge.services import knowledge_gaps as knowledge_gaps_service
 from career_forge.services import mock_interview as mock_interview_service
 from career_forge.services import planning as planning_service
 from career_forge.services.mock_interview_context import build_mock_interview_context
@@ -61,6 +62,7 @@ async def get_mock_interview_questions(
 @router.post("", response_model=MockInterviewRunResponse)
 async def run_mock_interview(
     body: MockInterviewRequest,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ) -> MockInterviewRunResponse:
     """Run mock interview loop — MCQ gabarito or legacy open-text graph."""
@@ -123,6 +125,20 @@ async def run_mock_interview(
         db.rollback()
 
     if mcq_session is not None:
+        # Capture gabarito → concept mapping while the session is still alive, then
+        # classify gaps off the critical path (fire-and-forget). HAC-67 adaptive memory.
+        wrong_items, correct_concepts = knowledge_gaps_service.build_gap_capture(
+            mcq_session,
+            body,
+        )
+        background_tasks.add_task(
+            knowledge_gaps_service.classify_and_store_gaps,
+            user_id=body.user_id,
+            node_id=body.node_id,
+            node_title=body.node_title,
+            wrong_items=[item.model_dump() for item in wrong_items],
+            correct_concepts=correct_concepts,
+        )
         consume_mock_interview_session(mcq_session.session_id)
 
     try:

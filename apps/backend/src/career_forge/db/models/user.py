@@ -38,8 +38,12 @@ class User(Base):
     validations: Mapped[list["Validation"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
+    knowledge_gaps: Mapped[list["KnowledgeGap"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
 
+from career_forge.db.models.knowledge_gap import KnowledgeGap  # noqa: E402
 from career_forge.db.models.profile import Profile  # noqa: E402
 from career_forge.db.models.user_skill_node import UserSkillNode  # noqa: E402
 from career_forge.db.models.validation import Validation  # noqa: E402
