@@ -35,7 +35,12 @@ class McqQuestionDraft(BaseModel):
     prompt: str = Field(min_length=12)
     label: str
     phase: Literal["base", "gap_probe", "scenario"]
-    rubric_criterion: str
+    concept: str = Field(
+        min_length=2,
+        max_length=120,
+        description="Conceito TÉCNICO específico testado (ex: 'list comprehension', "
+        "'np.reshape', 'idempotência de PUT'). Nunca logística de estudo.",
+    )
     hint: str | None = None
     options: list[McqOptionDraft] = Field(min_length=4, max_length=4)
     correct_option: Literal["A", "B", "C", "D"]
@@ -53,6 +58,12 @@ class McqQuestionDraft(BaseModel):
 
 
 class MockInterviewMcqDraft(BaseModel):
+    subject: str = Field(
+        min_length=2,
+        max_length=120,
+        description="Assunto TÉCNICO do bloco, ignorando linguagem de logística do título "
+        "(ex: 'Python para AI/ML', 'APIs REST'). Determine isto ANTES das perguntas.",
+    )
     questions: list[McqQuestionDraft] = Field(min_length=5, max_length=7)
 
 
@@ -118,13 +129,14 @@ def _draft_to_public(
                 label=item.label,
                 prompt=item.prompt,
                 hint=item.hint,
-                rubric_criterion=item.rubric_criterion,
+                rubric_criterion=item.concept,
+                concept=item.concept,
                 phase=item.phase,
                 options=options,
             ),
         )
         answer_key[question_id] = item.correct_option
-        rubric.append(item.rubric_criterion)
+        rubric.append(item.concept)
     response = MockInterviewQuestionsResponse(
         node_id=node_id,
         node_title=node_title,
@@ -163,13 +175,26 @@ class OpenAiMockInterviewMcqGenerator:
         context = format_context_for_prompt(study_block, learner)
         structured = self._llm.with_structured_output(MockInterviewMcqDraft, method="json_schema")
         system = (
-            "Você cria mock interviews de múltipla escolha para validar mastery de um bloco de estudo. "
-            "Gere 5 a 7 perguntas em português (BR), cada uma com exatamente 4 opções (A–D) e uma única "
-            "resposta correta. Misture fases: base (conceito), gap_probe (lacuna), scenario (aplicação). "
-            "Distractors devem ser plausíveis mas claramente inferiores à correta. "
-            "Ancore perguntas no bloco de estudo e no perfil do learner."
+            "Você cria mock interviews de múltipla escolha que validam DOMÍNIO TÉCNICO do "
+            "conteúdo de um capítulo de estudo.\n\n"
+            "PASSO 1 — Determine o `subject`: o ASSUNTO TÉCNICO real do capítulo. "
+            "O título pode conter linguagem de logística de estudo (ex: 'criar rotina de estudo', "
+            "'Semanas 1–4', 'dominar o mínimo de'). IGNORE essa moldura e extraia o tema técnico "
+            "(ex: 'Python para AI/ML', 'APIs REST', 'Git e versionamento').\n\n"
+            "PASSO 2 — Gere 5 a 7 perguntas em português (BR) que testam COMPREENSÃO TÉCNICA do "
+            "subject. Cada pergunta tem exatamente 4 opções (A–D), uma única correta, e um `concept` "
+            "técnico específico (ex: 'list comprehension', 'np.reshape', 'idempotência de PUT').\n\n"
+            "PROIBIDO terminantemente: perguntas sobre hábitos de estudo, rotina, agenda, gestão de "
+            "tempo, motivação, como organizar o aprendizado, quantas horas estudar. Isso NÃO é "
+            "conhecimento técnico e não pode aparecer.\n\n"
+            "Misture fases: base (conceito fundamental), gap_probe (erro comum/lacuna típica), "
+            "scenario (aplicação prática). Distractors plausíveis mas claramente inferiores. "
+            "Ancore as perguntas nas referências oficiais fornecidas quando houver."
         )
-        user = f"{context}\n\nGere o questionário MCQ agora."
+        user = (
+            f"{context}\n\n"
+            "Determine o subject técnico (ignorando logística do título) e gere o questionário MCQ agora."
+        )
         result = structured.invoke([("system", system), ("human", user)])
         return MockInterviewMcqDraft.model_validate(result)
 

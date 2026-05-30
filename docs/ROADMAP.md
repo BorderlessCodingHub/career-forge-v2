@@ -120,6 +120,9 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-64** — Mock interview + validation for generated StudyPlan nodes (resolve ai-generated context, preserve checklist evidence, recalibrate graph)
 - [x] **HAC-65** — Agent-generated MCQ mock interview (LLM A–D + server-side answer key, deterministic scoring, InterviewLoop pills)
 - [x] **HAC-57** — Diagnosis confirm → save DB → profile-only `POST /forge` → SSE redirect
+- [x] **HAC-66** — Mock interview on-topic (LLM commits to technical subject, forbids study logistics, grounds in references)
+- [x] **HAC-67** — Knowledge gap ledger + async classifier (`knowledge_gaps` table, fire-and-forget gap classification, searchable memory)
+- [x] **HAC-68** — Close the adaptive loop (mentor reads gaps, next mock weights gaps, drawer "Focos da última tentativa")
 
 ---
 

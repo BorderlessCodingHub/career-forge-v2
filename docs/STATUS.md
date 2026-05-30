@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-28** · Last merge: **HAC-57** (diagnosis confirm → forge motor wire)
+Last updated: **2026-05-30** · Last merge: **HAC-66/67/68** (adaptive mock interview loop — on-topic MCQ, knowledge gap memory, feedback loop)
 
 ---
 
@@ -50,6 +50,9 @@ Last updated: **2026-05-28** · Last merge: **HAC-57** (diagnosis confirm → fo
 | Mock interview on generated StudyPlan nodes | ✅ Done | HAC-64 — `/mock-interview` + `/validation/questions` resolve ai-generated nodes; evidence/tasks preserved through recalibration |
 | MCQ mock interview (agent-generated) | ✅ Done | HAC-65 — LLM MCQ A–D + server-side answer key; deterministic score on submit; InterviewLoop mode=loop pills |
 | Diagnosis confirm → forge motor (FE wire) | ✅ Done | HAC-57 — confirm saves profile; `POST /forge` profile-only; `/forge` SSE from stored run_id |
+| Mock interview on-topic | ✅ Done | HAC-66 — generator commits to technical subject, forbids study-logistics questions, grounds in references; per-question concept |
+| Knowledge gap ledger (adaptive memory) | ✅ Done | HAC-67 — `knowledge_gaps` table; async fire-and-forget classifier (concept/severity/remediation); ON CONFLICT upsert; correct answers resolve gaps |
+| Adaptive loop closed | ✅ Done | HAC-68 — mentor reads concept-level gaps, next mock targets open gaps (gap_probe), node drawer shows "Focos da última tentativa", `GET /knowledge-gaps` |
 
 ---
 
@@ -65,6 +68,9 @@ Last updated: **2026-05-28** · Last merge: **HAC-57** (diagnosis confirm → fo
 | **HAC-54** | Web search enrichment — live study sources | **Done** |
 | **HAC-55** | LLM graph persistence + references | **Done** |
 | **HAC-57** | Diagnosis confirm → save → forge (Arthur) | **Done** |
+| **HAC-66** | Mock interview on-topic (technical subject) | **Done** |
+| **HAC-67** | Knowledge gap ledger + async classifier | **Done** |
+| **HAC-68** | Close adaptive loop (mentor/mock/drawer) | **Done** |
 | **HAC-63** | Roadmap drawer progress (checklist + `PATCH /roadmap/nodes/{id}/checklist`) | **Done** |
 | **HAC-64** | Mock interview + validation on generated StudyPlan nodes | **Done** |
 | **HAC-65** | Agent-generated MCQ mock interview with answer-key scoring | **Done** |

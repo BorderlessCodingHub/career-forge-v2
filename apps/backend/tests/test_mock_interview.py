@@ -180,6 +180,82 @@ class TestMockInterviewEngine:
             assert strong.status == ValidationStatus.APROVADO
 
 
+class TestMockInterviewMcqDraft:
+    """HAC-66 — subject commitment + per-question concept must reach the public payload."""
+
+    def _draft(self):
+        from career_forge.ai.tools.mock_interview_mcq import (
+            McqOptionDraft,
+            McqQuestionDraft,
+            MockInterviewMcqDraft,
+        )
+
+        def question(concept: str, correct: str) -> McqQuestionDraft:
+            return McqQuestionDraft(
+                prompt=f"Pergunta técnica sobre {concept}?",
+                label="conceito",
+                phase="base",
+                concept=concept,
+                options=[
+                    McqOptionDraft(letter="A", text="Alternativa A correta e técnica"),
+                    McqOptionDraft(letter="B", text="Distrator plausível porém inferior"),
+                    McqOptionDraft(letter="C", text="Distrator que confunde termos"),
+                    McqOptionDraft(letter="D", text="Distrator que pula a evidência"),
+                ],
+                correct_option=correct,
+            )
+
+        return MockInterviewMcqDraft(
+            subject="Python para AI/ML",
+            questions=[
+                question("list comprehension", "A"),
+                question("dicionários", "B"),
+                question("numpy arrays", "A"),
+                question("funções", "C"),
+                question("tratamento de erros", "D"),
+            ],
+        )
+
+    def test_draft_to_public_carries_concept_and_answer_key(self) -> None:
+        from career_forge.ai.tools.mock_interview_mcq import _draft_to_public
+
+        public, answer_key, rubric = _draft_to_public(
+            "py-min",
+            "Python para AI/ML",
+            "code",
+            self._draft(),
+        )
+
+        assert public.format == "mcq"
+        assert [q.concept for q in public.questions] == [
+            "list comprehension",
+            "dicionários",
+            "numpy arrays",
+            "funções",
+            "tratamento de erros",
+        ]
+        assert rubric == [q.concept for q in public.questions]
+        assert answer_key["py-min-mi-q1"] == "A"
+        assert answer_key["py-min-mi-q2"] == "B"
+        for question in public.questions:
+            assert question.rubric_criterion == question.concept
+            assert "correct_option" not in question.model_dump()
+
+    def test_draft_requires_subject_and_concept(self) -> None:
+        from pydantic import ValidationError
+
+        from career_forge.ai.tools.mock_interview_mcq import McqQuestionDraft
+
+        with pytest.raises(ValidationError):
+            McqQuestionDraft(
+                prompt="Pergunta sem conceito definido?",
+                label="conceito",
+                phase="base",
+                options=[],
+                correct_option="A",
+            )
+
+
 class TestMockInterviewMcq:
     def test_evaluate_mcq_perfect_score(self) -> None:
         reset_mock_interview_sessions()

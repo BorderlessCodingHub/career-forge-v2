@@ -8,6 +8,7 @@ from career_forge.api import (
     diagnosis_interview,
     forge,
     health,
+    knowledge_gaps,
     mentor,
     mentor_report,
     mock_interview,
@@ -34,3 +35,6 @@ api_router.include_router(
     tags=["mentor-report"],
 )
 api_router.include_router(mock_interview.router, prefix="/mock-interview", tags=["mock-interview"])
+api_router.include_router(
+    knowledge_gaps.router, prefix="/knowledge-gaps", tags=["knowledge-gaps"]
+)

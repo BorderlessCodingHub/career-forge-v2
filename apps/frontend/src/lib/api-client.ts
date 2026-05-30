@@ -10,6 +10,7 @@ import type {
   ForgeRunResponse,
   InterviewTurnRequest,
   InterviewTurnResponse,
+  KnowledgeGapItem,
   MentorContextSnapshot,
   MentorReportResponse,
   MentorRequest,
@@ -343,6 +344,15 @@ export async function submitValidation(
     method: "POST",
     body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
   });
+}
+
+export async function getKnowledgeGaps(
+  nodeId: string,
+  userId?: string,
+): Promise<KnowledgeGapItem[]> {
+  const resolvedUserId = userId ?? getUserId();
+  const params = new URLSearchParams({ user_id: resolvedUserId, node_id: nodeId });
+  return apiFetch<KnowledgeGapItem[]>(`/knowledge-gaps?${params.toString()}`);
 }
 
 export async function getMockInterviewQuestions(
