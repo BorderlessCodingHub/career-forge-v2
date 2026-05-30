@@ -8,6 +8,7 @@ import {
   MissionBanner,
   MentorDrawer,
   NodeDrawer,
+  TutorDrawer,
   VerticalSpine,
   VerticalSpineShell,
   VerticalSpineSkeleton,
@@ -43,6 +44,7 @@ export default function RoadmapArtifactPageContent() {
   const [highlightNodeId, setHighlightNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [mentorOpen, setMentorOpen] = useState(false);
+  const [tutorOpen, setTutorOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [adaptiveSessionMissing, setAdaptiveSessionMissing] = useState(false);
@@ -51,6 +53,10 @@ export default function RoadmapArtifactPageContent() {
 
   const openMentor = useCallback(() => {
     setMentorOpen(true);
+  }, []);
+
+  const openTutor = useCallback(() => {
+    setTutorOpen(true);
   }, []);
 
   const closeDrawer = useCallback(() => {
@@ -225,12 +231,19 @@ export default function RoadmapArtifactPageContent() {
           node={selectedNode}
           onClose={closeDrawer}
           onOpenMentor={openMentor}
+          onOpenTutor={openTutor}
           onChecklistToggle={handleChecklistToggle}
         />
 
         <MentorDrawer
           open={mentorOpen}
           onClose={() => setMentorOpen(false)}
+          node={selectedNode}
+        />
+
+        <TutorDrawer
+          open={tutorOpen}
+          onClose={() => setTutorOpen(false)}
           node={selectedNode}
         />
       </main>

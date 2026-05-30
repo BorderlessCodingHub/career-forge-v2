@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from career_forge.ai.agents.mentor import build_mentor_agent
+from career_forge.ai.agents.tutor import build_tutor_agent
 from career_forge.ai.graphs.base import GraphRunnable
 from career_forge.ai.graphs.diagnosis import build_diagnosis_graph
 from career_forge.ai.graphs.diagnosis_interview import build_diagnosis_interview_graph
@@ -21,4 +22,5 @@ GRAPH_BUILDERS: dict[str, GraphBuilder] = {
     "validation": build_validation_graph,
     "mock_interview": build_mock_interview_graph,
     "mentor": build_mentor_agent,
+    "tutor": build_tutor_agent,
 }

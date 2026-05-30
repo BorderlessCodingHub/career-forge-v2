@@ -253,6 +253,46 @@ export type MentorRunResponse = {
   mentor: MentorResponse;
 };
 
+export type TutorMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type TutorReference = {
+  title: string;
+  url?: string | null;
+};
+
+export type TutorContext = {
+  node_id?: string | null;
+  node_title?: string | null;
+  key_concepts: string[];
+  references: TutorReference[];
+  open_gaps: string[];
+};
+
+export type TutorRequest = {
+  user_id?: string;
+  message: string;
+  node_id?: string | null;
+  node_title?: string | null;
+  history?: TutorMessage[];
+};
+
+export type TutorResponse = {
+  reply: string;
+  references: string[];
+  used_concepts: string[];
+  context: TutorContext;
+};
+
+export type TutorRunResponse = {
+  run_id: string;
+  status: string;
+  events: Array<Record<string, unknown>>;
+  tutor: TutorResponse;
+};
+
 export type MentorReportValidationEntry = {
   node_id: string;
   node_title: string;
