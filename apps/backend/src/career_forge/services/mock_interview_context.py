@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from career_forge.errors import DomainError
 from career_forge.services.forge_context import LearnerForgeContext, build_forge_context_from_input
 from career_forge.services.profile_diagnosis import load_forge_motor_input
-from career_forge.services.roadmap import get_skill_node_context, get_user_roadmap
+from career_forge.services.roadmap import resolve_skill_node_catalog_entry, get_user_roadmap
 
 
 def _strip_checklist_fields(items: list[dict]) -> list[dict[str, str]]:
@@ -36,7 +36,7 @@ def build_mock_interview_context(
     node_id: str,
 ) -> tuple[dict[str, Any], LearnerForgeContext | None]:
     """Return study-block payload + optional learner forge context."""
-    node = get_skill_node_context(session, node_id)
+    node = resolve_skill_node_catalog_entry(session, node_id)
 
     roadmap = get_user_roadmap(session, user_id)
     roadmap_node = next((item for item in roadmap.nodes if item.node_id == node_id), None)

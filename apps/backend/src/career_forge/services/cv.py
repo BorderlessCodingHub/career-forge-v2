@@ -139,7 +139,7 @@ def extract_cv_signals(text: str) -> CvSignals:
     return CvSignals(skills=skills, roles=roles, years_hint=years_hint)
 
 
-def process_cv_attachment(attachment: CvAttachment | None) -> CvParseResult:
+def parse_cv_attachment(attachment: CvAttachment | None) -> CvParseResult:
     """Parse optional CV attachment. Always fail open."""
     if attachment is None:
         return CvParseResult()
@@ -156,9 +156,9 @@ def process_cv_attachment(attachment: CvAttachment | None) -> CvParseResult:
     return CvParseResult(text=text, signals=signals, parse_ok=True)
 
 
-def enrich_cv_attachment(attachment: CvAttachment) -> CvAttachment:
+def attach_extracted_text(attachment: CvAttachment) -> CvAttachment:
     """Return attachment with extracted_text populated when parse succeeds."""
-    result = process_cv_attachment(attachment)
+    result = parse_cv_attachment(attachment)
     if not result.parse_ok or result.text is None:
         return attachment
     return attachment.model_copy(update={"extracted_text": result.text})

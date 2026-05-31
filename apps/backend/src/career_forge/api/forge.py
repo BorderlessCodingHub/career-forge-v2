@@ -6,31 +6,17 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
 from career_forge.ai.streaming.sse import format_sse
 from career_forge.db.session import get_db
-from career_forge.schemas.diagnosis import DiagnosisResponse
+from career_forge.schemas.forge import ForgeRunRequest, ForgeRunResponse
 from career_forge.services.forge_persistence import persist_graph_ready
 from career_forge.services.profile_diagnosis import load_forge_motor_input
 
 router = APIRouter()
-
-
-class ForgeRunRequest(BaseModel):
-    user_id: str = Field(default="demo-ana")
-    diagnosis: DiagnosisResponse | None = None
-    input: dict[str, Any] = Field(default_factory=dict)
-
-
-class ForgeRunResponse(BaseModel):
-    run_id: str
-    status: str
-    events: list[dict[str, Any]]
-    output: dict[str, Any] | None = None
 
 
 def _build_forge_input(

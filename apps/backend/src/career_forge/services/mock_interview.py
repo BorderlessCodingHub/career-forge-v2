@@ -28,7 +28,7 @@ from career_forge.services.mock_interview_session import (
     consume_mock_interview_session,
     get_mock_interview_session,
 )
-from career_forge.services.roadmap import get_skill_node_context
+from career_forge.services.roadmap import resolve_skill_node_catalog_entry
 
 
 class McqSessionError(ValueError):
@@ -80,7 +80,7 @@ def build_mock_interview_questions(
     Resolves catalog nodes and persisted AI-generated StudyPlan nodes (HAC-64),
     where the rubric maps to per-task evidence prompts and outcomes to task results.
     """
-    node = get_skill_node_context(session, node_id)
+    node = resolve_skill_node_catalog_entry(session, node_id)
     raw_rubric: list[str] = node.get("rubric") or []
     rubric = _pad_rubric(raw_rubric, node["title"], 3)
     outcomes: list[str] = node.get("outcomes") or []

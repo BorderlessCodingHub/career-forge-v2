@@ -115,7 +115,7 @@ def upsert_knowledge_gap(
     session.execute(stmt)
 
 
-def resolve_concepts(
+def mark_gaps_resolved_for_concepts(
     session: Session,
     *,
     user_id: uuid.UUID,
@@ -276,7 +276,7 @@ def classify_and_store_gaps(
             if user is None:
                 return
 
-            resolve_concepts(
+            mark_gaps_resolved_for_concepts(
                 session,
                 user_id=user.id,
                 skill_node_id=node_id,

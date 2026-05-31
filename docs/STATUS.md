@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-82** (StructuredToolClient — consolidate gap/tutor/mcq/planner/evaluator LLM boilerplate; deterministic fallback preserved; equivalent outputs; refactor loop wave 10)
+Last updated: **2026-05-30** · Last merge: **HAC-83** (naming batch + schemas out of api/* — resolve_skill_node_catalog_entry, mark_gaps_resolved_for_concepts, parse_cv_attachment/attach_extracted_text, GraphErrorEvent alias, ForgeRun*/DiagnosisRunResponse → schemas/; contracts identical; refactor loop wave 11)
 
 ---
 

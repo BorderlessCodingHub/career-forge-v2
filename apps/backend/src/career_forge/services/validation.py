@@ -18,7 +18,7 @@ from career_forge.services.assessment_rubric import (
     QUESTION_LABELS,
     QUESTION_TEMPLATES,
 )
-from career_forge.services.roadmap import get_skill_node_context
+from career_forge.services.roadmap import resolve_skill_node_catalog_entry
 
 
 def build_validation_questions(
@@ -27,7 +27,7 @@ def build_validation_questions(
 ) -> ValidationQuestionsResponse:
     """Generate three interview questions from the rubric of a catalog or
     persisted AI-generated StudyPlan node (HAC-64)."""
-    node = get_skill_node_context(session, node_id)
+    node = resolve_skill_node_catalog_entry(session, node_id)
     rubric: list[str] = node.get("rubric") or []
     while len(rubric) < 3:
         rubric.append(f"Demonstrar domínio prático de {node['title']}")

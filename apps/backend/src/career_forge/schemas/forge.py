@@ -12,6 +12,7 @@ from career_forge.schemas.common import (
     UserSkillNode,
     UserSkillNodePartial,
 )
+from career_forge.schemas.diagnosis import DiagnosisResponse
 
 
 class NodePatch(BaseModel):
@@ -67,9 +68,13 @@ class GraphReadyEvent(BaseModel):
     graph: list[UserSkillNode]
 
 
-class ForgeErrorEvent(BaseModel):
+class GraphErrorEvent(BaseModel):
     type: Literal["error"] = "error"
     message: str
+
+
+# Retrocompat alias — error event emitted by all graphs (renamed HAC-83).
+ForgeErrorEvent = GraphErrorEvent
 
 
 RoadmapForgeEvent = Annotated[
@@ -79,7 +84,7 @@ RoadmapForgeEvent = Annotated[
         NodeUpdatedEvent,
         StepCompleteEvent,
         GraphReadyEvent,
-        ForgeErrorEvent,
+        GraphErrorEvent,
     ],
     Field(discriminator="type"),
 ]
@@ -90,3 +95,20 @@ _forge_event_adapter = TypeAdapter(RoadmapForgeEvent)
 def parse_forge_event(data: dict[str, Any]) -> RoadmapForgeEvent:
     """Parse a single SSE payload dict into a typed forge event."""
     return _forge_event_adapter.validate_python(data)
+
+
+class ForgeRunRequest(BaseModel):
+    """Forge run request — profile-based (motor input) or explicit diagnosis."""
+
+    user_id: str = Field(default="demo-ana")
+    diagnosis: DiagnosisResponse | None = None
+    input: dict[str, Any] = Field(default_factory=dict)
+
+
+class ForgeRunResponse(BaseModel):
+    """Forge run envelope returned by POST /forge (run id + collected output)."""
+
+    run_id: str
+    status: str
+    events: list[dict[str, Any]]
+    output: dict[str, Any] | None = None

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -76,3 +76,12 @@ class DiagnosisRequest(BaseModel):
             msg = "answers must include at least one non-empty response"
             raise ValueError(msg)
         return cleaned
+
+
+class DiagnosisRunResponse(BaseModel):
+    """Diagnosis run envelope returned by POST /diagnosis (collected result)."""
+
+    run_id: str
+    status: str
+    events: list[dict[str, Any]]
+    diagnosis: DiagnosisResponse

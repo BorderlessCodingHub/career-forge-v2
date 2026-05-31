@@ -23,7 +23,7 @@ from career_forge.schemas.diagnosis_interview import (
     InterviewTurn,
     build_rubric_map,
 )
-from career_forge.services.cv import process_cv_attachment
+from career_forge.services.cv import parse_cv_attachment
 
 GraphPhase = Literal["start", "turn"]
 
@@ -41,7 +41,7 @@ from career_forge.ai.streaming.langchain_events import (
 def _extract_cv_text(intake: DiagnosisIntake) -> tuple[str | None, CvSignals | None]:
     if intake.cv is None:
         return None, None
-    result = process_cv_attachment(intake.cv)
+    result = parse_cv_attachment(intake.cv)
     return result.text, result.signals
 
 
