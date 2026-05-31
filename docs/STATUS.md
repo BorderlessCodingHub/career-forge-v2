@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-79** (assessment_flow — extract validation/mock orchestration out of routes; routes now ~10 LOC; identical responses; fixed latent unwrap_graph_output import in mock open-text path; refactor loop wave 7)
+Last updated: **2026-05-30** · Last merge: **HAC-80** (build_mentor_response — intent ladder → dispatch dict + per-intent helpers; identical replies; refactor loop wave 8)
 
 ---
 
