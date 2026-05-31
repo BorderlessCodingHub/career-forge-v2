@@ -8,17 +8,13 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.models.validation import Validation
+from career_forge.db.repositories.user import get_by_external_id
 from career_forge.demo.ana_state import DEMO_ANA_SKILL_STATE, DEMO_ANA_VALIDATIONS
 from career_forge.schemas.common import SkillStatus
 from career_forge.schemas.mentor import MentorContextSnapshot, MentorRequest, MentorResponse
 from career_forge.services.roadmap import load_roadmap_catalog
-
-
-def _resolve_user(session: Session, external_id: str) -> User | None:
-    return session.scalar(select(User).where(User.external_id == external_id))
 
 
 def _catalog_node(node_id: str) -> dict[str, Any] | None:
@@ -71,7 +67,7 @@ def load_mentor_context(
 ) -> MentorContextSnapshot:
     """Build mentor memory from validations and skill graph state."""
     try:
-        user = _resolve_user(session, user_id)
+        user = get_by_external_id(session, user_id)
         if user is None:
             return _demo_context(node_id)
 

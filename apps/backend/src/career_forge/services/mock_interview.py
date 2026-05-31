@@ -8,7 +8,6 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from career_forge.ai.graphs.validation import RUBRIC_GAPS
-from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.models.validation import Validation
 from career_forge.schemas.common import SkillStatus, ValidationStatus
@@ -23,6 +22,7 @@ from career_forge.services.mock_interview_session import (
     consume_mock_interview_session,
     get_mock_interview_session,
 )
+from career_forge.db.repositories.user import ensure_user
 from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
 from career_forge.services.validation import (
     QUESTION_HINTS,
@@ -146,17 +146,7 @@ def persist_mock_interview_result(
     stored_questions: list[dict] | None = None,
 ) -> tuple[Validation, UserSkillNodeRow]:
     """Store mock interview attempt with full 5–7 Q/A and update user skill node."""
-    from career_forge.services.validation import _resolve_user
-
-    user = _resolve_user(session, payload.user_id)
-    if user is None:
-        user = User(
-            external_id=payload.user_id,
-            display_name=payload.user_id.replace("-", " ").title(),
-            email=f"{payload.user_id}@demo.careerforge.local",
-        )
-        session.add(user)
-        session.flush()
+    user = ensure_user(session, payload.user_id)
 
     user_skill = session.scalar(
         select(UserSkillNodeRow).where(
