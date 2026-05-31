@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 import { ForgeEventLine, ForgeTimeline } from "@/components/forge";
 import { Button } from "@/components/ui";
@@ -26,6 +26,25 @@ export default function ForgePage() {
   const [elapsedSec, setElapsedSec] = useState(0);
   const startedRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const autoScrollRef = useRef(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollHeight, scrollTop, clientHeight } = document.documentElement;
+      autoScrollRef.current = scrollHeight - scrollTop - clientHeight < 150;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (events.length === 0) return;
+    if (!autoScrollRef.current) return;
+    requestAnimationFrame(() => {
+      sentinelRef.current?.scrollIntoView({ behavior: "smooth" });
+    });
+  }, [events.length]);
 
   const finishForge = useCallback(
     (collected: RoadmapForgeEvent[]) => {
@@ -147,6 +166,7 @@ export default function ForgePage() {
             </li>
           )}
         </ForgeTimeline>
+        <div ref={sentinelRef} />
 
         {status === "error" && (
           <div className="mt-8 flex gap-4">

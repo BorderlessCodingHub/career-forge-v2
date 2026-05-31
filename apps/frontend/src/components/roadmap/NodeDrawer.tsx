@@ -6,10 +6,11 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChecklistProgress, getChecklistProgress } from "@/components/roadmap/ChecklistProgress";
 import { Button } from "@/components/ui";
 import { getKnowledgeGaps } from "@/lib/api-client";
-import type { KnowledgeGapItem, RoadmapChecklistItem, RoadmapNode } from "@/types/contracts";
+import type { KnowledgeGapItem, RoadmapCategory, RoadmapChecklistItem, RoadmapNode } from "@/types/contracts";
 
 type NodeDrawerProps = {
   node: RoadmapNode | null;
+  categories?: RoadmapCategory[];
   onClose: () => void;
   onOpenMentor: () => void;
   onOpenTutor?: () => void;
@@ -61,6 +62,7 @@ function DrawerSection({ title, defaultOpen = true, children }: DrawerSectionPro
 
 export function NodeDrawer({
   node,
+  categories,
   onClose,
   onOpenMentor,
   onOpenTutor,
@@ -136,7 +138,7 @@ export function NodeDrawer({
       >
         <div className="flex shrink-0 items-start justify-between border-b border-border px-6 py-5">
           <div>
-            <p className="text-xs uppercase tracking-widest text-text-muted">{node.category}</p>
+            <p className="text-xs uppercase tracking-widest text-text-muted">{categories?.find((c) => c.id === node.category)?.label ?? node.category}</p>
             <h2 id="node-drawer-title" className="mt-1 text-xl font-semibold text-text-primary">
               {node.title}
             </h2>
