@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-80** (build_mentor_response — intent ladder → dispatch dict + per-intent helpers; identical replies; refactor loop wave 8)
+Last updated: **2026-05-30** · Last merge: **HAC-81** (build_adaptive_patch — split `_patches_on_pass`/`_patches_on_fail` + `_next_unlock_candidate`; identical GraphPatch; refactor loop wave 9)
 
 ---
 
