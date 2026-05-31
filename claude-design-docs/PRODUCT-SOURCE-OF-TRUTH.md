@@ -45,7 +45,6 @@ When sources conflict, apply this order **unless** an active Linear issue explic
 | **2** | **Screen intent** — [SCREEN-INTENT.md](./SCREEN-INTENT.md) + [UX-FLOW.md](./UX-FLOW.md) | Prototype detail contradicts wow moment or route purpose | Match intent; prototype is reference not law |
 | **3** | **Claude Design prototype** — [`prototype/`](./prototype/), [design-tokens.md](./design-tokens.md) | No implemented UI yet, or implementation diverges without documented reason | Tokens/components from prototype; **flow from UX-FLOW** |
 | **4** | **Implemented UI** — `apps/frontend/` | Deliberate evolution documented in **Implementation notes** below | Code wins; update docs same session |
-| **5** | **Brief history** — [brief-v1.md](./brief-v1.md) | Prototype already evolved past an old prompt | Prefer UX-FLOW + this doc over brief |
 
 ### Tie-breakers
 
@@ -144,7 +143,6 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 |------|------|
 | [UX-FLOW.md](./UX-FLOW.md) | Canonical flow + old vs new |
 | [SCREEN-INTENT.md](./SCREEN-INTENT.md) | Per-screen must-match |
-| [brief-v1.md](./brief-v1.md) | Original Claude Design prompts per screen |
 | [design-tokens.md](./design-tokens.md) | Color, type, status pills, spacing (Borderless) |
 | [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) | Canonical Borderless visual language |
 | [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) | HTML prototype evolution phases |

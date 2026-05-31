@@ -18,6 +18,10 @@ tsconfig.tsbuildinfo
 *.log
 logs/
 
+# Test artifacts
+.playwright-mcp/
+.venv-backend-tests/
+
 # OS
 .DS_Store
 .thumbnail

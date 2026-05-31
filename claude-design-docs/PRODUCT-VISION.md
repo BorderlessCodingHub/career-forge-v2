@@ -113,7 +113,6 @@ Do not build UI for these in MVP (see [CHECKPOINT](../docs/CHECKPOINT.md)):
 ## References
 
 - [UX-FLOW.md](./UX-FLOW.md) — canonical flow (HAC-21)
-- [brief-v1.md](./brief-v1.md) — screen prompts used in Claude Design
 - [handoff_chat_gpt.txt](../docs/handoff_chat_gpt.txt) — team debate + judge reframing
 - [prototype/](./prototype/) — tokens/components (flow may lag docs)
 - [references/roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) — steady-state layout

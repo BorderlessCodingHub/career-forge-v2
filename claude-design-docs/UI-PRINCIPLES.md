@@ -195,4 +195,4 @@ Before merging UI for these screens, verify against prototype:
 | `FORGE_SCRIPT` mock | `EventSource` SSE consumer |
 | Hash nav in `app.jsx` | Real routes + demo mode seed |
 
-Handoff checklist in [brief-v1.md](./brief-v1.md) §5.
+Handoff mapping: [README.md](./README.md) § Handoff → Next.js.

@@ -131,12 +131,6 @@ Ver [design-tokens.md](./design-tokens.md) e `prototype/styles.css`.
 
 ---
 
-## Brief original
-
-Ver [brief-v1.md](./brief-v1.md) — prompts usados no Claude Design (pré HAC-21).
-
----
-
 ## Handoff → Next.js
 
 Ao implementar:
