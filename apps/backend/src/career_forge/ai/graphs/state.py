@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, TypedDict
 
-from career_forge.schemas.common import Artifact, ForgeRunStatus, ReasoningEntry, SkillNode
+from career_forge.schemas.common import ForgeRunStatus, SkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
 
 
@@ -41,11 +41,3 @@ def new_skill_graph_state(
         max_iterations=max_iterations,
         status="running",
     )
-
-
-def append_reasoning(state: SkillGraphState, entry: ReasoningEntry) -> None:
-    state["reasoning_log"].append(entry.model_dump())
-
-
-def append_artifact(state: SkillGraphState, artifact: Artifact) -> None:
-    state["artifacts"].append(artifact.model_dump())

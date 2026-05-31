@@ -226,7 +226,7 @@ Career Forge — execução E2E (pós-HAC-32)
 ├─ FRONTEND  apps/frontend/src/
 │  ├─ (setup)/
 │  │  ├─ /onboarding ────────────── HAC-8  → POST /diagnosis
-│  │  └─ /forge ─────────────────── HAC-18 → GET /forge/stream (SSE timeline)
+│  │  └─ /forge ─────────────────── HAC-18 → GET /forge/{run_id}/stream (SSE timeline)
 │  └─ (artifact)/
 │     └─ /roadmap ───────────────── HAC-9  → GET /roadmap
 │        ├─ Validar ─────────────── HAC-10 → POST /validation → GraphExecutor(validation)

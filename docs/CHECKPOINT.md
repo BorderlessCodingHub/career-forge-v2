@@ -77,7 +77,7 @@ flowchart TD
 | `/demo/ana` | Demo seed user |
 | `/diagnosis` | Legacy single-shot diagnosis |
 | `/diagnosis/interview/start`, `/diagnosis/interview/{session_id}/turn` | Multi-turn CTRR diagnosis interview |
-| `/forge`, `/forge/stream`, `/forge/{run_id}/stream` | Forge run + SSE timeline |
+| `/forge`, `/forge/{run_id}/stream` | Forge run + SSE timeline |
 | `/roadmap/`, `/roadmap/sync` | Steady-state trail + sync |
 | `/validation/questions`, `/validation` | Mastery validation |
 | `/mentor/context`, `/mentor` | Contextual mentor |

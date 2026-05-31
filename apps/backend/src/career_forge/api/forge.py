@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
-from career_forge.ai.streaming.sse import events_to_sse, format_sse
+from career_forge.ai.streaming.sse import format_sse
 from career_forge.db.session import get_db
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.services.forge_persistence import persist_graph_ready
@@ -74,39 +74,6 @@ async def forge_run(
         events=[],
         output=None,
     )
-
-
-@router.get("/stream")
-async def forge_stream_demo() -> StreamingResponse:
-    """Demo SSE endpoint — streams forge with default Ana-like diagnosis."""
-    from career_forge.ai.graphs.diagnosis import build_diagnosis_response
-    from career_forge.schemas.diagnosis import DiagnosisRequest
-
-    demo_diagnosis = build_diagnosis_response(
-        DiagnosisRequest(
-            goal_id="backend",
-            motivation="APIs para space tech",
-            answers={
-                "level": "Já programo em JavaScript há alguns meses.",
-                "git": "Subi um projeto no GitHub.",
-            },
-        ),
-    )
-    run = GraphRun(
-        graph_name="roadmap_forge",
-        user_id="demo-ana",
-        input={"diagnosis": demo_diagnosis.model_dump()},
-    )
-    get_graph_run_store().save(run)
-    executor = get_graph_executor()
-    event_iter = await executor.execute(run, stream=True)
-    assert not isinstance(event_iter, GraphRunResult)
-
-    async def sse_body():
-        async for line in events_to_sse(event_iter):
-            yield line
-
-    return StreamingResponse(sse_body(), media_type="text/event-stream")
 
 
 @router.get("/{run_id}/stream")
