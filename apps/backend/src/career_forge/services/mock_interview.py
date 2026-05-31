@@ -30,6 +30,11 @@ from career_forge.services.mock_interview_session import (
 )
 from career_forge.services.roadmap import get_skill_node_context
 
+
+class McqSessionError(ValueError):
+    """Invalid MCQ mock interview session — maps to HTTP 400 at the boundary."""
+
+
 BASE_LABELS = QUESTION_LABELS
 GAP_LABELS = ("lacuna 1", "lacuna 2")
 SCENARIO_LABELS = ("cenário 1", "cenário 2")
@@ -165,12 +170,12 @@ def evaluate_mcq_session(payload: MockInterviewRequest) -> tuple[ValidationRespo
     """Score MCQ answers deterministically against server-side gabarito (HAC-65)."""
     if not payload.session_id:
         msg = "session_id is required for MCQ mock interview"
-        raise ValueError(msg)
+        raise McqSessionError(msg)
 
     session = get_mock_interview_session(payload.session_id)
     if session.user_id != payload.user_id or session.node_id != payload.node_id:
         msg = "Mock interview session does not match user/node"
-        raise ValueError(msg)
+        raise McqSessionError(msg)
 
     answers_by_id = {
         answer.question_id: answer.answer.strip().upper()
