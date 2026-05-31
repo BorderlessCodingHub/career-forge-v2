@@ -2,7 +2,6 @@ import type { RoadmapNode } from "@/types/contracts";
 
 import { getChecklistProgress } from "./checklist-progress-stats";
 
-export type { ChecklistProgressStats } from "./checklist-progress-stats";
 export { getChecklistProgress, getTrailChecklistProgressPct } from "./checklist-progress-stats";
 
 type ChecklistProgressProps = {

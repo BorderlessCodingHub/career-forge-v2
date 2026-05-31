@@ -4,10 +4,6 @@ import { readString, writeString } from "@/lib/session/storage";
 
 const USER_ID_KEY = "career-forge.user-id";
 
-/** Backend demo seed id — dev/API only, not used as default FE session. */
-export const DEMO_USER_ID =
-  process.env.NEXT_PUBLIC_DEMO_USER_ID?.trim() || "demo-ana";
-
 /**
  * Returns the persisted anonymous user id. Client-only — throws during SSR so
  * server code cannot silently fall back to the demo seed user.

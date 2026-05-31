@@ -5,7 +5,7 @@ import {
 } from "@/types/contracts";
 
 /** Profile sidebar skeleton — labels/descriptions sync with backend PROFILE_DIMENSION_* */
-export const PROFILE_DIMENSIONS: Array<{
+const PROFILE_DIMENSIONS: Array<{
   rubric_key: RubricDimensionKey;
   label: string;
   description: string;

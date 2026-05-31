@@ -1,4 +1,4 @@
-export type SseMessage = {
+type SseMessage = {
   event: string;
   data: string;
 };
@@ -20,12 +20,3 @@ export function parseSseBlock(block: string): SseMessage | null {
   return { event, data };
 }
 
-export function parseSseJson<T>(block: string): T | null {
-  const message = parseSseBlock(block);
-  if (!message) return null;
-  try {
-    return JSON.parse(message.data) as T;
-  } catch {
-    return null;
-  }
-}

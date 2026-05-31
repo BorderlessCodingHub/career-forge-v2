@@ -64,15 +64,6 @@ export type CvAttachment = {
   dataBase64: string;
 };
 
-export type OnboardingSession = {
-  goalId: string | null;
-  motivation: string;
-  yearsXp: YearsXpRange | null;
-  cvAttachment: CvAttachment | null;
-  answers: Record<string, string>;
-  diagnosis?: DiagnosisResponse;
-};
-
 export type RoadmapTrack = {
   id: string;
   title: string;
@@ -437,13 +428,6 @@ export type ValidationRequest = {
   node_title: string;
   rubric: string[];
   answers: ValidationAnswer[];
-};
-
-export type DemoValidationSummary = {
-  node_id: string;
-  score: number;
-  passed: boolean;
-  feedback?: string | null;
 };
 
 export type MentorRequest = {
