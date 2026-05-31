@@ -18,7 +18,7 @@ from career_forge.schemas.common import ValidationStatus
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.profile_diagnosis import diagnosis_response_from_profile
 from career_forge.schemas.mentor_report import MentorReportResponse, MentorReportValidationEntry
-from career_forge.services.roadmap import get_skill_node_context, load_roadmap_catalog
+from career_forge.services.roadmap import resolve_skill_node_catalog_entry, load_roadmap_catalog
 
 _NODE_ID_PREFIX = re.compile(r"^node-\d+-", re.IGNORECASE)
 _SLUG_PATTERN = re.compile(r"^[a-z0-9-]+$")
@@ -69,7 +69,7 @@ def _resolve_goal_display(raw: str) -> str:
 
 def _resolve_node_title(session: Session, node_id: str) -> str:
     try:
-        return str(get_skill_node_context(session, node_id)["title"])
+        return str(resolve_skill_node_catalog_entry(session, node_id)["title"])
     except ValueError:
         return _humanize_node_id(node_id)
 

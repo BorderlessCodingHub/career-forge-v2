@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
@@ -16,7 +13,11 @@ from career_forge.ai.run import (
     unwrap_graph_output,
 )
 from career_forge.db.session import get_db
-from career_forge.schemas.diagnosis import DiagnosisRequest, DiagnosisResponse
+from career_forge.schemas.diagnosis import (
+    DiagnosisRequest,
+    DiagnosisResponse,
+    DiagnosisRunResponse,
+)
 from career_forge.schemas.profile_diagnosis import (
     DiagnosisConfirmRequest,
     DiagnosisConfirmResponse,
@@ -24,13 +25,6 @@ from career_forge.schemas.profile_diagnosis import (
 from career_forge.services.profile_diagnosis import confirm_diagnosis
 
 router = APIRouter()
-
-
-class DiagnosisRunResponse(BaseModel):
-    run_id: str
-    status: str
-    events: list[dict[str, Any]]
-    diagnosis: DiagnosisResponse
 
 
 @router.post("", response_model=DiagnosisRunResponse)

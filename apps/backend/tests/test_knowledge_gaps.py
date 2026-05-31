@@ -83,7 +83,7 @@ class TestKnowledgeGapLedger:
         assert rows[0].evidence == "atualizado"
         assert rows[0].status == "open"
 
-    def test_resolve_concepts_marks_resolved(self, client) -> None:
+    def test_mark_gaps_resolved_for_concepts_marks_resolved(self, client) -> None:
         _sync_node(client, "gap-resolve")
         uid = _user_id("gap-resolve")
 
@@ -97,7 +97,7 @@ class TestKnowledgeGapLedger:
             session.commit()
 
         with SessionLocal() as session:
-            resolved = svc.resolve_concepts(
+            resolved = svc.mark_gaps_resolved_for_concepts(
                 session,
                 user_id=uid,
                 skill_node_id=NODE_ID,
@@ -308,7 +308,7 @@ class TestRemediationTasks:
         assert len(self._gap_tasks(client, "rem-idem")) == 1
 
         with SessionLocal() as session:
-            svc.resolve_concepts(
+            svc.mark_gaps_resolved_for_concepts(
                 session, user_id=uid, skill_node_id=NODE_ID, concepts=["retry/backoff"]
             )
             session.flush()

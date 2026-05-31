@@ -42,7 +42,7 @@ def load_roadmap_catalog(path: Path = ROADMAP_PATH) -> dict[str, Any]:
         return json.load(handle)
 
 
-def get_skill_node_context(session: Session | None, node_id: str) -> dict[str, Any]:
+def resolve_skill_node_catalog_entry(session: Session | None, node_id: str) -> dict[str, Any]:
     """Resolve a node's question-building context from the static catalog or a
     persisted AI-generated row (`track_id=ai-generated`), so downstream features
     (mock interview, validation) work for both seeded and StudyPlan nodes.

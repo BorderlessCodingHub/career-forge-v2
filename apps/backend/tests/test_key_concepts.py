@@ -5,7 +5,7 @@ from __future__ import annotations
 from career_forge.db.session import SessionLocal
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.services.mock_interview_context import build_mock_interview_context
-from career_forge.services.roadmap import get_skill_node_context
+from career_forge.services.roadmap import resolve_skill_node_catalog_entry
 
 NODE_ID = "gen-key-concepts"
 CONCEPTS = ["idempotência de PUT", "status codes HTTP", "design de recursos REST"]
@@ -32,7 +32,7 @@ def test_key_concepts_persist_and_surface(client) -> None:
     assert response.status_code == 200
 
     with SessionLocal() as session:
-        ctx = get_skill_node_context(session, NODE_ID)
+        ctx = resolve_skill_node_catalog_entry(session, NODE_ID)
         assert ctx["key_concepts"] == CONCEPTS
 
         study_block, _ = build_mock_interview_context(

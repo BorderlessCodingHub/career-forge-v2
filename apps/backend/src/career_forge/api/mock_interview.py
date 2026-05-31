@@ -15,7 +15,7 @@ from career_forge.schemas.mock_interview import (
 from career_forge.services import assessment_flow
 from career_forge.services import mock_interview as mock_interview_service
 from career_forge.services.mock_interview_context import build_mock_interview_context
-from career_forge.services.roadmap import get_skill_node_context
+from career_forge.services.roadmap import resolve_skill_node_catalog_entry
 
 router = APIRouter()
 
@@ -28,7 +28,7 @@ async def get_mock_interview_questions(
 ) -> MockInterviewQuestionsResponse:
     try:
         study_block, learner = build_mock_interview_context(db, user_id=user_id, node_id=node_id)
-        node = get_skill_node_context(db, node_id)
+        node = resolve_skill_node_catalog_entry(db, node_id)
         return await generate_mcq_mock_interview(
             user_id=user_id,
             node_id=node_id,

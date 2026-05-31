@@ -20,7 +20,7 @@ from career_forge.schemas.cv import CvAttachment, CvSignals
 from career_forge.services.cv import (
     extract_cv_signals,
     extract_pdf_text,
-    process_cv_attachment,
+    parse_cv_attachment,
 )
 
 
@@ -95,7 +95,7 @@ class TestExtractCvSignals:
 
 class TestProcessCvAttachment:
     def test_none_attachment_fails_open(self) -> None:
-        result = process_cv_attachment(None)
+        result = parse_cv_attachment(None)
         assert result.parse_ok is False
         assert result.text is None
         assert result.signals is None
@@ -104,17 +104,17 @@ class TestProcessCvAttachment:
         attachment = _attachment_from_text(
             "Software Developer — 2 years. Python JavaScript React Git.",
         )
-        result = process_cv_attachment(attachment)
+        result = parse_cv_attachment(attachment)
         assert result.parse_ok is True
         assert result.text
         assert result.signals is not None
         assert "Python" in result.signals.skills
 
-    def test_enrich_cv_attachment_sets_extracted_text(self) -> None:
-        from career_forge.services.cv import enrich_cv_attachment
+    def test_attach_extracted_text_sets_extracted_text(self) -> None:
+        from career_forge.services.cv import attach_extracted_text
 
         attachment = _attachment_from_text("Python developer with Git experience.")
-        enriched = enrich_cv_attachment(attachment)
+        enriched = attach_extracted_text(attachment)
         assert enriched.extracted_text is not None
         assert "Python" in enriched.extracted_text
 
@@ -124,7 +124,7 @@ class TestProcessCvAttachment:
             mime_type="application/pdf",
             content_base64="!!!not-base64!!!",
         )
-        result = process_cv_attachment(attachment)
+        result = parse_cv_attachment(attachment)
         assert result.parse_ok is False
         assert result.text is None
 
@@ -135,7 +135,7 @@ class TestProcessCvAttachment:
             mime_type="application/pdf",
             content_base64=payload,
         )
-        result = process_cv_attachment(attachment)
+        result = parse_cv_attachment(attachment)
         assert result.parse_ok is False
 
     def test_corrupt_pdf_fails_open(self) -> None:
@@ -146,5 +146,5 @@ class TestProcessCvAttachment:
             content_base64=payload,
         )
         with patch("career_forge.services.cv.extract_pdf_text", return_value=None):
-            result = process_cv_attachment(attachment)
+            result = parse_cv_attachment(attachment)
         assert result.parse_ok is False

@@ -26,7 +26,7 @@ from career_forge.schemas.diagnosis_interview import (
     InterviewQuestion,
     build_rubric_map,
 )
-from career_forge.services.cv import enrich_cv_attachment
+from career_forge.services.cv import attach_extracted_text
 
 
 class DiagnosisSessionNotFoundError(Exception):
@@ -210,7 +210,7 @@ class DiagnosisSessionService:
     async def start_interview(self, body: InterviewStartRequest) -> InterviewTurnResponse:
         intake = body.model_copy(deep=True)
         if intake.cv is not None:
-            intake = intake.model_copy(update={"cv": enrich_cv_attachment(intake.cv)})
+            intake = intake.model_copy(update={"cv": attach_extracted_text(intake.cv)})
 
         session_id = str(uuid4())
         session = DiagnosisSession(
@@ -234,7 +234,7 @@ class DiagnosisSessionService:
     ) -> AsyncIterator[str]:
         intake = body.model_copy(deep=True)
         if intake.cv is not None:
-            intake = intake.model_copy(update={"cv": enrich_cv_attachment(intake.cv)})
+            intake = intake.model_copy(update={"cv": attach_extracted_text(intake.cv)})
 
         session_id = str(uuid4())
         session = DiagnosisSession(
