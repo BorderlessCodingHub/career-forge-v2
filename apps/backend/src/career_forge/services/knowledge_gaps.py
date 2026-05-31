@@ -18,8 +18,8 @@ from sqlalchemy.orm import Session
 
 from career_forge.ai.tools.gap_classifier import classify_gaps
 from career_forge.db.models.knowledge_gap import KnowledgeGap
-from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
+from career_forge.db.repositories.user import get_by_external_id
 from career_forge.db.session import SessionLocal
 
 REMEDIATION_PREFIX = "gap-rem-"
@@ -73,10 +73,6 @@ def build_gap_capture(
         )
 
     return wrong, correct_concepts
-
-
-def _resolve_user(session: Session, external_id: str) -> User | None:
-    return session.scalar(select(User).where(User.external_id == external_id))
 
 
 def upsert_knowledge_gap(
@@ -152,7 +148,7 @@ def list_open_gaps(
     limit: int = 20,
 ) -> list[KnowledgeGapItem]:
     """Open gaps for a learner, optionally scoped to a node (mentor / next mock / drawer)."""
-    user = _resolve_user(session, user_id)
+    user = get_by_external_id(session, user_id)
     if user is None:
         return []
     query = select(KnowledgeGap).where(
@@ -276,7 +272,7 @@ def classify_and_store_gaps(
     items = [WrongAnswerItem.model_validate(item) for item in wrong_items]
     with SessionLocal() as session:
         try:
-            user = _resolve_user(session, user_id)
+            user = get_by_external_id(session, user_id)
             if user is None:
                 return
 

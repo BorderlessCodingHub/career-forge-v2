@@ -13,6 +13,7 @@ from career_forge.db.models.profile import Profile
 from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.models.validation import Validation
+from career_forge.db.repositories.user import get_by_external_id
 from career_forge.schemas.common import ValidationStatus
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.profile_diagnosis import diagnosis_response_from_profile
@@ -31,19 +32,15 @@ GOAL_DISPLAY_LABELS: dict[str, str] = {
 }
 
 
-def _resolve_user(session: Session, external_id: str) -> User | None:
-    return session.scalar(select(User).where(User.external_id == external_id))
-
-
 def _ensure_demo_user(session: Session, external_id: str) -> User:
     from scripts.seed import seed_demo_ana
 
-    user = _resolve_user(session, external_id)
+    user = get_by_external_id(session, external_id)
     if user is not None:
         return user
     if external_id == DEMO_ANA_EXTERNAL_ID:
         seed_demo_ana(session)
-        user = _resolve_user(session, external_id)
+        user = get_by_external_id(session, external_id)
         if user is not None:
             return user
     msg = f"User not found: {external_id}"

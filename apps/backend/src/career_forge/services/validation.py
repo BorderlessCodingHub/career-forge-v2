@@ -5,9 +5,9 @@ from __future__ import annotations
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.models.validation import Validation
+from career_forge.db.repositories.user import ensure_user
 from career_forge.schemas.common import SkillStatus, ValidationStatus
 from career_forge.schemas.validation import (
     ValidationQuestion,
@@ -29,10 +29,6 @@ QUESTION_HINTS = {
     "aplicação": "Use um exemplo concreto de projeto ou endpoint.",
     "aprofundamento": "Explique como se estivesse ensinando um colega.",
 }
-
-
-def _resolve_user(session: Session, external_id: str) -> User | None:
-    return session.scalar(select(User).where(User.external_id == external_id))
 
 
 def build_validation_questions(
@@ -72,15 +68,7 @@ def persist_validation_result(
     result: ValidationResponse,
 ) -> tuple[Validation, UserSkillNodeRow]:
     """Store validation attempt and update user skill node status."""
-    user = _resolve_user(session, payload.user_id)
-    if user is None:
-        user = User(
-            external_id=payload.user_id,
-            display_name=payload.user_id.replace("-", " ").title(),
-            email=f"{payload.user_id}@demo.careerforge.local",
-        )
-        session.add(user)
-        session.flush()
+    user = ensure_user(session, payload.user_id)
 
     user_skill = session.scalar(
         select(UserSkillNodeRow).where(

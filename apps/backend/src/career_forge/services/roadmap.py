@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from career_forge.db.models.skill_node import SkillNode
 from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
+from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.paths import roadmap_json_path
 from career_forge.schemas.roadmap import (
@@ -69,10 +70,6 @@ def get_skill_node_context(session: Session | None, node_id: str) -> dict[str, A
 
     msg = f"Unknown skill node: {node_id}"
     raise ValueError(msg)
-
-
-def _resolve_user(session: Session, external_id: str) -> User | None:
-    return session.scalar(select(User).where(User.external_id == external_id))
 
 
 def _user_state_map(session: Session, user: User) -> dict[str, UserSkillNodeRow]:
@@ -155,7 +152,7 @@ def build_roadmap_from_catalog(
 def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResponse:
     """Join skill catalog with per-user state from Postgres."""
     catalog = load_roadmap_catalog()
-    user = _resolve_user(session, user_id)
+    user = get_by_external_id(session, user_id)
     if user is None:
         return build_roadmap_from_catalog()
 
@@ -198,15 +195,7 @@ def sync_user_graph(
     nodes: list[UserSkillNode],
 ) -> RoadmapResponse:
     """Upsert forge graph into user_skill_nodes and return merged roadmap."""
-    user = _resolve_user(session, user_id)
-    if user is None:
-        user = User(
-            external_id=user_id,
-            display_name=user_id.replace("-", " ").title(),
-            email=f"{user_id}@demo.careerforge.local",
-        )
-        session.add(user)
-        session.flush()
+    user = ensure_user(session, user_id)
 
     existing = _user_state_map(session, user)
     incoming_ids = {node.node_id for node in nodes}
@@ -251,15 +240,7 @@ def toggle_checklist_item(
     done: bool,
 ) -> RoadmapResponse:
     """Persist lightweight checklist progress for a single task or reference item."""
-    user = _resolve_user(session, user_id)
-    if user is None:
-        user = User(
-            external_id=user_id,
-            display_name=user_id.replace("-", " ").title(),
-            email=f"{user_id}@demo.careerforge.local",
-        )
-        session.add(user)
-        session.flush()
+    user = ensure_user(session, user_id)
 
     roadmap = get_user_roadmap(session, user_id)
     node = next((item for item in roadmap.nodes if item.node_id == node_id), None)
