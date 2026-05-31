@@ -4,6 +4,8 @@
 
 Hackathon Borderless BASE 01/2026 · repository `HB01-2026_soft-push` (Soft Push)
 
+[Watch the full E2E demo (video)](https://drive.google.com/file/d/1bG_mgxk-PK4AKG9ZkfWniBKNzLkh8PSK/view?usp=sharing)
+
 | Layer | Technology |
 |--------|------------|
 | Frontend | Next.js + TypeScript + Tailwind |
