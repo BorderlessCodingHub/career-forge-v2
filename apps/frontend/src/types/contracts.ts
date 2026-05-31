@@ -315,21 +315,6 @@ export type MentorReportResponse = {
   learner_gaps: string[];
 };
 
-export type DiagnosisRequest = {
-  user_id?: string;
-  goal_id: string;
-  motivation: string;
-  years_xp?: "0-1" | "1-3" | "3-5" | "5+";
-  answers: Record<string, string>;
-};
-
-export type DiagnosisRunResponse = {
-  run_id: string;
-  status: string;
-  events: Array<Record<string, unknown>>;
-  diagnosis: DiagnosisResponse;
-};
-
 /** Universal profile dimension keys — mirrors backend PROFILE_DIMENSION_KEYS (ADR-002). */
 export type RubricDimensionKey =
   | "motivation_goal"
@@ -459,15 +444,6 @@ export type DemoValidationSummary = {
   score: number;
   passed: boolean;
   feedback?: string | null;
-};
-
-export type DemoAnaResponse = {
-  user_id: string;
-  display_name: string;
-  diagnosis: DiagnosisResponse;
-  roadmap: RoadmapResponse;
-  validations: DemoValidationSummary[];
-  pitch_node_id: string;
 };
 
 export type MentorRequest = {

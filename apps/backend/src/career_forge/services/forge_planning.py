@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from career_forge.ai.tools.study_plan_evaluator import StudyPlanEvaluator
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.study_plan import (
@@ -53,14 +52,6 @@ def build_draft_study_plan(
         ),
         nodes=nodes or [_starter_node(resources)],
     )
-
-
-async def evaluate_study_plan_event(
-    plan: StudyPlan,
-    evaluator: StudyPlanEvaluator,
-) -> dict[str, Any]:
-    evaluation = await evaluator.evaluate(plan)
-    return evaluation_artifact(evaluation)
 
 
 def evaluation_artifact(evaluation: StudyPlanEvaluation) -> dict[str, Any]:

@@ -102,7 +102,7 @@ events = await executor.execute(run, stream=True)    # → AsyncIterator[dict]
 | Mode | HTTP | Client receives | GraphRun |
 |------|------|-----------------|----------|
 | `stream=False` | `POST /forge` | Full JSON result after completion | All events recorded |
-| `stream=True` | `GET /forge/{run_id}/stream` or `GET /forge/stream` | SSE lines via `streaming/sse.py` | Same recording path |
+| `stream=True` | `GET /forge/{run_id}/stream` | SSE lines via `streaming/sse.py` | Same recording path |
 
 Same loop, same recording — only the client-facing delivery differs.
 
@@ -142,7 +142,6 @@ Production path uses LangGraph builders through `ai/registry.py` for diagnosis, 
 | Method | Path | Behavior |
 |--------|------|----------|
 | `POST` | `/forge` | Create `GraphRun`, execute collect, return `{ run_id, events, output }` |
-| `GET` | `/forge/stream` | Demo SSE — ephemeral run, stream mock forge |
 | `GET` | `/forge/{run_id}/stream` | Re-execute stored run with `stream=True` → SSE |
 
 Other AI-backed routers already follow this pattern (`diagnosis`, `diagnosis_interview`, `validation`, `mock_interview`, `mentor`).

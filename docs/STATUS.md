@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-72** (fix: adaptive roadmap surfaces async remediation/focos without manual nav)
+Last updated: **2026-05-30** · Last merge: **HAC-73** (dead-code sweep — orphan FE, dead api-client exports, micro-backend; refactor loop wave 1)
 
 ---
 

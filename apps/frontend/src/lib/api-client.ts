@@ -1,11 +1,8 @@
 import type {
   CvAttachment,
-  DemoAnaResponse,
   DiagnosisConfirmResponse,
   DiagnosisIntake,
-  DiagnosisRequest,
   DiagnosisResponse,
-  DiagnosisRunResponse,
   DiagnosisStreamEvent,
   ForgeRunResponse,
   InterviewTurnRequest,
@@ -93,24 +90,6 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
     throw new Error(`API ${path} failed: ${message}`);
   }
   return res.json() as Promise<T>;
-}
-
-export async function createDiagnosis(
-  payload: DiagnosisRequest,
-): Promise<DiagnosisRunResponse> {
-  return apiFetch<DiagnosisRunResponse>("/diagnosis", {
-    method: "POST",
-    body: JSON.stringify({ user_id: getUserId(), ...payload }),
-  });
-}
-
-export async function startDiagnosisInterview(
-  payload: DiagnosisIntake,
-): Promise<InterviewTurnResponse> {
-  return apiFetch<InterviewTurnResponse>("/diagnosis/interview/start", {
-    method: "POST",
-    body: JSON.stringify({ user_id: getUserId(), ...payload }),
-  });
 }
 
 function parseDiagnosisStreamEvent(raw: Record<string, unknown>): DiagnosisStreamEvent | null {
@@ -203,19 +182,6 @@ export async function streamDiagnosisInterviewTurn(
   );
 }
 
-export async function submitDiagnosisTurn(
-  sessionId: string,
-  payload: InterviewTurnRequest,
-): Promise<InterviewTurnResponse> {
-  return apiFetch<InterviewTurnResponse>(
-    `/diagnosis/interview/${encodeURIComponent(sessionId)}/turn`,
-    {
-      method: "POST",
-      body: JSON.stringify(payload),
-    },
-  );
-}
-
 export async function confirmDiagnosis(payload: {
   diagnosis: DiagnosisResponse;
   goal_id: string;
@@ -247,24 +213,6 @@ export async function startForgeRunFromProfile(
   return apiFetch<ForgeRunResponse>("/forge", {
     method: "POST",
     body: JSON.stringify({ user_id: resolvedUserId }),
-  });
-}
-
-/** Legacy inline-diagnosis forge start (demo / tests). */
-export async function startForgeRun(
-  diagnosis: DiagnosisResponse,
-  userId?: string,
-  input?: {
-    goal_id?: string | null;
-    motivation?: string;
-    years_xp?: DiagnosisIntake["years_xp"] | null;
-    answers?: Record<string, string>;
-  },
-): Promise<ForgeRunResponse> {
-  const resolvedUserId = userId ?? getUserId();
-  return apiFetch<ForgeRunResponse>("/forge", {
-    method: "POST",
-    body: JSON.stringify({ user_id: resolvedUserId, diagnosis, input }),
   });
 }
 
@@ -377,10 +325,6 @@ export async function submitMockInterview(
     method: "POST",
     body: JSON.stringify({ user_id: resolvedUserId, ...payload }),
   });
-}
-
-export async function getDemoAna(): Promise<DemoAnaResponse> {
-  return apiFetch<DemoAnaResponse>("/demo/ana");
 }
 
 export async function getMentorContext(
