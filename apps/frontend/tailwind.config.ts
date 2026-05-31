@@ -51,6 +51,12 @@ const config: Config = {
       backgroundSize: {
         dots: "24px 24px",
       },
+      keyframes: {
+        reveal: {
+          from: { opacity: "0", transform: "translateY(1rem)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+      },
     },
   },
   plugins: [],
