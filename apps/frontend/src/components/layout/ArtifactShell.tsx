@@ -2,7 +2,7 @@
 
 import type { HTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
-import { FileText } from "lucide-react";
+import { Axe, FileText } from "lucide-react";
 
 const topbarActionClass =
   "inline-flex h-9 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium text-text-secondary transition hover:border-accent/40 hover:bg-surface hover:text-text-primary";
@@ -28,8 +28,8 @@ export function ArtifactShell({
         data-testid="artifact-topbar"
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-accent/20 text-sm font-semibold text-accent">
-            CF
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-accent/20 text-accent">
+            <Axe className="h-5 w-5" />
           </div>
           <div>
             <p className="text-sm font-semibold text-text-primary">Career Forge</p>

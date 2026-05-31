@@ -249,6 +249,7 @@ export default function RoadmapArtifactPageContent() {
 
         <NodeDrawer
           node={selectedNode}
+          categories={roadmap?.categories}
           onClose={closeDrawer}
           onOpenMentor={openMentor}
           onOpenTutor={openTutor}

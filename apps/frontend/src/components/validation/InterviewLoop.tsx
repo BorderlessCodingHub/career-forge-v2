@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BookOpen, BookOpenCheck } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui";
@@ -37,7 +38,7 @@ const MODE_COPY: Record<
     screen: string;
     title: string;
     subtitle: string;
-    badge: string;
+    badge: React.ReactNode;
     loading: string;
     loadError: string;
     footer: string;
@@ -50,7 +51,7 @@ const MODE_COPY: Record<
     title: "Mock interview — validação profunda",
     subtitle:
       "5–7 perguntas de múltipla escolha contextualizadas no seu bloco de estudo. O gabarito é validado na hora e recalibra a trilha.",
-    badge: "MI",
+    badge: <BookOpen className="h-5 w-5" />,
     loading: "Gerando perguntas contextualizadas…",
     loadError: "Falha ao carregar mock interview",
     footer: "Mock interview retroalimenta o plano — lacunas detectadas recalibram a trilha",
@@ -62,7 +63,7 @@ const MODE_COPY: Record<
     title: "Pronto para validar seu aprendizado?",
     subtitle:
       "A IA vai te entrevistar antes de liberar o próximo tópico. Pense como se estivesse explicando para um colega.",
-    badge: "/v",
+    badge: <BookOpenCheck className="h-5 w-5" />,
     loading: "Preparando entrevista…",
     loadError: "Falha ao carregar entrevista",
     footer: "Avaliação por evidência — não basta marcar como concluído",
