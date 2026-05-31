@@ -41,10 +41,10 @@ Career Forge shares Borderless Community’s dark, premium dev-tool aesthetic. S
 | `accent-mint-bright` | `#00E5C0` | `--accent-mint-bright` | Progress bar peak, glow accents |
 | `accent-glow` | `rgba(124, 58, 237, 0.22)` | `--accent-glow` | Focus rings, node selection |
 | `mint-glow` | `rgba(45, 212, 191, 0.18)` | `--mint-glow` | Progress bar track glow |
-| `success` | `#22C55E` | `--success` | Mastery / aprovado (semantic) |
-| `warning` | `#F59E0B` | `--warning` | Revisar / atenção |
-| `locked` | `#4B5563` | `--locked` | Nó bloqueado |
-| `evidence` | `#2DD4BF` | `--evidence` | Evidências (align with mint accent) |
+| `success` | `#22C55E` | `--success` | Mastery / approved (semantic) |
+| `warning` | `#F59E0B` | `--warning` | Review / attention |
+| `locked` | `#4B5563` | `--locked` | Locked node |
+| `evidence` | `#2DD4BF` | `--evidence` | Evidence (align with mint accent) |
 | `grid-dot` | `rgba(255,255,255,0.04)` | — | Canvas dot grid (24px spacing) |
 
 ### Gradients (logo-derived)
@@ -129,7 +129,7 @@ Keep HAC-21 status enum; map colors to Borderless where possible:
 
 UX flow from [UX-FLOW.md](./UX-FLOW.md) does **not** change:
 
-1. Goal → Onboarding → **Editable diagnosis** → Gerar roadmap
+1. Goal → Onboarding → **Editable diagnosis** → Generate roadmap
 2. **Forge stream** — timeline only, no graph on canvas during generation
 3. **Animation reveal** — stream items animate into node positions on canvas
 4. **Steady state** — Code Breakers–style canvas (not legacy indigo skill-graph dashboard)
@@ -147,7 +147,7 @@ UX flow from [UX-FLOW.md](./UX-FLOW.md) does **not** change:
 | Element | Spec |
 |---------|------|
 | **`MentorAvatar`** | `bg-gradient-to-br from-accent-mint to-accent` — brand ribbon; used in `MentorDrawer` header |
-| **`trail-progress-ring`** | ~44px compact SVG ring, `accent-mint` stroke, center `%` — centered in page intro below subtitle; `getTrailChecklistProgressPct`: per-topic `getChecklistProgress` stats item-pooled; **Progresso de estudo** label; hidden when no checklist items |
+| **`trail-progress-ring`** | ~44px compact SVG ring, `accent-mint` stroke, center `%` — centered in page intro below subtitle; `getTrailChecklistProgressPct`: per-topic `getChecklistProgress` stats item-pooled; **Study progress** label; hidden when no checklist items |
 | **Topbar ghost actions** | Shared `topbarActionClass` — `h-9` bordered pill, `hover:bg-surface`; `h-7` leading slot (centered `FileText`); right cluster `items-end` so actions align to track title baseline |
 | **Spine selection** | Active row dot: `border-accent-mint`, `shadow-[0_0_12px_var(--mint-glow)]` |
 | **Spine branch connector** | Solid 2px horizontal line card ↔ spine dot — `border` default, `warning` revisar, `accent-mint` selected; `roadmap-connector-{id}` |

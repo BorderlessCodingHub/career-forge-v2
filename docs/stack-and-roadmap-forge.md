@@ -1,8 +1,8 @@
-# Stack fechada + Live Roadmap Forge
+# Closed stack + Live Roadmap Forge
 
-## Stack oficial
+## Official stack
 
-| Camada | Tecnologia |
+| Layer | Technology |
 |--------|------------|
 | Frontend | Next.js + TypeScript + Tailwind |
 | Backend | FastAPI + Pydantic + SQLAlchemy/Alembic |
@@ -16,28 +16,28 @@ Monorepo:
 ```
 apps/frontend/          # Next.js
 apps/backend/          # FastAPI
-packages/schemas/  # Pydantic models (opcional shared)
-data/roadmap.json  # catálogo base de skills
+packages/schemas/  # Pydantic models (optional, shared)
+data/roadmap.json  # base skill catalog
 ```
 
 ---
 
-## Live Roadmap Forge — spec técnica
+## Live Roadmap Forge — technical spec
 
-**Posição no fluxo:** Onboarding pill rounds + editable diagnosis (HAC-8) → **Forge stream timeline-only (HAC-18)** → Animation reveal → **artifact mode** vertical roadmap (HAC-9)
+**Position in the flow:** Onboarding pill rounds + editable diagnosis (HAC-8) → **Forge stream timeline-only (HAC-18)** → Animation reveal → **artifact mode** vertical roadmap (HAC-9)
 
-**Por que é o primeiro wow:** mostra IA como motor visível — não black box, não chatbot decorativo.
+**Why it's the first wow:** shows AI as a visible engine — not a black box, not a decorative chatbot.
 
 ### LangGraph — `roadmap_forge_graph`
 
 ```python
 class SkillGraphState(TypedDict):
     user_id: str
-    profile: DiagnosisResponse          # do onboarding
+    profile: DiagnosisResponse          # from onboarding
     base_catalog: list[SkillNode]       # roadmap.json
-    accumulated_graph: list[UserSkillNode]  # SOURCE OF TRUTH — merge determinístico
-    reasoning_log: list[ReasoningEntry] # timeline para UI
-    artifacts: list[Artifact]           # resources/decisões encontradas
+    accumulated_graph: list[UserSkillNode]  # SOURCE OF TRUTH — deterministic merge
+    reasoning_log: list[ReasoningEntry] # timeline for UI
+    artifacts: list[Artifact]           # resources/decisions found
     iteration: int
     max_iterations: int               # default 3 (guardrail hackathon)
     status: Literal["running", "done", "error"]
@@ -45,32 +45,32 @@ class SkillGraphState(TypedDict):
 
 ### Nodes
 
-| Node | Responsabilidade | Stream? |
+| Node | Responsibility | Stream? |
 |------|------------------|---------|
-| `load_topics` | Carrega catálogo + perfil do Postgres | evento `step_complete` |
-| `analyze_gaps` | LLM compara perfil vs catálogo; identifica lacunas/redundâncias | `reasoning_delta` (token stream) |
-| `research_enrich` | OpenAI native `web_search` via LangChain content blocks; enriquece prioridades/recursos com fontes oficiais | `artifact_found`, `reasoning_delta` |
-| `plan_study_graph` | Planner LLM cria `StudyPlan` com estratégia, tarefas, evidências e recursos | `artifact_found` |
-| `evaluate_plan` | Evaluator mini revisa gaps; se `revise`, feedback volta ao planner com estado completo | `artifact_found`, `reasoning_delta` |
-| `accumulate_graph` | **Código Python** merge nodes (status, mastery, priority) — NÃO confia na LLM | `node_updated` por nó |
-| `should_continue` | Conditional edge: iteration < max AND gaps significativos | — |
-| `emit_final` | Persiste `user_skill_nodes` + emite `graph_ready` | `graph_ready` |
+| `load_topics` | Loads catalog + profile from Postgres | `step_complete` event |
+| `analyze_gaps` | LLM compares profile vs catalog; identifies gaps/redundancies | `reasoning_delta` (token stream) |
+| `research_enrich` | OpenAI native `web_search` via LangChain content blocks; enriches priorities/resources with official sources | `artifact_found`, `reasoning_delta` |
+| `plan_study_graph` | Planner LLM creates `StudyPlan` with strategy, tasks, evidence, and resources | `artifact_found` |
+| `evaluate_plan` | Mini evaluator reviews gaps; if `revise`, feedback returns to the planner with full state | `artifact_found`, `reasoning_delta` |
+| `accumulate_graph` | **Python code** merges nodes (status, mastery, priority) — does NOT trust the LLM | `node_updated` per node |
+| `should_continue` | Conditional edge: iteration < max AND significant gaps | — |
+| `emit_final` | Persists `user_skill_nodes` + emits `graph_ready` | `graph_ready` |
 
-### Regra de ouro: LLM propõe, código dispõe
+### Golden rule: the LLM proposes, the code disposes
 
-A LLM retorna JSON estruturado (`GraphPatch`), ex.:
+The LLM returns structured JSON (`GraphPatch`), e.g.:
 ```json
 {
   "patches": [
     { "node_id": "http-basics", "status": "recomendado", "mastery_estimated": 42, "priority": "high", "rationale": "..." },
-    { "node_id": "git-github", "status": "aprovado", "mastery_estimated": 78, "priority": "low", "rationale": "revisão rápida" }
+    { "node_id": "git-github", "status": "aprovado", "mastery_estimated": 78, "priority": "low", "rationale": "quick review" }
   ],
   "continue_research": true,
   "summary": "..."
 }
 ```
 
-Node `accumulate_graph` aplica patches com validação Pydantic + regras de prerequisite.
+The `accumulate_graph` node applies patches with Pydantic validation + prerequisite rules.
 
 ### SSE — FastAPI endpoint
 
@@ -82,7 +82,7 @@ GET /forge/{run_id}/stream
 → text/event-stream
 ```
 
-Eventos (`RoadmapForgeEvent`):
+Events (`RoadmapForgeEvent`):
 ```typescript
 type RoadmapForgeEvent =
   | { type: "reasoning_delta"; text: string; step: string }
@@ -93,49 +93,49 @@ type RoadmapForgeEvent =
   | { type: "error"; message: string };
 ```
 
-`ResearchSource` vem de citações nos `AIMessage.content_blocks` do LangChain, não de HTTP manual para search APIs externas. Queries ficam internas ao planner/research state; a UI renderiza resumo + cards de referência.
+`ResearchSource` comes from citations in LangChain's `AIMessage.content_blocks`, not from manual HTTP to external search APIs. Queries stay internal to the planner/research state; the UI renders a summary + reference cards.
 
-HAC-54 inicia o loop de qualidade: o planner recebe contexto do aluno + fontes; o evaluator retorna `ship|revise`; em caso de `revise`, o planner recebe `previous_plan + evaluator_feedback + research_state + learner_context` para uma nova iteração antes de `graph_ready`. HAC-55 persiste o `StudyPlan` aprovado como nós dinâmicos (`user_skill_nodes` + `skill_nodes` gerados) com `tasks[]`, `references[]` e prerequisites para reload pós-forge.
+HAC-54 starts the quality loop: the planner receives learner context + sources; the evaluator returns `ship|revise`; on `revise`, the planner receives `previous_plan + evaluator_feedback + research_state + learner_context` for a new iteration before `graph_ready`. HAC-55 persists the approved `StudyPlan` as dynamic nodes (`user_skill_nodes` + generated `skill_nodes`) with `tasks[]`, `references[]`, and prerequisites for post-forge reload.
 
-Implementação: `GraphExecutor` com `astream_events` v2 + normalização em `ai/streaming/events.py`.
+Implementation: `GraphExecutor` with `astream_events` v2 + normalization in `ai/streaming/events.py`.
 
 ### Frontend — UX (HAC-21 + HAC-25)
 
-**Fase 1 — Forge (live):**
+**Phase 1 — Forge (live):**
 - **Timeline only** — full-width numbered steps (`reasoning_delta`, `artifact_found`, `decision`)
 - **No graph/map preview** during stream — `node_updated` updates backend state only
-- Loading pulse suave, sem spinner genérico como UX primária
+- Subtle loading pulse, no generic spinner as the primary UX
 
-**Fase 2 — Reveal:**
-- Stream encerra com `graph_ready`
-- Animação: itens do stream **voam** para posições no layout vertical roadmap (spine left/right)
-- Transição para `/roadmap` em **`artifact` mode** (sem stepper, sem sidebar de progresso)
+**Phase 2 — Reveal:**
+- Stream ends with `graph_ready`
+- Animation: stream items **fly** to positions in the vertical roadmap layout (spine left/right)
+- Transition to `/roadmap` in **`artifact` mode** (no stepper, no progress sidebar)
 
-**Fase 3 — Steady state (HAC-9):**
-- Canvas vertical uniforme; click node → drawer (referências + Ask AI + validar)
-- Status/mastery no drawer, não poluindo cards do canvas
+**Phase 3 — Steady state (HAC-9):**
+- Uniform vertical canvas; click node → drawer (references + Ask AI + validate)
+- Status/mastery in the drawer, not cluttering the canvas cards
 
-**Fallback demo:** replay JSON de eventos gravados (seed Ana) se LLM falhar ao vivo.
+**Demo fallback:** replay JSON of recorded events (seed Ana) if the LLM fails live.
 
 ### LangSmith
 
-- 1 trace por `run_id`
+- 1 trace per `run_id`
 - Tags: `roadmap_forge`, `iteration:N`, `user:demo-ana`
-- Mostrar no pitch: "cada decisão do grafo é rastreável"
+- Show in the pitch: "every graph decision is traceable"
 
 ---
 
-## Guardrails hackathon
+## Hackathon guardrails
 
-1. **Max 3 iterations** no loop — evita runaway
-2. **Timeout 60s** no stream total
-3. **Catálogo fixo** — LLM personaliza, não inventa nós novos no MVP
-4. **Replay fallback** — eventos pré-gravados para demo
-5. **Research node** — no MVP pode ser LLM-only (sem web search real); label como "research" na timeline mesmo assim
+1. **Max 3 iterations** in the loop — avoids runaway
+2. **60s timeout** on the total stream
+3. **Fixed catalog** — the LLM personalizes, does not invent new nodes in the MVP
+4. **Replay fallback** — pre-recorded events for the demo
+5. **Research node** — in the MVP it can be LLM-only (no real web search); label it as "research" in the timeline regardless
 
 ---
 
-## Dependências Linear
+## Linear dependencies
 
 ```
 HAC-5 (stack) → HAC-6, HAC-7

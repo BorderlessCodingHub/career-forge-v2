@@ -21,7 +21,7 @@ Agents compare all three before coding UI. After sessions that change layout, to
 ## Canonical UX flow (HAC-21 + HAC-25)
 
 ```
-Goal → Onboarding pill rounds → Editable diagnosis → [Gerar roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
+Goal → Onboarding pill rounds → Editable diagnosis → [Generate roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
 ```
 
 **App modes (prototype + target app):**
@@ -68,9 +68,9 @@ Full narrative: [PRODUCT-VISION](./PRODUCT-VISION.md)
 | Live Roadmap Forge | User *watches* AI build their personal trail (streaming timeline → animation reveal) |
 | Mastery validation | Progress only after AI interview proves learning |
 | Adaptive planning | Graph reacts to validation outcomes |
-| Borderless mentor value | Evidence + gaps for embaixadores, not generic chat |
+| Borderless mentor value | Evidence + gaps for ambassadors, not generic chat |
 
-**Pitch line:** *Sem IA vira checklist. Com IA diagnostica, valida e adapta.*
+**Pitch line:** *Without AI it becomes a checklist. With AI it diagnoses, validates, and adapts.*
 
 ---
 
@@ -124,14 +124,14 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
 | `/` Goal picker | Hero + 3 cards + motivation field | Animation library, form validation UX |
-| `/onboarding` | Chat diagnostic, 4–6 Q feel; short negative answers like "Nada." are valid evidence | Streaming vs batch API |
-| `/onboarding/edit` | **Editable** fortes/lacunas/prioridades + **"Gerar roadmap"** | HAC-53: view-first, pencil/trash, dnd-kit reorder, refazer diagnóstico |
-| `/roadmap/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; manual **"Ver roadmap"** CTA after `graph_ready` | SSE wiring, scroll behavior |
+| `/onboarding` | Chat diagnostic, 4–6 Q feel; short negative answers like "Nothing." are valid evidence | Streaming vs batch API |
+| `/onboarding/edit` | **Editable** strengths/gaps/priorities + **"Generate roadmap"** | HAC-53: view-first, pencil/trash, dnd-kit reorder, redo diagnosis |
+| `/roadmap/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; manual **"View roadmap"** CTA after `graph_ready` | SSE wiring, scroll behavior |
 | `/roadmap/forge/complete` | Stream items fly into vertical layout | Motion implementation |
 | `/roadmap` | **Vertical roadmap** steady state; track name in **artifact topbar** only; right cluster `items-end`; `mentor-report-link` bottom-aligned to track title; page intro (`pt-6`) = subtitle + centered **`trail-progress-ring`** when checklist items exist; spine nodes alternate left/right with solid **`roadmap-connector-{id}`** lines to spine dot; canvas compact study progress; drawer accordions + sticky validate CTA | Node detail panel, full AI sidebar (P2) |
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |
 | `/roadmap` (adaptive) | Roadmap state change + mentor/AI context | Drawer vs sidebar |
-| `/report` | **Mentor evidence report** — human **Objetivo** (career goal label, not `goal_id` slug) + human topic titles; structured resumo per validation (lacunas / acertos / próximo passo bullets); score header; entry via topbar `mentor-report-link` | Export PDF, mentor filters |
+| `/report` | **Mentor evidence report** — human **Goal** (career goal label, not `goal_id` slug) + human topic titles; structured summary per validation (gaps / correct answers / next step bullets); score header; entry via topbar `mentor-report-link` | Export PDF, mentor filters |
 
 Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype/README.md`](./prototype/README.md) — run `python3 -m http.server 8765` in `prototype/` → `http://localhost:8765/`
 
@@ -162,20 +162,20 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 
 | Topic | Docs (HAC-21) | Prototype (legacy) | Implemented | Decision | Date |
 |-------|-----------------|-------------------|-------------|----------|------|
-| Diagnosis answer validation | Pill rounds accept meaningful short answers | Prototype did not define min length | `MIN_ANSWER_LENGTH=1`; disabled button has visible disabled state | **Code + backend contract win** — "Nada." is valid evidence | 2026-05-27 |
+| Diagnosis answer validation | Pill rounds accept meaningful short answers | Prototype did not define min length | `MIN_ANSWER_LENGTH=1`; disabled button has visible disabled state | **Code + backend contract win** — "Nothing." is valid evidence | 2026-05-27 |
 | Post-diagnosis | Editable `/onboarding/edit` | Read-only `/onboarding/result` | HAC-53 shipped — view-first edit, dnd-kit priorities, sessionStorage | **Docs + code aligned** | HAC-53 |
 | Forge during stream | Timeline only, no graph | Split timeline + graph skeleton | Implemented | **Docs win** — timeline-only wow | HAC-18 |
 | Steady state | Vertical roadmap + optional AI sidebar | Skill graph dashboard | Implemented (HAC-9) | **Docs win** — roadmap.sh layout | HAC-9 |
 | Reveal | Items fly into vertical layout | Graph panel reveal | Implemented | **Docs win** | HAC-18 |
 | Monorepo UI | Full flow per UX-FLOW | Old hash routes in HTML | Mostly implemented | HAC-52 API done (`/diagnosis/confirm`, forge loads profile); **HAC-57** wires confirm button | HAC-52 |
-| Forge research + evaluation | Timeline-only stream with `artifact_found` rows | Mock artifacts without live sources | HAC-54 — OpenAI native `web_search` citations, planner artifact, evaluator verdict, paced instant steps, then manual **Ver roadmap** CTA | **Code + docs aligned** — no third-party search adapter | HAC-54 |
+| Forge research + evaluation | Timeline-only stream with `artifact_found` rows | Mock artifacts without live sources | HAC-54 — OpenAI native `web_search` citations, planner artifact, evaluator verdict, paced instant steps, then manual **View roadmap** CTA | **Code + docs aligned** — no third-party search adapter | HAC-54 |
 | Generated roadmap details | Drawer can show references/outcomes | Prototype lacks generated StudyPlan fields | HAC-55 — dynamic nodes reload from backend with `tasks[]` and `references[]` | **Code wins** — richer graph data | HAC-55 |
 | Drawer study checklist | Optional read/practice tracking | Prototype has no per-item progress | **HAC-63** — `NodeDrawer`: checkboxes (`checklist-task-{id}`, `checklist-reference-{id}`), progress block (`node-checklist-progress`, `checklist-non-blocking-copy`), mint bar; `PATCH /roadmap/nodes/{node_id}/checklist` persists `checklist_progress` JSONB per user+node; adaptive `?adaptive=1` updates local state only | **Code wins** — study aid only; `validate-node-cta` unchanged | 2026-05-28 |
 | Canvas study progress | Progress only in drawer | Prototype has no card progress | **`ChecklistProgress`** + **`checklist-progress-stats.ts`** — `getChecklistProgress` per topic; `getTrailChecklistProgressPct` item-pools for page-intro ring; card shows `roadmap-node-{id}-checklist-progress` with `x/y` + thin mint bar when `checklist_total > 0`; mastery % stays drawer-only | **Code wins** — at-a-glance study tracking, not mastery on canvas | 2026-05-30 |
 | Node drawer layout | Drawer repeats title + long description; muted `slideover-close` | Card shows description; drawer lists status/mastery | **NodeDrawer** — header title only; `description` callout in drawer when no knowledge gaps (otherwise gaps block); header **✕** = red dismiss icon (`h-9 w-9`, `text-red-400`, hover/focus `red-900/60`, `aria-label="Fechar detalhes"`); Escape closes + focus returns to card; collapsible sections default open (outcomes, tasks, refs; user can collapse via header toggle); optional tutor row; sticky `validate-node-cta` footer — **no** in-drawer mentor chat row | **Code wins** — less redundancy; dismiss reads as exit/destructive, not neutral chrome | 2026-05-30 |
-| Artifact roadmap chrome | Centered page `<h1>` + inline mentor card | Topbar track name + actions | **`ArtifactShell`** topbar (`artifact-topbar`): right cluster `items-end` — single `mentor-report-link` (`h-9`, `FileText` icon slot) + track name block (no ring in topbar); **`TrailProgressRing`** (`trail-progress-ring`, ~44px, mint stroke) centered in **page intro** below subtitle when checklist items exist — `getTrailChecklistProgressPct` item-pooled; label **Progresso de estudo**; adaptive view (`?adaptive=1`) = subtitle + highlighted spine node only — **no** `MissionBanner` on canvas; without session → silent server fallback | **Code wins** — de-cluttered topbar; trail progress on canvas intro | 2026-05-30 |
+| Artifact roadmap chrome | Centered page `<h1>` + inline mentor card | Topbar track name + actions | **`ArtifactShell`** topbar (`artifact-topbar`): right cluster `items-end` — single `mentor-report-link` (`h-9`, `FileText` icon slot) + track name block (no ring in topbar); **`TrailProgressRing`** (`trail-progress-ring`, ~44px, mint stroke) centered in **page intro** below subtitle when checklist items exist — `getTrailChecklistProgressPct` item-pooled; label **Study progress**; adaptive view (`?adaptive=1`) = subtitle + highlighted spine node only — **no** `MissionBanner` on canvas; without session → silent server fallback | **Code wins** — de-cluttered topbar; trail progress on canvas intro | 2026-05-30 |
 | Spine card connectors | Dashed SVG branches (`prototype/skill-graph.jsx`) | Dashed grey graph edges (Code Breakers ref) | **`VerticalSpine`** / **`VerticalSpineSkeleton`**: 3-zone flex row — card + solid **`roadmap-connector-{id}`** (2px, `min-w-6 max-w-[120px]`) + spine dot; colors: `bg-border` default, `bg-warning` when `revisar`, `bg-accent-mint` when selected; skeleton connector stubs match loaded layout; `scrollIntoView` on select; selected dot mint glow | **Code wins** — solid status-colored branches on vertical artifact canvas | 2026-05-30 |
-| Mentor evidence report | Dense paragraph `mentor_summary`; slug as headline; raw `goal_id` as Objetivo | N/A | **`/report`** — `MentorReportView`: `formatGoalForDisplay` + backend `_resolve_goal_display` (slug `ai-ml` → `AI & ML Engineer`; human strings pass through); `formatNodeTitleForDisplay` for topics; structured **Resumo para mentor** — lacunas / acertos / próximo passo bullets; legacy `mentor_summary` split when structured fields empty; list-shaped StudyPlan evidence on backend | **Code wins** — mentor scan UX | 2026-05-30 |
+| Mentor evidence report | Dense paragraph `mentor_summary`; slug as headline; raw `goal_id` as Goal | N/A | **`/report`** — `MentorReportView`: `formatGoalForDisplay` + backend `_resolve_goal_display` (slug `ai-ml` → `AI & ML Engineer`; human strings pass through); `formatNodeTitleForDisplay` for topics; structured **Mentor summary** — gaps / correct answers / next step bullets; legacy `mentor_summary` split when structured fields empty; list-shaped StudyPlan evidence on backend | **Code wins** — mentor scan UX | 2026-05-30 |
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
 | Deploy badge (global footer) | Not in prototype | N/A | Fixed bottom strip on all routes — `DeployBadge` in root layout (`z-auto`, not `z-50`) so `NodeDrawer` / `MentorDrawer` (`z-40` backdrop, `z-50` panel) paint above; `local dev` when `NEXT_PUBLIC_BUILD_*` unset; prod `deploy {sha} · {time}`; health dot polls `GET /health` | **Code wins** — operational debug chrome below modals; not pitch UX | 2026-05-28 |
@@ -203,4 +203,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: 2026-05-30 — `/report` human Objetivo labels + structured resumo*
+*Last updated: 2026-05-30 — `/report` human Goal labels + structured summary*

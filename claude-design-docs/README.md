@@ -1,6 +1,6 @@
 # Claude Design — Career Forge
 
-Documentação da UI gerada no Claude Design, intent de produto por tela, e **fonte de verdade** para agentes que implementam front-end.
+UI documentation generated in Claude Design, per-screen product intent, and the **source of truth** for agents implementing the front-end.
 
 ---
 
@@ -28,18 +28,18 @@ Documentação da UI gerada no Claude Design, intent de produto por tela, e **fo
 ## Canonical flow (HAC-21)
 
 ```
-Goal → Onboarding chat → Editable diagnosis → [Gerar roadmap] → Forge stream (steps only) → Animation reveal → Vertical roadmap + optional AI sidebar
+Goal → Onboarding chat → Editable diagnosis → [Generate roadmap] → Forge stream (steps only) → Animation reveal → Vertical roadmap + optional AI sidebar
 ```
 
-Detalhes: [UX-FLOW.md](./UX-FLOW.md)
+Details: [UX-FLOW.md](./UX-FLOW.md)
 
 ---
 
 ## Prototype
 
-Arquivos exportados do Claude Design (React standalone via Babel):
+Files exported from Claude Design (standalone React via Babel):
 
-| Arquivo | Conteúdo |
+| File | Contents |
 |---------|----------|
 | [prototype/index.html](./prototype/index.html) | Redirect entry — use with local server |
 | [prototype/README.md](./prototype/README.md) | **How to run** — `python3 -m http.server 8765` |
@@ -48,7 +48,7 @@ Arquivos exportados do Claude Design (React standalone via Babel):
 | [prototype/screens-flow.jsx](./prototype/screens-flow.jsx) | Onboarding + goal picker + diagnosis result (legacy) |
 | [prototype/screens-forge.jsx](./prototype/screens-forge.jsx) | Live Roadmap Forge + reveal (legacy split layout) |
 | [prototype/screens-dashboard.jsx](./prototype/screens-dashboard.jsx) | Skill graph steady state (legacy) |
-| [prototype/skill-graph.jsx](./prototype/skill-graph.jsx) | Grafo + nós |
+| [prototype/skill-graph.jsx](./prototype/skill-graph.jsx) | Graph + nodes |
 | [prototype/components.jsx](./prototype/components.jsx) | Design system components |
 | [prototype/styles.css](./prototype/styles.css) | Tokens + layout |
 
@@ -62,64 +62,64 @@ Legacy URL `Career OS.html` redirects automatically.
 
 ### Prototype drift
 
-> **HAC-21:** O prototype HTML reflete o paradigma **antigo** (confirmação read-only, forge split com grafo, dashboard em skill graph). Use-o para **tokens e componentes**, não para fluxo ou layout steady state.
+> **HAC-21:** The HTML prototype reflects the **old** paradigm (read-only confirmation, split forge with graph, skill-graph dashboard). Use it for **tokens and components**, not for flow or steady-state layout.
 
-| Aspecto | Prototype (legacy) | Docs (HAC-21 truth) |
+| Aspect | Prototype (legacy) | Docs (HAC-21 truth) |
 |---------|-------------------|---------------------|
-| Pós-diagnóstico | Read-only result | Editable diagnosis + "Gerar roadmap" |
+| Post-diagnosis | Read-only result | Editable diagnosis + "Generate roadmap" |
 | Forge | Timeline + graph skeleton | Timeline only |
 | Steady state | Skill graph dashboard | Vertical roadmap + optional AI sidebar |
 
-Atualizar prototype: issue futura (HAC-9 / HAC-18 UI).
+Update the prototype: future issue (HAC-9 / HAC-18 UI).
 
 ---
 
-## Posicionamento visual (Borderless — HAC-23)
+## Visual positioning (Borderless — HAC-23)
 
-- **Identidade:** Borderless Community — roxo profundo + mint/cyan, shell sidebar + canvas (Code Breakers)
-- **Inspirado em** [roadmap.sh](https://roadmap.sh) — AI tutor sidebar opcional (layout secundário)
-- **Evoluído para** skill graph adaptativo em canvas — nós roxos, progresso mint, dependências tracejadas
-- **Não é** LMS genérico, gamificação ou indigo navy legacy
+- **Identity:** Borderless Community — deep purple + mint/cyan, sidebar shell + canvas (Code Breakers)
+- **Inspired by** [roadmap.sh](https://roadmap.sh) — optional AI tutor sidebar (secondary layout)
+- **Evolved into** an adaptive skill graph on canvas — purple nodes, mint progress, dashed dependencies
+- **Not** a generic LMS, gamification, or legacy indigo navy
 
-Referências: [borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) · [borderless-logo-brand.png](./references/borderless-logo-brand.png)
+References: [borderless-code-breakers-dashboard.png](./references/borderless-code-breakers-dashboard.png) · [borderless-logo-brand.png](./references/borderless-logo-brand.png)
 
-Detalhes: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · [UI-PRINCIPLES.md](./UI-PRINCIPLES.md)
+Details: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · [UI-PRINCIPLES.md](./UI-PRINCIPLES.md)
 
 ---
 
-## Telas (fluxo demo — HAC-21)
+## Screens (demo flow — HAC-21)
 
-| # | Rota | Nome | Wow |
+| # | Route | Name | Wow |
 |---|------|------|-----|
-| 1 | `/` | Goal Picker | Objetivo + motivação |
-| 2 | `/onboarding` | Diagnóstico IA | Pill rounds — 2 perguntas/rodada, 3 rodadas |
-| 3 | `/onboarding/edit` | **Diagnóstico editável** | User corrige fortes/lacunas |
-| 4 | `/roadmap/forge` | **Live Roadmap Forge** | Timeline streaming (passos 1–N) — sem grafo |
-| 4b | `/roadmap/forge/complete` | **Animation reveal** | Items voam para layout vertical |
-| 5 | `/roadmap` | **Vertical roadmap** | Trilha steady + AI sidebar opcional |
-| 6 | `/validate/:topic` | Mastery Validation | Entrevista + score |
-| 7 | `/roadmap` (updated) | Adaptive + Mentor | Trilha reagiu pós-validação |
+| 1 | `/` | Goal Picker | Goal + motivation |
+| 2 | `/onboarding` | AI Diagnosis | Pill rounds — 2 questions/round, 3 rounds |
+| 3 | `/onboarding/edit` | **Editable diagnosis** | User corrects strengths/gaps |
+| 4 | `/roadmap/forge` | **Live Roadmap Forge** | Streaming timeline (steps 1–N) — no graph |
+| 4b | `/roadmap/forge/complete` | **Animation reveal** | Items fly into the vertical layout |
+| 5 | `/roadmap` | **Vertical roadmap** | Steady roadmap + optional AI sidebar |
+| 6 | `/validate/:topic` | Mastery Validation | Interview + score |
+| 7 | `/roadmap` (updated) | Adaptive + Mentor | Roadmap reacted after validation |
 
-Intent completo: [SCREEN-INTENT.md](./SCREEN-INTENT.md) · [UX-FLOW.md](./UX-FLOW.md)
+Full intent: [SCREEN-INTENT.md](./SCREEN-INTENT.md) · [UX-FLOW.md](./UX-FLOW.md)
 
 ---
 
 ## Live Roadmap Forge (hero UX — HAC-21)
 
-Pós-diagnóstico editável, usuário clica **"Gerar roadmap"** e **vê a IA pensar**:
+After the editable diagnosis, the user clicks **"Generate roadmap"** and **watches the AI think**:
 
-**Durante geração — só timeline:**
-- Passos numerados 1, 2, 3, 4…
-- Pensamentos (`reasoning_delta`)
-- Artefatos (`artifact_found`)
-- Decisões (`decision`)
-- **Sem skill graph visível**
+**During generation — timeline only:**
+- Numbered steps 1, 2, 3, 4…
+- Reasoning (`reasoning_delta`)
+- Artifacts (`artifact_found`)
+- Decisions (`decision`)
+- **No skill graph visible**
 
-**Ao completar:**
-- Animação — cada item do stream voa para o layout vertical
-- Transição para steady state em `/roadmap`
+**On completion:**
+- Animation — each stream item flies into the vertical layout
+- Transition to steady state at `/roadmap`
 
-Script mockado em `screens-forge.jsx` (`FORGE_SCRIPT`) — implementação real usa SSE do FastAPI + LangGraph. UI consome timeline only; `node_updated` alimenta estado backend, não preview visual durante stream.
+Mocked script in `screens-forge.jsx` (`FORGE_SCRIPT`) — the real implementation uses SSE from FastAPI + LangGraph. The UI consumes timeline only; `node_updated` feeds backend state, not a visual preview during the stream.
 
 Spec: [docs/stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md)
 
@@ -127,25 +127,25 @@ Spec: [docs/stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md)
 
 ## Design tokens
 
-Ver [design-tokens.md](./design-tokens.md) e `prototype/styles.css`.
+See [design-tokens.md](./design-tokens.md) and `prototype/styles.css`.
 
 ---
 
 ## Handoff → Next.js
 
-Ao implementar:
+When implementing:
 
-1. Extrair tokens → `tailwind.config.ts`
-2. Mapear componentes → `apps/frontend/components/`
-3. Seguir rotas de [UX-FLOW.md](./UX-FLOW.md) — não hash routes legacy do prototype
-4. Forge timeline → consome `EventSource` SSE (timeline only)
+1. Extract tokens → `tailwind.config.ts`
+2. Map components → `apps/frontend/components/`
+3. Follow the routes in [UX-FLOW.md](./UX-FLOW.md) — not the prototype's legacy hash routes
+4. Forge timeline → consumes `EventSource` SSE (timeline only)
 5. Reveal → Framer Motion (items → vertical roadmap positions)
 6. Steady state → vertical roadmap layout + collapsible AI sidebar
 
-Registrar divergências em [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) → Implementation notes.
+Record divergences in [PRODUCT-SOURCE-OF-TRUTH.md](./PRODUCT-SOURCE-OF-TRUTH.md) → Implementation notes.
 
 ---
 
-## Stack de implementação
+## Implementation stack
 
-Front consome API FastAPI. Ver [docs/stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md) · Produto: [docs/CHECKPOINT.md](../docs/CHECKPOINT.md)
+The front-end consumes the FastAPI API. See [docs/stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md) · Product: [docs/CHECKPOINT.md](../docs/CHECKPOINT.md)

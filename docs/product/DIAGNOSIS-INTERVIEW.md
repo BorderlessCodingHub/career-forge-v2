@@ -10,7 +10,7 @@
 
 ```mermaid
 sequenceDiagram
-    actor U as Usuário
+    actor U as User
     participant FE as Frontend
     participant API as API
     participant CV as cv service
@@ -18,7 +18,7 @@ sequenceDiagram
     participant GX as GraphExecutor
     participant LLM as LLM
 
-    U->>FE: Tela 1 goal + motivação + XP + CV PDF
+    U->>FE: Screen 1 goal + motivation + XP + CV PDF
     FE->>API: POST /diagnosis/interview/start
     API->>CV: extract_text(pdf) if present
     API->>DB: create session

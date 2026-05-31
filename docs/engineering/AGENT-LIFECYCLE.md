@@ -9,7 +9,7 @@ Engineering lifecycle for hackathon agents working on **HAC-XX** issues.
 ## Flow overview
 
 ```
-Entrada → Planejamento → Implementação → Triple QA → Saída
+Entry → Planning → Implementation → Triple QA → Exit
 ```
 
 | Phase | Flowchart | Artifacts |
@@ -20,7 +20,7 @@ Entrada → Planejamento → Implementação → Triple QA → Saída
 
 ---
 
-## 1. Entrada da sessão
+## 1. Session entry
 
 **Trigger:** `sessionStart` hook → agent reads context in order:
 
@@ -34,7 +34,7 @@ Entrada → Planejamento → Implementação → Triple QA → Saída
 
 ---
 
-## 2. Planejamento
+## 2. Planning
 
 **Rule:** [linear-delivery-workflow](../../.cursor/rules/linear-delivery-workflow.mdc)
 
@@ -54,7 +54,7 @@ Reference: [lifecycle-session-planning.png](./lifecycle-session-planning.png)
 
 ---
 
-## 3. Implementação
+## 3. Implementation
 
 Per issue:
 
@@ -96,7 +96,7 @@ Reference: [lifecycle-implementation-qa-exit.png](./lifecycle-implementation-qa-
 
 ---
 
-## 5. Saída
+## 5. Exit
 
 **Rule:** [end-session-smoke](../../.cursor/rules/end-session-smoke.mdc) — run `make smoke` before ending session.
 

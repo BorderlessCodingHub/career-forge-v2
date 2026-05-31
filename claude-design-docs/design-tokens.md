@@ -6,25 +6,25 @@ Extracted from Borderless Community reference (Code Breakers dashboard + logo). 
 
 ## Colors
 
-| Token | Hex | Uso |
+| Token | Hex | Usage |
 |-------|-----|-----|
-| `bg` | `#0D0B14` | Background principal, canvas base |
-| `bg-sidebar` | `#0A0812` | Sidebar fixa |
+| `bg` | `#0D0B14` | Main background, canvas base |
+| `bg-sidebar` | `#0A0812` | Fixed sidebar |
 | `surface` | `#15121F` | Cards, inputs, top bar |
 | `surface-elevated` | `#1C1828` | Modals, drawers |
-| `surface-node` | `#6B4CE6` | Nós do roadmap (roxo vibrante) |
-| `border` | `#2A2540` | Bordas, linhas tracejadas |
-| `border-soft` | `#1F1A30` | Divisores sutis |
-| `text-primary` | `#FFFFFF` | Títulos, body |
+| `surface-node` | `#6B4CE6` | Roadmap nodes (vibrant purple) |
+| `border` | `#2A2540` | Borders, dashed lines |
+| `border-soft` | `#1F1A30` | Subtle dividers |
+| `text-primary` | `#FFFFFF` | Headings, body |
 | `text-secondary` | `#9CA3AF` | Labels, hints |
 | `text-muted` | `#6B7280` | Meta, timestamps |
-| `accent` | `#7C3AED` | CTA, nav ativa, roxo logo |
-| `accent-mint` | `#2DD4BF` | Progresso, evidências, mint logo |
-| `accent-mint-bright` | `#00E5C0` | Pico da barra de progresso |
-| `success` | `#22C55E` | Mastery / aprovado |
-| `warning` | `#F59E0B` | Revisar / atenção |
-| `locked` | `#4B5563` | Nó bloqueado |
-| `evidence` | `#2DD4BF` | Evidências, artifacts (mint) |
+| `accent` | `#7C3AED` | CTA, active nav, logo purple |
+| `accent-mint` | `#2DD4BF` | Progress, evidence, logo mint |
+| `accent-mint-bright` | `#00E5C0` | Progress bar peak |
+| `success` | `#22C55E` | Mastery / approved |
+| `warning` | `#F59E0B` | Review / attention |
+| `locked` | `#4B5563` | Locked node |
+| `evidence` | `#2DD4BF` | Evidence, artifacts (mint) |
 
 ### Dismiss / destructive icon (implemented — dark UI)
 
@@ -84,18 +84,18 @@ Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; r
 ## Typography
 
 - **Sans:** Inter (UI)
-- **Mono:** JetBrains Mono (timeline, código, scores)
+- **Mono:** JetBrains Mono (timeline, code, scores)
 
 ## Status pills
 
-| Status | Cor | Significado |
+| Status | Color | Meaning |
 |--------|-----|-------------|
-| `bloqueado` | locked | Prerequisite não cumprido |
-| `recomendado` | accent (purple) | Prioridade atual |
-| `em_estudo` | accent-mint | Em progresso |
-| `validar` | warning | Pronto para entrevista IA |
-| `aprovado` | success | Mastery validado |
-| `revisar` | warning | Falhou validação |
+| `bloqueado` | locked | Prerequisite not met |
+| `recomendado` | accent (purple) | Current priority |
+| `em_estudo` | accent-mint | In progress |
+| `validar` | warning | Ready for AI interview |
+| `aprovado` | success | Mastery validated |
+| `revisar` | warning | Failed validation |
 
 ## Spacing
 
@@ -113,9 +113,9 @@ Grid 4px: 4, 8, 12, 16, 24, 32, 48
 - Dot grid: 24px spacing, `rgba(255,255,255,0.04)` dots on `--bg`
 - Connection lines: solid 2px branch connectors card ↔ spine dot on artifact canvas; central spine 1px `border`
 
-## Componentes reutilizáveis (prototype)
+## Reusable components (prototype)
 
-Definidos em `prototype/components.jsx`:
+Defined in `prototype/components.jsx`:
 
 - `SkillNodeCard`
 - `StatusPill`

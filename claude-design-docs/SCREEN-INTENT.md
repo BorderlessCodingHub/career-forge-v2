@@ -18,9 +18,9 @@
 
 | Constraint | Detail |
 |------------|--------|
-| Headline | *"Para onde você quer ir?"* |
+| Headline | *"Where do you want to go?"* |
 | Subhead | Optional — keep minimal; no long explanatory paragraph required |
-| Cards | Backend active; Data / Frontend disabled "Em breve" |
+| Cards | Backend active; Data / Frontend disabled "Coming soon" |
 | Layout | **Minimal** — compact row cards, no heavy chrome (icons, meta badges, footer notes) |
 | Motivation | Required in happy path — feeds downstream AI |
 | CTA | Single primary action to onboarding |
@@ -36,8 +36,8 @@
 | Feel | Focused diagnostic — **not** open-ended ChatGPT |
 | Layout | **Pill/balloon rounds** — multiple questions shown together per round |
 | Rounds | 3 batches: seniority/context → stack/domain → gaps (Git, HTTP, APIs, DB) |
-| Input | Each pill has its own textarea — **not** one-at-a-time chat bubbles; explicit short negative answers like "Nada." are valid signal |
-| Progress | Step indicator + round counter (e.g. Rodada 2/3) |
+| Input | Each pill has its own textarea — **not** one-at-a-time chat bubbles; explicit short negative answers like "Nothing." are valid signal |
+| Progress | Step indicator + round counter (e.g. Round 2/3) |
 | Recap | Goal + motivation from step 1 visible in sidebar |
 | Exit | Transitions to **editable diagnosis** — not forge directly |
 
@@ -53,12 +53,12 @@
 |------------|--------|
 | Purpose | User **corrects** AI understanding before forge |
 | Edit | Each list item editable inline |
-| Add | User can add items to fortes / lacunas / recomendação |
+| Add | User can add items to strengths / gaps / recommendation |
 | Remove | User can remove items |
-| Profile badge | e.g. "Iniciante com base em JavaScript" |
-| Evidence callout | Avaliação por evidência — no fake "concluído" |
-| CTA | **"Gerar roadmap"** — explicit forge trigger |
-| Forbidden | Read-only confirmation with passive "Ver minha trilha" dead-end |
+| Profile badge | e.g. "Beginner with a JavaScript foundation" |
+| Evidence callout | Evidence-based assessment — no fake "done" |
+| CTA | **"Generate roadmap"** — explicit forge trigger |
+| Forbidden | Read-only confirmation with passive "View my roadmap" dead-end |
 
 **Can evolve:** drag-reorder, autosave, sidebar vs full page
 
@@ -73,8 +73,8 @@
 | Steps | Numbered 1, 2, 3, 4… (or N) **only during generation** |
 | Event types | `reasoning_delta`, `artifact_found`, `decision` visual language; `artifact_found` may include formatted summaries, official source cards, planner/evaluator verdicts |
 | Feedback | Sequential timeline items — **no generic spinner as primary UX** |
-| Header | "Forjando sua trilha personalizada" + elapsed / passos |
-| Exit | On `graph_ready` → show manual **"Ver roadmap"** CTA → animation reveal |
+| Header | "Forging your personalized roadmap" + elapsed / steps |
+| Exit | On `graph_ready` → show manual **"View roadmap"** CTA → animation reveal |
 
 **Can evolve:** SSE reconnect, scroll auto-behavior, skip control
 
@@ -102,11 +102,11 @@
 | App mode | **`artifact`** — finished personalized roadmap.sh page; distinct from **`setup`** (onboarding + forge) |
 | Layout | Full-width vertical spine; nodes alternating left/right with **solid horizontal connectors** to spine dot (`roadmap-connector-{id}`); category headers |
 | Reference | [roadmap-sh-reference-full.png](./references/roadmap-sh-reference-full.png) · [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png) |
-| Chrome | **No** onboarding stepper (01 Objetivo … 07 Adaptação); **no** fixed progress/evidence/mentor sidebar |
-| Top bar | Career Forge logo + **Sua trilha** track name; right cluster **`items-end`** — **`mentor-report-link`** action bottom-aligned with track title line; same `topbarActionClass` (`h-9`); relatório = `h-7` icon slot + `FileText` + label; **no** progress ring in topbar; mentor via node drawer only |
-| Page intro | Subtitle/hint + optional centered **`trail-progress-ring`** below subtitle (`getTrailChecklistProgressPct` — item-pooled checklist %, not mastery %, not topic-average) + **Progresso de estudo** label — **no** duplicate track `<h1>` on canvas |
+| Chrome | **No** onboarding stepper (01 Goal … 07 Adaptation); **no** fixed progress/evidence/mentor sidebar |
+| Top bar | Career Forge logo + **Your roadmap** track name; right cluster **`items-end`** — **`mentor-report-link`** action bottom-aligned with track title line; same `topbarActionClass` (`h-9`); report = `h-7` icon slot + `FileText` + label; **no** progress ring in topbar; mentor via node drawer only |
+| Page intro | Subtitle/hint + optional centered **`trail-progress-ring`** below subtitle (`getTrailChecklistProgressPct` — item-pooled checklist %, not mastery %, not topic-average) + **Study progress** label — **no** duplicate track `<h1>` on canvas |
 | Canvas nodes | **Uniform** Borderless purple cards — compact **study** progress (`x/y` + mint bar) when checklist items exist; **mastery %** and status detail stay in **node drawer** only |
-| Interaction | **Click node** → right drawer: title, red **✕** dismiss, Escape to close, status/mastery, study progress, description callout when no gaps, collapsible outcomes/refs/tasks (default expanded), optional tutor row, sticky CTA **Mock interview — validar mastery** |
+| Interaction | **Click node** → right drawer: title, red **✕** dismiss, Escape to close, status/mastery, study progress, description callout when no gaps, collapsible outcomes/refs/tasks (default expanded), optional tutor row, sticky CTA **Mock interview — validate mastery** |
 | Personalization | Graph state still adaptive (backend recalibrates) — visible in drawer, not canvas pollution |
 | Forbidden | Forge streaming as steady state; MissionBanner hero on artifact canvas; status-colored node grid |
 
@@ -118,10 +118,10 @@
 
 | Constraint | Detail |
 |------------|--------|
-| Headline | *"Pronto para validar seu aprendizado?"* |
-| Subhead | Entrevista antes de liberar próximo tópico |
+| Headline | *"Ready to validate your learning?"* |
+| Subhead | Interview before unlocking the next topic |
 | Flow | Question card + textarea + submit |
-| Result | ScoreRing, status pill, acertou / melhorar / próximo passo |
+| Result | ScoreRing, status pill, got right / improve / next step |
 | Mentor summary | Collapsible optional block |
 
 **Can evolve:** question count (3±), retry copy, wizard vs single page
@@ -146,10 +146,10 @@
 | Constraint | Detail |
 |------------|--------|
 | Entry | Topbar **`mentor-report-link`** on artifact routes → `/report` |
-| Objetivo | Human career goal label from `CAREER_GOALS` map (`formatGoalForDisplay`) — **never** raw slug (`ai-ml`) |
+| Goal | Human career goal label from `CAREER_GOALS` map (`formatGoalForDisplay`) — **never** raw slug (`ai-ml`) |
 | Topic headline | Human-readable title — **never** raw slug (`node-1-…`) as primary label; `formatNodeTitleForDisplay` fallback humanizes hyphens |
 | Validation card | Score + status pill; **`mentor-report-entry-{node_id}`** |
-| Resumo para mentor | Structured sections — **Lacunas principais** (bullets), **Evidências positivas** (bullets when present), **Próximo passo** (intervention callout) — not a single dense paragraph |
+| Mentor summary | Structured sections — **Main gaps** (bullets), **Positive evidence** (bullets when present), **Next step** (intervention callout) — not a single dense paragraph |
 | Legacy rows | When structured fields empty, split cleaned `mentor_summary` into short lines (strip `(node-id)` parenthetical) |
 | Forbidden | Showing internal `node_id` as the topic title; wall-of-text mentor resume |
 
@@ -172,4 +172,4 @@
 
 ---
 
-*Last updated: 2026-05-30 — `/report` human Objetivo + topic titles*
+*Last updated: 2026-05-30 — `/report` human Goal + topic titles*

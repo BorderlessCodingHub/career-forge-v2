@@ -32,7 +32,7 @@ Full token table + component specs: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING
 ### Goal picker — minimal first screen (HAC-24)
 
 - **Layout:** Narrow column (~560px), no centered hero block
-- **Cards:** Text-only row buttons — title + "Em breve" for disabled tracks
+- **Cards:** Text-only row buttons — title + "Coming soon" for disabled tracks
 - **No chrome:** Skip icons, domain counts, sprout meta, sparkles footer
 - **Motivation:** Single textarea + inline char count; CTA right-aligned
 - **Typography:** 32px headline (not 44px); step label in mono uppercase
@@ -42,7 +42,7 @@ Full token table + component specs: [BORDERLESS-THEMING.md](./BORDERLESS-THEMING
 - **Not chat bubbles** — batch 2 questions per round in pill cards
 - Each pill: tag label + prompt + textarea
 - 3 rounds: seniority/context → stack/domain → gaps mapping
-- Sidebar shows live "O que a IA está mapeando" checklist
+- Sidebar shows a live "What the AI is mapping" checklist
 
 ### Steady-state roadmap canvas (HAC-21 + Borderless + HAC-24)
 
@@ -99,8 +99,8 @@ Prototype evolution: [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) · User 
 ## Language
 
 - **All user-facing copy: Portuguese (Brazil)**
-- Tone: confident, direct, supportive — not corporate, not infantil
-- Prefer evidence language: *"evidência de aprendizado"*, *"validar mastery"*, *"próxima missão"*
+- Tone: confident, direct, supportive — not corporate, not childish
+- Prefer evidence language: *"evidence of learning"*, *"validate mastery"*, *"next mission"*
 - Error/empty states in PT-BR with actionable next step
 
 Agent-facing docs and code comments: English OK.
@@ -123,12 +123,12 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); stats from `checklist-progress-stats.ts` |
 | `checklist-progress-stats` | Pure helpers: `getChecklistProgress` (per topic) + `getTrailChecklistProgressPct` (item-pooled across topics via `sum completed / sum total`) |
 | `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); single `mentor-report-link` ghost action (`topbarActionClass`, `h-9`); track name right — **no** progress ring |
-| `TrailProgressRing` | Compact ~44px SVG ring in **page intro** (below subtitle) — item-pooled checklist % (`accent-mint` stroke); **Progresso de estudo** label; hidden when no checklist items |
+| `TrailProgressRing` | Compact ~44px SVG ring in **page intro** (below subtitle) — item-pooled checklist % (`accent-mint` stroke); **Study progress** label; hidden when no checklist items |
 | `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — `MentorDrawer` header only |
 | `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) — connector stubs match loaded layout |
 | `VerticalSpine` connectors | Solid 2px `roadmap-connector-{id}` — `border` default, `warning` revisar, `accent-mint` selected |
-| `MentorReportView` | `/report` evidence cards — structured resumo (lacunas / acertos / próximo passo); `data-testid="mentor-report"` + `mentor-report-entry-{node_id}` |
-| `format-node-title.ts` | Display-only helpers — `formatNodeTitleForDisplay`, `formatGoalForDisplay` (Objetivo on `/report`), `humanizeNodeId`, `formatLegacyMentorSummary`; never mutates stored ids |
+| `MentorReportView` | `/report` evidence cards — structured summary (gaps / correct answers / next step); `data-testid="mentor-report"` + `mentor-report-entry-{node_id}` |
+| `format-node-title.ts` | Display-only helpers — `formatNodeTitleForDisplay`, `formatGoalForDisplay` (Goal on `/report`), `humanizeNodeId`, `formatLegacyMentorSummary`; never mutates stored ids |
 | `NodeDrawer` study checklist | Right drawer: collapsible sections default open, optional tutor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |
 | Dismiss icon button | Square `h-9 w-9`, `text-red-400`, hover/focus `red-900/60` on dark elevated surfaces (drawer close); row delete uses lighter `text-red-500` + `red-500/10` (`EditableDiagnosis`) — same family, different weight |
@@ -143,13 +143,13 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 |-------------|--------|
 | **All routes** | Fixed bottom `DeployBadge` (~32px, `z-auto`); root `body` uses `pb-8` so CTAs are not covered; overlays (node drawer, mentor drawer) use `z-40`/`z-50` and stack above the badge |
 | Marketing/entry | Centered hero, max-width ~720px |
-| Editable diagnosis | Structured lists, full-width, single CTA "Gerar roadmap" |
+| Editable diagnosis | Structured lists, full-width, single CTA "Generate roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes |
 | Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-report-link` only; page intro = subtitle + optional centered `trail-progress-ring`; spine + uniform nodes + solid card↔dot connectors; **click node** → accordion drawer + sticky validate CTA; optional tutor row in drawer |
-| Mentor report | `/report` — learner header grid + validation cards; human **Objetivo** + topic titles; structured resumo per entry; **Voltar à trilha** CTA |
+| Mentor report | `/report` — learner header grid + validation cards; human **Goal** + topic titles; structured summary per entry; **Back to roadmap** CTA |
 | Validation | Focus mode — question card dominant, minimal chrome |
-| Mentor | Relatório via topbar `mentor-report-link` → `/report` structured evidence cards; no contextual chat drawer on artifact canvas |
+| Mentor | Report via topbar `mentor-report-link` → `/report` structured evidence cards; no contextual chat drawer on artifact canvas |
 
 Desktop-first **1280px**. Mobile responsive nice-to-have for hackathon.
 
@@ -180,8 +180,8 @@ Before merging UI for these screens, verify against prototype:
 - [ ] Mission/next action visible after reveal
 
 **Mastery validation**
-- [ ] Headline: provar aprendizado, not "quiz"
-- [ ] Result shows score + acertou / melhorar / próximo passo
+- [ ] Headline: prove learning, not "quiz"
+- [ ] Result shows score + got right / improve / next step
 - [ ] Optional collapsed mentor_summary
 
 ---

@@ -1,6 +1,6 @@
 # Career Forge — Claude Code context
 
-**Career Forge** (Soft Push) — AI-native learning system: skill graph adaptativo, Live Roadmap Forge com streaming, validação de mastery por IA.
+**Career Forge** (Soft Push) — AI-native learning system: adaptive skill graph, Live Roadmap Forge with streaming, AI-driven mastery validation.
 
 Hackathon Borderless BASE 01/2026 · repo `HB01-2026_soft-push`
 
@@ -231,9 +231,9 @@ At the start of a session involving implementation work, read in order:
 ## Environment
 
 Required in `.env` (copy from `.env.example`):
-- `OPENAI_API_KEY` — obrigatória para diagnóstico, forge, validação
-- `DATABASE_URL` — Postgres (Docker preenche)
-- `CORS_ORIGINS` — deve incluir URL do frontend
+- `OPENAI_API_KEY` — required for diagnosis, forge, validation
+- `DATABASE_URL` — Postgres (Docker fills it in)
+- `CORS_ORIGINS` — must include the frontend URL
 - `NEXT_PUBLIC_BACKEND_URL`, `NEXT_PUBLIC_API_URL` — frontend → API
-- `WEB_HOST_PORT` — porta do Next.js no host
-- `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT` — opcional, observabilidade LLM
+- `WEB_HOST_PORT` — Next.js port on the host
+- `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT` — optional, LLM observability
