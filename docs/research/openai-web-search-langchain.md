@@ -151,7 +151,7 @@ Mapping:
 
 ## UX Notes
 
-Render search as "Pesquisa ao vivo" rows in the forge timeline:
+Render search as "Live search" rows in the forge timeline:
 
 - Show 2-3 source cards with title, URL hostname, and snippet/cited span.
 - Keep raw queries out of the UI unless explicitly debugging.

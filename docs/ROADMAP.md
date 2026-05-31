@@ -6,7 +6,7 @@ Execution order for hackathon week. **One issue = one branch = one merge.**
 
 Branch format: `HAC-XX-title-slug` (git hygiene). Linear status: **manual** via [end-task-workflow](../.cursor/rules/end-task-workflow.mdc).
 
-**MVP target (Arthur sync):** ~2026-05-29 (quinta) · **Pitch:** 7 min demo ao vivo
+**MVP target (Arthur sync):** ~2026-05-29 (Thursday) · **Pitch:** 7-min live demo
 
 Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [engineering/AGENT-LIFECYCLE.md](./engineering/AGENT-LIFECYCLE.md)
 
@@ -44,7 +44,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 **Target:** 2026-05-29 (MVP)
 
-- [x] **HAC-8** — Identity Engine (onboarding diagnóstico + **editable diagnosis** screen)
+- [x] **HAC-8** — Identity Engine (onboarding diagnosis + **editable diagnosis** screen)
 - [x] **HAC-18** — Live Roadmap Forge (LangGraph SSE + animation reveal) ⭐
 
 **Sequential:** HAC-8 → HAC-18
@@ -81,7 +81,7 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 
 - [x] **HAC-13** [P] — Contextual Mentor
 - [x] **HAC-14** [P] — Mock Interview Loop
-- [x] **HAC-15** [P] — Relatório mentor
+- [x] **HAC-15** [P] — Mentor report
 
 **Parallel:** HAC-13, HAC-14, HAC-15 after HAC-12 (HAC-15 also needs HAC-10)
 
@@ -122,8 +122,8 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 - [x] **HAC-57** — Diagnosis confirm → save DB → profile-only `POST /forge` → SSE redirect
 - [x] **HAC-66** — Mock interview on-topic (LLM commits to technical subject, forbids study logistics, grounds in references)
 - [x] **HAC-67** — Knowledge gap ledger + async classifier (`knowledge_gaps` table, fire-and-forget gap classification, searchable memory)
-- [x] **HAC-68** — Close the adaptive loop (mentor reads gaps, next mock weights gaps, drawer "Focos da última tentativa")
-- [x] **HAC-69** — Forge re-plan remediation (high-severity gaps inject self-cleaning remediation tasks into the chapter, "Adaptação" badge)
+- [x] **HAC-68** — Close the adaptive loop (mentor reads gaps, next mock weights gaps, drawer "Focus areas from the last attempt")
+- [x] **HAC-69** — Forge re-plan remediation (high-severity gaps inject self-cleaning remediation tasks into the chapter, "Adaptation" badge)
 - [x] **HAC-70** — Planner emits `key_concepts` per node (canonical concept source for mock + tutor, persisted via migration 006)
 - [x] **HAC-71** — Chapter Q&A tutor (AI grounded in `key_concepts` + references + open gaps via GraphExecutor, `TutorDrawer`)
 
@@ -135,9 +135,9 @@ Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [eng
 |-------|-------|--------|
 | HAC-16 | CV from Evidence (P2) | Backlog |
 | HAC-17 | Claude Design HTML handoff | Backlog |
-| HAC-28 | Gamificação streak + níveis | Cancelled |
-| HAC-29 | Auto-posts de progresso | Cancelled |
-| HAC-30 | Onboarding horas/dia pacing | Cancelled |
+| HAC-28 | Gamification streak + levels | Cancelled |
+| HAC-29 | Progress auto-posts | Cancelled |
+| HAC-30 | Onboarding hours/day pacing | Cancelled |
 
 Decisions: [decisions/README.md](./decisions/README.md) · [ADR-001](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) · [2026-05-25 sync Arthur](./decisions/2026-05-25-sync-arthur.md)
 

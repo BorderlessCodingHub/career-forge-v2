@@ -26,12 +26,12 @@ Last updated: **HAC-51**
 Onboarding (HAC-8)
   → Live Roadmap Forge — timeline SSE only (HAC-18)
   → animation reveal → vertical roadmap artifact (HAC-9)
-  → Validar com IA (HAC-10)
-  → trilha reage — GraphPatch (HAC-11)
+  → Validate with AI (HAC-10)
+  → roadmap reacts — GraphPatch (HAC-11)
   → pitch demo Ana (HAC-12)
 ```
 
-**User reaction targets:** "Tô vendo a IA pensar" (forge stream) · "Não deixa eu mentir que aprendi" (validation) · "A trilha mudou porque eu errei" (adaptive).
+**User reaction targets:** "I can see the AI thinking" (forge stream) · "It won't let me fake that I learned" (validation) · "The roadmap changed because I got it wrong" (adaptive).
 
 Full demo script: [CHECKPOINT.md](../CHECKPOINT.md) § Demo script.
 
@@ -50,8 +50,8 @@ flowchart TB
 
     subgraph ARTIFACT["Frontend — (artifact)"]
         ROAD["/roadmap<br/>HAC-9 steady state"]
-        VAL_UI["Validar com IA<br/>HAC-10"]
-        MENTOR_UI["Chat mentor<br/>HAC-13"]
+        VAL_UI["Validate with AI<br/>HAC-10"]
+        MENTOR_UI["Mentor chat<br/>HAC-13"]
         ROAD --> VAL_UI
         ROAD --> MENTOR_UI
     end
@@ -67,7 +67,7 @@ flowchart TB
 
 | Layer | Route group | Purpose |
 |-------|-------------|---------|
-| **(setup)** | `(setup)/` | Onboarding diagnóstico editável (HAC-8) → Live Roadmap Forge with **timeline-only SSE** during stream (HAC-18). No graph preview during stream. |
+| **(setup)** | `(setup)/` | Editable diagnosis onboarding (HAC-8) → Live Roadmap Forge with **timeline-only SSE** during stream (HAC-18). No graph preview during stream. |
 | **(artifact)** | `(artifact)/` | Vertical roadmap.sh-style trail (HAC-9) → mastery validation (HAC-10) → adaptive graph (HAC-11) → demo Ana (HAC-12). |
 
 ---
@@ -84,12 +84,12 @@ flowchart LR
     end
 
     subgraph SVC["services/ — business logic"]
-        RS["roadmap.py<br/>persistência user graph"]
+        RS["roadmap.py<br/>user graph persistence"]
         GS["graph_state.py<br/>GraphPatch merge<br/>HAC-11/18"]
         SC["seed_catalog.py<br/>HAC-6 ✅"]
     end
 
-    subgraph AI["ai/ — execução unificada HAC-32"]
+    subgraph AI["ai/ — unified execution HAC-32"]
         GR["GraphRun + Store<br/>run.py"]
         EX["GraphExecutor<br/>executor.py"]
         AF["AgentFactory<br/>factory.py + registry.py"]
@@ -128,18 +128,18 @@ flowchart LR
 
 ```mermaid
 sequenceDiagram
-    participant Client as Cliente (FE ou curl)
+    participant Client as Client (FE or curl)
     participant API as api/*.py
     participant Store as GraphRunStore (Postgres)
     participant EX as GraphExecutor
     participant AF as AgentFactory
-    participant G as graphs/* ou agents/*
+    participant G as graphs/* or agents/*
     participant CP as LangGraph checkpointer
     participant REC as recording.py
     participant EV as streaming/events.py
     participant SSE as streaming/sse.py
 
-    Client->>API: POST /forge (collect) ou GET /forge/.../stream (SSE)
+    Client->>API: POST /forge (collect) or GET /forge/.../stream (SSE)
     API->>Store: GraphRun.create + save
     API->>EX: execute(run, stream=False|True)
 
@@ -147,7 +147,7 @@ sequenceDiagram
     AF->>G: builder(checkpointer=PostgresSaver)
     EX->>Store: status = running
 
-    loop astream_events v2 (sempre)
+    loop astream_events v2 (always)
         EX->>G: astream_events(input, version="v2")
         G->>CP: checkpoint state (LangGraph internal)
         G-->>EX: LangChain event
@@ -221,7 +221,7 @@ Two complementary Postgres layers:
 ## ASCII execution tree
 
 ```
-Career Forge — execução E2E (pós-HAC-32)
+Career Forge — E2E execution (post-HAC-32)
 │
 ├─ FRONTEND  apps/frontend/src/
 │  ├─ (setup)/
@@ -229,26 +229,26 @@ Career Forge — execução E2E (pós-HAC-32)
 │  │  └─ /forge ─────────────────── HAC-18 → GET /forge/{run_id}/stream (SSE timeline)
 │  └─ (artifact)/
 │     └─ /roadmap ───────────────── HAC-9  → GET /roadmap
-│        ├─ Validar ─────────────── HAC-10 → POST /validation → GraphExecutor(validation)
-│        ├─ Trilha reativa ──────── HAC-11 → services/graph_state.apply_graph_patch
-│        ├─ Chat mentor ─────────── HAC-13 → GraphExecutor(mentor)
+│        ├─ Validate ────────────── HAC-10 → POST /validation → GraphExecutor(validation)
+│        ├─ Reactive roadmap ────── HAC-11 → services/graph_state.apply_graph_patch
+│        ├─ Mentor chat ─────────── HAC-13 → GraphExecutor(mentor)
 │        └─ Demo Ana ────────────── HAC-12
 │
 └─ BACKEND  apps/backend/src/career_forge/
-   ├─ api/          thin HTTP (cria GraphRun, chama executor)
+   ├─ api/          thin HTTP (creates GraphRun, calls executor)
    │  ├─ diagnosis.py   [stub → HAC-8]
    │  ├─ forge.py       [✅ wired]
    │  ├─ roadmap.py     [stub → HAC-9]
    │  └─ validation.py  [stub → HAC-10]
    │
-   ├─ services/     business logic (sem streaming)
-   │  ├─ roadmap.py      persistência user graph (HAC-9/18)
-   │  ├─ graph_state.py  GraphPatch merge determinístico (HAC-11/18)
+   ├─ services/     business logic (no streaming)
+   │  ├─ roadmap.py      user graph persistence (HAC-9/18)
+   │  ├─ graph_state.py  deterministic GraphPatch merge (HAC-11/18)
    │  └─ seed_catalog.py ✅
    │
-   ├─ ai/           execução unificada HAC-32
+   ├─ ai/           unified execution HAC-32
    │  ├─ run.py          GraphRun + GraphRunStore (Postgres canonical; InMemory dev fallback)
-   │  ├─ executor.py     ÚNICO caminho astream_events v2
+   │  ├─ executor.py     SINGLE astream_events v2 path
    │  ├─ factory.py      AgentFactory.get(name) + checkpointer injection
    │  ├─ registry.py     diagnosis | roadmap_forge | validation | mentor
    │  ├─ recording.py     raw + normalized events → GraphRun
@@ -303,7 +303,7 @@ Sprint 5:  [P] HAC-13 + HAC-14 + HAC-15  →  ONE message, 3 subagents
 
 ## New session handoff
 
-Bootstrap paste block and subagent Task template: [AGENTS.md](../../AGENTS.md) § Nova sessão — bootstrap manual.
+Bootstrap paste block and subagent Task template: [AGENTS.md](../../AGENTS.md) § New session — manual bootstrap.
 
 ---
 

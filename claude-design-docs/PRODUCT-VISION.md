@@ -6,7 +6,7 @@
 
 ## One sentence
 
-**Career Forge** modela continuamente a evolução profissional de quem está virando dev — diagnóstico, trilha viva, validação de mastery e evidências para mentores.
+**Career Forge** continuously models the professional growth of someone becoming a developer — diagnosis, a living roadmap, mastery validation, and evidence for mentors.
 
 ---
 
@@ -14,12 +14,12 @@
 
 | They | We |
 |------|-----|
-| roadmap.sh — caminho genérico igual para todos | Trilha **personalizada** pelo objetivo e ponto de partida |
-| Checklist manual / "marque concluído" | **Mastery before progression** — entrevista IA antes de avançar |
-| AI tutor genérico no canto | IA como **sistema operacional** da jornada |
-| Sem evidência para mentor | **Learning evidence** — scores, lacunas, recomendações estruturadas |
+| roadmap.sh — one generic path for everyone | A roadmap **personalized** by goal and starting point |
+| Manual checklist / "mark as done" | **Mastery before progression** — AI interview before advancing |
+| Generic AI tutor in the corner | AI as the **operating system** of the journey |
+| No evidence for the mentor | **Learning evidence** — scores, gaps, structured recommendations |
 
-Sub-eixo oficial: **Aprender com validação prática** (Alpha School: domínio demonstrado > conteúdo visto).
+Official sub-theme: **Learn with practical validation** (Alpha School: demonstrated mastery > content consumed).
 
 ---
 
@@ -27,60 +27,60 @@ Sub-eixo oficial: **Aprender com validação prática** (Alpha School: domínio 
 
 ### 1. Career Forge — identity engine
 
-Usuário declara **quem quer ser** e **por quê** (motivação). Objetivo alimenta diagnóstico, forge e priorização — não é dropdown decorativo.
+The user declares **who they want to be** and **why** (motivation). The goal feeds diagnosis, forge, and prioritization — it is not a decorative dropdown.
 
-- MVP: uma trilha ativa (Backend Developer)
-- Outras trilhas: "Em breve" no UI
+- MVP: one active roadmap (Backend Developer)
+- Other roadmaps: "Coming soon" in the UI
 
-### 2. Skill graph — cérebro adaptativo
+### 2. Skill graph — adaptive brain
 
-Grafo de dependências personalizado com estados e mastery % — trilha viva, não checklist estático.
+A personalized dependency graph with states and mastery % — a living roadmap, not a static checklist.
 
-- Catálogo base: `data/roadmap.json` (tópicos + prerequisites + rubric)
-- Estado dinâmico: status por nó + evidências acumuladas
-- **Steady state UI:** layout vertical roadmap.sh-style (spine + categorias + nós left/right)
+- Base catalog: `data/roadmap.json` (topics + prerequisites + rubric)
+- Dynamic state: status per node + accumulated evidence
+- **Steady state UI:** vertical roadmap.sh-style layout (spine + categories + left/right nodes)
 - Status: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar`
 
 ### 3. Live Roadmap Forge — wow #1
 
-Após diagnóstico **editável**, usuário clica **"Gerar roadmap"** e **assiste** a IA forjar a trilha:
+After the **editable** diagnosis, the user clicks **"Generate roadmap"** and **watches** the AI forge the roadmap:
 
-- Timeline ao vivo — passos numerados 1, 2, 3, 4… (reasoning, artifacts, decisions)
-- **Sem grafo visível durante stream** — foco total no pensamento da IA
-- Animação reveal — items voam para layout vertical
-- Trilha pronta + próxima missão
+- Live timeline — numbered steps 1, 2, 3, 4… (reasoning, artifacts, decisions)
+- **No graph visible during the stream** — full focus on the AI's thinking
+- Animation reveal — items fly into the vertical layout
+- Roadmap ready + next mission
 
-Reação esperada: *"Tô vendo a IA pensar e montar MINHA trilha."*
+Expected reaction: *"I'm watching the AI think and build MY roadmap."*
 
-Spec técnica: [stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md) · Flow: [UX-FLOW.md](./UX-FLOW.md)
+Technical spec: [stack-and-roadmap-forge.md](../docs/stack-and-roadmap-forge.md) · Flow: [UX-FLOW.md](./UX-FLOW.md)
 
 ### 4. Mastery validation — wow #2
 
-Botão **Validar com IA** — entrevista curta, score 0–100, feedback acionável.
+**Validate with AI** button — short interview, score 0–100, actionable feedback.
 
-- Não aprova respostas vagas
-- Gera `mentor_summary` para Borderless
-- Reação: *"Não deixa eu mentir que aprendi."*
+- Does not approve vague answers
+- Generates `mentor_summary` for Borderless
+- Reaction: *"It won't let me pretend I learned."*
 
 ### 5. Borderless mentor value
 
-Embaixadores julgam utilidade interna. O produto deve mostrar:
+Ambassadors judge internal usefulness. The product must show:
 
-- Onde o aluno travou (lacunas da validação)
-- Evidências objetivas (não auto-relato)
-- Próximo passo recomendado (P1: mentor contextual; P1: relatório simples)
+- Where the learner got stuck (gaps from validation)
+- Objective evidence (not self-reporting)
+- Recommended next step (P1: contextual mentor; P1: simple report)
 
-Frase para jurados: *"Reduz trabalho manual do mentor — lacunas e evidências já estruturadas."*
+Line for judges: *"Reduces the mentor's manual work — gaps and evidence already structured."*
 
 ---
 
 ## Adaptive loop (P0 narrative)
 
 ```
-Objetivo → Diagnóstico → Forge → Grafo → Validar → Grafo reage → (mentor contextual)
+Goal → Diagnosis → Forge → Graph → Validate → Graph reacts → (contextual mentor)
 ```
 
-Cena demo obrigatória: validação **ruim** em REST → HTTP sobe prioridade → missão atualizada.
+Mandatory demo scene: a **bad** validation on REST → HTTP rises in priority → mission updated.
 
 ---
 
@@ -88,9 +88,9 @@ Cena demo obrigatória: validação **ruim** em REST → HTTP sobe prioridade �
 
 Do not build UI for these in MVP (see [CHECKPOINT](../docs/CHECKPOINT.md)):
 
-- Múltiplas trilhas completas
-- Auth enterprise / turmas
-- Gamificação (badges, ranking, streaks)
+- Multiple complete roadmaps
+- Enterprise auth / classes
+- Gamification (badges, ranking, streaks)
 - GitHub integration
 - Mock interview loop (P1 stretch)
 - CV from evidence (P2)
@@ -101,10 +101,10 @@ Do not build UI for these in MVP (see [CHECKPOINT](../docs/CHECKPOINT.md)):
 
 | Moment | Pass |
 |--------|------|
-| Editable diagnosis | User adjusts item, clicks "Gerar roadmap" |
+| Editable diagnosis | User adjusts item, clicks "Generate roadmap" |
 | Forge | Timeline-only stream with numbered steps < 60s in demo |
 | Reveal | Items animate into vertical roadmap layout |
-| Validation | Score + lacunas + próximo passo in one screen |
+| Validation | Score + gaps + next step in one screen |
 | Adaptive | Roadmap visibly changes after failed validation |
 | Mentor (P1) | Answer references last validation, not generic tips |
 

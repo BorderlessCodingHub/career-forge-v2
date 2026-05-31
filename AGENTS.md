@@ -1,6 +1,6 @@
 # Career Forge — Agent harness (index)
 
-**Career Forge** (Soft Push) — AI-native learning system: skill graph adaptativo, Live Roadmap Forge com streaming, validação de mastery por IA.
+**Career Forge** (Soft Push) — AI-native learning system: adaptive skill graph, Live Roadmap Forge with streaming, AI-driven mastery validation.
 
 **Stack:** Next.js (web) · FastAPI (api) · PostgreSQL · LangGraph + LangChain + LangSmith
 
@@ -26,7 +26,7 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 
 ---
 
-## Nova sessão — bootstrap manual
+## New session — manual bootstrap
 
 Paste as first agent message if hooks unavailable:
 
@@ -163,7 +163,7 @@ Use Linear **Copy git branch name** when available. Branch name is for **git hyg
 
 ## North star (demo)
 
-> Onboarding → **Live Roadmap Forge (stream)** → skill graph reveal → **Validar com IA** → trilha reage.
+> Onboarding → **Live Roadmap Forge (stream)** → skill graph reveal → **Validate with AI** → roadmap reacts.
 
 Design reference: [`claude-design-docs/prototype/README.md`](./claude-design-docs/prototype/README.md) — `http://localhost:8765/`
 

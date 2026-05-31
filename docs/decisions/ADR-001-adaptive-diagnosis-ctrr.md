@@ -47,14 +47,14 @@ Two LLM roles (see [Rubric-Aware Interview](https://arxiv.org/html/2603.01775)):
 
 | Key | UI label (sidebar) | Measures |
 |-----|-------------------|----------|
-| `learning_stage` | Senioridade | Dreyfus-lite: novice / advanced beginner — not "senior backend" |
-| `project_scope` | Escala | Largest thing built (todo app, API, deploy) — not distributed systems |
-| `background_context` | Contexto | Prior domain + learning style (bootcamp vs self-study) |
-| `hands_on_evidence` | Experiência prática | STAR-lite: something built or attempted |
+| `learning_stage` | Seniority | Dreyfus-lite: novice / advanced beginner — not "senior backend" |
+| `project_scope` | Scale | Largest thing built (todo app, API, deploy) — not distributed systems |
+| `background_context` | Context | Prior domain + learning style (bootcamp vs self-study) |
+| `hands_on_evidence` | Hands-on experience | STAR-lite: something built or attempted |
 | `git` | Git | aware vs practiced |
-| `client_server` | Cliente/servidor | mental model |
+| `client_server` | Client/server | mental model |
 | `http_apis` | HTTP & APIs | exposure |
-| `database` | Banco de dados | exposure |
+| `database` | Database | exposure |
 
 Skip dimensions already evidenced in intake, CV extract, or prior turns.
 
@@ -100,7 +100,7 @@ No Demo Ana toggle on onboarding UI. One anonymous user per browser session.
 ### Positive
 
 - Meets hackathon AI-first requirement on identity engine
-- Sidebar "O que a IA está mapeando" reflects real `belief_state`
+- Sidebar "What the AI is mapping" reflects real `belief_state`
 - Auditable transcript + belief for demo / mentors
 
 ### Negative / tradeoffs

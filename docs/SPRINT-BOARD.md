@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [STATUS](./STATUS.md) · [decisions/2026-05-25-sync-arthur](./decisions/2026-05-25-sync-arthur.md) · [Linear project](https://linear.app/hackas-borderless/project/career-forge-soft-push-b0fb1f68c110)
 
-Hackathon week target: **2026-06-01** · MVP funcional: **~2026-05-29 (quinta)**
+Hackathon week target: **2026-06-01** · Functional MVP: **~2026-05-29 (Thursday)**
 
 Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workflow](../.cursor/rules/end-task-workflow.mdc))
 
@@ -29,7 +29,7 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 ## Sprint 1 — Foundation ✅
 
-**Goal:** Monorepo deployável + skill graph seed + contratos IA.  
+**Goal:** Deployable monorepo + skill graph seed + AI contracts.  
 **Target:** 2026-05-27  
 **Parallel group [P]:** HAC-5, HAC-6, HAC-7 — **done**
 
@@ -49,7 +49,7 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 ## Sprint 2 — Identity + Forge (core wow) ✅
 
-**Goal:** Onboarding diagnóstico editável → Live Roadmap Forge SSE → primeiro wow ao vivo.  
+**Goal:** Editable onboarding diagnosis → Live Roadmap Forge SSE → first live wow.  
 **Target:** 2026-05-29 (MVP milestone)
 
 | Issue | Title | Class | Deps | Status |
@@ -64,7 +64,7 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 ## Sprint 3 — Artifact UI ✅
 
-**Goal:** Trilha vertical estilo roadmap.sh em artifact mode (steady state pós-forge).  
+**Goal:** Vertical roadmap.sh-style roadmap in artifact mode (post-forge steady state).  
 **Target:** 2026-05-30
 
 | Issue | Title | Class | Deps | Status |
@@ -75,13 +75,13 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 ## Sprint 4 — Mastery loop ✅
 
-**Goal:** Validar aprendizado → trilha reage → demo mode Ana para pitch 7 min.  
+**Goal:** Validate learning → roadmap reacts → demo mode Ana for 7-min pitch.  
 **Target:** 2026-05-31
 
 | Issue | Title | Class | Deps | Status |
 |-------|-------|-------|------|--------|
-| **HAC-10** | AI Mastery Validation — entrevista + score | S | HAC-9 | ✅ |
-| **HAC-11** | Adaptive Planning — trilha reativa | S | HAC-10 | ✅ |
+| **HAC-10** | AI Mastery Validation — interview + score | S | HAC-9 | ✅ |
+| **HAC-11** | Adaptive Planning — reactive roadmap | S | HAC-10 | ✅ |
 | **HAC-12** | Demo mode + seed user Ana | S | HAC-11 | ✅ |
 
 **Sequential chain:** HAC-10 → HAC-11 → HAC-12
@@ -90,14 +90,14 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 ## Sprint 5 — Stretch P1 ✅
 
-**Goal:** Mentor contextual, mock interview loop, relatório mentor — parallel where possible.  
+**Goal:** Contextual mentor, mock interview loop, mentor report — parallel where possible.  
 **Target:** 2026-06-01
 
 | Issue | Title | Class | Deps | Status |
 |-------|-------|-------|------|--------|
-| **HAC-13** [P] | Contextual Mentor — chat com memória | P | HAC-12 | ✅ |
-| **HAC-14** [P] | Mock Interview Loop — recalibra trilha | P | HAC-12 | ✅ |
-| **HAC-15** [P] | Relatório para mentor | P | HAC-10 | ✅ |
+| **HAC-13** [P] | Contextual Mentor — chat with memory | P | HAC-12 | ✅ |
+| **HAC-14** [P] | Mock Interview Loop — recalibrates roadmap | P | HAC-12 | ✅ |
+| **HAC-15** [P] | Report for mentor | P | HAC-10 | ✅ |
 
 > HAC-13/14/15 can run in parallel after Sprint 4 demo core is stable.
 
@@ -140,9 +140,9 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 | Issue | Title | Reason |
 |-------|-------|--------|
-| HAC-28 | Gamificação — streak + níveis | Não é motor do produto |
-| HAC-29 | Auto-posts de progresso | Social feed — fora do demo |
-| HAC-30 | Onboarding horas/dia pacing | Defer pós-MVP quinta |
+| HAC-28 | Gamification — streak + levels | Not a product driver |
+| HAC-29 | Progress auto-posts | Social feed — out of demo scope |
+| HAC-30 | Onboarding hours/day pacing | Defer post-MVP Thursday |
 
 ---
 
@@ -150,21 +150,21 @@ Branch format: `HAC-XX-title-slug` · Linear status: **manual** ([end-task-workf
 
 | Feature | Fit? | Sprint / Issue |
 |---------|------|----------------|
-| Diagnóstico contextual por objetivo | ✅ FIT | HAC-8 |
-| Live forge com streaming + pesquisa | ✅ FIT | HAC-18 |
-| Mock interview pós-tópico | ✅ FIT | HAC-10, HAC-14 |
-| Trilha adaptativa pós-falha | ✅ FIT | HAC-11 |
-| Chat integrado contextual | ✅ FIT | HAC-13 |
-| Backend especializado (space tech etc.) | ✅ FIT | HAC-6 seed + HAC-8 |
+| Contextual diagnosis by goal | ✅ FIT | HAC-8 |
+| Live forge with streaming + research | ✅ FIT | HAC-18 |
+| Post-topic mock interview | ✅ FIT | HAC-10, HAC-14 |
+| Adaptive roadmap after failure | ✅ FIT | HAC-11 |
+| Integrated contextual chat | ✅ FIT | HAC-13 |
+| Specialized backend (space tech etc.) | ✅ FIT | HAC-6 seed + HAC-8 |
 | Frontend TS (Arthur) + Backend FastAPI | ✅ FIT | HAC-5 |
-| MVP quinta-feira | ✅ FIT | Milestones 1–4 |
-| Pitch 7 min demo ao vivo | ✅ FIT | HAC-12 |
+| MVP Thursday | ✅ FIT | Milestones 1–4 |
+| 7-min live demo pitch | ✅ FIT | HAC-12 |
 | GitHub-style contribution streak | ❌ NO FIT | HAC-28 |
-| Níveis aprendiz → global | ❌ NO FIT | HAC-28 |
-| Posts automáticos de progresso | ❌ NO FIT | HAC-29 |
-| Horas/dia no onboarding | ❌ DEFER | HAC-30 |
-| Múltiplas trilhas completas | ❌ NO FIT | CHECKPOINT |
-| Auth enterprise | ❌ NO FIT | CHECKPOINT |
+| Levels: apprentice → global | ❌ NO FIT | HAC-28 |
+| Automatic progress posts | ❌ NO FIT | HAC-29 |
+| Hours/day in onboarding | ❌ DEFER | HAC-30 |
+| Multiple complete roadmaps | ❌ NO FIT | CHECKPOINT |
+| Enterprise auth | ❌ NO FIT | CHECKPOINT |
 
 ---
 

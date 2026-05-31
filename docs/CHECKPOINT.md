@@ -8,9 +8,9 @@ Authoritative product + architecture reference for agents.
 
 ## One-liner
 
-**Career Forge** — skill graph adaptativo que diagnostica, forja trilha ao vivo, valida mastery e gera evidências para mentores.
+**Career Forge** — adaptive skill graph that diagnoses, forges the roadmap live, validates mastery, and generates evidence for mentors.
 
-Sub-eixo: **Aprender com validação prática** (Alpha School: mastery before progression).
+Sub-theme: **Learning with practical validation** (Alpha School: mastery before progression).
 
 **Audience:** career transition to tech (often zero or early study) — not senior hiring.
 
@@ -22,11 +22,11 @@ Sub-eixo: **Aprender com validação prática** (Alpha School: mastery before pr
 
 | P | Feature | User reaction |
 |---|---------|---------------|
-| P0 | **Live Roadmap Forge** | "Tô vendo a IA pensar e montar MINHA trilha" |
-| P0 | **Mastery Validation** | "Não deixa eu mentir que aprendi" |
-| P0 | **Adaptive graph** | "A trilha mudou porque eu errei" |
-| P1 | Contextual Mentor | "Sabe onde eu travei" |
-| P1 | Mock → recalibra | "Entrevista muda o plano" |
+| P0 | **Live Roadmap Forge** | "I can see the AI thinking and building MY roadmap" |
+| P0 | **Mastery Validation** | "It won't let me pretend I learned" |
+| P0 | **Adaptive graph** | "The roadmap changed because I got it wrong" |
+| P1 | Contextual Mentor | "It knows where I got stuck" |
+| P1 | Mock → recalibrates | "The interview changes the plan" |
 
 ---
 
@@ -180,11 +180,11 @@ Spec: [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md)
 ## Demo script (5 min)
 
 1. Goal + motivation (+ optional CV)
-2. AI diagnosis interview → diagnóstico editável
-3. **Editable diagnosis** — ajustar lacuna, clicar **"Gerar roadmap"**
-4. **Forge stream** (timeline passos 1–N, sem grafo) → **animation reveal** → vertical roadmap
-5. Validar REST → resposta ruim → score
-6. Roadmap reage + sugestão mentor / AI sidebar
+2. AI diagnosis interview → editable diagnosis
+3. **Editable diagnosis** — adjust gap, click **"Generate roadmap"**
+4. **Forge stream** (timeline steps 1–N, no graph) → **animation reveal** → vertical roadmap
+5. Validate REST → bad answer → score
+6. Roadmap reacts + mentor suggestion / AI sidebar
 
 ---
 

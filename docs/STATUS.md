@@ -26,7 +26,7 @@ Last updated: **2026-05-30** · Last merge: **HAC-85** (normalize evidence → c
 | Live Roadmap Forge (timeline-only SSE) | ✅ Done | HAC-18 — forge graph + SSE timeline + reveal |
 | Vertical roadmap UI — artifact mode | ✅ Done | HAC-9 — GET /roadmap, vertical spine, node drawer |
 | Mastery Validation | ✅ Done | HAC-10 — validation graph, /validate interview UI, score ring |
-| Adaptive Planning | ✅ Done | HAC-11 — GraphPatch pós-validação, mission banner, nó revisar destacado |
+| Adaptive Planning | ✅ Done | HAC-11 — GraphPatch post-validation, mission banner, highlighted review node |
 | Demo mode + seed Ana | ✅ Done | HAC-12 — GET /demo/ana, seed js/git validations, Demo Ana toggle, Docker auto-seed |
 | Contextual Mentor | ✅ Done | HAC-13 — mentor agent via GraphExecutor, POST/GET /mentor, drawer + Ask AI |
 | Mock Interview Loop | ✅ Done | HAC-14 — 5–7 contextual Qs, mock_interview graph, trail recalibration |
@@ -42,7 +42,7 @@ Last updated: **2026-05-30** · Last merge: **HAC-85** (normalize evidence → c
 | VPS deploy pipeline hardening | ✅ Done | GHCR namespace `ghcr.io/pedroalano`, monorepo Dockerfile build paths fixed, SSH deploy health check migrated from Python to `curl` |
 | Prod skill catalog seed on deploy | ✅ Done | HAC-59 — prod/dev entrypoints always run `scripts.seed`; `SEED_DEMO_ANA` only for demo Ana; `data/roadmap.json` documented in DEPLOY-VPS |
 | Prod Postgres persistence stores | ✅ Done | HAC-58 — `DIAGNOSIS_SESSION_STORE` + `GRAPH_RUN_STORE` → Postgres when `ENV=production` |
-| Diagnosis screen UX (view-first edit) | ✅ Done | HAC-53 — inline edit icons, add/delete, dnd-kit priority reorder, refazer diagnóstico |
+| Diagnosis screen UX (view-first edit) | ✅ Done | HAC-53 — inline edit icons, add/delete, dnd-kit priority reorder, redo diagnosis |
 | Diagnosis confirm + forge motor API | ✅ Done | HAC-52 — `POST /diagnosis/confirm`, `POST /forge` loads profile (202 + run_id) |
 | Forge web search + StudyPlan loop | ✅ Done | HAC-54 — OpenAI native `web_search`, progressive source cards, planner/evaluator loop, `graph_ready` from approved StudyPlan |
 | Generated roadmap persistence + references | ✅ Done | HAC-55 — approved StudyPlan persists as dynamic roadmap nodes with tasks, references, prerequisites, and stable ordering |
@@ -52,8 +52,8 @@ Last updated: **2026-05-30** · Last merge: **HAC-85** (normalize evidence → c
 | Diagnosis confirm → forge motor (FE wire) | ✅ Done | HAC-57 — confirm saves profile; `POST /forge` profile-only; `/forge` SSE from stored run_id |
 | Mock interview on-topic | ✅ Done | HAC-66 — generator commits to technical subject, forbids study-logistics questions, grounds in references; per-question concept |
 | Knowledge gap ledger (adaptive memory) | ✅ Done | HAC-67 — `knowledge_gaps` table; async fire-and-forget classifier (concept/severity/remediation); ON CONFLICT upsert; correct answers resolve gaps |
-| Adaptive loop closed | ✅ Done | HAC-68 — mentor reads concept-level gaps, next mock targets open gaps (gap_probe), node drawer shows "Focos da última tentativa", `GET /knowledge-gaps` |
-| Chapter reacts to gaps (remediation) | ✅ Done | HAC-69 — open high-severity gaps inject self-cleaning remediation tasks into the node (stable id, resolved-aware); drawer "Adaptação" badge |
+| Adaptive loop closed | ✅ Done | HAC-68 — mentor reads concept-level gaps, next mock targets open gaps (gap_probe), node drawer shows "Focus areas from the last attempt", `GET /knowledge-gaps` |
+| Chapter reacts to gaps (remediation) | ✅ Done | HAC-69 — open high-severity gaps inject self-cleaning remediation tasks into the node (stable id, resolved-aware); drawer "Adaptation" badge |
 | Canonical key_concepts per node | ✅ Done | HAC-70 — planner emits 3-6 atomic technical concepts/node; persisted (migration 006); shared source for mock + tutor |
 | Chapter Q&A tutor (AI) | ✅ Done | HAC-71 — `tutor` agent via GraphExecutor grounded in key_concepts + references + open gaps; `GET /tutor/context` + `POST /tutor`; `TutorDrawer` from node drawer |
 
@@ -105,11 +105,11 @@ Sprint 6 complete — adaptive diagnosis interview live on onboarding path ([DIA
 
 | Decision | Status |
 |----------|--------|
-| MVP funcional ~quinta 2026-05-29 | ✅ Milestones set |
-| Pitch 7 min demo ao vivo | ✅ HAC-12 scoped |
+| Functional MVP ~Thu 2026-05-29 | ✅ Milestones set |
+| 7-min live demo pitch | ✅ HAC-12 scoped |
 | Arthur → frontend TS; backend FastAPI | ✅ HAC-5 updated |
 | Parallel Sprint 1 (HAC-5/6/7) | ✅ Labels + rule |
-| Won't-do: gamificação, auto-posts, horas/dia | ✅ HAC-27–29 Cancelled |
+| Won't-do: gamification, auto-posts, hours/day | ✅ HAC-27–29 Cancelled |
 
 Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arthur.md)
 
@@ -137,7 +137,7 @@ Full doc: [decisions/2026-05-25-sync-arthur.md](./decisions/2026-05-25-sync-arth
 
 ## Blockers
 
-- Confirmação formal participação Arthur (pendente da call)
+- Formal confirmation of Arthur's participation (pending the call)
 
 ---
 

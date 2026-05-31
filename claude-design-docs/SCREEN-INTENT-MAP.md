@@ -10,7 +10,7 @@
 / → /onboarding → /onboarding/edit → /roadmap/forge → /roadmap/forge/complete → /roadmap → /validate/:topic → /roadmap (adaptive)
 ```
 
-Breadcrumb: **Objetivo → Diagnóstico → Revisar → Forjar → Explorar → Validar**
+Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 
 5-min demo: [CHECKPOINT](../docs/CHECKPOINT.md#demo-script-5-min)
 
@@ -22,7 +22,7 @@ Breadcrumb: **Objetivo → Diagnóstico → Revisar → Forjar → Explorar → 
 |---|-----------|-------------------------|---------------|------|------------|------------|
 | 1 | `/` | `goal` | `goal-picker` | — | Headline PT-BR, 3 career cards, motivation textarea, single CTA | Card hover, validation toast |
 | 2 | `/onboarding` | `diag` | `diagnostic` | — | Chat layout, 4–6 Q thread, recap of goal | Streaming vs batch API |
-| 3 | `/onboarding/edit` | `result` ⚠️ | `diagnosis-editable` | — | **Editable** lists, add/remove, CTA **"Gerar roadmap"** | Drag-reorder, autosave |
+| 3 | `/onboarding/edit` | `result` ⚠️ | `diagnosis-editable` | — | **Editable** lists, add/remove, CTA **"Generate roadmap"** | Drag-reorder, autosave |
 | 4 | `/roadmap/forge` | `forge` ⚠️ | `forge-stream` | **P0** | **Timeline only**, numbered steps, **no graph during stream** | SSE reconnect, scroll |
 | 4b | `/roadmap/forge/complete` | (inline reveal) ⚠️ | `forge-reveal` | **P0** | Items fly into vertical layout | Animation library |
 | 5 | `/roadmap` | `roadmap` ⚠️ | `vertical-roadmap` | **P0** | Vertical spine; cards show compact study `x/y` + mint bar when checklist items exist; drawer has full checklist + progress | Node detail panel, sidebar UX |
@@ -52,7 +52,7 @@ Declare dream role + motivation. Prototype: `screens-flow.jsx`
 Short diagnostic chat. Exit → editable diagnosis (not forge). Prototype: `screens-flow.jsx`
 
 ### 3. Editable Diagnosis (`/onboarding/edit`) ⭐ NEW
-User edits/adds/removes fortes, lacunas, recomendação. CTA: **"Gerar roadmap"**. Replaces read-only confirmation.
+User edits/adds/removes strengths, gaps, recommendation. CTA: **"Generate roadmap"**. Replaces read-only confirmation.
 
 ### 4. Live Roadmap Forge (`/roadmap/forge`) ⭐ REDESIGNED
 Timeline-only stream, steps 1–N. No graph during generation. Prototype split layout is **legacy**.
@@ -67,7 +67,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; single `h-9` action `mentor-report-link` + `FileText` (no progress ring).
 
-**Page intro:** centered subtitle + optional `trail-progress-ring` below (`getTrailChecklistProgressPct`, item-pooled) + **Progresso de estudo** label.
+**Page intro:** centered subtitle + optional `trail-progress-ring` below (`getTrailChecklistProgressPct`, item-pooled) + **Study progress** label.
 
 **Node drawer (HAC-63):** Header title + red dismiss **✕**; Escape closes. Description callout when no knowledge gaps. Status/mastery, study progress, collapsible outcomes/refs/tasks (default expanded), optional `open-tutor-drawer`, sticky `validate-node-cta`. Persist via `PATCH /roadmap/nodes/{node_id}/checklist` (adaptive: local-only).
 
@@ -76,9 +76,9 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 **Loading:** `vertical-spine-skeleton` placeholder spine with connector stubs (no lone text spinner as primary feedback).
 
 ### 6. Mentor evidence report (`/report`)
-Borderless learning evidence for embaixadores. Entry: artifact topbar **`mentor-report-link`**.
+Borderless learning evidence for ambassadors. Entry: artifact topbar **`mentor-report-link`**.
 
-**Validation cards:** human topic title (`formatNodeTitleForDisplay`); score + status; structured **Resumo para mentor** (lacunas / acertos / próximo passo) — `data-testid="mentor-report-entry-{node_id}"`.
+**Validation cards:** human topic title (`formatNodeTitleForDisplay`); score + status; structured **Mentor summary** (gaps / correct answers / next step) — `data-testid="mentor-report-entry-{node_id}"`.
 
 ### 7. Mastery Validation (`/validate/:topic`)
 Interview + score. Unchanged.
@@ -135,4 +135,4 @@ See [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md).
 
 ---
 
-*Last updated: 2026-05-30 — `/report` mentor evidence + structured resumo testids*
+*Last updated: 2026-05-30 — `/report` mentor evidence + structured summary testids*

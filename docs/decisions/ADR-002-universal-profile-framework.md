@@ -15,10 +15,10 @@
 
 ADR-001 defined **CTRR** — eight rubric dimensions tuned for backend transition (`git`, `http_apis`, `database`, …). In production testing:
 
-1. **Low mapping velocity** — one interview round often maps only one sidebar dimension (e.g. Contexto), even when answers mention projects, tools, and learning path.
+1. **Low mapping velocity** — one interview round often maps only one sidebar dimension (e.g. Context), even when answers mention projects, tools, and learning path.
 2. **Role-specific sprawl** — a credible framework for data engineer, fullstack, and AI engineer implies **3× rubric maintenance** (prompts, labels, finalize mapping, sidebar).
 3. **Interrogation feel** — up to 5 rounds × 2 questions = 10 turns to saturate 8 dimensions; users compare this to form spam (Gupy-style) and churn before the roadmap.
-4. **Goal as framework fork** — `GoalPicker` historically locked non-backend paths (“Em breve”), forcing backend-shaped questions for everyone.
+4. **Goal as framework fork** — `GoalPicker` historically locked non-backend paths (“Coming soon”), forcing backend-shaped questions for everyone.
 
 The AI-first constraint from ADR-001 **still holds**: diagnosis must remain LLM-driven (Judge + Interviewer). This ADR changes **what** is measured, not **whether** AI runs.
 
@@ -44,11 +44,11 @@ Role-agnostic keys — backend/data/frontend/AI differ only in **downstream mapp
 
 | Key | UI label | Measures | Typical evidence |
 |-----|----------|----------|------------------|
-| `motivation_goal` | Objetivo | Why this path + alignment with stated goal | Screen 1 motivation, goal-specific follow-up |
-| `background_transfer` | De onde você vem | Prior domain + transferable habits (communication, analysis, ops) | Intake, CV roles, “how you study today” |
-| `learning_velocity` | Ritmo de aprendizado | Dreyfus-lite stage + time invested + consistency | years_xp, courses, frequency, recency |
-| `hands_on_proof` | Prova prática | Largest built/attempted artifact (STAR-lite) | Project story, repo, deploy attempt |
-| `constraints` | Contexto real | Time/week, language, budget, bootcamp vs self-study | Single direct question if not in intake |
+| `motivation_goal` | Goal | Why this path + alignment with stated goal | Screen 1 motivation, goal-specific follow-up |
+| `background_transfer` | Where you come from | Prior domain + transferable habits (communication, analysis, ops) | Intake, CV roles, “how you study today” |
+| `learning_velocity` | Learning pace | Dreyfus-lite stage + time invested + consistency | years_xp, courses, frequency, recency |
+| `hands_on_proof` | Hands-on proof | Largest built/attempted artifact (STAR-lite) | Project story, repo, deploy attempt |
+| `constraints` | Real context | Time/week, language, budget, bootcamp vs self-study | Single direct question if not in intake |
 
 **Saturation:** confidence ≥ **0.75** per dimension **OR** **3 interview rounds** (max **6 questions** total) → finalize.
 
@@ -69,13 +69,13 @@ goal_id
       track_id, persona_slug, starting_priorities weights
 ```
 
-**Example:** Answer: *“Montei API REST no GitHub, uso Git básico, 6h/semana”*  
+**Example:** Answer: *“I built a REST API on GitHub, I use basic Git, 6h/week”*  
 → `hands_on_proof` mapped, `learning_velocity` mapped, `background_transfer` partial; **do not** ask separate git/http/database questions unless `hands_on_proof` still < 0.75 after one clarifier.
 
 ### 3. Interviewer rules
 
 - **Max 2 questions per round**, **max 3 rounds** (6 questions hard cap).
-- Round 1 must be **open** (“Conte o que você já fez ou tentou…”) when intake + CV leave ≥3 dimensions unsaturated — avoids pill fatigue.
+- Round 1 must be **open** (“Tell us what you have already done or tried…”) when intake + CV leave ≥3 dimensions unsaturated — avoids pill fatigue.
 - Prefer **compound questions** over dimension-per-turn.
 - Skip dimensions already ≥ 0.75 from intake/CV/answers.
 - `goal_id` may **word** examples (“API” vs “pipeline”) but **same rubric keys**.
@@ -85,12 +85,12 @@ goal_id
 | Rule | Implementation |
 |------|----------------|
 | **Hard cap** | 3 rounds / 6 questions; then finalize with best-effort belief |
-| **Progress ≠ checklist** | Sidebar: “Perfil: 60% completo” + 5 dimension chips (not 8 tech silos) |
+| **Progress ≠ checklist** | Sidebar: “Profile: 60% complete” + 5 dimension chips (not 8 tech silos) |
 | **Stop early** | All 5 saturated OR user gives rich round-1 answer mapping ≥4 dims |
 | **No dead ends** | Submit always advances or completes; loading state always clears (`finally`) |
 | **Goal unlocked day 1** | All `CAREER_GOALS` active; finalize uses `goal_id` parameter |
 
-Copy: *“Sem certo ou errado — quanto mais concreto, menos perguntas.”*
+Copy: *“No right or wrong — the more concrete, the fewer questions.”*
 
 ### 5. What stays from ADR-001
 
@@ -109,7 +109,7 @@ Copy: *“Sem certo ou errado — quanto mais concreto, menos perguntas.”*
 - Fewer turns to usable roadmap; lower churn risk
 - One prompt/schema path for all career goals
 - Rich answers improve mapping in **one shot** (aligns with Judge multi-dimension rule added interim)
-- Demo story: “tell us your story → 2 smart follow-ups → trilha”
+- Demo story: “tell us your story → 2 smart follow-ups → roadmap”
 
 ### Negative / tradeoffs
 

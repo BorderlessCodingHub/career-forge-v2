@@ -1,47 +1,47 @@
-# Arquitetura — Career Forge (backend)
+# Architecture — Career Forge (backend)
 
-> **Para o reviewer:** este documento mostra a arquitetura do backend **depois** do
-> ciclo de refactor pós-entrega (HAC-73 … HAC-85). Todos os diagramas são
-> [Mermaid](https://mermaid.js.org/) — o GitHub **renderiza nativamente** ao abrir
-> este `.md` (sem plugin). Se algum diagrama aparecer como código, recarregue a
-> página; o GitHub às vezes faz cache do render.
+> **For the reviewer:** this document shows the backend architecture **after** the
+> post-delivery refactor cycle (HAC-73 … HAC-85). All diagrams are
+> [Mermaid](https://mermaid.js.org/) — GitHub **renders them natively** when you open
+> this `.md` (no plugin). If a diagram shows up as code, reload the
+> page; GitHub sometimes caches the render.
 
-Camadas: **API** (rotas finas, só transporte) → **Services** (orquestração +
-domínio) → **AI** (executor/factory/registry + graphs/agents/tools/llm) → **DB**.
-Kernel compartilhado: `schemas/` + `errors.py` (erros de domínio).
+Layers: **API** (thin routes, transport only) → **Services** (orchestration +
+domain) → **AI** (executor/factory/registry + graphs/agents/tools/llm) → **DB**.
+Shared kernel: `schemas/` + `errors.py` (domain errors).
 
 ---
 
-## Padrões de execução
+## Execution patterns
 
-Existem **três** formas de uma rota chegar no resultado. Saber qual é cada uma
-torna os diagramas de sequência muito mais fáceis de ler.
+There are **three** ways a route reaches its result. Knowing which is which
+makes the sequence diagrams much easier to read.
 
-| Padrão | Quando | Caminho |
+| Pattern | When | Path |
 |--------|--------|---------|
-| **executor-collect** | resultado único (sem stream) | rota → `GraphExecutor.execute(stream=False)` → `AgentFactory` → runnable → `unwrap_graph_output` |
-| **executor-stream** | streaming SSE | rota → `GraphExecutor.execute(stream=True)` → gera eventos SSE |
-| **service-direto** | sem grafo / lógica determinística | rota → service (sem executor) |
+| **executor-collect** | single result (no stream) | route → `GraphExecutor.execute(stream=False)` → `AgentFactory` → runnable → `unwrap_graph_output` |
+| **executor-stream** | SSE streaming | route → `GraphExecutor.execute(stream=True)` → emits SSE events |
+| **service-direto** | no graph / deterministic logic | route → service (no executor) |
 
-| Feature | Padrão |
+| Feature | Pattern |
 |---------|--------|
-| Diagnosis (multi-turn CTRR) | service-direto (streaming próprio) |
+| Diagnosis (multi-turn CTRR) | service-direto (own streaming) |
 | Live Roadmap Forge | executor-stream |
 | Roadmap (steady-state / toggle) | service-direto |
 | Validation | executor-collect (via `assessment_flow`) |
-| Mock Interview (MCQ) | service-direto p/ scoring + executor p/ open-text legado |
-| Mentor | executor-collect (agent embrulha service) |
-| Tutor | executor-collect (agent embrulha service) |
+| Mock Interview (MCQ) | service-direto for scoring + executor for legacy open-text |
+| Mentor | executor-collect (agent wraps service) |
+| Tutor | executor-collect (agent wraps service) |
 | Mentor Report | service-direto |
-| Knowledge Gaps / Remediação | background task (fire-and-forget) |
+| Knowledge Gaps / Remediation | background task (fire-and-forget) |
 
 ---
 
-## Diagrama de dependência (módulos pós-refactor)
+## Dependency diagram (post-refactor modules)
 
 ```mermaid
 graph TD
-  subgraph API["API — rotas finas: transporte + mapeia erro para HTTP"]
+  subgraph API["API — thin routes: transport + map error to HTTP"]
     A_diag[diagnosis_interview]
     A_forge[forge]
     A_road[roadmap]
@@ -52,7 +52,7 @@ graph TD
     A_rep[mentor_report]
   end
 
-  subgraph SVC["Services — orquestracao + dominio"]
+  subgraph SVC["Services — orchestration + domain"]
     S_flow["assessment_flow"]
     S_persist["assessment_persistence"]
     S_rubric["assessment_rubric"]
@@ -67,7 +67,7 @@ graph TD
     S_gaps[knowledge_gaps]
     S_prof[profile_diagnosis]
     S_dsess[diagnosis_session]
-    subgraph ROAD["roadmap/ pacote com facade"]
+    subgraph ROAD["roadmap/ package with facade"]
       R_init["__init__ facade"]
       R_cat[catalog]
       R_asm[assembler]
@@ -77,7 +77,7 @@ graph TD
     end
   end
 
-  subgraph AICORE["AI nucleo de execucao"]
+  subgraph AICORE["AI execution core"]
     X_exec["executor GraphExecutor"]
     X_fac["factory AgentFactory"]
     X_reg["registry GRAPH_BUILDERS"]
@@ -156,17 +156,17 @@ graph TD
   SVC --> K_sch
 ```
 
-**Regra de direção (o que o refactor fixou):** `API → Services → DB/kernel`.
-O HAC-77 removeu a inversão **services → ai/graphs**. A única dependência "para
-cima" sancionada é **graphs/agents → services** (os runnables são finos e
-embrulham o domínio determinístico). `catalog` e `evidence` são folhas (sem
-dependências internas no pacote `roadmap/`).
+**Direction rule (what the refactor locked in):** `API → Services → DB/kernel`.
+HAC-77 removed the **services → ai/graphs** inversion. The only sanctioned "upward"
+dependency is **graphs/agents → services** (the runnables are thin and
+wrap the deterministic domain). `catalog` and `evidence` are leaves (no
+internal dependencies within the `roadmap/` package).
 
 ---
 
-## Sequência — Diagnosis Interview (multi-turn CTRR)
+## Sequence — Diagnosis Interview (multi-turn CTRR)
 
-`service-direto` — não passa pelo `GraphExecutor`; tem streaming próprio.
+`service-direto` — does not go through `GraphExecutor`; it has its own streaming.
 
 ```mermaid
 sequenceDiagram
@@ -179,22 +179,22 @@ sequenceDiagram
 
   FE->>R: POST /diagnosis/interview/start
   R->>SS: start_interview(body)
-  opt tem CV
+  opt has CV
     SS->>CV: parse_cv_attachment / attach_extracted_text
   end
   SS->>LLM: initialize_belief(intake, cv)
   SS->>LLM: plan_questions(belief)
   SS->>DB: persist diagnosis_session
-  SS-->>FE: round 1 perguntas CTRR
+  SS-->>FE: round 1 CTRR questions
 
-  loop ate belief fechar ou max rounds
+  loop until belief closes or max rounds
     FE->>R: POST /interview/{id}/turn
     R->>SS: submit_turn(id, answers)
     SS->>LLM: update_belief(transcript, answers)
-    alt ainda aberto
+    alt still open
       SS->>LLM: plan_questions(belief)
-      SS-->>FE: proximo round
-    else fechado
+      SS-->>FE: next round
+    else closed
       SS->>LLM: finalize_diagnosis(belief)
       SS->>DB: persist final
       SS-->>FE: DiagnosisResponse
@@ -203,14 +203,14 @@ sequenceDiagram
 
   FE->>R: POST /diagnosis/confirm
   R->>SS: profile_diagnosis.confirm_diagnosis
-  SS->>DB: grava Profile motor-input
+  SS->>DB: write Profile motor-input
 ```
 
 ---
 
-## Sequência — Live Roadmap Forge
+## Sequence — Live Roadmap Forge
 
-`executor-stream` — POST cria o run (pending), o GET consome o SSE.
+`executor-stream` — POST creates the run (pending), GET consumes the SSE.
 
 ```mermaid
 sequenceDiagram
@@ -226,7 +226,7 @@ sequenceDiagram
 
   FE->>R: POST /forge
   R->>PD: load_forge_motor_input(user_id)
-  PD-->>R: motor input ou ProfileNotFoundError 404
+  PD-->>R: motor input or ProfileNotFoundError 404
   R->>DB: store GraphRun roadmap_forge pending
   R-->>FE: 202 run_id
 
@@ -237,18 +237,18 @@ sequenceDiagram
     GF->>TL: web_search / planner / evaluator
     GF-->>FE: SSE reasoning, artifact, node_updated
   end
-  GF-->>EX: graph_ready grafo final
+  GF-->>EX: graph_ready final graph
   EX-->>FE: SSE graph_ready
   R->>FP: persist_graph_ready(graph)
   FP->>CMD: sync_user_graph(nodes)
-  CMD->>DB: upsert user_skill_nodes evidence canonico
+  CMD->>DB: upsert user_skill_nodes canonical evidence
 ```
 
 ---
 
-## Sequência — Roadmap (steady-state + checklist toggle)
+## Sequence — Roadmap (steady-state + checklist toggle)
 
-`service-direto` — através do pacote `roadmap/`.
+`service-direto` — through the `roadmap/` package.
 
 ```mermaid
 sequenceDiagram
@@ -268,15 +268,15 @@ sequenceDiagram
   REPO->>DB: SELECT user_skill_nodes
   CMD->>ASM: _merge_node(catalog, row)
   ASM->>EV: read_evidence(row.evidence)
-  EV-->>ASM: envelope checklist + remediation viram tasks
+  EV-->>ASM: envelope checklist + remediation become tasks
   CMD-->>FE: RoadmapResponse
 
   FE->>R: PATCH /roadmap/nodes/{id}/checklist
   R->>CMD: toggle_checklist_item
-  alt node inexistente
+  alt node does not exist
     CMD-->>R: NodeNotFoundError
     R-->>FE: 404
-  else item inexistente
+  else item does not exist
     CMD-->>R: ChecklistItemNotFoundError
     R-->>FE: 400
   else ok
@@ -287,9 +287,9 @@ sequenceDiagram
 
 ---
 
-## Sequência — Validation
+## Sequence — Validation
 
-`executor-collect` orquestrado por `assessment_flow`.
+`executor-collect` orchestrated by `assessment_flow`.
 
 ```mermaid
 sequenceDiagram
@@ -313,17 +313,17 @@ sequenceDiagram
   GV-->>EX: graph_complete ValidationResponse
   EX-->>AF: unwrap_graph_output
   AF->>AP: persist_assessment_result
-  AP->>DB: upsert UserSkillNode + Validation evidence canonico
+  AP->>DB: upsert UserSkillNode + Validation canonical evidence
   AF->>PL: recalibrate_after_validation
-  PL->>DB: sync_user_graph GraphPatch aplicado
+  PL->>DB: sync_user_graph GraphPatch applied
   AF-->>FE: validation, node_status, graph_patch, roadmap
 ```
 
 ---
 
-## Sequência — Mock Interview MCQ (+ loop de gaps e remediação)
+## Sequence — Mock Interview MCQ (+ gaps and remediation loop)
 
-`service-direto` para scoring determinístico + background fire-and-forget.
+`service-direto` for deterministic scoring + fire-and-forget background.
 
 ```mermaid
 sequenceDiagram
@@ -341,28 +341,28 @@ sequenceDiagram
 
   FE->>R: GET /mock-interview/questions
   R->>MC: build_mock_interview_context
-  R->>MCQ: generate_mcq StructuredToolClient ou fallback
-  MCQ->>SESS: save session gabarito in-memory
-  R-->>FE: MCQ sem correct_option
+  R->>MCQ: generate_mcq StructuredToolClient or fallback
+  MCQ->>SESS: save session answer-key in-memory
+  R-->>FE: MCQ without correct_option
 
   FE->>R: POST /mock-interview session_id + answers
   R->>AF: run_mock_interview
-  AF->>SM: evaluate_mcq_session gabarito deterministico
+  AF->>SM: evaluate_mcq_session deterministic answer-key
   AF->>AP: persist_assessment_result mock_interview=true
-  AP->>DB: upsert evidence canonico
+  AP->>DB: upsert canonical evidence
   AF->>BG: add_task classify_and_store_gaps fire-and-forget
   AF-->>FE: validation, node_status, roadmap
-  Note over BG,DB: pos-resposta em background
-  BG->>GC: classify_gaps LLM ou fallback
+  Note over BG,DB: post-answer in background
+  BG->>GC: classify_gaps LLM or fallback
   BG->>DB: upsert KnowledgeGap ledger
-  BG->>DB: sync_remediation_tasks grava evidence.remediation
+  BG->>DB: sync_remediation_tasks write evidence.remediation
 ```
 
 ---
 
-## Sequência — Mentor
+## Sequence — Mentor
 
-`executor-collect` — o agent embrulha o service determinístico.
+`executor-collect` — the agent wraps the deterministic service.
 
 ```mermaid
 sequenceDiagram
@@ -377,8 +377,8 @@ sequenceDiagram
   FE->>R: POST /mentor
   R->>SM: load_mentor_context(user, node)
   SM->>DB: validations + user_skill_nodes read_evidence
-  SM->>KG: list_open_gaps ledger primario
-  R->>EX: execute(mentor, collect) com context_snapshot
+  SM->>KG: list_open_gaps primary ledger
+  R->>EX: execute(mentor, collect) with context_snapshot
   EX->>AG: astream_events
   AG->>SM: build_mentor_response intent dispatch
   AG-->>EX: graph_complete MentorResponse
@@ -388,9 +388,9 @@ sequenceDiagram
 
 ---
 
-## Sequência — Tutor (Q&A do capítulo)
+## Sequence — Tutor (chapter Q&A)
 
-`executor-collect` — o agent embrulha o service.
+`executor-collect` — the agent wraps the service.
 
 ```mermaid
 sequenceDiagram
@@ -405,10 +405,10 @@ sequenceDiagram
   FE->>R: POST /tutor
   R->>ST: load_tutor_context key_concepts + refs + open_gaps
   ST->>DB: skill node + gaps
-  R->>EX: execute(tutor, collect) com context_snapshot
+  R->>EX: execute(tutor, collect) with context_snapshot
   EX->>AG: astream_events
   AG->>ST: build_tutor_response(payload, context)
-  ST->>TL: generate_tutor_reply StructuredToolClient ou fallback
+  ST->>TL: generate_tutor_reply StructuredToolClient or fallback
   AG-->>EX: graph_complete TutorResponse
   EX-->>R: unwrap_graph_output
   R-->>FE: reply, used_concepts
@@ -416,9 +416,9 @@ sequenceDiagram
 
 ---
 
-## Sequência — Mentor Report
+## Sequence — Mentor Report
 
-`service-direto` — agrega histórico de validações.
+`service-direto` — aggregates validation history.
 
 ```mermaid
 sequenceDiagram
@@ -433,43 +433,43 @@ sequenceDiagram
   R->>MR: get_mentor_report
   MR->>DB: Profile + validations + user_skill_nodes
   MR->>PD: diagnosis_response_from_profile parse v2
-  loop por validacao
+  loop per validation
     MR->>EV: read_evidence(row) validation_summary
   end
-  MR-->>FE: relatorio agregado strengths/gaps por no
+  MR-->>FE: aggregated report strengths/gaps per node
 ```
 
 ---
 
-## Decisões arquiteturais (pontos de revisão)
+## Architectural decisions (review points)
 
-1. **`ai/graphs` e `ai/agents` dependem de `services`** (runnables embrulham o
-   domínio determinístico). É a única dependência "para cima". Alternativa:
-   mover a lógica determinística (rubric/mentor/tutor) para um pacote `domain/`
-   neutro. Mantido como está — runnables finos e previsíveis.
-2. **Dois clients LLM**: `StructuredLlmClient` (async, diagnosis) e
-   `StructuredToolClient` (sync, tools). Unificar num só com `invoke`/`ainvoke`
-   seria mais limpo (ficou fora do escopo do HAC-82).
-3. **Diagnosis tem dois caminhos**: o multi-turn real (`diagnosis_session`,
-   service-direto) + um `diagnosis` graph legado via executor
-   (`api/diagnosis.create_diagnosis`) que o front não usa mais → candidato a
-   remoção de dead-code.
-4. **Sessão MCQ é in-memory** (`mock_interview_session`): o gabarito não
-   persiste. Simples e suficiente para o fluxo, mas é estado efêmero (perde em
-   restart / múltiplas instâncias).
-5. **Evidence normalizado (HAC-85)**: um envelope canônico
-   `{checklist, validation, remediation, metadata}` + `read_evidence` como único
-   adapter de leitura do legado. Escrita só no shape novo; migração **lazy** (sem
-   rewrite em massa). Remediação numa chave dedicada, desacoplada do checklist.
-6. **`assessment_flow` mantém `except Exception` amplo** no persist/recalibrate
-   (resiliência herdada das rotas) — preservado para não mudar comportamento;
-   poderia virar fail-fast.
+1. **`ai/graphs` and `ai/agents` depend on `services`** (runnables wrap the
+   deterministic domain). It is the only "upward" dependency. Alternative:
+   move the deterministic logic (rubric/mentor/tutor) into a neutral `domain/`
+   package. Kept as is — thin, predictable runnables.
+2. **Two LLM clients**: `StructuredLlmClient` (async, diagnosis) and
+   `StructuredToolClient` (sync, tools). Unifying them into one with `invoke`/`ainvoke`
+   would be cleaner (it was out of scope for HAC-82).
+3. **Diagnosis has two paths**: the real multi-turn one (`diagnosis_session`,
+   service-direto) + a legacy `diagnosis` graph via the executor
+   (`api/diagnosis.create_diagnosis`) that the frontend no longer uses → candidate for
+   dead-code removal.
+4. **MCQ session is in-memory** (`mock_interview_session`): the answer key is not
+   persisted. Simple and sufficient for the flow, but it is ephemeral state (lost on
+   restart / multiple instances).
+5. **Normalized evidence (HAC-85)**: a canonical envelope
+   `{checklist, validation, remediation, metadata}` + `read_evidence` as the single
+   read adapter for the legacy format. Writes only in the new shape; **lazy** migration (no
+   mass rewrite). Remediation in a dedicated key, decoupled from the checklist.
+6. **`assessment_flow` keeps a broad `except Exception`** in persist/recalibrate
+   (resilience inherited from the routes) — preserved to avoid changing behavior;
+   could become fail-fast.
 
 ---
 
-## Documentos relacionados
+## Related documents
 
-- [docs/engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) — árvore E2E + ordem de dispatch
+- [docs/engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) — E2E tree + dispatch order
 - [docs/engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md) — GraphRun, GraphExecutor, AgentFactory
-- [docs/engineering/REPO-STRUCTURE.md](./engineering/REPO-STRUCTURE.md) — layout de pastas
-- [docs/CHECKPOINT.md](./CHECKPOINT.md) — overview de produto + stack
+- [docs/engineering/REPO-STRUCTURE.md](./engineering/REPO-STRUCTURE.md) — folder layout
+- [docs/CHECKPOINT.md](./CHECKPOINT.md) — product + stack overview
