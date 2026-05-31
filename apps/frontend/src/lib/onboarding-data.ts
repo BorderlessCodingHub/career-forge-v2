@@ -1,4 +1,4 @@
-export type CareerGoal = {
+type CareerGoal = {
   id: string;
   title: string;
   active: boolean;

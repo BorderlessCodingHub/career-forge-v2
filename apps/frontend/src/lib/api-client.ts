@@ -66,7 +66,7 @@ async function readApiErrorMessage(res: Response): Promise<string> {
   return `${res.status} ${res.statusText}`;
 }
 
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${backendUrl}${path}`, {
@@ -216,7 +216,7 @@ export async function startForgeRunFromProfile(
   });
 }
 
-export function forgeStreamUrl(runId: string): string {
+function forgeStreamUrl(runId: string): string {
   return `${backendUrl}/forge/${runId}/stream`;
 }
 
@@ -378,4 +378,3 @@ export async function getMentorReport(userId?: string): Promise<MentorReportResp
   );
 }
 
-export { backendUrl };

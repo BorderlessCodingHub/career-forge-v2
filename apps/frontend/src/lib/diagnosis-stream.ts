@@ -12,6 +12,5 @@ export {
   applyDiagnosisStreamEvent,
   createInitialDiagnosisStreamState,
   hydrateMappingFromResponse,
-  type DiagnosisStreamSideEffects,
   type DiagnosisStreamUiState,
 } from "@/lib/diagnosis-stream/strategies";

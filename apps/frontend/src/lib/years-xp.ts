@@ -1,7 +1,7 @@
 import type { YearsXpRange } from "@/types/contracts";
 
 /** PT-BR labels — mirror backend YearsXpRange buckets. */
-export const YEARS_XP_LABELS: Record<YearsXpRange, string> = {
+const YEARS_XP_LABELS: Record<YearsXpRange, string> = {
   "0-1": "0–1 ano",
   "1-3": "1–3 anos",
   "3-5": "3–5 anos",

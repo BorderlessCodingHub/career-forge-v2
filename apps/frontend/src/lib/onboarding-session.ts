@@ -87,15 +87,3 @@ export function setStoredDiagnosis(diagnosis: DiagnosisResponse) {
 export function clearStoredDiagnosis() {
   removeItems([DIAGNOSIS_KEY, DIAGNOSIS_SESSION_KEY, ANSWERS_KEY]);
 }
-
-export function clearOnboardingSession() {
-  removeItems([
-    GOAL_KEY,
-    MOTIVATION_KEY,
-    YEARS_XP_KEY,
-    CV_ATTACHMENT_KEY,
-    DIAGNOSIS_SESSION_KEY,
-    ANSWERS_KEY,
-    DIAGNOSIS_KEY,
-  ]);
-}

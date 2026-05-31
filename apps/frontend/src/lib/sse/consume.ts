@@ -1,6 +1,6 @@
 import { parseSseBlock } from "@/lib/sse/parse";
 
-export type SseHandler<T> = (eventName: string, payload: T) => void;
+type SseHandler<T> = (eventName: string, payload: T) => void;
 
 export async function consumeFetchEventStream<T>(
   url: string,

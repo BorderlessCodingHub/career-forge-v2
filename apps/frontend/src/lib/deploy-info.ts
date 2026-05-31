@@ -2,7 +2,7 @@
 
 export type ApiHealthState = "ok" | "degraded" | "unreachable" | "loading";
 
-export function getPublicBackendUrl(): string {
+function getPublicBackendUrl(): string {
   const fromEnv =
     process.env.NEXT_PUBLIC_BACKEND_URL?.trim() ||
     process.env.NEXT_PUBLIC_API_URL?.trim();
