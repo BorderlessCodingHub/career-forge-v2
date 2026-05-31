@@ -6,7 +6,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from fastapi import HTTPException
+from career_forge.errors import MockInterviewSessionNotFoundError
 
 
 @dataclass
@@ -40,7 +40,7 @@ def create_session_id() -> str:
 def get_mock_interview_session(session_id: str) -> MockInterviewSessionRecord:
     record = _sessions.get(session_id)
     if record is None:
-        raise HTTPException(status_code=404, detail=f"Mock interview session {session_id} not found")
+        raise MockInterviewSessionNotFoundError(f"Mock interview session {session_id} not found")
     return record
 
 

@@ -6,12 +6,12 @@ import json
 from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from career_forge.db.models.skill_node import SkillNode
 from career_forge.db.models.user import User
+from career_forge.errors import ChecklistItemNotFoundError, NodeNotFoundError
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
@@ -245,13 +245,12 @@ def toggle_checklist_item(
     roadmap = get_user_roadmap(session, user_id)
     node = next((item for item in roadmap.nodes if item.node_id == node_id), None)
     if node is None:
-        raise HTTPException(status_code=404, detail=f"Node {node_id} not found")
+        raise NodeNotFoundError(f"Node {node_id} not found")
 
     items = node.tasks if item_type == "task" else node.references
     if not any(str(item.get("id")) == item_id for item in items):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Unknown {item_type} item_id {item_id} for node {node_id}",
+        raise ChecklistItemNotFoundError(
+            f"Unknown {item_type} item_id {item_id} for node {node_id}",
         )
 
     existing = _user_state_map(session, user)

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from career_forge.errors import DomainError
 from career_forge.services.forge_context import LearnerForgeContext, build_forge_context_from_input
 from career_forge.services.profile_diagnosis import load_forge_motor_input
 from career_forge.services.roadmap import get_skill_node_context, get_user_roadmap
@@ -63,7 +63,7 @@ def build_mock_interview_context(
     try:
         motor_input = load_forge_motor_input(session, user_id)
         learner = build_forge_context_from_input(user_id=user_id, input_data=motor_input)
-    except HTTPException:
+    except DomainError:
         learner = None
 
     return study_block, learner

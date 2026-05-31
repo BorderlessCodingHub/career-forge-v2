@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from career_forge.db.session import get_db
+from career_forge.errors import DomainError
 from career_forge.schemas.roadmap import ChecklistToggleRequest, RoadmapResponse, RoadmapSyncRequest
 from career_forge.services import roadmap as roadmap_service
 
@@ -61,7 +62,7 @@ def patch_node_checklist(
             body.item_id,
             body.done,
         )
-    except HTTPException:
+    except DomainError:
         db.rollback()
         raise
     except Exception:

@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-75** (unwrap_graph_output — dedup graph_complete extraction across 5 routes; refactor loop wave 3)
+Last updated: **2026-05-30** · Last merge: **HAC-76** (domain errors in services — `errors.py` + app handler replaces `HTTPException`; status codes preserved; refactor loop wave 4)
 
 ---
 

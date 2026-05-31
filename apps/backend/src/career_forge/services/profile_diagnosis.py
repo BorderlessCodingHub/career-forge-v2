@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from career_forge.db.models.profile import Profile
 from career_forge.db.models.user import User
+from career_forge.errors import ProfileNotFoundError
 from career_forge.schemas.profile_diagnosis import (
     DiagnosisConfirmRequest,
     DiagnosisConfirmResponse,
@@ -89,21 +89,15 @@ def load_forge_motor_input(session: Session, external_id: str) -> dict[str, Any]
     """Build forge GraphRun input from persisted profile."""
     user = session.scalar(select(User).where(User.external_id == external_id))
     if user is None:
-        raise HTTPException(status_code=404, detail=f"User {external_id!r} not found")
+        raise ProfileNotFoundError(f"User {external_id!r} not found")
 
     profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
     if profile is None or profile.diagnosis is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No confirmed diagnosis for user {external_id!r}",
-        )
+        raise ProfileNotFoundError(f"No confirmed diagnosis for user {external_id!r}")
 
     record = parse_profile_diagnosis(profile.diagnosis)
     if record is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No confirmed diagnosis for user {external_id!r}",
-        )
+        raise ProfileNotFoundError(f"No confirmed diagnosis for user {external_id!r}")
 
     intake = record.intake.model_dump(mode="json")
     return {
