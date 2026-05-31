@@ -2,25 +2,23 @@
 
 from __future__ import annotations
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.models.validation import Validation
-from career_forge.db.repositories.user import ensure_user
-from career_forge.schemas.common import SkillStatus, ValidationStatus
 from career_forge.schemas.validation import (
     ValidationQuestion,
     ValidationQuestionsResponse,
     ValidationRequest,
     ValidationResponse,
 )
+from career_forge.services.assessment_persistence import persist_assessment_result
 from career_forge.services.assessment_rubric import (
     QUESTION_HINTS,
     QUESTION_LABELS,
     QUESTION_TEMPLATES,
 )
-from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
+from career_forge.services.roadmap import get_skill_node_context
 
 
 def build_validation_questions(
@@ -60,49 +58,13 @@ def persist_validation_result(
     result: ValidationResponse,
 ) -> tuple[Validation, UserSkillNodeRow]:
     """Store validation attempt and update user skill node status."""
-    user = ensure_user(session, payload.user_id)
-
-    user_skill = session.scalar(
-        select(UserSkillNodeRow).where(
-            UserSkillNodeRow.user_id == user.id,
-            UserSkillNodeRow.skill_node_id == payload.node_id,
-        ),
-    )
-    if user_skill is None:
-        user_skill = UserSkillNodeRow(
-            user_id=user.id,
-            skill_node_id=payload.node_id,
-            status=SkillStatus.EM_ESTUDO.value,
-            mastery_score=0,
-        )
-        session.add(user_skill)
-        session.flush()
-
-    passed = result.status == ValidationStatus.APROVADO
-    new_status = SkillStatus.APROVADO if passed else SkillStatus.REVISAR
-
     question_payload = build_validation_questions(payload.node_id, session)
-    user_skill.status = new_status.value
-    user_skill.mastery_score = result.score
-    user_skill.evidence = merge_validation_evidence(
-        user_skill.evidence,
-        strengths=result.strengths,
-        gaps=result.gaps,
-        next_action=result.next_action,
-    )
-
-    validation = Validation(
-        user_id=user.id,
-        skill_node_id=payload.node_id,
-        user_skill_node_id=user_skill.id,
-        score=result.score,
-        passed=passed,
-        feedback=result.mentor_summary,
+    return persist_assessment_result(
+        session,
+        user_id=payload.user_id,
+        node_id=payload.node_id,
+        result=result,
         questions=[question.model_dump() for question in question_payload.questions],
         answers=[answer.model_dump() for answer in payload.answers],
+        mock_interview=False,
     )
-    session.add(validation)
-    session.commit()
-    session.refresh(validation)
-    session.refresh(user_skill)
-    return validation, user_skill

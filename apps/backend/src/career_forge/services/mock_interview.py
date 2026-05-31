@@ -4,24 +4,18 @@ from __future__ import annotations
 
 from typing import Any
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.models.validation import Validation
-from career_forge.schemas.common import SkillStatus, ValidationStatus
+from career_forge.schemas.common import ValidationStatus
 from career_forge.schemas.mock_interview import (
     MockInterviewQuestion,
     MockInterviewQuestionsResponse,
     MockInterviewRequest,
 )
 from career_forge.schemas.validation import ValidationResponse
-from career_forge.services.mock_interview_session import (
-    MockInterviewSessionRecord,
-    consume_mock_interview_session,
-    get_mock_interview_session,
-)
-from career_forge.db.repositories.user import ensure_user
+from career_forge.services.assessment_persistence import persist_assessment_result
 from career_forge.services.assessment_rubric import (
     PASS_THRESHOLD,
     QUESTION_HINTS,
@@ -29,7 +23,12 @@ from career_forge.services.assessment_rubric import (
     QUESTION_TEMPLATES,
     RUBRIC_GAPS,
 )
-from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
+from career_forge.services.mock_interview_session import (
+    MockInterviewSessionRecord,
+    consume_mock_interview_session,
+    get_mock_interview_session,
+)
+from career_forge.services.roadmap import get_skill_node_context
 
 BASE_LABELS = QUESTION_LABELS
 GAP_LABELS = ("lacuna 1", "lacuna 2")
@@ -147,54 +146,19 @@ def persist_mock_interview_result(
     stored_questions: list[dict] | None = None,
 ) -> tuple[Validation, UserSkillNodeRow]:
     """Store mock interview attempt with full 5–7 Q/A and update user skill node."""
-    user = ensure_user(session, payload.user_id)
-
-    user_skill = session.scalar(
-        select(UserSkillNodeRow).where(
-            UserSkillNodeRow.user_id == user.id,
-            UserSkillNodeRow.skill_node_id == payload.node_id,
-        ),
-    )
-    if user_skill is None:
-        user_skill = UserSkillNodeRow(
-            user_id=user.id,
-            skill_node_id=payload.node_id,
-            status=SkillStatus.EM_ESTUDO.value,
-            mastery_score=0,
-        )
-        session.add(user_skill)
-        session.flush()
-
-    passed = result.status == ValidationStatus.APROVADO
-    new_status = SkillStatus.APROVADO if passed else SkillStatus.REVISAR
-
-    question_payload = build_mock_interview_questions(payload.node_id, session)
-    question_rows = stored_questions or [question.model_dump() for question in question_payload.questions]
-    user_skill.status = new_status.value
-    user_skill.mastery_score = result.score
-    user_skill.evidence = merge_validation_evidence(
-        user_skill.evidence,
-        strengths=result.strengths,
-        gaps=result.gaps,
-        next_action=result.next_action,
-        mock_interview=True,
-    )
-
-    validation = Validation(
-        user_id=user.id,
-        skill_node_id=payload.node_id,
-        user_skill_node_id=user_skill.id,
-        score=result.score,
-        passed=passed,
-        feedback=result.mentor_summary,
+    question_rows = stored_questions or [
+        question.model_dump()
+        for question in build_mock_interview_questions(payload.node_id, session).questions
+    ]
+    return persist_assessment_result(
+        session,
+        user_id=payload.user_id,
+        node_id=payload.node_id,
+        result=result,
         questions=question_rows,
         answers=[answer.model_dump() for answer in payload.answers],
+        mock_interview=True,
     )
-    session.add(validation)
-    session.commit()
-    session.refresh(validation)
-    session.refresh(user_skill)
-    return validation, user_skill
 
 
 def evaluate_mcq_session(payload: MockInterviewRequest) -> tuple[ValidationResponse, MockInterviewSessionRecord]:

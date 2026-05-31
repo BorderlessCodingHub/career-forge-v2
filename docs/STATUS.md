@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-77** (assessment_rubric — single source for rubric constants + `score_answer`/`keywords_for`; kills services→ai/graphs inversion + dup constants; scores/feedback identical; refactor loop wave 5)
+Last updated: **2026-05-30** · Last merge: **HAC-78** (persist_assessment_result — unify validation↔mock persistence; ~70 LOC dedup; identical rows; refactor loop wave 6)
 
 ---
 
