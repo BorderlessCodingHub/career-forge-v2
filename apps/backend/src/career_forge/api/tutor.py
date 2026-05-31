@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
-from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
+from career_forge.ai.run import (
+    GraphRun,
+    GraphRunResult,
+    get_graph_run_store,
+    unwrap_graph_output,
+)
 from career_forge.db.session import get_db
 from career_forge.schemas.tutor import (
     TutorContext,
@@ -19,15 +22,6 @@ from career_forge.schemas.tutor import (
 from career_forge.services import tutor as tutor_service
 
 router = APIRouter()
-
-
-def _extract_tutor(output: dict[str, Any] | None) -> TutorResponse:
-    if output is None:
-        msg = "Tutor agent completed without output"
-        raise ValueError(msg)
-    if output.get("type") == "graph_complete" and isinstance(output.get("output"), dict):
-        return TutorResponse.model_validate(output["output"])
-    return TutorResponse.model_validate(output)
 
 
 @router.get("/context", response_model=TutorContext)
@@ -61,7 +55,7 @@ async def chat_with_tutor(
     result = await executor.execute(run, stream=False)
     assert isinstance(result, GraphRunResult)
 
-    tutor = _extract_tutor(result.run.output)
+    tutor = unwrap_graph_output(result.run.output, TutorResponse)
 
     return TutorRunResponse(
         run_id=result.run.id,

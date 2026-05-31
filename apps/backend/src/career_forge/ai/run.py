@@ -3,12 +3,27 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Any, Literal, Protocol, runtime_checkable
+from typing import Any, Literal, Protocol, TypeVar, runtime_checkable
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
 GraphRunStatus = Literal["pending", "running", "completed", "failed"]
+
+ModelT = TypeVar("ModelT", bound=BaseModel)
+
+
+def unwrap_graph_output(output: dict[str, Any] | None, schema: type[ModelT]) -> ModelT:
+    """Validate a GraphExecutor output into a Pydantic schema.
+
+    Accepts both the wrapped ``graph_complete`` envelope and a raw output dict.
+    """
+    if output is None:
+        msg = f"Graph completed without output (expected {schema.__name__})"
+        raise ValueError(msg)
+    if output.get("type") == "graph_complete" and isinstance(output.get("output"), dict):
+        return schema.model_validate(output["output"])
+    return schema.model_validate(output)
 
 
 class GraphRun(BaseModel):

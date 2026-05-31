@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-74** (central user repository — dedup _resolve_user + demo upsert; refactor loop wave 2)
+Last updated: **2026-05-30** · Last merge: **HAC-75** (unwrap_graph_output — dedup graph_complete extraction across 5 routes; refactor loop wave 3)
 
 ---
 
