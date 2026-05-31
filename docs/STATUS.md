@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-76** (domain errors in services — `errors.py` + app handler replaces `HTTPException`; status codes preserved; refactor loop wave 4)
+Last updated: **2026-05-30** · Last merge: **HAC-77** (assessment_rubric — single source for rubric constants + `score_answer`/`keywords_for`; kills services→ai/graphs inversion + dup constants; scores/feedback identical; refactor loop wave 5)
 
 ---
 

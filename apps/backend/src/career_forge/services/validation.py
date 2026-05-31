@@ -15,20 +15,12 @@ from career_forge.schemas.validation import (
     ValidationRequest,
     ValidationResponse,
 )
-from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
-
-QUESTION_LABELS = ("conceito", "aplicação", "aprofundamento")
-QUESTION_TEMPLATES = (
-    "Com suas palavras, {criterion}. Dê um exemplo prático.",
-    "Como você aplicaria isso em um projeto real: {criterion}?",
-    "Explique para um colega iniciante: {criterion}.",
+from career_forge.services.assessment_rubric import (
+    QUESTION_HINTS,
+    QUESTION_LABELS,
+    QUESTION_TEMPLATES,
 )
-
-QUESTION_HINTS = {
-    "conceito": "Pense na definição e no porquê antes do como.",
-    "aplicação": "Use um exemplo concreto de projeto ou endpoint.",
-    "aprofundamento": "Explique como se estivesse ensinando um colega.",
-}
+from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
 
 
 def build_validation_questions(

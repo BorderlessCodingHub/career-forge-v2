@@ -12,14 +12,13 @@ from career_forge.ai.streaming.langchain_events import (
     emit_chain_stream,
     new_run_id,
 )
-from career_forge.ai.graphs.validation import (
+from career_forge.services.assessment_rubric import (
     NEXT_ACTIONS,
     PASS_THRESHOLD,
     RUBRIC_GAPS,
-    RUBRIC_KEYWORDS,
     RUBRIC_STRENGTHS,
-    _keywords_for,
-    _score_text,
+    keywords_for,
+    score_answer,
 )
 from career_forge.schemas.common import ValidationStatus
 from career_forge.schemas.mock_interview import MockInterviewRequest
@@ -48,14 +47,14 @@ def build_mock_interview_response(payload: MockInterviewRequest) -> ValidationRe
 
     for index, answer in enumerate(payload.answers):
         if index < 3:
-            keywords = _keywords_for(payload.node_id, index, rubric)
+            keywords = keywords_for(payload.node_id, index, rubric)
         elif index < 5:
             criterion = rubric[index] if index < len(rubric) else answer.question_id
             keywords = _gap_keywords(criterion)
         else:
             criterion = rubric[index] if index < len(rubric) else answer.question_id
             keywords = _outcome_keywords(criterion)
-        per_answer_scores.append(_score_text(answer.answer, keywords))
+        per_answer_scores.append(score_answer(answer.answer, keywords))
 
     base_scores = per_answer_scores[:3]
     extended_scores = per_answer_scores[3:]
