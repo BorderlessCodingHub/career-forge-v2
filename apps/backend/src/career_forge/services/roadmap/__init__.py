@@ -13,13 +13,13 @@ from career_forge.services.roadmap.assembler import (
     _checklist_counts,
     _enrich_checklist_items,
     _evidence_from_node,
-    _evidence_items,
     _generated_row_sort_order,
     _merge_node,
     _stable_item_id,
     build_roadmap_from_catalog,
     merge_validation_evidence,
 )
+from career_forge.services.roadmap.evidence import EvidenceEnvelope, read_evidence
 from career_forge.services.roadmap.catalog import (
     DEFAULT_DEMO_STATE,
     ROADMAP_PATH,

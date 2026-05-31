@@ -21,9 +21,6 @@ from career_forge.db.models.knowledge_gap import KnowledgeGap
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.repositories.user import get_by_external_id
 from career_forge.db.session import SessionLocal
-
-REMEDIATION_PREFIX = "gap-rem-"
-REMEDIATION_SEVERITY = "high"
 from career_forge.schemas.knowledge_gap import (
     KnowledgeGapDraft,
     KnowledgeGapItem,
@@ -31,6 +28,9 @@ from career_forge.schemas.knowledge_gap import (
 )
 from career_forge.schemas.mock_interview import MockInterviewRequest
 from career_forge.services.mock_interview_session import MockInterviewSessionRecord
+from career_forge.services.roadmap.evidence import REMEDIATION_PREFIX, read_evidence
+
+REMEDIATION_SEVERITY = "high"
 
 
 def build_gap_capture(
@@ -196,8 +196,9 @@ def sync_remediation_tasks(
 ) -> None:
     """Reconcile remediation tasks on a node against its open high-severity gaps (HAC-69).
 
-    Idempotent (stable id per concept), self-cleaning (drops tasks whose gap resolved),
-    and preserves the node's existing tasks/references. Only mutates list-form evidence.
+    Idempotent (stable id per concept), self-cleaning (drops tasks whose gap
+    resolved). Remediation lives in the evidence envelope's dedicated
+    `remediation` key, decoupled from the StudyPlan checklist (HAC-85).
     """
     skill_row = session.scalar(
         select(UserSkillNodeRow).where(
@@ -205,7 +206,7 @@ def sync_remediation_tasks(
             UserSkillNodeRow.skill_node_id == skill_node_id,
         ),
     )
-    if skill_row is None or isinstance(skill_row.evidence, dict):
+    if skill_row is None:
         return
 
     high_gaps = session.scalars(
@@ -218,18 +219,10 @@ def sync_remediation_tasks(
     ).all()
     desired = {f"{REMEDIATION_PREFIX}{_concept_slug(gap.concept)}": gap for gap in high_gaps}
 
-    evidence = list(skill_row.evidence or [])
+    envelope = read_evidence(skill_row.evidence)
     kept: list[dict] = []
     seen: set[str] = set()
-    for item in evidence:
-        is_remediation = (
-            isinstance(item, dict)
-            and item.get("type") == "task"
-            and str(item.get("id", "")).startswith(REMEDIATION_PREFIX)
-        )
-        if not is_remediation:
-            kept.append(item)
-            continue
+    for item in envelope.remediation:
         item_id = str(item.get("id"))
         if item_id in desired and item_id not in seen:
             kept.append(_remediation_item(item_id, desired[item_id]))
@@ -240,7 +233,8 @@ def sync_remediation_tasks(
             kept.append(_remediation_item(item_id, gap))
             seen.add(item_id)
 
-    skill_row.evidence = kept
+    envelope.remediation = kept
+    skill_row.evidence = envelope.to_storage()
 
 
 def _best_effort_learner_summary(

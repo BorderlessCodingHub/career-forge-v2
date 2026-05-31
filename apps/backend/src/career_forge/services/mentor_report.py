@@ -18,7 +18,11 @@ from career_forge.schemas.common import ValidationStatus
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.profile_diagnosis import diagnosis_response_from_profile
 from career_forge.schemas.mentor_report import MentorReportResponse, MentorReportValidationEntry
-from career_forge.services.roadmap import resolve_skill_node_catalog_entry, load_roadmap_catalog
+from career_forge.services.roadmap import (
+    load_roadmap_catalog,
+    read_evidence,
+    resolve_skill_node_catalog_entry,
+)
 
 _NODE_ID_PREFIX = re.compile(r"^node-\d+-", re.IGNORECASE)
 _SLUG_PATTERN = re.compile(r"^[a-z0-9-]+$")
@@ -75,15 +79,9 @@ def _resolve_node_title(session: Session, node_id: str) -> str:
 
 
 def _evidence_from_skill_row(row: UserSkillNodeRow | None) -> dict[str, Any]:
-    if row is None or row.evidence is None:
+    if row is None:
         return {}
-    if isinstance(row.evidence, dict):
-        return row.evidence
-    if isinstance(row.evidence, list):
-        for item in reversed(row.evidence):
-            if isinstance(item, dict) and item.get("type") == "validation":
-                return item
-    return {}
+    return read_evidence(row.evidence).validation_summary()
 
 
 def get_mentor_report(session: Session, user_id: str) -> MentorReportResponse:
