@@ -229,9 +229,9 @@ More recipes: [.cursor/skills/local-debug/SKILL.md](./.cursor/skills/local-debug
 
 **Programadores Sem Pátria** — Hackathon BASE 2026
 
-- [Matheus Oliveira](https://github.com/MatheusOliveiraSilva)
-- [Pedro Alano](https://github.com/pedroalano)
-- [Arthur Araujo](https://github.com/Tute24)
+- [Matheus Oliveira](https://github.com/MatheusOliveiraSilva) — **AI / LangGraph**: the AI engine across diagnosis (CTRR), live forge, validation, mentor & tutor, and adaptive knowledge-gap memory.
+- [Pedro Alano](https://github.com/pedroalano) — **Infrastructure & deploy + fullstack**: Docker/Compose, GHCR + VPS pipeline (CI/CD), and across-the-stack work.
+- [Arthur Araujo](https://github.com/Tute24) — **Frontend**: Next.js UI, the live forge stream UX, and roadmap/validation screens.
 
 ## Credits
 
