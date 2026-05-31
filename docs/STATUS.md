@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-70/71** (canonical key_concepts + chapter Q&A tutor — adaptive learning product complete)
+Last updated: **2026-05-30** · Last merge: **HAC-72** (fix: adaptive roadmap surfaces async remediation/focos without manual nav)
 
 ---
 

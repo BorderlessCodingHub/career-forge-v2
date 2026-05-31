@@ -71,33 +71,47 @@ export default function RoadmapArtifactPageContent() {
     setLoading(true);
     setError(null);
     setAdaptiveSessionMissing(false);
+
+    const adaptiveSession = adaptiveMode ? getAdaptiveSession() : null;
+    if (adaptiveMode && !adaptiveSession) {
+      setAdaptiveSessionMissing(true);
+    }
+
     try {
-      if (adaptiveMode) {
-        const adaptiveSession = getAdaptiveSession();
-        if (adaptiveSession) {
-          setRoadmap(adaptiveSession.roadmap);
-          setHighlightNodeId(adaptiveSession.nodeId);
-          setSelectedNodeId(adaptiveSession.nodeId);
-          return;
+      // Never re-sync the forge graph in adaptive mode — the recalibrated user
+      // graph is already persisted server-side and a re-sync would overwrite it.
+      if (!adaptiveMode) {
+        const forgeGraph = getForgeGraph();
+        if (forgeGraph?.length) {
+          await syncRoadmap(forgeGraphToSyncNodes(forgeGraph));
+          clearForgeGraph();
         }
-        setAdaptiveSessionMissing(true);
       }
 
-      const forgeGraph = getForgeGraph();
-      if (forgeGraph?.length) {
-        await syncRoadmap(forgeGraphToSyncNodes(forgeGraph));
-        clearForgeGraph();
-      }
+      // Always read fresh server state so async-injected remediation tasks + gaps
+      // (HAC-67/68/69) show up, even in adaptive mode — the snapshot only picked
+      // the highlighted node. HAC-72.
       const data = await getRoadmap();
       setRoadmap(data);
-      if (nodeFromQuery) {
+
+      if (adaptiveSession) {
+        setHighlightNodeId(adaptiveSession.nodeId);
+        setSelectedNodeId(adaptiveSession.nodeId);
+      } else if (nodeFromQuery) {
         setHighlightNodeId(nodeFromQuery);
         setSelectedNodeId(nodeFromQuery);
       } else {
         setHighlightNodeId(null);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao carregar trilha");
+      if (adaptiveSession) {
+        // Fallback to the client snapshot if the server is unreachable.
+        setRoadmap(adaptiveSession.roadmap);
+        setHighlightNodeId(adaptiveSession.nodeId);
+        setSelectedNodeId(adaptiveSession.nodeId);
+      } else {
+        setError(err instanceof Error ? err.message : "Falha ao carregar trilha");
+      }
     } finally {
       setLoading(false);
     }
@@ -106,6 +120,28 @@ export default function RoadmapArtifactPageContent() {
   useEffect(() => {
     void loadRoadmap();
   }, [loadRoadmap]);
+
+  // Adaptive mode: the gap classifier runs async after the mock submit, so the
+  // remediation tasks + focos land server-side a few seconds later. Poll briefly
+  // to surface them without forcing a manual navigation back to /roadmap. HAC-72.
+  useEffect(() => {
+    if (!adaptiveMode) return;
+    let cancelled = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const refresh = async () => {
+      try {
+        const data = await getRoadmap();
+        if (!cancelled) setRoadmap(data);
+      } catch {
+        /* keep current state on transient errors */
+      }
+    };
+    [4000, 9000, 14000].forEach((ms) => timers.push(setTimeout(refresh, ms)));
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+    };
+  }, [adaptiveMode]);
 
   useEffect(() => {
     if (prevAdaptiveMode.current === true && !adaptiveMode) {
