@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-78** (persist_assessment_result — unify validation↔mock persistence; ~70 LOC dedup; identical rows; refactor loop wave 6)
+Last updated: **2026-05-30** · Last merge: **HAC-79** (assessment_flow — extract validation/mock orchestration out of routes; routes now ~10 LOC; identical responses; fixed latent unwrap_graph_output import in mock open-text path; refactor loop wave 7)
 
 ---
 
