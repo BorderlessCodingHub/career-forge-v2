@@ -96,6 +96,104 @@ def _roadmap_to_graph(roadmap: RoadmapResponse) -> list[UserSkillNode]:
     ]
 
 
+def _next_unlock_candidate(
+    node_id: str,
+    nodes_meta: list[dict[str, Any]],
+    status_by_id: dict[str, SkillStatus],
+) -> dict[str, Any] | None:
+    """First BLOQUEADO node (other than node_id) whose prerequisites are all
+    APROVADO — i.e. the node the just-passed validation unlocks."""
+    for node in nodes_meta:
+        if node["id"] == node_id:
+            continue
+        prereqs = node.get("prerequisites") or []
+        if not prereqs:
+            continue
+        if status_by_id.get(node["id"]) == SkillStatus.APROVADO:
+            continue
+        if not all(status_by_id.get(prereq) == SkillStatus.APROVADO for prereq in prereqs):
+            continue
+        if status_by_id.get(node["id"]) != SkillStatus.BLOQUEADO:
+            continue
+        return node
+    return None
+
+
+def _patches_on_pass(
+    node_id: str,
+    validation: ValidationResponse,
+    nodes_meta: list[dict[str, Any]],
+    status_by_id: dict[str, SkillStatus],
+    current_by_id: dict[str, UserSkillNode],
+    failed_node: dict[str, Any],
+) -> tuple[list[NodePatch], str]:
+    """Approve the node and unlock the next eligible dependent (if any)."""
+    status_by_id[node_id] = SkillStatus.APROVADO
+    patches: list[NodePatch] = [
+        NodePatch(
+            node_id=node_id,
+            status=SkillStatus.APROVADO,
+            mastery_estimated=validation.score,
+            priority=Priority.LOW,
+            rationale="Mastery validado — seguir para próximo tópico",
+        ),
+    ]
+
+    unlock = _next_unlock_candidate(node_id, nodes_meta, status_by_id)
+    if unlock is not None:
+        existing = current_by_id.get(unlock["id"])
+        patches.append(
+            NodePatch(
+                node_id=unlock["id"],
+                status=SkillStatus.VALIDAR,
+                mastery_estimated=existing.mastery_score if existing else 0,
+                priority=Priority.HIGH,
+                rationale=f"Pré-requisitos concluídos — validar {unlock['title']}",
+            ),
+        )
+
+    summary = f"{failed_node['title']} aprovado — trilha liberou próximo nó."
+    return patches, summary
+
+
+def _patches_on_fail(
+    node_id: str,
+    validation: ValidationResponse,
+    nodes_meta: list[dict[str, Any]],
+    current_by_id: dict[str, UserSkillNode],
+    failed_node: dict[str, Any],
+) -> tuple[list[NodePatch], str]:
+    """Flag the node for review and block its transitive dependents."""
+    patches: list[NodePatch] = [
+        NodePatch(
+            node_id=node_id,
+            status=SkillStatus.REVISAR,
+            mastery_estimated=validation.score,
+            priority=Priority.HIGH,
+            rationale=validation.gaps[0] if validation.gaps else validation.next_action,
+        ),
+    ]
+
+    blocked = _transitive_dependents(node_id, nodes_meta)
+    for dependent_id in blocked:
+        existing = current_by_id.get(dependent_id)
+        patches.append(
+            NodePatch(
+                node_id=dependent_id,
+                status=SkillStatus.BLOQUEADO,
+                mastery_estimated=existing.mastery_score if existing else 0,
+                priority=Priority.LOW,
+                rationale=f"Bloqueado até revisar {failed_node['title']}",
+            ),
+        )
+
+    summary = (
+        f"Falha em {failed_node['title']} — trilha repriorizou revisão "
+        f"e bloqueou {len(blocked)} nós dependentes."
+    )
+    return patches, summary
+
+
 def build_adaptive_patch(
     node_id: str,
     validation: ValidationResponse,
@@ -116,74 +214,14 @@ def build_adaptive_patch(
             "prerequisites": [],
         }
 
-    patches: list[NodePatch] = []
     passed = validation.status.value == SkillStatus.APROVADO.value
-
     if passed:
-        status_by_id[node_id] = SkillStatus.APROVADO
-        patches.append(
-            NodePatch(
-                node_id=node_id,
-                status=SkillStatus.APROVADO,
-                mastery_estimated=validation.score,
-                priority=Priority.LOW,
-                rationale="Mastery validado — seguir para próximo tópico",
-            ),
+        patches, summary = _patches_on_pass(
+            node_id, validation, nodes_meta, status_by_id, current_by_id, failed_node,
         )
-
-        for node in nodes_meta:
-            if node["id"] == node_id:
-                continue
-            prereqs = node.get("prerequisites") or []
-            if not prereqs:
-                continue
-            if status_by_id.get(node["id"]) == SkillStatus.APROVADO:
-                continue
-            if not all(status_by_id.get(prereq) == SkillStatus.APROVADO for prereq in prereqs):
-                continue
-            if status_by_id.get(node["id"]) != SkillStatus.BLOQUEADO:
-                continue
-
-            existing = current_by_id.get(node["id"])
-            patches.append(
-                NodePatch(
-                    node_id=node["id"],
-                    status=SkillStatus.VALIDAR,
-                    mastery_estimated=existing.mastery_score if existing else 0,
-                    priority=Priority.HIGH,
-                    rationale=f"Pré-requisitos concluídos — validar {node['title']}",
-                ),
-            )
-            break
-
-        summary = f"{failed_node['title']} aprovado — trilha liberou próximo nó."
     else:
-        patches.append(
-            NodePatch(
-                node_id=node_id,
-                status=SkillStatus.REVISAR,
-                mastery_estimated=validation.score,
-                priority=Priority.HIGH,
-                rationale=validation.gaps[0] if validation.gaps else validation.next_action,
-            ),
-        )
-
-        for dependent_id in _transitive_dependents(node_id, nodes_meta):
-            dependent = meta_by_id[dependent_id]
-            existing = current_by_id.get(dependent_id)
-            patches.append(
-                NodePatch(
-                    node_id=dependent_id,
-                    status=SkillStatus.BLOQUEADO,
-                    mastery_estimated=existing.mastery_score if existing else 0,
-                    priority=Priority.LOW,
-                    rationale=f"Bloqueado até revisar {failed_node['title']}",
-                ),
-            )
-
-        summary = (
-            f"Falha em {failed_node['title']} — trilha repriorizou revisão "
-            f"e bloqueou {len(_transitive_dependents(node_id, nodes_meta))} nós dependentes."
+        patches, summary = _patches_on_fail(
+            node_id, validation, nodes_meta, current_by_id, failed_node,
         )
 
     return GraphPatch(
