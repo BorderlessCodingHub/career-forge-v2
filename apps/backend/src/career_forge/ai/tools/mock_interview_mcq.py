@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import asyncio
-import os
 from typing import Literal
 
-from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field, model_validator
 
+from career_forge.ai.llm.client import StructuredToolClient
 from career_forge.schemas.mock_interview import (
     MockInterviewOption,
     MockInterviewQuestion,
@@ -151,12 +150,13 @@ def _draft_to_public(
 
 class OpenAiMockInterviewMcqGenerator:
     def __init__(self, *, model: str | None = None, api_key: str | None = None) -> None:
-        resolved_key = (api_key if api_key is not None else os.getenv("OPENAI_API_KEY", "")).strip()
-        if not resolved_key:
-            msg = "OPENAI_API_KEY não configurada"
-            raise RuntimeError(msg)
-        self._model = model or os.getenv("MOCK_INTERVIEW_MODEL", "gpt-5.4-mini")
-        self._llm = ChatOpenAI(model=self._model, api_key=resolved_key, temperature=0.3)
+        self._client = StructuredToolClient(
+            model_env="MOCK_INTERVIEW_MODEL",
+            default_model="gpt-5.4-mini",
+            temperature=0.3,
+            model=model,
+            api_key=api_key,
+        )
 
     async def generate(
         self,
@@ -173,7 +173,6 @@ class OpenAiMockInterviewMcqGenerator:
         learner: LearnerForgeContext | None,
     ) -> MockInterviewMcqDraft:
         context = format_context_for_prompt(study_block, learner)
-        structured = self._llm.with_structured_output(MockInterviewMcqDraft, method="json_schema")
         system = (
             "Você cria mock interviews de múltipla escolha que validam DOMÍNIO TÉCNICO do "
             "conteúdo de um capítulo de estudo.\n\n"
@@ -195,8 +194,7 @@ class OpenAiMockInterviewMcqGenerator:
             f"{context}\n\n"
             "Determine o subject técnico (ignorando logística do título) e gere o questionário MCQ agora."
         )
-        result = structured.invoke([("system", system), ("human", user)])
-        return MockInterviewMcqDraft.model_validate(result)
+        return self._client.invoke(system=system, user=user, schema=MockInterviewMcqDraft)
 
 
 async def generate_mcq_mock_interview(

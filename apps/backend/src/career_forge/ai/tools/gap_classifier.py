@@ -8,8 +8,8 @@ deterministic mapping when no API key is configured (tests / offline).
 from __future__ import annotations
 
 import asyncio
-import os
 
+from career_forge.ai.llm.client import StructuredToolClient
 from career_forge.schemas.knowledge_gap import (
     KnowledgeGapClassification,
     KnowledgeGapDraft,
@@ -50,14 +50,13 @@ def _fallback_classification(
 
 class OpenAiGapClassifier:
     def __init__(self, *, model: str | None = None, api_key: str | None = None) -> None:
-        from langchain_openai import ChatOpenAI
-
-        resolved_key = (api_key if api_key is not None else os.getenv("OPENAI_API_KEY", "")).strip()
-        if not resolved_key:
-            msg = "OPENAI_API_KEY não configurada"
-            raise RuntimeError(msg)
-        self._model = model or os.getenv("GAP_CLASSIFIER_MODEL", "gpt-5.4-mini")
-        self._llm = ChatOpenAI(model=self._model, api_key=resolved_key, temperature=0.2)
+        self._client = StructuredToolClient(
+            model_env="GAP_CLASSIFIER_MODEL",
+            default_model="gpt-5.4-mini",
+            temperature=0.2,
+            model=model,
+            api_key=api_key,
+        )
 
     def _invoke(
         self,
@@ -66,9 +65,6 @@ class OpenAiGapClassifier:
         learner_summary: str | None,
         wrong_items: list[WrongAnswerItem],
     ) -> KnowledgeGapClassification:
-        structured = self._llm.with_structured_output(
-            KnowledgeGapClassification, method="json_schema"
-        )
         system = (
             "Você classifica lacunas de conhecimento de um aluno a partir de erros num mock "
             "interview de múltipla escolha. Para cada erro, descreva a lacuna REAL de conhecimento "
@@ -82,8 +78,11 @@ class OpenAiGapClassifier:
             f"## Erros\n{_format_wrong_items(wrong_items)}\n\n"
             "Classifique as lacunas de conhecimento agora."
         )
-        result = structured.invoke([("system", system), ("human", user)])
-        return KnowledgeGapClassification.model_validate(result)
+        return self._client.invoke(
+            system=system,
+            user=user,
+            schema=KnowledgeGapClassification,
+        )
 
     async def classify(
         self,
