@@ -139,7 +139,11 @@ function EditItem({
       onKeyDown={(e) => {
         if (e.key === "Escape") {
           e.preventDefault();
-          onSave(value);
+          if (value) {
+            onSave(value);
+          } else {
+            onDiscard();
+          }
         }
       }}
     />
