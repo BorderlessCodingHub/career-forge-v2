@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
-from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
+from career_forge.ai.run import (
+    GraphRun,
+    GraphRunResult,
+    get_graph_run_store,
+    unwrap_graph_output,
+)
 from career_forge.db.session import get_db
 from career_forge.schemas.validation import (
     ValidationQuestionsResponse,
@@ -20,17 +23,6 @@ from career_forge.services import planning as planning_service
 from career_forge.services import validation as validation_service
 
 router = APIRouter()
-
-
-def _extract_validation(output: dict[str, Any] | None) -> ValidationResponse:
-    if output is None:
-        msg = "Validation graph completed without output"
-        raise ValueError(msg)
-
-    if output.get("type") == "graph_complete" and isinstance(output.get("output"), dict):
-        return ValidationResponse.model_validate(output["output"])
-
-    return ValidationResponse.model_validate(output)
 
 
 @router.get("/questions", response_model=ValidationQuestionsResponse)
@@ -71,7 +63,7 @@ async def run_validation(
     result = await executor.execute(run, stream=False)
     assert isinstance(result, GraphRunResult)
 
-    validation = _extract_validation(result.run.output)
+    validation = unwrap_graph_output(result.run.output, ValidationResponse)
 
     node_status = validation.status.value
     mastery_score = validation.score

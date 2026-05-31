@@ -9,7 +9,12 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
-from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
+from career_forge.ai.run import (
+    GraphRun,
+    GraphRunResult,
+    get_graph_run_store,
+    unwrap_graph_output,
+)
 from career_forge.db.session import get_db
 from career_forge.schemas.diagnosis import DiagnosisRequest, DiagnosisResponse
 from career_forge.schemas.profile_diagnosis import (
@@ -28,17 +33,6 @@ class DiagnosisRunResponse(BaseModel):
     diagnosis: DiagnosisResponse
 
 
-def _extract_diagnosis(output: dict[str, Any] | None) -> DiagnosisResponse:
-    if output is None:
-        msg = "Diagnosis graph completed without output"
-        raise ValueError(msg)
-
-    if output.get("type") == "graph_complete" and isinstance(output.get("output"), dict):
-        return DiagnosisResponse.model_validate(output["output"])
-
-    return DiagnosisResponse.model_validate(output)
-
-
 @router.post("", response_model=DiagnosisRunResponse)
 async def create_diagnosis(body: DiagnosisRequest) -> DiagnosisRunResponse:
     """Run onboarding diagnosis — collect full result (no SSE to client)."""
@@ -54,7 +48,7 @@ async def create_diagnosis(body: DiagnosisRequest) -> DiagnosisRunResponse:
     result = await executor.execute(run, stream=False)
     assert isinstance(result, GraphRunResult)
 
-    diagnosis = _extract_diagnosis(result.run.output)
+    diagnosis = unwrap_graph_output(result.run.output, DiagnosisResponse)
 
     return DiagnosisRunResponse(
         run_id=result.run.id,

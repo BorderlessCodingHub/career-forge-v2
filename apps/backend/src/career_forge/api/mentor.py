@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
-from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
+from career_forge.ai.run import (
+    GraphRun,
+    GraphRunResult,
+    get_graph_run_store,
+    unwrap_graph_output,
+)
 from career_forge.db.session import get_db
 from career_forge.schemas.mentor import (
     MentorContextSnapshot,
@@ -19,17 +22,6 @@ from career_forge.schemas.mentor import (
 from career_forge.services import mentor as mentor_service
 
 router = APIRouter()
-
-
-def _extract_mentor(output: dict[str, Any] | None) -> MentorResponse:
-    if output is None:
-        msg = "Mentor agent completed without output"
-        raise ValueError(msg)
-
-    if output.get("type") == "graph_complete" and isinstance(output.get("output"), dict):
-        return MentorResponse.model_validate(output["output"])
-
-    return MentorResponse.model_validate(output)
 
 
 @router.get("/context", response_model=MentorContextSnapshot)
@@ -65,7 +57,7 @@ async def chat_with_mentor(
     result = await executor.execute(run, stream=False)
     assert isinstance(result, GraphRunResult)
 
-    mentor = _extract_mentor(result.run.output)
+    mentor = unwrap_graph_output(result.run.output, MentorResponse)
 
     return MentorRunResponse(
         run_id=result.run.id,

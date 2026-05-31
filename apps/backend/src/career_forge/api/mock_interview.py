@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
@@ -25,17 +23,6 @@ from career_forge.services.mock_interview_session import consume_mock_interview_
 from career_forge.services.roadmap import get_skill_node_context
 
 router = APIRouter()
-
-
-def _extract_validation(output: dict[str, Any] | None) -> ValidationResponse:
-    if output is None:
-        msg = "Mock interview graph completed without output"
-        raise ValueError(msg)
-
-    if output.get("type") == "graph_complete" and isinstance(output.get("output"), dict):
-        return ValidationResponse.model_validate(output["output"])
-
-    return ValidationResponse.model_validate(output)
 
 
 @router.get("/questions", response_model=MockInterviewQuestionsResponse)
@@ -104,7 +91,7 @@ async def run_mock_interview(
         assert isinstance(result, GraphRunResult)
         run_status = result.run.status
         events = result.events
-        validation = _extract_validation(result.run.output)
+        validation = unwrap_graph_output(result.run.output, ValidationResponse)
 
     node_status = validation.status.value
     mastery_score = validation.score
