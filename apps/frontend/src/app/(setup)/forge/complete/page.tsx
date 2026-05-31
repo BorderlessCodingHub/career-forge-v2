@@ -45,7 +45,7 @@ export default function ForgeCompletePage() {
           Sua trilha está pronta
         </h1>
         <p className="mt-2 text-text-secondary">
-          Cada nó do stream materializa no layout vertical (HAC-9 em seguida).
+          Cada capítulo do seu plano aparece abaixo. Explore a trilha e comece a estudar.
         </p>
 
         <ol className="mt-10 space-y-4">
