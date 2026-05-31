@@ -49,6 +49,8 @@ PostgreSQL         Perfis, trilha, sessões de diagnóstico, graph_runs
 
 Estrutura detalhada: [docs/engineering/REPO-STRUCTURE.md](./docs/engineering/REPO-STRUCTURE.md).
 
+**Diagramas (dependência de módulos + sequência por feature, renderizados no GitHub):** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+
 ---
 
 ## Quick start (recomendado)
@@ -176,6 +178,7 @@ Runbook completo: [docs/engineering/DEPLOY-VPS.md](./docs/engineering/DEPLOY-VPS
 | Para quem | Onde começar |
 |-----------|----------------|
 | **Novos no projeto** | [docs/CHECKPOINT.md](./docs/CHECKPOINT.md) — overview completo |
+| **Arquitetura (diagramas)** | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) — dependência + sequência por feature (Mermaid) |
 | **Índice de docs** | [docs/README.md](./docs/README.md) |
 | **Agentes / contribuição** | [AGENTS.md](./AGENTS.md) · [docs/ROADMAP.md](./docs/ROADMAP.md) · [docs/STATUS.md](./docs/STATUS.md) |
 | **IA / LangGraph** | [docs/engineering/EXECUTION-FLOW.md](./docs/engineering/EXECUTION-FLOW.md) |
