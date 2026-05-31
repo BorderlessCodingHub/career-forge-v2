@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-81** (build_adaptive_patch — split `_patches_on_pass`/`_patches_on_fail` + `_next_unlock_candidate`; identical GraphPatch; refactor loop wave 9)
+Last updated: **2026-05-30** · Last merge: **HAC-82** (StructuredToolClient — consolidate gap/tutor/mcq/planner/evaluator LLM boilerplate; deterministic fallback preserved; equivalent outputs; refactor loop wave 10)
 
 ---
 

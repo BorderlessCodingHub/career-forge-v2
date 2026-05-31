@@ -3,11 +3,9 @@
 from __future__ import annotations
 
 import asyncio
-import os
 from typing import Any, Protocol
 
-from langchain_openai import ChatOpenAI
-
+from career_forge.ai.llm.client import StructuredToolClient
 from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
 from career_forge.services.forge_context import LearnerForgeContext
 
@@ -36,14 +34,15 @@ class OpenAiStudyPlanPlanner:
     """Planner model that creates/revises StudyPlan with structured output."""
 
     def __init__(self, *, model: str | None = None, api_key: str | None = None) -> None:
-        resolved_key = (
-            api_key if api_key is not None else os.getenv("OPENAI_API_KEY", "")
-        ).strip()
-        if not resolved_key:
-            msg = "OPENAI_API_KEY não configurada. Configure a chave antes de planejar o forge."
-            raise RuntimeError(msg)
-        self._model = model or os.getenv("FORGE_PLANNER_MODEL", "gpt-5.4")
-        self._llm = ChatOpenAI(model=self._model, api_key=resolved_key, temperature=0.2)
+        self._client = StructuredToolClient(
+            model_env="FORGE_PLANNER_MODEL",
+            default_model="gpt-5.4",
+            temperature=0.2,
+            method=None,
+            key_error="OPENAI_API_KEY não configurada. Configure a chave antes de planejar o forge.",
+            model=model,
+            api_key=api_key,
+        )
 
     async def create_plan(
         self,
@@ -83,31 +82,23 @@ class OpenAiStudyPlanPlanner:
         feedback: StudyPlanEvaluation | None,
         previous_plan: StudyPlan | None,
     ) -> StudyPlan:
-        runnable = self._llm.with_structured_output(StudyPlan)
-        return runnable.invoke(
-            [
-                (
-                    "system",
-                    "Você é o planner do Career Forge. Gere um StudyPlan robusto, "
-                    "prático, sequenciado e baseado em fontes. Dê liberdade à IA, "
-                    "mas mantenha qualidade: pré-requisitos, tarefas, evidência prática "
-                    "e aderência ao contexto do aluno. Para cada nó preencha "
-                    "`key_concepts`: 3 a 6 conceitos TÉCNICOS atômicos que o capítulo "
-                    "ensina (ex: 'list comprehension', 'idempotência de PUT', 'np.reshape'). "
-                    "Nunca logística de estudo — esses conceitos viram a base de mock "
-                    "interviews e do tutor de Q&A.",
-                ),
-                (
-                    "user",
-                    _planner_prompt(
-                        context=context,
-                        research_events=research_events,
-                        feedback=feedback,
-                        previous_plan=previous_plan,
-                    ),
-                ),
-            ],
+        system = (
+            "Você é o planner do Career Forge. Gere um StudyPlan robusto, "
+            "prático, sequenciado e baseado em fontes. Dê liberdade à IA, "
+            "mas mantenha qualidade: pré-requisitos, tarefas, evidência prática "
+            "e aderência ao contexto do aluno. Para cada nó preencha "
+            "`key_concepts`: 3 a 6 conceitos TÉCNICOS atômicos que o capítulo "
+            "ensina (ex: 'list comprehension', 'idempotência de PUT', 'np.reshape'). "
+            "Nunca logística de estudo — esses conceitos viram a base de mock "
+            "interviews e do tutor de Q&A."
         )
+        user = _planner_prompt(
+            context=context,
+            research_events=research_events,
+            feedback=feedback,
+            previous_plan=previous_plan,
+        )
+        return self._client.invoke(system=system, user=user, schema=StudyPlan)
 
 
 def build_study_plan_planner_from_env() -> StudyPlanPlanner:

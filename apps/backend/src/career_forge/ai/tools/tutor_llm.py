@@ -6,10 +6,9 @@ gaps. Falls back to a deterministic, still-grounded reply when no API key is set
 
 from __future__ import annotations
 
-import os
-
 from pydantic import BaseModel, Field
 
+from career_forge.ai.llm.client import StructuredToolClient
 from career_forge.schemas.tutor import TutorContext, TutorMessage
 
 
@@ -56,14 +55,13 @@ def _fallback_reply(message: str, context: TutorContext) -> TutorReplyDraft:
 
 class OpenAiTutor:
     def __init__(self, *, model: str | None = None, api_key: str | None = None) -> None:
-        from langchain_openai import ChatOpenAI
-
-        resolved_key = (api_key if api_key is not None else os.getenv("OPENAI_API_KEY", "")).strip()
-        if not resolved_key:
-            msg = "OPENAI_API_KEY não configurada"
-            raise RuntimeError(msg)
-        self._model = model or os.getenv("TUTOR_MODEL", "gpt-5.4-mini")
-        self._llm = ChatOpenAI(model=self._model, api_key=resolved_key, temperature=0.3)
+        self._client = StructuredToolClient(
+            model_env="TUTOR_MODEL",
+            default_model="gpt-5.4-mini",
+            temperature=0.3,
+            model=model,
+            api_key=api_key,
+        )
 
     def _invoke(
         self,
@@ -72,7 +70,6 @@ class OpenAiTutor:
         history: list[TutorMessage],
         context: TutorContext,
     ) -> TutorReplyDraft:
-        structured = self._llm.with_structured_output(TutorReplyDraft, method="json_schema")
         system = (
             "Você é um tutor técnico do Career Forge, focado em UM capítulo de estudo. "
             "Responda à dúvida do aluno de forma didática e concisa (máx ~6 frases), em "
@@ -85,8 +82,7 @@ class OpenAiTutor:
             f"{_format_context(context)}{_format_history(history)}\n\n"
             f"## Pergunta do aluno\n{message}\n\nResponda agora."
         )
-        result = structured.invoke([("system", system), ("human", user)])
-        return TutorReplyDraft.model_validate(result)
+        return self._client.invoke(system=system, user=user, schema=TutorReplyDraft)
 
 
 def generate_tutor_reply(
