@@ -4,7 +4,7 @@
 
 Hackathon Borderless BASE 01/2026 · repository `HB01-2026_soft-push` (Soft Push)
 
-[Watch the full E2E demo (video)](https://drive.google.com/file/d/1bG_mgxk-PK4AKG9ZkfWniBKNzLkh8PSK/view?usp=sharing)
+**Live app:** [forge.pedroalano.com.br](https://forge.pedroalano.com.br/) · [Watch the full E2E demo (video)](https://drive.google.com/file/d/1bG_mgxk-PK4AKG9ZkfWniBKNzLkh8PSK/view?usp=sharing)
 
 | Layer | Technology |
 |--------|------------|
@@ -180,7 +180,7 @@ Make sure `CORS_ORIGINS` and `NEXT_PUBLIC_*` in the root `.env` point to the por
 
 | Environment | How |
 |----------|------|
-| **Current production** | Images at `ghcr.io/pedroalano/career-forge-{backend,frontend}` · VPS + nginx + `docker-compose.prod.yml` |
+| **Current production** | **Live at [forge.pedroalano.com.br](https://forge.pedroalano.com.br/)** · Images at `ghcr.io/pedroalano/career-forge-{backend,frontend}` · VPS + nginx + `docker-compose.prod.yml` |
 | CI/CD | [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) (build/push + SSH deploy) |
 
 Full runbook: [docs/engineering/DEPLOY-VPS.md](./docs/engineering/DEPLOY-VPS.md).
