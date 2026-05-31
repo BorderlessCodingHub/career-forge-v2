@@ -2,7 +2,7 @@
 
 > **Navigation:** [ROADMAP](./ROADMAP.md) · [SPRINT-BOARD](./SPRINT-BOARD.md) · [CHECKPOINT](./CHECKPOINT.md) · [AGENTS.md](../AGENTS.md)
 
-Last updated: **2026-05-30** · Last merge: **HAC-84** (split services/roadmap.py god-object → roadmap/ package catalog+assembler+repository+commands; `__init__` facade re-exports public + test helpers; no behavior change; refactor loop wave 12)
+Last updated: **2026-05-30** · Last merge: **HAC-85** (normalize evidence → canonical envelope {checklist,validation,remediation,metadata} + `read_evidence` adapter for legacy list/dict; write-only-new (lazy migration); remediation in dedicated key; centralized the scattered `isinstance(evidence,...)`; refactor loop wave 13 — LOOP COMPLETE 13/13)
 
 ---
 

@@ -15,7 +15,7 @@ from career_forge.db.repositories.user import get_by_external_id
 from career_forge.demo.ana_state import DEMO_ANA_SKILL_STATE, DEMO_ANA_VALIDATIONS
 from career_forge.schemas.common import SkillStatus
 from career_forge.schemas.mentor import MentorContextSnapshot, MentorRequest, MentorResponse
-from career_forge.services.roadmap import load_roadmap_catalog
+from career_forge.services.roadmap import load_roadmap_catalog, read_evidence
 
 
 def _catalog_node(node_id: str) -> dict[str, Any] | None:
@@ -92,10 +92,9 @@ def load_mentor_context(
             if row.feedback and last_feedback is None:
                 last_feedback = row.feedback
             user_skill = session.get(UserSkillNodeRow, row.user_skill_node_id)
-            evidence = (user_skill.evidence if user_skill else None) or {}
-            if isinstance(evidence, dict):
-                gaps.extend(evidence.get("gaps") or [])
-                strengths.extend(evidence.get("strengths") or [])
+            summary = read_evidence(user_skill.evidence if user_skill else None).validation_summary()
+            gaps.extend(summary.get("gaps") or [])
+            strengths.extend(summary.get("strengths") or [])
 
         # Prefer the structured knowledge-gap ledger (concept-level) over evidence strings (HAC-68).
         try:

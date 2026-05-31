@@ -13,14 +13,11 @@ from career_forge.schemas.roadmap import (
     RoadmapTrack,
 )
 from career_forge.services.roadmap.catalog import DEFAULT_DEMO_STATE, load_roadmap_catalog
-
-
-def _evidence_items(evidence: list[dict[str, Any]], item_type: str) -> list[dict[str, str]]:
-    return [
-        {str(key): str(value) for key, value in item.items() if key != "type" and value is not None}
-        for item in evidence
-        if isinstance(item, dict) and item.get("type") == item_type
-    ]
+from career_forge.services.roadmap.evidence import (
+    EvidenceEnvelope,
+    _format_checklist_item,
+    read_evidence,
+)
 
 
 def _stable_item_id(item_type: str, index: int) -> str:
@@ -59,10 +56,10 @@ def _merge_node(
     fallback: dict[str, Any] | None,
 ) -> RoadmapNode:
     state = fallback or {}
-    evidence: list[dict[str, Any]] = []
+    envelope = EvidenceEnvelope()
     checklist_progress: dict[str, Any] = {}
     if user_row is not None:
-        evidence = user_row.evidence or []
+        envelope = read_evidence(user_row.evidence)
         checklist_progress = user_row.checklist_progress or {}
         state = {
             "status": user_row.status,
@@ -75,9 +72,13 @@ def _merge_node(
     priority_raw = state.get("priority")
     priority = Priority(priority_raw) if priority_raw else None
 
-    tasks = _enrich_checklist_items(_evidence_items(evidence, "task"), "tasks", checklist_progress)
+    tasks = _enrich_checklist_items(
+        [_format_checklist_item(item) for item in envelope.task_items()],
+        "tasks",
+        checklist_progress,
+    )
     references = _enrich_checklist_items(
-        _evidence_items(evidence, "reference"),
+        [_format_checklist_item(item) for item in envelope.reference_items()],
         "references",
         checklist_progress,
     )
@@ -131,49 +132,35 @@ def merge_validation_evidence(
     next_action: str,
     mock_interview: bool = False,
 ) -> list | dict:
-    """Persist validation feedback without dropping StudyPlan checklist evidence."""
+    """Set the validation summary on the canonical envelope, preserving the
+    checklist / remediation / metadata. Always returns the canonical shape."""
+    envelope = read_evidence(existing)
     summary: dict[str, Any] = {
-        "type": "validation",
         "strengths": strengths,
         "gaps": gaps,
         "next_action": next_action,
     }
     if mock_interview:
         summary["mock_interview"] = True
-
-    if isinstance(existing, list):
-        kept = [
-            item
-            for item in existing
-            if isinstance(item, dict) and item.get("type") in ("metadata", "task", "reference")
-        ]
-        return [*kept, summary]
-
-    return {
-        "strengths": strengths,
-        "gaps": gaps,
-        "next_action": next_action,
-        **({"mock_interview": True} if mock_interview else {}),
-    }
+    envelope.validation = summary
+    return envelope.to_storage()
 
 
-def _evidence_from_node(node: UserSkillNode, *, sort_order: int) -> list[dict[str, Any]]:
-    return [
-        {"type": "metadata", "sort_order": sort_order},
-    ] + [
-        {"type": "task", **task}
-        for task in node.tasks
-    ] + [
-        {"type": "reference", **reference}
-        for reference in node.references
-    ]
+def _evidence_from_node(node: UserSkillNode, *, sort_order: int) -> dict[str, Any]:
+    envelope = EvidenceEnvelope(
+        checklist=[
+            *({"type": "task", **task} for task in node.tasks),
+            *({"type": "reference", **reference} for reference in node.references),
+        ],
+        metadata={"sort_order": sort_order},
+    )
+    return envelope.to_storage()
 
 
 def _catalog_node_from_generated_row(
     row: UserSkillNodeRow,
 ) -> dict[str, Any]:
-    evidence = row.evidence or []
-    tasks = _evidence_items(evidence, "task")
+    tasks = read_evidence(row.evidence).task_items()
     sort_order = _generated_row_sort_order(row)
     return {
         "id": row.skill_node_id,
@@ -194,13 +181,9 @@ def _catalog_node_from_generated_row(
 
 
 def _generated_row_sort_order(row: UserSkillNodeRow) -> int:
-    evidence = row.evidence or []
-    for item in evidence:
-        if isinstance(item, dict) and item.get("type") == "metadata":
-            try:
-                return int(item.get("sort_order", 0))
-            except (TypeError, ValueError):
-                return 0
+    sort_order = read_evidence(row.evidence).sort_order()
+    if sort_order is not None:
+        return sort_order
     if row.skill_node is not None:
         return row.skill_node.sort_order
     return 0
