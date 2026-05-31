@@ -7,7 +7,6 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from career_forge.ai.graphs.validation import RUBRIC_GAPS
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.models.validation import Validation
 from career_forge.schemas.common import SkillStatus, ValidationStatus
@@ -23,12 +22,14 @@ from career_forge.services.mock_interview_session import (
     get_mock_interview_session,
 )
 from career_forge.db.repositories.user import ensure_user
-from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
-from career_forge.services.validation import (
+from career_forge.services.assessment_rubric import (
+    PASS_THRESHOLD,
     QUESTION_HINTS,
     QUESTION_LABELS,
     QUESTION_TEMPLATES,
+    RUBRIC_GAPS,
 )
+from career_forge.services.roadmap import get_skill_node_context, merge_validation_evidence
 
 BASE_LABELS = QUESTION_LABELS
 GAP_LABELS = ("lacuna 1", "lacuna 2")
@@ -198,8 +199,6 @@ def persist_mock_interview_result(
 
 def evaluate_mcq_session(payload: MockInterviewRequest) -> tuple[ValidationResponse, MockInterviewSessionRecord]:
     """Score MCQ answers deterministically against server-side gabarito (HAC-65)."""
-    from career_forge.ai.graphs.validation import PASS_THRESHOLD
-
     if not payload.session_id:
         msg = "session_id is required for MCQ mock interview"
         raise ValueError(msg)
