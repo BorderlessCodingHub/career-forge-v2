@@ -28,6 +28,18 @@ Full product and architecture overview: [docs/CHECKPOINT.md](./docs/CHECKPOINT.m
 
 ---
 
+## Main features
+
+- **Adaptive diagnosis (CTRR)** — a multi-turn AI interview that maps where you actually start (≤2 questions per round, adaptive rubric).
+- **Live Roadmap Forge** — the AI builds your personalized roadmap with visible reasoning, streamed live over SSE.
+- **AI mastery validation** — interview-based validation; the roadmap reacts (unlocks/blocks nodes) to your result.
+- **Adaptive memory (knowledge gaps)** — wrong answers become structured gaps that feed future mock interviews, the mentor, and remediation tasks.
+- **MCQ mock interview** — agent-generated questions with deterministic, server-side scoring.
+- **Chapter Q&A tutor** — a grounded tutor per roadmap node (key concepts + official references).
+- **Contextual mentor + evidence report** — chat with full progress context and a mentor-facing evidence report.
+
+---
+
 ## What the app does (flow)
 
 1. **Goal** — choose a target and motivation (+ optional PDF CV).
