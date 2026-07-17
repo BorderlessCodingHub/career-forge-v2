@@ -13,6 +13,7 @@ const API_PREFIXES = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  basePath: "/career-forge",
   async rewrites() {
     const internal = process.env.API_INTERNAL_URL?.replace(/\/$/, "");
     if (!internal) return [];
