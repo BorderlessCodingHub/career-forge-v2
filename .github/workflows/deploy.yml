@@ -72,7 +72,7 @@ jobs:
           script: |
             set -euo pipefail
 
-            APP_DIR="/home/ubuntu/soft-push"
+            APP_DIR="/home/career-forge-v2"
             cd "$APP_DIR"
 
             if [ -f .env ]; then
@@ -90,10 +90,6 @@ jobs:
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans --no-build
 
-            if [ -z "${API_DOMAIN:-}" ]; then
-              echo "API_DOMAIN missing from .env" >&2
-              exit 1
-            fi
-            curl -fsS "https://${API_DOMAIN}/health"
+            curl -fsS "http://127.0.0.1:18000/health"
             echo ""
             echo "Health OK"
