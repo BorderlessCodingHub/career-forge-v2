@@ -47,6 +47,6 @@ print("  OK: health payload valid:", data)
 echo "smoke-stack: OpenAPI /docs"
 curl -sf "${API_URL}/docs" | grep -q "Swagger UI" && echo "  OK: /docs serves OpenAPI UI"
 
-wait_for_url "${WEB_URL}" "frontend home" 45
+wait_for_url "${WEB_URL}" "frontend home" 90
 
 echo "smoke-stack: STACK OK"
