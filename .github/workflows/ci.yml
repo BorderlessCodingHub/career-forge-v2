@@ -52,15 +52,22 @@ jobs:
   smoke:
     name: Stack smoke
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      CORS_ORIGINS: http://localhost:13000
+      NEXT_PUBLIC_BACKEND_URL: http://localhost:18000
+      NEXT_PUBLIC_API_URL: http://localhost:18000
+      FRONTEND_URL: http://localhost:13000
+      BACKEND_URL: http://localhost:18000
     steps:
       - uses: actions/checkout@v4
 
       - name: Start stack
-        run: docker compose up -d --build --wait
+        run: docker compose -f docker-compose.prod.yml up -d --build --wait
 
       - name: smoke-stack
         run: bash scripts/smoke-stack.sh
 
       - name: Tear down
         if: always()
-        run: docker compose down -v
+        run: docker compose -f docker-compose.prod.yml down -v
