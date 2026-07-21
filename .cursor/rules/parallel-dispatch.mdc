@@ -1,5 +1,5 @@
 ---
-description: Mandatory parallel Task dispatch when 2+ Linear issues are class P with satisfied deps. Apply during sprint planning and batch execution.
+description: Mandatory parallel Task dispatch when 2+ Linear issues are class P with satisfied deps. Apply during planning and batch execution.
 alwaysApply: true
 ---
 
@@ -25,23 +25,19 @@ Reference flowchart: [docs/engineering/lifecycle-session-planning.png](../../doc
 
 ---
 
-## Examples (Career Forge)
+## Examples (Career Forge v2)
 
 | Batch | Parallel group | Issues |
 |-------|----------------|--------|
-| Sprint 1 Foundation | **[P]** | HAC-5, HAC-6, HAC-7 (after HAC-19 done) |
-| Sprint 5 Stretch | **[P]** | HAC-13, HAC-14, HAC-15 (after Sprint 4) |
-
-Sequential chains (do **not** parallelize):
-
-- HAC-8 → HAC-18 → HAC-9 (Sprint 2)
-- HAC-10 → HAC-11 → HAC-12 (Sprint 4)
+| F1 Track A | **[P]** | CAR-5, CAR-6, CAR-8 |
+| F1 cost report | **[S]** | CAR-7 after CAR-5 + CAR-6 |
+| F1 nginx | **[B]** | CAR-9 (external Brunno / domain) |
 
 ---
 
 ## Parent agent checklist
 
-1. Read [docs/SPRINT-BOARD.md](../../docs/SPRINT-BOARD.md) or [docs/ROADMAP.md](../../docs/ROADMAP.md) for `[P]` markers
+1. Read [docs/ROADMAP.md](../../docs/ROADMAP.md) or [docs/V2-PLAN.md](../../docs/V2-PLAN.md) for `[P]` markers
 2. Confirm deps merged on `main`
 3. Set all issues → `In Progress` via Linear MCP
 4. Launch **one message** with multiple `Task` tool calls (one per issue)
@@ -51,7 +47,7 @@ Sequential chains (do **not** parallelize):
 
 ## Anti-patterns
 
-- ❌ Implementing HAC-5, then HAC-6, then HAC-7 serially when all three are P
+- ❌ Implementing CAR-5, then CAR-6, then CAR-8 serially when all three are P
 - ❌ Waiting for one P issue to fully merge before starting another P issue in the same batch
 - ❌ Launching subagents in separate turns when they could have been parallel
 

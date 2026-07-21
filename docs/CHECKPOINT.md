@@ -1,6 +1,6 @@
 # CHECKPOINT — Career Forge product
 
-> **Navigation:** [ROADMAP](./ROADMAP.md) · [STATUS](./STATUS.md) · [claude-design-docs](../claude-design-docs/)
+> **Navigation:** [V2-PLAN](./V2-PLAN.md) · [ROADMAP](./ROADMAP.md) · [STATUS](./STATUS.md) · [claude-design-docs](../claude-design-docs/)
 
 Authoritative product + architecture reference for agents.
 
@@ -10,11 +10,13 @@ Authoritative product + architecture reference for agents.
 
 **Career Forge** — adaptive skill graph that diagnoses, forges the roadmap live, validates mastery, and generates evidence for mentors.
 
-Sub-theme: **Learning with practical validation** (Alpha School: mastery before progression).
+Sub-theme: **Learning with practical validation** (mastery before progression).
 
-**Audience:** career transition to tech (often zero or early study) — not senior hiring.
+**Audience (v2):** BASE and PSP learners only — spectrum from ~6 months XP to decades. Goals repositioned to **LLM engineer** tracks (RAG, Agents, Evals, Fine-tuning).
 
 **AI-first rule:** remove AI → app stops. Identity/diagnosis **must** be LLM-driven ([ADR-001](./decisions/ADR-001-adaptive-diagnosis-ctrr.md)).
+
+**Deploy:** `https://labs.borderlesscoding.com/career-forge` (app under `/career-forge/app`).
 
 ---
 
@@ -30,15 +32,41 @@ Sub-theme: **Learning with practical validation** (Alpha School: mastery before 
 
 ---
 
+## v2 goals (LLM tracks)
+
+| Goal id | Track |
+|---------|-------|
+| `rag-engineer` | Production RAG & Advanced Retrieval |
+| `agent-engineer` | Agent Engineering (MCP, Tool Use, Failure Modes) |
+| `llm-evals` | LLM Evaluation & Observability (LLMOps) |
+| `fine-tuning` | Fine-Tuning & Alignment (LoRA, DPO, Custom Models) |
+
+Catalog seeds land in F1 (CAR-5). Must-have nodes (job-market lean fit) draft in CAR-8; wired in F2.
+
+---
+
+## Cost & access (v2)
+
+- Hard stop: **R$500/month** global API pool (all billable GraphRuns)
+- Gate approval ceiling: **R$700** (Yuri go/no-go)
+- Per-user forge cap (1–2/month after gate)
+- Soft gate on diagnosis in pilot (lean forge + warning); hard block = later
+- First humans: **F3 only**, after platform auth + caps
+- Demo user `demo-ana`: outside student cost pool
+
+Details: [V2-PLAN.md](./V2-PLAN.md)
+
+---
+
 ## Stack (closed)
 
 ```
 apps/frontend/     Next.js + TS + Tailwind
-apps/backend/     FastAPI + Pydantic + SQLAlchemy
-PostgreSQL    skill graph state, validations, profiles, graph_runs
-LangGraph     diagnosis_graph, diagnosis_interview_graph, roadmap_forge_graph, validation_graph, mock_interview_graph
-LangChain     astream_events v2 via GraphExecutor (HAC-32)
-LangSmith     traces per GraphRun
+apps/backend/      FastAPI + Pydantic + SQLAlchemy
+PostgreSQL         skill graph state, validations, profiles, graph_runs
+LangGraph          diagnosis, diagnosis_interview, roadmap_forge, validation, mock_interview
+LangChain          astream_events v2 via GraphExecutor
+LangSmith          traces per GraphRun
 ```
 
 ## Application map (implemented)
@@ -96,11 +124,11 @@ Core models under `apps/backend/src/career_forge/db/models/`:
 
 ## Deployment baseline
 
-- Production images are published to `ghcr.io/pedroalano/career-forge-{backend,frontend}:latest`.
-- Canonical server deploy path is VPS + host nginx + `docker-compose.prod.yml` over SSH workflow.
-- Post-deploy verification is `curl -fsS "https://$API_DOMAIN/health"` (no Python dependency on VPS image).
+- Primary runbook: [DEPLOY-LABS-MANUAL.md](./DEPLOY-LABS-MANUAL.md) — path `labs.borderlesscoding.com/career-forge`
+- Images: GHCR (`ghcr.io/pedroalano/career-forge-{backend,frontend}` or org GHCR as configured)
+- Post-deploy: `curl -fsS` health on API path under Labs
 
-## AI execution layer (HAC-32)
+## AI execution layer
 
 Unified under `career_forge/ai/`:
 
@@ -109,11 +137,11 @@ Unified under `career_forge/ai/`:
 - **GraphExecutor** — always `astream_events` v2; `stream=False` collects, `stream=True` → SSE
 - **Registry** — `diagnosis`, `diagnosis_interview`, `roadmap_forge`, `validation`, `mock_interview`, `mentor`
 
-Canonical doc: [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) · [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md)
+Canonical doc: [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) · [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md) · [ARCHITECTURE.md](./ARCHITECTURE.md)
 
 ---
 
-## Live Roadmap Forge (HAC-18)
+## Live Roadmap Forge
 
 Post-onboarding LangGraph loop:
 
@@ -126,8 +154,6 @@ Post-onboarding LangGraph loop:
 7. `emit_final` — SSE `graph_ready`
 
 SSE events: `reasoning_delta`, `artifact_found` (with `sources[]` for web search), `node_updated`, `step_complete`, `graph_ready`
-
-Full spec: [stack-and-roadmap-forge.md](./stack-and-roadmap-forge.md)
 
 ---
 
@@ -143,17 +169,19 @@ Statuses: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar`
 
 ## UI reference
 
-Canonical UX (HAC-21): [claude-design-docs/UX-FLOW.md](../claude-design-docs/UX-FLOW.md) · [SCREEN-INTENT.md](../claude-design-docs/SCREEN-INTENT.md)
+Canonical UX: [claude-design-docs/UX-FLOW.md](../claude-design-docs/UX-FLOW.md) · [SCREEN-INTENT.md](../claude-design-docs/SCREEN-INTENT.md)
 
-Claude Design prototype: [claude-design-docs/prototype/](../claude-design-docs/prototype/) — tokens/components only; flow may lag docs.
+Claude Design prototype: [claude-design-docs/prototype/](../claude-design-docs/prototype/) — tokens/components; rebrand tokens in F3.
 
-**Visual identity (HAC-23):** Borderless Community theming — deep purple-black, purple roadmap nodes, cyan progress, sidebar + canvas shell. Canonical: [BORDERLESS-THEMING.md](../claude-design-docs/BORDERLESS-THEMING.md). Primary reference: [borderless-code-breakers-dashboard.png](../claude-design-docs/references/borderless-code-breakers-dashboard.png). Steady state: canvas roadmap + optional AI sidebar (roadmap.sh layout secondary).
+**Visual identity:** Borderless Community theming — [BORDERLESS-THEMING.md](../claude-design-docs/BORDERLESS-THEMING.md). Brand kit colors for v2: `#121212` / `#5316CC` / `#44D5AD`.
 
 ---
 
-## Adaptive diagnosis (ADR-001 — Sprint 6 done)
+## Adaptive diagnosis (ADR-001)
 
 Screen 2 is live: **CTRR** rubric + Interviewer/Judge loop — max 2 questions/turn, optional PDF CV, accumulative transcript → `DiagnosisResponse`.
+
+v2: recalibrate prompts for BASE/PSP + practical / system-AI questions; **soft gate** below score (lean forge + warning) in the pilot.
 
 Spec: [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md)
 
@@ -165,17 +193,18 @@ Spec: [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md)
 |---|---|
 | Local dev | `make up` (`docker-compose.yml`) + `.env.example` |
 | Verification | `make smoke`, `make agent-verify`, backend `/health` |
-| Production | GHCR + VPS (`docker-compose.prod.yml`) + host nginx + Certbot |
+| Labs | GHCR + VPS Labs + host nginx path (see DEPLOY-LABS-MANUAL) |
 
 ## Documentation quick index
 
 | Need | Read |
 |---|---|
-| Product/feature overview | [CHECKPOINT.md](./CHECKPOINT.md) |
-| Sprint ordering and issue status | [ROADMAP.md](./ROADMAP.md), [SPRINT-BOARD.md](./SPRINT-BOARD.md), [STATUS.md](./STATUS.md) |
-| AI runtime internals | [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md), [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md) |
-| Deploy and ops | [engineering/DEPLOY-VPS.md](./engineering/DEPLOY-VPS.md) |
-| Diagnosis deep spec | [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) |
+| v2 plan / decisions | [V2-PLAN.md](./V2-PLAN.md) |
+| Product overview | [CHECKPOINT.md](./CHECKPOINT.md) |
+| Current work | [ROADMAP.md](./ROADMAP.md), [STATUS.md](./STATUS.md) |
+| AI runtime | [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md), [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md) |
+| Deploy Labs | [DEPLOY-LABS-MANUAL.md](./DEPLOY-LABS-MANUAL.md) |
+| Diagnosis | [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) |
 
 ## Demo script (5 min)
 
@@ -183,19 +212,11 @@ Spec: [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md)
 2. AI diagnosis interview → editable diagnosis
 3. **Editable diagnosis** — adjust gap, click **"Generate roadmap"**
 4. **Forge stream** (timeline steps 1–N, no graph) → **animation reveal** → vertical roadmap
-5. Validate REST → bad answer → score
-6. Roadmap reacts + mentor suggestion / AI sidebar
+5. Validate → score / adapt
+6. Mentor / AI sidebar
 
 ---
 
-## Out of scope (hackathon)
+## Out of scope (v2)
 
-- Multiple full tracks
-- Enterprise auth
-- Gamification
-- GitHub integration
-- Web scraping for research (MVP: LLM-labeled research steps)
-
----
-
-*HB01-2026 · Programadores Sem Pátria*
+See [V2-PLAN.md](./V2-PLAN.md) — SSO beyond platform, Stripe, job-RAG forge, Frame landing, hard diagnosis block, OPS dashboards.

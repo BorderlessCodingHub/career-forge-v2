@@ -1,10 +1,8 @@
 # Architecture — Career Forge (backend)
 
-> **For the reviewer:** this document shows the backend architecture **after** the
-> post-delivery refactor cycle (HAC-73 … HAC-85). All diagrams are
-> [Mermaid](https://mermaid.js.org/) — GitHub **renders them natively** when you open
-> this `.md` (no plugin). If a diagram shows up as code, reload the
-> page; GitHub sometimes caches the render.
+> Backend module map for Career Forge v2. Motor unchanged from the shipped LangGraph stack.
+> Diagrams are [Mermaid](https://mermaid.js.org/) — GitHub renders them natively.
+> Product / phase context: [V2-PLAN.md](./V2-PLAN.md) · [CHECKPOINT.md](./CHECKPOINT.md)
 
 Layers: **API** (thin routes, transport only) → **Services** (orchestration +
 domain) → **AI** (executor/factory/registry + graphs/agents/tools/llm) → **DB**.
@@ -157,7 +155,7 @@ graph TD
 ```
 
 **Direction rule (what the refactor locked in):** `API → Services → DB/kernel`.
-HAC-77 removed the **services → ai/graphs** inversion. The only sanctioned "upward"
+A later refactor removed the **services → ai/graphs** inversion. The only sanctioned "upward"
 dependency is **graphs/agents → services** (the runnables are thin and
 wrap the deterministic domain). `catalog` and `evidence` are leaves (no
 internal dependencies within the `roadmap/` package).
@@ -449,7 +447,7 @@ sequenceDiagram
    package. Kept as is — thin, predictable runnables.
 2. **Two LLM clients**: `StructuredLlmClient` (async, diagnosis) and
    `StructuredToolClient` (sync, tools). Unifying them into one with `invoke`/`ainvoke`
-   would be cleaner (it was out of scope for HAC-82).
+   would be cleaner (deferred).
 3. **Diagnosis has two paths**: the real multi-turn one (`diagnosis_session`,
    service-direto) + a legacy `diagnosis` graph via the executor
    (`api/diagnosis.create_diagnosis`) that the frontend no longer uses → candidate for
@@ -457,7 +455,7 @@ sequenceDiagram
 4. **MCQ session is in-memory** (`mock_interview_session`): the answer key is not
    persisted. Simple and sufficient for the flow, but it is ephemeral state (lost on
    restart / multiple instances).
-5. **Normalized evidence (HAC-85)**: a canonical envelope
+5. **Normalized evidence**: a canonical envelope
    `{checklist, validation, remediation, metadata}` + `read_evidence` as the single
    read adapter for the legacy format. Writes only in the new shape; **lazy** migration (no
    mass rewrite). Remediation in a dedicated key, decoupled from the checklist.

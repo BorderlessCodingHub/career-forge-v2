@@ -16,7 +16,7 @@ Helper script: [`scripts/langsmith-env.sh`](../../scripts/langsmith-env.sh)
 **Always load from repo `.env`** before any CLI call. Never print or commit API keys.
 
 ```bash
-cd /path/to/HB01-2026_soft-push
+cd /path/to/career-forge-v2
 set -a && source .env && set +a
 ```
 

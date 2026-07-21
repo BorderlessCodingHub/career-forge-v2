@@ -20,7 +20,7 @@ Read in order:
 
 1. [PRODUCT-SOURCE-OF-TRUTH.md](../../claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) — **canonical hierarchy + flow summary**
 2. [BORDERLESS-THEMING.md](../../claude-design-docs/BORDERLESS-THEMING.md) — **canonical Borderless visual language** (tokens, shell, canvas, nodes)
-3. [UX-FLOW.md](../../claude-design-docs/UX-FLOW.md) — screen-by-screen flow (HAC-21+)
+3. [UX-FLOW.md](../../claude-design-docs/UX-FLOW.md) — screen-by-screen flow 
 4. [SCREEN-INTENT.md](../../claude-design-docs/SCREEN-INTENT.md) — per-screen must-match
 5. [UI-PRINCIPLES.md](../../claude-design-docs/UI-PRINCIPLES.md)
 6. [references/borderless-code-breakers-dashboard.png](../../claude-design-docs/references/borderless-code-breakers-dashboard.png) — steady-state shell + canvas (primary)
@@ -66,8 +66,8 @@ Skill for explicit sync: [.cursor/skills/ui-product-sync/SKILL.md](../skills/ui-
 ## Do not
 
 - Ship UI that weakens P0 wow (Forge timeline stream, animation reveal, validation, adaptive roadmap) without CHECKPOINT update
-- Show skill graph during forge stream (HAC-21 — timeline only)
-- Use read-only diagnosis confirmation dead-end (HAC-21 — editable diagnosis + "Gerar roadmap")
+- Show skill graph during forge stream (timeline only)
+- Use read-only diagnosis confirmation dead-end (editable diagnosis + "Gerar roadmap")
 - Introduce gamification / LMS patterns rejected in UI-PRINCIPLES
 - Rename skill status enums without API + CHECKPOINT alignment
 

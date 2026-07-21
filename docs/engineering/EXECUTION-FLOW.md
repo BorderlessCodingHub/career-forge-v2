@@ -1,10 +1,10 @@
 # Execution flow — Career Forge (canonical)
 
-> **Navigation:** [AI-EXECUTION.md](./AI-EXECUTION.md) · [REPO-STRUCTURE.md](./REPO-STRUCTURE.md) · [SPRINT-BOARD.md](../SPRINT-BOARD.md) · [CHECKPOINT.md](../CHECKPOINT.md)
+> **Navigation:** [AI-EXECUTION.md](./AI-EXECUTION.md) · [REPO-STRUCTURE.md](./REPO-STRUCTURE.md) · [V2-PLAN.md](../V2-PLAN.md) · [CHECKPOINT.md](../CHECKPOINT.md)
 
-End-to-end execution tree, parallel dispatch order, and architecture after Sprint 6 + deploy hardening.
+End-to-end execution tree and architecture for the LangGraph motor (unchanged in v2).
 
-Last updated: **HAC-51**
+Last updated: **2026-07-21**
 
 ---
 
@@ -12,23 +12,23 @@ Last updated: **HAC-51**
 
 | Area | Status |
 |------|--------|
-| Sprint 0 → Sprint 6 | ✅ Done (HAC-5..15, HAC-33, HAC-42..47) |
 | AI layer | ✅ `career_forge/ai/` — GraphRun, GraphExecutor, AgentFactory |
 | Graph builders | ✅ `diagnosis`, `diagnosis_interview`, `roadmap_forge`, `validation`, `mock_interview`; mentor as agent runnable |
 | HTTP | ✅ diagnosis, diagnosis interview, forge, roadmap, validation, mentor, mentor report, mock interview routes wired |
 | Persistence | ✅ `GraphRunRecord` + `graph_runs` table; diagnosis sessions and skill graph state persisted in Postgres |
+| v2 work | See [V2-PLAN.md](../V2-PLAN.md) / [ROADMAP.md](../ROADMAP.md) — goals, cost caps, Labs path |
 
 ---
 
 ## North star demo flow
 
 ```
-Onboarding (HAC-8)
-  → Live Roadmap Forge — timeline SSE only (HAC-18)
-  → animation reveal → vertical roadmap artifact (HAC-9)
-  → Validate with AI (HAC-10)
-  → roadmap reacts — GraphPatch (HAC-11)
-  → pitch demo Ana (HAC-12)
+Onboarding (CTRR interview)
+ → Live Roadmap Forge — timeline SSE only
+ → animation reveal → vertical roadmap artifact
+ → Validate with AI
+ → roadmap reacts — GraphPatch
+ → optional mentor / mock / demo-ana
 ```
 
 **User reaction targets:** "I can see the AI thinking" (forge stream) · "It won't let me fake that I learned" (validation) · "The roadmap changed because I got it wrong" (adaptive).
@@ -41,34 +41,34 @@ Full demo script: [CHECKPOINT.md](../CHECKPOINT.md) § Demo script.
 
 ```mermaid
 flowchart TB
-    subgraph SETUP["Frontend — (setup)"]
-        HOME["/"]
-        ONB["/onboarding<br/>HAC-8"]
-        FORGE["/forge<br/>HAC-18"]
-        HOME --> ONB --> FORGE
-    end
+ subgraph SETUP["Frontend — (setup)"]
+ HOME["/"]
+ ONB["/onboarding"]
+ FORGE["/forge"]
+ HOME --> ONB --> FORGE
+ end
 
-    subgraph ARTIFACT["Frontend — (artifact)"]
-        ROAD["/roadmap<br/>HAC-9 steady state"]
-        VAL_UI["Validate with AI<br/>HAC-10"]
-        MENTOR_UI["Mentor chat<br/>HAC-13"]
-        ROAD --> VAL_UI
-        ROAD --> MENTOR_UI
-    end
+ subgraph ARTIFACT["Frontend — (artifact)"]
+ ROAD["/roadmap steady state"]
+ VAL_UI["Validate with AI"]
+ MENTOR_UI["Mentor chat"]
+ ROAD --> VAL_UI
+ ROAD --> MENTOR_UI
+ end
 
-    FORGE -->|"graph_ready + reveal"| ROAD
-    VAL_UI -->|"GraphPatch"| ROAD
+ FORGE -->|"graph_ready + reveal"| ROAD
+ VAL_UI -->|"GraphPatch"| ROAD
 
-    subgraph DEMO["Demo pitch"]
-        ANA["Seed Ana<br/>HAC-12"]
-    end
-    ROAD --> ANA
+ subgraph DEMO["Demo pitch"]
+ ANA["Seed Ana"]
+ end
+ ROAD --> ANA
 ```
 
 | Layer | Route group | Purpose |
 |-------|-------------|---------|
-| **(setup)** | `(setup)/` | Editable diagnosis onboarding (HAC-8) → Live Roadmap Forge with **timeline-only SSE** during stream (HAC-18). No graph preview during stream. |
-| **(artifact)** | `(artifact)/` | Vertical roadmap.sh-style trail (HAC-9) → mastery validation (HAC-10) → adaptive graph (HAC-11) → demo Ana (HAC-12). |
+| **(setup)** | `(setup)/` | Editable diagnosis onboarding () → Live Roadmap Forge with **timeline-only SSE** during stream (). No graph preview during stream. |
+| **(artifact)** | `(artifact)/` | Vertical roadmap.sh-style trail () → mastery validation () → adaptive graph () → demo Ana (). |
 
 ---
 
@@ -76,48 +76,48 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-    subgraph API["api/ — thin HTTP"]
-        D["diagnosis.py<br/>HAC-8"]
-        F["forge.py ✅"]
-        R["roadmap.py<br/>HAC-9"]
-        V["validation.py<br/>HAC-10"]
-    end
+ subgraph API["api/ — thin HTTP"]
+ D["diagnosis.py"]
+ F["forge.py ✅"]
+ R["roadmap.py"]
+ V["validation.py"]
+ end
 
-    subgraph SVC["services/ — business logic"]
-        RS["roadmap.py<br/>user graph persistence"]
-        GS["graph_state.py<br/>GraphPatch merge<br/>HAC-11/18"]
-        SC["seed_catalog.py<br/>HAC-6 ✅"]
-    end
+ subgraph SVC["services/ — business logic"]
+ RS["roadmap.py<br/>user graph persistence"]
+ GS["graph_state.py<br/>GraphPatch merge/18"]
+ SC["seed_catalog.py ✅"]
+ end
 
-    subgraph AI["ai/ — unified execution HAC-32"]
-        GR["GraphRun + Store<br/>run.py"]
-        EX["GraphExecutor<br/>executor.py"]
-        AF["AgentFactory<br/>factory.py + registry.py"]
-        REC["recording.py"]
-        STR["streaming/<br/>events.py + sse.py"]
-        G["graphs/<br/>diagnosis | roadmap_forge | validation"]
-        A["agents/<br/>mentor HAC-13"]
-    end
+ subgraph AI["ai/ — unified execution "]
+ GR["GraphRun + Store<br/>run.py"]
+ EX["GraphExecutor<br/>executor.py"]
+ AF["AgentFactory<br/>factory.py + registry.py"]
+ REC["recording.py"]
+ STR["streaming/<br/>events.py + sse.py"]
+ G["graphs/<br/>diagnosis | roadmap_forge | validation"]
+ A["agents/<br/>mentor "]
+ end
 
-    subgraph DB["db/ + schemas/"]
-        PG["Postgres<br/>graph_runs + skill graph<br/>HAC-6 ✅"]
-        CP["LangGraph Postgres<br/>checkpointer"]
-        PY["Pydantic contracts<br/>HAC-7 ✅"]
-    end
+ subgraph DB["db/ + schemas/"]
+ PG["Postgres<br/>graph_runs + skill graph ✅"]
+ CP["LangGraph Postgres<br/>checkpointer"]
+ PY["Pydantic contracts ✅"]
+ end
 
-    D & F & V --> GR
-    D & F & V --> EX
-    R --> RS
-    RS --> PG
-    GS --> PY
-    EX --> AF
-    AF --> G & A
-    EX --> REC
-    EX --> STR
-    G --> PY
-    G --> CP
-    GR --> PG
-    CP --> PG
+ D & F & V --> GR
+ D & F & V --> EX
+ R --> RS
+ RS --> PG
+ GS --> PY
+ EX --> AF
+ AF --> G & A
+ EX --> REC
+ EX --> STR
+ G --> PY
+ G --> CP
+ GR --> PG
+ CP --> PG
 ```
 
 **Layer rules:** `api/` creates `GraphRun` and calls `GraphExecutor` only. `services/` handles deterministic merge and DB persistence — no streaming. `ai/` owns all LangChain/LangGraph execution. For endpoint-level API map, see [CHECKPOINT.md](../CHECKPOINT.md) § Application map.
@@ -128,48 +128,48 @@ flowchart LR
 
 ```mermaid
 sequenceDiagram
-    participant Client as Client (FE or curl)
-    participant API as api/*.py
-    participant Store as GraphRunStore (Postgres)
-    participant EX as GraphExecutor
-    participant AF as AgentFactory
-    participant G as graphs/* or agents/*
-    participant CP as LangGraph checkpointer
-    participant REC as recording.py
-    participant EV as streaming/events.py
-    participant SSE as streaming/sse.py
+ participant Client as Client (FE or curl)
+ participant API as api/*.py
+ participant Store as GraphRunStore (Postgres)
+ participant EX as GraphExecutor
+ participant AF as AgentFactory
+ participant G as graphs/* or agents/*
+ participant CP as LangGraph checkpointer
+ participant REC as recording.py
+ participant EV as streaming/events.py
+ participant SSE as streaming/sse.py
 
-    Client->>API: POST /forge (collect) or GET /forge/.../stream (SSE)
-    API->>Store: GraphRun.create + save
-    API->>EX: execute(run, stream=False|True)
+ Client->>API: POST /forge (collect) or GET /forge/.../stream (SSE)
+ API->>Store: GraphRun.create + save
+ API->>EX: execute(run, stream=False|True)
 
-    EX->>AF: get(run.graph_name)
-    AF->>G: builder(checkpointer=PostgresSaver)
-    EX->>Store: status = running
+ EX->>AF: get(run.graph_name)
+ AF->>G: builder(checkpointer=PostgresSaver)
+ EX->>Store: status = running
 
-    loop astream_events v2 (always)
-        EX->>G: astream_events(input, version="v2")
-        G->>CP: checkpoint state (LangGraph internal)
-        G-->>EX: LangChain event
-        EX->>REC: record_raw_event
-        EX->>EV: normalize_langchain_event
-        alt normalized != None
-            EX->>REC: record_normalized_event
-            opt stream=True
-                EX-->>API: yield normalized dict
-                API->>SSE: events_to_sse
-                SSE-->>Client: SSE line
-            end
-        end
-    end
+ loop astream_events v2 (always)
+ EX->>G: astream_events(input, version="v2")
+ G->>CP: checkpoint state (LangGraph internal)
+ G-->>EX: LangChain event
+ EX->>REC: record_raw_event
+ EX->>EV: normalize_langchain_event
+ alt normalized != None
+ EX->>REC: record_normalized_event
+ opt stream=True
+ EX-->>API: yield normalized dict
+ API->>SSE: events_to_sse
+ SSE-->>Client: SSE line
+ end
+ end
+ end
 
-    EX->>REC: finalize_run (output/error)
-    EX->>Store: save GraphRunRecord
+ EX->>REC: finalize_run (output/error)
+ EX->>Store: save GraphRunRecord
 
-    alt stream=False
-        EX-->>API: GraphRunResult
-        API-->>Client: JSON { run_id, events, output }
-    end
+ alt stream=False
+ EX-->>API: GraphRunResult
+ API-->>Client: JSON { run_id, events, output }
+ end
 ```
 
 **Golden rule:** `astream_events` v2 lives **only** in `GraphExecutor`. Never duplicate streaming in `api/` or per-graph modules.
@@ -189,12 +189,12 @@ Two complementary Postgres layers:
 
 **Canonical target:** Postgres for both layers. **`InMemoryGraphRunStore`** remains as dev/test fallback (pytest, local smoke without DB) — not production default.
 
-**Wiring status (HAC-32):**
+**Wiring status ():**
 
 - ✅ `GraphRunRecord` model + `graph_runs` migration
 - ⬜ `PostgresGraphRunStore` replacing module-level `_default_store`
 - ⬜ `PostgresSaver` injected into graph builders via `AgentFactory`
-- ⬜ Replace `MockGraphRunnable` with compiled LangGraph graphs (HAC-8/10/18)
+- ⬜ Replace `MockGraphRunnable` with compiled LangGraph graphs (/10/18)
 
 ---
 
@@ -202,102 +202,102 @@ Two complementary Postgres layers:
 
 | Issue | Layer | Target modules |
 |-------|-------|----------------|
-| **HAC-5** ✅ | Infra | `apps/frontend`, `apps/backend`, `docker-compose`, `Makefile` |
-| **HAC-6** ✅ | Data | `data/roadmap.json`, `db/models/`, Alembic, `scripts/seed.py` |
-| **HAC-7** ✅ | Contracts | `schemas/diagnosis.py`, `forge.py`, `validation.py`, `planning.py` |
-| **HAC-32** ✅ | AI core | `ai/run.py`, `executor.py`, `factory.py`, `registry.py`, `recording.py`, `streaming/` |
-| **HAC-8** | Setup + diagnosis | `ai/graphs/diagnosis.py`, `api/diagnosis.py`, `(setup)/onboarding`, `components/diagnosis/` |
-| **HAC-18** | Forge wow | `ai/graphs/roadmap_forge.py`, `services/graph_state.py`, `api/forge.py` ✅, `(setup)/forge`, `components/forge/`, `components/streaming/` |
-| **HAC-9** | Artifact UI | `api/roadmap.py`, `services/roadmap.py`, `(artifact)/roadmap`, `components/roadmap/` |
-| **HAC-10** | Mastery loop | `ai/graphs/validation.py`, `api/validation.py`, validation UI in artifact |
-| **HAC-11** | Adaptive | `services/graph_state.py`, `schemas/planning.py`, post-validation recalibration |
-| **HAC-12** | Demo | seed Ana, E2E pitch 7 min |
-| **HAC-13** [P] | Stretch | `ai/agents/mentor.py`, mentor route, artifact sidebar |
-| **HAC-14** [P] | Stretch | mock interview loop (recalibrates trail) |
-| **HAC-15** [P] | Stretch | mentor report (depends HAC-10) |
+| **** ✅ | Infra | `apps/frontend`, `apps/backend`, `docker-compose`, `Makefile` |
+| **** ✅ | Data | `data/roadmap.json`, `db/models/`, Alembic, `scripts/seed.py` |
+| **** ✅ | Contracts | `schemas/diagnosis.py`, `forge.py`, `validation.py`, `planning.py` |
+| **** ✅ | AI core | `ai/run.py`, `executor.py`, `factory.py`, `registry.py`, `recording.py`, `streaming/` |
+| **** | Setup + diagnosis | `ai/graphs/diagnosis.py`, `api/diagnosis.py`, `(setup)/onboarding`, `components/diagnosis/` |
+| **** | Forge wow | `ai/graphs/roadmap_forge.py`, `services/graph_state.py`, `api/forge.py` ✅, `(setup)/forge`, `components/forge/`, `components/streaming/` |
+| **** | Artifact UI | `api/roadmap.py`, `services/roadmap.py`, `(artifact)/roadmap`, `components/roadmap/` |
+| **** | Mastery loop | `ai/graphs/validation.py`, `api/validation.py`, validation UI in artifact |
+| **** | Adaptive | `services/graph_state.py`, `schemas/planning.py`, post-validation recalibration |
+| **** | Demo | seed Ana, E2E pitch 7 min |
+| **** [P] | Stretch | `ai/agents/mentor.py`, mentor route, artifact sidebar |
+| **** [P] | Stretch | mock interview loop (recalibrates trail) |
+| **** [P] | Stretch | mentor report (depends ) |
 
 ---
 
 ## ASCII execution tree
 
 ```
-Career Forge — E2E execution (post-HAC-32)
+Career Forge — E2E execution (post-)
 │
-├─ FRONTEND  apps/frontend/src/
-│  ├─ (setup)/
-│  │  ├─ /onboarding ────────────── HAC-8  → POST /diagnosis
-│  │  └─ /forge ─────────────────── HAC-18 → GET /forge/{run_id}/stream (SSE timeline)
-│  └─ (artifact)/
-│     └─ /roadmap ───────────────── HAC-9  → GET /roadmap
-│        ├─ Validate ────────────── HAC-10 → POST /validation → GraphExecutor(validation)
-│        ├─ Reactive roadmap ────── HAC-11 → services/graph_state.apply_graph_patch
-│        ├─ Mentor chat ─────────── HAC-13 → GraphExecutor(mentor)
-│        └─ Demo Ana ────────────── HAC-12
+├─ FRONTEND apps/frontend/src/
+│ ├─ (setup)/
+│ │ ├─ /onboarding ────────────── → POST /diagnosis
+│ │ └─ /forge ─────────────────── → GET /forge/{run_id}/stream (SSE timeline)
+│ └─ (artifact)/
+│ └─ /roadmap ───────────────── → GET /roadmap
+│ ├─ Validate ────────────── → POST /validation → GraphExecutor(validation)
+│ ├─ Reactive roadmap ────── → services/graph_state.apply_graph_patch
+│ ├─ Mentor chat ─────────── → GraphExecutor(mentor)
+│ └─ Demo Ana ────────────── 
 │
-└─ BACKEND  apps/backend/src/career_forge/
-   ├─ api/          thin HTTP (creates GraphRun, calls executor)
-   │  ├─ diagnosis.py   [stub → HAC-8]
-   │  ├─ forge.py       [✅ wired]
-   │  ├─ roadmap.py     [stub → HAC-9]
-   │  └─ validation.py  [stub → HAC-10]
-   │
-   ├─ services/     business logic (no streaming)
-   │  ├─ roadmap.py      user graph persistence (HAC-9/18)
-   │  ├─ graph_state.py  deterministic GraphPatch merge (HAC-11/18)
-   │  └─ seed_catalog.py ✅
-   │
-   ├─ ai/           unified execution HAC-32
-   │  ├─ run.py          GraphRun + GraphRunStore (Postgres canonical; InMemory dev fallback)
-   │  ├─ executor.py     SINGLE astream_events v2 path
-   │  ├─ factory.py      AgentFactory.get(name) + checkpointer injection
-   │  ├─ registry.py     diagnosis | roadmap_forge | validation | mentor
-   │  ├─ recording.py     raw + normalized events → GraphRun
-   │  ├─ streaming/
-   │  │  ├─ events.py    LC v2 → RoadmapForgeEvent / graph_complete
-   │  │  └─ sse.py       wire SSE
-   │  ├─ graphs/         LangGraph builders + PostgresSaver checkpointer
-   │  └─ agents/         mentor (HAC-13)
-   │
-   ├─ schemas/      Pydantic I/O ✅ HAC-7
-   └─ db/           Postgres
-      ├─ models/graph_run.py   GraphRunRecord → graph_runs ✅
-      └─ (LangGraph checkpoint tables via PostgresSaver)
+└─ BACKEND apps/backend/src/career_forge/
+ ├─ api/ thin HTTP (creates GraphRun, calls executor)
+ │ ├─ diagnosis.py [stub → ]
+ │ ├─ forge.py [✅ wired]
+ │ ├─ roadmap.py [stub → ]
+ │ └─ validation.py [stub → ]
+ │
+ ├─ services/ business logic (no streaming)
+ │ ├─ roadmap.py user graph persistence (/18)
+ │ ├─ graph_state.py deterministic GraphPatch merge (/18)
+ │ └─ seed_catalog.py ✅
+ │
+ ├─ ai/ unified execution 
+ │ ├─ run.py GraphRun + GraphRunStore (Postgres canonical; InMemory dev fallback)
+ │ ├─ executor.py SINGLE astream_events v2 path
+ │ ├─ factory.py AgentFactory.get(name) + checkpointer injection
+ │ ├─ registry.py diagnosis | roadmap_forge | validation | mentor
+ │ ├─ recording.py raw + normalized events → GraphRun
+ │ ├─ streaming/
+ │ │ ├─ events.py LC v2 → RoadmapForgeEvent / graph_complete
+ │ │ └─ sse.py wire SSE
+ │ ├─ graphs/ LangGraph builders + PostgresSaver checkpointer
+ │ └─ agents/ mentor ()
+ │
+ ├─ schemas/ Pydantic I/O ✅ 
+ └─ db/ Postgres
+ ├─ models/graph_run.py GraphRunRecord → graph_runs ✅
+ └─ (LangGraph checkpoint tables via PostgresSaver)
 ```
 
 ---
 
 ## Parallel dispatch order
 
-Reference: [parallel-dispatch.mdc](../../.cursor/rules/parallel-dispatch.mdc) · [SPRINT-BOARD.md](../SPRINT-BOARD.md)
+Reference: [parallel-dispatch.mdc](../../.cursor/rules/parallel-dispatch.mdc) · [ROADMAP.md](../ROADMAP.md)
 
 | Issue | Class | Depends on | Parallel with |
 |-------|-------|------------|---------------|
-| HAC-5 ✅ | P | HAC-19 ✅ | HAC-6, HAC-7 |
-| HAC-6 ✅ | P | HAC-19 ✅ | HAC-5, HAC-7 |
-| HAC-7 ✅ | P | HAC-19 ✅ | HAC-5, HAC-6 |
-| HAC-31 ✅ | — | HAC-5 | — |
-| HAC-32 ✅ | — | HAC-7 | — |
-| **HAC-8** | **S** | HAC-5,6,7 ✅ | **None** — next in queue |
-| **HAC-18** | **S** | HAC-8 | **None** until HAC-8 merges |
-| **HAC-9** | **S** | HAC-18 | **None** until HAC-18 merges |
-| **HAC-10** | **S** | HAC-9 | **None** |
-| **HAC-11** | **S** | HAC-10 | **None** |
-| **HAC-12** | **S** | HAC-11 | **None** |
-| **HAC-13** | **P** | HAC-12 | HAC-14 (after HAC-12) |
-| **HAC-14** | **P** | HAC-12 | HAC-13 (after HAC-12) |
-| **HAC-15** | **P** | HAC-10 + HAC-12 | HAC-13, HAC-14 (after deps OK) |
+| ✅ | P | ✅ | , |
+| ✅ | P | ✅ | , |
+| ✅ | P | ✅ | , |
+| ✅ | — | | — |
+| ✅ | — | | — |
+| **** | **S** | ,6,7 ✅ | **None** — next in queue |
+| **** | **S** | | **None** until merges |
+| **** | **S** | | **None** until merges |
+| **** | **S** | | **None** |
+| **** | **S** | | **None** |
+| **** | **S** | | **None** |
+| **** | **P** | | (after ) |
+| **** | **P** | | (after ) |
+| **** | **P** | + | , (after deps OK) |
 
 ### Dispatch quick reference
 
 ```
-Sprint 1:  [P] HAC-5 + HAC-6 + HAC-7  →  ONE message, 3 subagents  ✅
-Sprint 2:  [S] HAC-8 → HAC-18         ← NEXT (sequential)
-Sprint 3:  [S] HAC-9
-Sprint 4:  [S] HAC-10 → HAC-11 → HAC-12
-Sprint 5:  [P] HAC-13 + HAC-14 + HAC-15  →  ONE message, 3 subagents
+Sprint 1: [P] + + → ONE message, 3 subagents ✅
+Sprint 2: [S] → ← NEXT (sequential)
+Sprint 3: [S] 
+Sprint 4: [S] → → 
+Sprint 5: [P] + + → ONE message, 3 subagents
 ```
 
-**Practical note:** within a single issue (e.g. HAC-8), FE and BE can progress in parallel on the same branch. Do **not** parallelize sibling issues in `[S]` chains before upstream merge.
+**Practical note:** within a single issue (e.g. a single CAR issue), FE and BE can progress in parallel on the same branch. Do **not** parallelize sibling issues in `[S]` chains before upstream merge.
 
 ---
 
@@ -312,21 +312,21 @@ Bootstrap paste block and subagent Task template: [AGENTS.md](../../AGENTS.md) �
 Use a **sibling worktree** outside the main checkout so issue work does not pollute the primary workspace:
 
 ```bash
-# From HB01-2026_soft-push on main
-git worktree add ../worktrees/hac-XX-<slug> -b hac-XX-<slug> origin/main
-cd ../worktrees/hac-XX-<slug>
+# From career-forge-v2 on main
+git worktree add ../worktrees/car-XX-<slug> -b CAR-XX-title-slug origin/main
+cd ../worktrees/car-XX-<slug>
 # implement → test → merge to main from worktree or main checkout
 ```
 
 After merge + end-task:
 
 ```bash
-git worktree remove ../worktrees/hac-XX-<slug>
-git branch -d hac-XX-<slug>
+git worktree remove ../worktrees/car-XX-<slug>
+git branch -d CAR-XX-title-slug
 ```
 
 Keep `main` clean for harness/docs and parallel prep; one worktree per active `[S]` issue.
 
 ---
 
-*HB01-2026 · Programadores Sem Pátria*
+*Career Forge v2 · Borderless Labs*

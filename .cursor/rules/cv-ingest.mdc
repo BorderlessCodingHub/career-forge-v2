@@ -4,7 +4,7 @@ globs:
   - apps/backend/src/career_forge/services/cv*
   - apps/backend/src/career_forge/schemas/cv*
   - apps/frontend/src/components/diagnosis/CvDropzone*
-  - docs/backlog/CV-PARSING.md
+  - docs/archive/backlog/CV-PARSING.md
 alwaysApply: false
 ---
 
@@ -13,7 +13,7 @@ alwaysApply: false
 ## Read first
 
 - [ADR-001 § CV policy](../../docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md)
-- [CV-PARSING backlog](../../docs/backlog/CV-PARSING.md)
+- Historical backlog notes: [CV-PARSING](../../docs/archive/backlog/CV-PARSING.md)
 
 ## MVP scope
 
@@ -25,9 +25,5 @@ alwaysApply: false
 ## Anti-patterns
 
 - ❌ Require CV to start diagnosis
-- ❌ LinkedIn scrape in hackathon MVP
+- ❌ LinkedIn scrape
 - ❌ Store raw PDF in sessionStorage for production (move to backend on start)
-
-## Linear
-
-HAC-33 (epic) · blocks enriched skip logic in HAC-43

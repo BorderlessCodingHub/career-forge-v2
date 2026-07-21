@@ -1,8 +1,8 @@
 # Diagnosis interview — product + engineering spec
 
-> **Authority:** [ADR-001](../decisions/ADR-001-adaptive-diagnosis-ctrr.md) (business decisions) · this doc (operational spec)
+> **Authority:** [ADR-001](../decisions/ADR-001-adaptive-diagnosis-ctrr.md) (business decisions) · this doc (operational spec) · [V2-PLAN.md](../V2-PLAN.md) (v2 soft gate / audience)
 
-**Status:** Implemented in production path (HAC-42–46, polished in HAC-47)
+**Status:** Implemented in production path. v2 F2 recalibrates prompts for BASE/PSP + LLM tracks; pilot uses **soft gate** (lean forge + warning) below score bar.
 
 ---
 
@@ -147,7 +147,7 @@ See [`components/diagnosis/AGENTS.md`](../../apps/frontend/src/components/diagno
 
 ---
 
-## CV ingest (HAC-33b)
+## CV ingest
 
 | Step | Owner | LLM? |
 |------|-------|------|

@@ -1,22 +1,23 @@
 # Start a Linear issue
 
-Workflow to begin work on a Linear issue.
+Workflow to begin work on a Linear issue (Career Forge V2 · `CAR-XX`).
 
 ## Steps
 
 1. **Read context** (in order):
-   - CLAUDE.md → docs/ROADMAP.md → docs/SPRINT-BOARD.md → docs/STATUS.md → docs/CHECKPOINT.md
+   - CLAUDE.md / AGENTS.md → docs/V2-PLAN.md → docs/ROADMAP.md → docs/STATUS.md → docs/CHECKPOINT.md
 
 2. **Get issue from Linear** via MCP:
    - Use `get_issue` to fetch acceptance criteria
-   - Confirm scope is a single HAC-XX issue
+   - Confirm scope is a single CAR-XX issue
+   - Set state → **In Progress**
 
 3. **Create branch**:
    ```
    git checkout main && git pull origin main
-   git checkout -b HAC-XX-title-slug
+   git checkout -b CAR-XX-title-slug
    ```
-   Use Linear "Copy git branch name" format when available.
+   Strip any `username/` prefix from Linear's suggested branch name.
 
 4. **Classify issue**:
    - **P** (parallel) — independent, can run with others
@@ -33,4 +34,4 @@ Workflow to begin work on a Linear issue.
 7. **Start implementation** — target 200–500 LOC.
 
 ## Input
-Provide the Linear issue identifier (e.g., HAC-42) or describe the task.
+Provide the Linear issue identifier (e.g., CAR-5) or describe the task.

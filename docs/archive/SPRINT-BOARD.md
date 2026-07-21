@@ -1,6 +1,6 @@
 # SPRINT BOARD — Career Forge
 
-> **Navigation:** [ROADMAP](./ROADMAP.md) · [STATUS](./STATUS.md) · [decisions/2026-05-25-sync-arthur](./decisions/2026-05-25-sync-arthur.md) · [Linear project](https://linear.app/hackas-borderless/project/career-forge-soft-push-b0fb1f68c110)
+> **Navigation:** [ROADMAP](../ROADMAP.md) · [STATUS](../STATUS.md) · [decisions/2026-05-25-sync-arthur](./decisions/2026-05-25-sync-arthur.md) · [Linear project](https://linear.app/hackas-borderless/project/career-forge-soft-push-b0fb1f68c110)
 
 Hackathon week target: **2026-06-01** · Functional MVP: **~2026-05-29 (Thursday)**
 

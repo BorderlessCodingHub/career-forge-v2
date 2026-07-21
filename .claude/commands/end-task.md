@@ -8,7 +8,7 @@ Mandatory after every merge to main.
    ```
    git log --oneline -5
    ```
-   Confirm the merge commit is on main.
+   Confirm the merge commit is on main and references `CAR-XX`.
 
 2. **Update Linear issue status**:
    - Use Linear MCP `save_issue` to set status → **Done**
@@ -19,7 +19,7 @@ Mandatory after every merge to main.
    - Update the "last merge" entry
 
 4. **Update docs/ROADMAP.md**:
-   - Check off the completed item in the sprint checklist
+   - Mark the completed CAR issue / phase checklist item
 
 5. **Self-critique drift check**:
    - Did the merge introduce duplicate modules?
@@ -33,4 +33,4 @@ Mandatory after every merge to main.
    - Any blockers or follow-up items
 
 ## Input
-Provide the HAC-XX issue identifier that was just merged.
+Provide the CAR-XX issue identifier that was just merged.

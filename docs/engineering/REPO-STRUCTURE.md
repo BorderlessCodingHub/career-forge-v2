@@ -2,7 +2,7 @@
 
 > **Navigation:** [AGENTS.md](../AGENTS.md) · [AGENT-LIFECYCLE.md](./AGENT-LIFECYCLE.md) · [EXECUTION-FLOW.md](./EXECUTION-FLOW.md) · [AI-EXECUTION.md](./AI-EXECUTION.md)
 
-Last updated: **HAC-51** — Sprint 6 + deploy hardening docs sync.
+Last updated: **2026-07-21** (Career Forge v2 docs sync).
 
 ## Root layout
 
@@ -53,12 +53,12 @@ apps/backend/
         │   ├── base.py
         │   └── models/
         │       └── graph_run.py # GraphRunRecord → graph_runs (Postgres canonical store)
-        ├── schemas/             # Pydantic structured outputs (HAC-7)
+        ├── schemas/             # Pydantic structured outputs 
         │   ├── diagnosis.py
         │   ├── forge.py
         │   ├── validation.py
         │   └── planning.py
-        ├── ai/                  # Unified AI layer (HAC-32)
+        ├── ai/                  # Unified AI layer 
         │   ├── factory.py       # AgentFactory — register/get by name
         │   ├── executor.py      # GraphExecutor — astream_events v2
         │   ├── run.py           # GraphRun entity + GraphRunStore
@@ -82,7 +82,7 @@ apps/backend/
         └── fixtures/            # Example JSON contracts
 ```
 
-### AI layer rules (HAC-32)
+### AI layer rules
 
 | Module | Responsibility |
 |--------|----------------|

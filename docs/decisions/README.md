@@ -4,8 +4,10 @@ Immutable **business + architecture decisions** for Career Forge. Agents must re
 
 | ADR | Status | Topic |
 |-----|--------|-------|
-| [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) | **Accepted** | Adaptive diagnosis interview (CTRR + Interviewer/Judge) |
-| [ADR-002](./ADR-002-universal-profile-framework.md) | **Proposed** | Universal 5-dimension profile (replaces 8-dim CTRR scope) |
+| [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) | **Accepted · binding in v2** | Adaptive diagnosis (CTRR + Interviewer/Judge) |
+| [ADR-002](./ADR-002-universal-profile-framework.md) | **Not active in v2 F2** | Universal 5-dimension profile (historical; do not implement) |
+
+v2 execution decisions (cost pool, auth platform, goals): [V2-PLAN.md](../V2-PLAN.md) decision log.
 
 ## When to add an ADR
 
@@ -16,7 +18,7 @@ Immutable **business + architecture decisions** for Career Forge. Agents must re
 ## When **not** to add an ADR
 
 - Implementation detail covered by `docs/product/` or `docs/engineering/`
-- Sprint-only scope already in Linear acceptance criteria
+- Phase-only scope already in Linear acceptance criteria or V2-PLAN
 
 ## Agent workflow
 

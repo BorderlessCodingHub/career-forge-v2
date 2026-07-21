@@ -2,16 +2,18 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Accepted |
-| **Date** | 2026-05-25 |
-| **Deciders** | Career Forge team (hackathon) |
-| **Supersedes (partial)** | [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) — dimension model & UX caps only; Judge/Interviewer loop remains |
+| **Status** | **Not active in v2 F2.** Historical proposal. v2 keeps CTRR 4 dims + soft gate per [V2-PLAN.md](../V2-PLAN.md). Revisit only via a new ADR. |
+| **Date** | 2026-05-25 · annotated 2026-07-21 |
+| **Deciders** | Career Forge team (hackathon-era) |
+| **Supersedes (partial, historical)** | [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) — dimension model only; Judge/Interviewer loop remains in ADR-001 |
+
+> **v2 agents:** follow ADR-001 + [DIAGNOSIS-INTERVIEW.md](../product/DIAGNOSIS-INTERVIEW.md). Do not implement the 5-dimension universal profile from this ADR unless product explicitly reopens it.
 
 ---
 
 ## Context
 
-### Problem with 8-dimension CTRR (hackathon scope)
+### Problem with 8-dimension CTRR (historical)
 
 ADR-001 defined **CTRR** — eight rubric dimensions tuned for backend transition (`git`, `http_apis`, `database`, …). In production testing:
 

@@ -1,6 +1,10 @@
 # Deploy Career Forge on a VPS (nginx + Docker Compose + Let's Encrypt)
 
-This is a v1 deployment runbook for a VPS where **host nginx** already exists. Docker only runs the apps and Postgres; nginx + Certbot live on the host.
+> **Labs path is primary for v2.** Prefer [DEPLOY-LABS-MANUAL.md](../DEPLOY-LABS-MANUAL.md)
+> (`labs.borderlesscoding.com/career-forge`). This document remains for alternate
+> subdomain / dual-domain nginx setups.
+
+This is a deployment runbook for a VPS where **host nginx** already exists. Docker only runs the apps and Postgres; nginx + Certbot live on the host.
 
 Product-level deployment overview lives in [docs/CHECKPOINT.md](../CHECKPOINT.md) under **Deployment baseline**.
 

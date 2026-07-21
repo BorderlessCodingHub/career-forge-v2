@@ -4,7 +4,7 @@
 
 Canonical reference for how graphs/agents run, stream, and persist events.
 
-Last updated: **HAC-51**
+Last updated: **2026-07-21** (Career Forge v2 docs sync).
 
 ---
 
@@ -64,12 +64,14 @@ Registered names:
 
 | Name | Builder | Issue |
 |------|---------|-------|
-| `diagnosis` | `build_diagnosis_graph` | HAC-8 |
-| `diagnosis_interview` | `build_diagnosis_interview_graph` | HAC-43 |
-| `roadmap_forge` | `build_roadmap_forge_graph` | HAC-18 |
-| `validation` | `build_validation_graph` | HAC-10 |
-| `mock_interview` | `build_mock_interview_graph` | HAC-14 |
-| `mentor` | `build_mentor_agent` | HAC-13 |
+| Graph | Builder | Notes |
+|-------|---------|-------|
+| `diagnosis` | `build_diagnosis_graph` | Legacy / fallback path |
+| `diagnosis_interview` | `build_diagnosis_interview_graph` | Production CTRR interview |
+| `roadmap_forge` | `build_roadmap_forge_graph` | Live forge SSE |
+| `validation` | `build_validation_graph` | Mastery validation |
+| `mock_interview` | `build_mock_interview_graph` | Mock interview loop |
+| `mentor` | `build_mentor_agent` | Contextual mentor |
 
 Extend via `factory.register(name, builder_fn)`.
 
@@ -160,7 +162,7 @@ Other AI-backed routers already follow this pattern (`diagnosis`, `diagnosis_int
 
 ## Current follow-ups
 
-- [ ] Replace `MockGraphRunnable` with compiled LangGraph graphs (HAC-8/10/18)
+- [x] Compiled LangGraph graphs via AgentFactory
 - [ ] Wire `PostgresGraphRunStore` as production default (replace module-level `InMemoryGraphRunStore`)
 - [ ] Inject LangGraph `PostgresSaver` checkpointer in graph builders
 - [ ] LangSmith trace IDs on `GraphRun`
@@ -168,4 +170,4 @@ Other AI-backed routers already follow this pattern (`diagnosis`, `diagnosis_int
 
 ---
 
-*HB01-2026 · Programadores Sem Pátria*
+*Career Forge v2 · Borderless Labs*
