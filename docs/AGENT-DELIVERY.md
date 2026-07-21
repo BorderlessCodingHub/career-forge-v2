@@ -50,7 +50,7 @@ Triple QA Gate: PASS | BLOCKED
 
 Readonly subagent with `git diff origin/main...HEAD` + tests.
 
-Checklist: coupling, SRP, Pydantic contracts, meaningful tests, scope = single HAC issue, **structure compliance** ([REPO-STRUCTURE.md](../docs/engineering/REPO-STRUCTURE.md) — no duplicate modules, no legacy `apps/api`/`apps/web` paths).
+Checklist: coupling, SRP, Pydantic contracts, meaningful tests, scope = single **CAR** issue, **structure compliance** ([REPO-STRUCTURE.md](./engineering/REPO-STRUCTURE.md) — no duplicate modules, no legacy `apps/api`/`apps/web` paths).
 
 Output: `SHIP | FIX | SPLIT`
 
@@ -95,4 +95,4 @@ Checks (grow over time): health, diagnosis, forge SSE, validation, skill graph s
 
 ---
 
-*Career Forge · HB01-2026*
+*Career Forge v2 · Borderless Labs*

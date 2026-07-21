@@ -19,6 +19,7 @@ alwaysApply: false
 
 1. [ADR-001](../../docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md) — business decisions
 2. [DIAGNOSIS-INTERVIEW.md](../../docs/product/DIAGNOSIS-INTERVIEW.md) — API, schemas, sequence
+3. [V2-PLAN.md](../../docs/V2-PLAN.md) — v2 audience + soft gate
 
 ## Golden rules
 
@@ -27,14 +28,12 @@ alwaysApply: false
 3. **Frontend dumb:** render API `questions[]`; no `DIAG_ROUNDS` in prod path
 4. **GraphExecutor + AgentFactory** — register `diagnosis_interview` in `registry.py`
 5. **CV optional** — PDF-only ingest; skip saturated dimensions from intake/CV
-6. **Audience:** career transition beginners — no enterprise hiring rubric
-
-## Linear
-
-HAC-42 → HAC-46 · CV: HAC-33
+6. **Audience (v2):** BASE/PSP spectrum — readiness for LLM tracks, not enterprise hiring rubric
+7. **Soft gate (v2 pilot):** below score bar → lean forge + warning (not hard block)
 
 ## Anti-patterns
 
 - ❌ Static pill rounds in `onboarding-data.ts` for production
 - ❌ Mock diagnosis without LLM on user path
 - ❌ Demo Ana toggle on onboarding screens
+- ❌ Implementing ADR-002 5-dim profile without a new product ADR

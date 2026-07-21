@@ -8,7 +8,7 @@ alwaysApply: false
 
 # AI execution (GraphExecutor)
 
-All graph/agent execution goes through the unified AI layer (HAC-32).
+All graph/agent execution goes through the unified AI layer (`career_forge/ai/`).
 
 ---
 

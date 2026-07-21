@@ -1,165 +1,69 @@
-# ROADMAP — Career Forge
+# ROADMAP — Career Forge v2
 
-> **Navigation:** [SPRINT-BOARD](./SPRINT-BOARD.md) · [STATUS](./STATUS.md) · [CHECKPOINT](./CHECKPOINT.md) · [Linear project — Career Forge](https://linear.app/hackas-borderless/project/career-forge-soft-push-b0fb1f68c110)
+> **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Status:** [STATUS.md](./STATUS.md) · **Linear:** [Career Forge V2](https://linear.app/career-forge-v2) (`CAR`)
 
-Execution order for hackathon week. **One issue = one branch = one merge.**
+Branch format: `CAR-XX-title-slug` (no username prefix).
 
-Branch format: `HAC-XX-title-slug` (git hygiene). Linear status: **manual** via [end-task-workflow](../.cursor/rules/end-task-workflow.mdc).
-
-**MVP target (Arthur sync):** ~2026-05-29 (Thursday) · **Pitch:** 7-min live demo
-
-Full sprint board: [SPRINT-BOARD.md](./SPRINT-BOARD.md) · Agent lifecycle: [engineering/AGENT-LIFECYCLE.md](./engineering/AGENT-LIFECYCLE.md)
+Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Parallel-safe issues with deps satisfied → launch Task subagents in one message.
 
 ---
 
-## Sprint 0 — Harness & prototype ✅
+## Current focus — Phase 1 (Infra + cost gate)
 
-- [x] **HAC-19** — Engineering lifecycle + agent harness
-- [x] **HAC-20** — UI product source of truth docs + sync rule/hook
-- [x] **HAC-21** — UX paradigm doc update (editable diagnosis + forge redesign)
-- [x] **HAC-22** — Rename product to Career Forge (docs, prototype, harness)
-- [x] **HAC-23** — Borderless UI theming guidance (docs, references, prototype CSS Phase 1)
-- [x] **HAC-24** — Prototype onboarding pills, minimal goal, vertical graph, 404 fix
-- [x] **HAC-25** — Prototype artifact mode: steady trail canvas, node drawer, uniform forge nodes
-- [x] **HAC-26** — Backlog compliance audit (docs + Linear HAC-5–18 alignment)
-- [x] **HAC-30** — Arthur sync — sprint roadmap + agent lifecycle
+**Gate:** cost report + budget (hard R$500 / approval ≤ R$700) approved by Yuri → **no students before that**.
 
----
+### Track A — unblocked now **[P]**
 
-## Sprint 1 — Foundation **[P] parallel**
+| Issue | Title | Class |
+|-------|-------|-------|
+| [CAR-5](https://linear.app/career-forge-v2/issue/CAR-5) | Swap goals + minimal catalog seeds (LLM tracks) | [P] |
+| [CAR-6](https://linear.app/career-forge-v2/issue/CAR-6) | Cost instrumentation (global pool + per-user cap) | [P] |
+| [CAR-8](https://linear.app/career-forge-v2/issue/CAR-8) | Draft must-have nodes (4 LLM goals) | [P] |
 
-**Target:** 2026-05-27 · **Dispatch:** [parallel-dispatch](../.cursor/rules/parallel-dispatch.mdc)
+### Track A — sequential
 
-- [x] **HAC-5** [P] — Monorepo Next.js + FastAPI + Postgres + deploy
-- [x] **HAC-6** [P] — Skill graph schema + roadmap.json seed
-- [x] **HAC-7** [P] — Pydantic + LangGraph state contracts
-- [x] **HAC-31** — Professional scaffold (`apps/backend` + `apps/frontend`)
-- [x] **HAC-32** — AI execution layer (`GraphRun`, `GraphExecutor`, `AgentFactory`)
+| Issue | Title | Class | Blocked by |
+|-------|-------|-------|------------|
+| [CAR-7](https://linear.app/career-forge-v2/issue/CAR-7) | Synthetic cost gate run + Yuri report | [S] | CAR-5, CAR-6 |
 
-**Parallel:** HAC-5, HAC-6, HAC-7 after HAC-19 (no cross-deps)
+### Track B — external **[B]**
+
+| Issue | Title | Class |
+|-------|-------|-------|
+| [CAR-9](https://linear.app/career-forge-v2/issue/CAR-9) | Labs nginx path `/career-forge` (Brunno / domain) | [B] |
 
 ---
 
-## Sprint 2 — Identity + Forge (core wow)
+## Phase 2 — Goals LLM + prompts + english-first (placeholders)
 
-**Target:** 2026-05-29 (MVP)
+**Prerequisite:** F1 cost gate approved; must-haves sign-off (or silence baseline).  
+**No real students.** Acceptance: golden cases + ≥70% must-have coverage; soft gate on diagnosis.
 
-- [x] **HAC-8** — Identity Engine (onboarding diagnosis + **editable diagnosis** screen)
-- [x] **HAC-18** — Live Roadmap Forge (LangGraph SSE + animation reveal) ⭐
+- [ ] CTRR prompts/rubrics for BASE/PSP spectrum (4 goals)
+- [ ] Soft gate (lean forge + warning below bar)
+- [ ] Catalog + prompts enforce must-have nodes
+- [ ] English-first UI / prompts / reports
+- [ ] 16 golden cases (4 goals × 4 CTRR dims)
 
-**Sequential:** HAC-8 → HAC-18
-
-> Forge UI is **timeline-only during stream** (no graph preview). Reveal animates into **vertical roadmap.sh-style layout**. See [UX-FLOW.md](../claude-design-docs/UX-FLOW.md).
-
----
-
-## Sprint 3 — Artifact UI
-
-**Target:** 2026-05-30
-
-- [x] **HAC-9** — Vertical roadmap UI (steady state + optional AI sidebar)
-
-**Sequential:** HAC-18 → HAC-9
+Create Linear issues when F1 gate closes.
 
 ---
 
-## Sprint 4 — Mastery loop
+## Phase 3 — Rebrand + auth platform + landing + pilots (placeholders)
 
-**Target:** 2026-05-31
+**Prerequisite:** F2 golden cases OK.  
+**First humans BASE/PSP only after:** platform auth + hard caps + rebrand/landing.
 
-- [x] **HAC-10** — AI Mastery Validation
-- [x] **HAC-11** — Adaptive Planning
-- [x] **HAC-12** — Demo mode + seed Ana
-
-**Sequential:** HAC-10 → HAC-11 → HAC-12
-
----
-
-## Sprint 5 — Stretch P1 **[P] where possible**
-
-**Target:** 2026-06-01
-
-- [x] **HAC-13** [P] — Contextual Mentor
-- [x] **HAC-14** [P] — Mock Interview Loop
-- [x] **HAC-15** [P] — Mentor report
-
-**Parallel:** HAC-13, HAC-14, HAC-15 after HAC-12 (HAC-15 also needs HAC-10)
+- [ ] Auth via `borderless-api` (platform)
+- [ ] Hard caps (pool R$500 + per-user)
+- [ ] Rebrand Borderless + i18n pt-BR
+- [ ] Landing Next.js at `/career-forge`
+- [ ] 2 BASE/PSP pilots end-to-end
 
 ---
 
-## Sprint 6 — AI diagnosis interview (P0 post-MVP) ⭐
+## Out of scope (v3+)
 
-**Authority:** [ADR-001](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) · [DIAGNOSIS-INTERVIEW](./product/DIAGNOSIS-INTERVIEW.md)
+SSO beyond platform · NocoDB/Discord · OPS dashboard · Gate-as-a-Service · Stripe · job-RAG in forge · diagnosis hard block · Frame landing · global standalone domain
 
-**Why:** Hackathon rule — remove AI, app stops. Screen 2 must be LLM-driven (CTRR + Interviewer/Judge).
-
-- [x] **HAC-33** — CV ingest MVP (PDF extract + optional CvSignals) — supports skip logic
-- [x] **HAC-42** — Rubric schemas + CTRR contracts
-- [x] **HAC-43** — `diagnosis_interview` graph (Judge + Interviewer)
-- [x] **HAC-44** — Multi-turn session API + Postgres
-- [x] **HAC-45** — Frontend adaptive UI (dumb renderer)
-- [x] **HAC-46** — Saturation guardrails + LLM fallback
-- [x] **HAC-47** — Onboarding diagnosis polish + observability harness
-
-**Sequential:** HAC-42 → HAC-43 → HAC-44 → HAC-45 → HAC-46 · HAC-33 parallel with HAC-42–44 · HAC-47 post-merge polish
-
----
-
-## Tech debt cleanup
-
-- [x] **HAC-35** — Consolidate fragmented session stores (`lib/session/storage.ts`)
-- [x] **HAC-50** — VPS production deploy hardening (GHCR namespace `pedroalano`, monorepo Dockerfile paths in CI, nginx envsubst safety, curl-based post-deploy health check)
-- [x] **HAC-51** — Complete application overview + full documentation sync
-- [x] **HAC-59** — Prod skill catalog bootstrap (always seed `skill_nodes` on deploy; `SEED_DEMO_ANA` opt-in for demo Ana)
-- [x] **HAC-58** — Prod Postgres persistence stores (`DIAGNOSIS_SESSION_STORE` + `GRAPH_RUN_STORE`)
-- [x] **HAC-53** — Diagnosis screen UX (view-first edit, dnd-kit reorder)
-- [x] **HAC-52** — Roadmap motor API (`POST /diagnosis/confirm`, forge loads profile, 202 + run_id)
-- [x] **HAC-54** — Web search enrichment (OpenAI native `web_search`, live source cards, planner/evaluator StudyPlan loop)
-- [x] **HAC-55** — LLM learning graph persistence (dynamic StudyPlan nodes, references/tasks, reload order)
-- [x] **HAC-63** — Roadmap drawer progress (check tasks/references, progress bar, `PATCH /roadmap/nodes/{id}/checklist`)
-- [x] **HAC-64** — Mock interview + validation for generated StudyPlan nodes (resolve ai-generated context, preserve checklist evidence, recalibrate graph)
-- [x] **HAC-65** — Agent-generated MCQ mock interview (LLM A–D + server-side answer key, deterministic scoring, InterviewLoop pills)
-- [x] **HAC-57** — Diagnosis confirm → save DB → profile-only `POST /forge` → SSE redirect
-- [x] **HAC-66** — Mock interview on-topic (LLM commits to technical subject, forbids study logistics, grounds in references)
-- [x] **HAC-67** — Knowledge gap ledger + async classifier (`knowledge_gaps` table, fire-and-forget gap classification, searchable memory)
-- [x] **HAC-68** — Close the adaptive loop (mentor reads gaps, next mock weights gaps, drawer "Focus areas from the last attempt")
-- [x] **HAC-69** — Forge re-plan remediation (high-severity gaps inject self-cleaning remediation tasks into the chapter, "Adaptation" badge)
-- [x] **HAC-70** — Planner emits `key_concepts` per node (canonical concept source for mock + tutor, persisted via migration 006)
-- [x] **HAC-71** — Chapter Q&A tutor (AI grounded in `key_concepts` + references + open gaps via GraphExecutor, `TutorDrawer`)
-
----
-
-## Backlog / Won't do
-
-| Issue | Title | Status |
-|-------|-------|--------|
-| HAC-16 | CV from Evidence (P2) | Backlog |
-| HAC-17 | Claude Design HTML handoff | Backlog |
-| HAC-28 | Gamification streak + levels | Cancelled |
-| HAC-29 | Progress auto-posts | Cancelled |
-| HAC-30 | Onboarding hours/day pacing | Cancelled |
-
-Decisions: [decisions/README.md](./decisions/README.md) · [ADR-001](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) · [2026-05-25 sync Arthur](./decisions/2026-05-25-sync-arthur.md)
-
----
-
-## Subagent prompt template
-
-```
-Repo: HB01-2026_soft-push. Read AGENTS.md → ROADMAP → SPRINT-BOARD → STATUS → CHECKPOINT.
-Issue: HAC-XX only. Branch: HAC-XX-slug.
-Triple gate before merge. End-task after merge.
-If batch is [P]: parent launches parallel Tasks in ONE message.
-```
-
----
-
-## Linear hygiene
-
-- Start issue: `save_issue` state `In Progress`
-- Finish issue: **end-task-workflow** → `Done` + STATUS.md + checkbox here
-- Milestones: Sprint 1–5 on Linear project
-
----
-
-*Source of truth for agents — keep in sync with Linear.*
+Hackathon sprint history: [archive/SPRINT-BOARD.md](./archive/SPRINT-BOARD.md)

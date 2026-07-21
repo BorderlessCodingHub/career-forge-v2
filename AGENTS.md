@@ -1,8 +1,9 @@
 # Career Forge — Agent harness (index)
 
-**Career Forge** (Soft Push) — AI-native learning system: adaptive skill graph, Live Roadmap Forge with streaming, AI-driven mastery validation.
+**Career Forge v2** — AI-native learning system for BASE/PSP: adaptive skill graph, Live Roadmap Forge with streaming, AI-driven mastery validation. Deployed at `labs.borderlesscoding.com/career-forge`.
 
-**Stack:** Next.js (web) · FastAPI (api) · PostgreSQL · LangGraph + LangChain + LangSmith
+**Stack:** Next.js · FastAPI · PostgreSQL · LangGraph + LangChain + LangSmith  
+**Linear:** [Career Forge V2](https://linear.app/career-forge-v2) · team key **`CAR`**
 
 This file is the **table of contents**. Details live under [`docs/`](./docs/README.md) and [`claude-design-docs/`](./claude-design-docs/README.md).
 
@@ -12,17 +13,18 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 
 | Task | Read in order | Then do |
 |------|---------------|---------|
-| **Implement a Linear issue** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Worktree `../worktrees/hac-XX-<slug>` · branch `HAC-XX-title-slug` · triple gate · merge · **end-task** |
+| **Implement a Linear issue** | [V2-PLAN](./docs/V2-PLAN.md) → [ROADMAP](./docs/ROADMAP.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Branch `CAR-XX-title-slug` · triple gate · merge · **end-task** |
 | **AI / LangGraph work** | [EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) → [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) → [REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) § AI layer | Use `GraphExecutor` + `AgentFactory` — no per-graph streaming |
 | **Debug LLM / traces** | [langsmith-inspect skill](./.cursor/skills/langsmith-inspect/SKILL.md) → [langsmith-inspect rule](./.cursor/rules/langsmith-inspect.mdc) | `./scripts/langsmith-env.sh` loads `.env` · inspect traces before changing prompts/graphs |
 | **Local runtime / failed to fetch** | [local-debug skill](./.cursor/skills/local-debug/SKILL.md) → [local-debug rule](./.cursor/rules/local-debug.mdc) | Docker logs · CORS · `logs/backend.log` when `ENV=local` |
-| **Diagnosis / onboarding AI** | [ADR-001](./docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md) → [DIAGNOSIS-INTERVIEW](./docs/product/DIAGNOSIS-INTERVIEW.md) → [diagnosis-interview rule](./.cursor/rules/diagnosis-interview.mdc) | Multi-turn CTRR · ≤2 Q/turn · FE dumb renderer · HAC-42–46 |
-| **Bootstrap / first session** | [ROADMAP](./docs/ROADMAP.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | Paste block below · `make smoke` when apps exist |
-| **Understand full application** | [CHECKPOINT](./docs/CHECKPOINT.md) → [engineering/REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) → [engineering/EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) | Use as canonical product + runtime architecture overview before broad doc or refactor work |
-| **Cloud agent / Linear MCP** | [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Set `HACKATON_LINEAR_API_KEY` in [Cloud secrets](https://cursor.com/dashboard/cloud-agents) · repo [`.cursor/mcp.json`](./.cursor/mcp.json) |
-| **Agent lifecycle / sprint planning** | [AGENT-LIFECYCLE](./docs/engineering/AGENT-LIFECYCLE.md) → [SPRINT-BOARD](./docs/SPRINT-BOARD.md) | Classify P/S/B · parallel dispatch for [P] batches |
+| **Diagnosis / onboarding AI** | [ADR-001](./docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md) → [DIAGNOSIS-INTERVIEW](./docs/product/DIAGNOSIS-INTERVIEW.md) → [diagnosis-interview rule](./.cursor/rules/diagnosis-interview.mdc) | Multi-turn CTRR · ≤2 Q/turn · FE dumb renderer · soft gate in v2 pilot |
+| **Bootstrap / first session** | [V2-PLAN](./docs/V2-PLAN.md) → [ROADMAP](./docs/ROADMAP.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | Paste block below · `make smoke` when apps exist |
+| **Understand full application** | [CHECKPOINT](./docs/CHECKPOINT.md) → [engineering/REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) → [engineering/EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) | Canonical product + runtime overview |
+| **Cloud agent / Linear** | [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Linear Cursor plugin · workspace career-forge-v2 |
+| **Agent lifecycle / planning** | [AGENT-LIFECYCLE](./docs/engineering/AGENT-LIFECYCLE.md) → [ROADMAP](./docs/ROADMAP.md) | Classify P/S/B · parallel dispatch for [P] batches |
 | **UI from Claude Design** | [PRODUCT-SOURCE-OF-TRUTH](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) → [claude-design-docs/README.md](./claude-design-docs/README.md) | Map prototype → Next.js; sync docs after paradigm change |
 | **Delivery / merge** | [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) → [end-task-workflow](./.cursor/rules/end-task-workflow.mdc) | `SHIP + PASS + VERIFIED` then **manual Done in Linear** |
+| **Deploy Labs** | [DEPLOY-LABS-MANUAL](./docs/DEPLOY-LABS-MANUAL.md) | Path `/career-forge` on Labs VPS |
 
 ---
 
@@ -31,12 +33,12 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 Paste as first agent message if hooks unavailable:
 
 ```
-Repo: HB01-2026_soft-push (Career Forge hackathon).
-Read AGENTS.md → ROADMAP → SPRINT-BOARD → STATUS → CHECKPOINT → EXECUTION-FLOW (AI work).
-Pick current ROADMAP batch only. Branch: HAC-XX-title-slug.
+Repo: career-forge-v2 (Career Forge v2 · Borderless Labs).
+Read AGENTS.md → V2-PLAN → ROADMAP → STATUS → CHECKPOINT → EXECUTION-FLOW (AI work).
+Pick current ROADMAP phase only. Branch: CAR-XX-title-slug.
 Before merge: triple gate (docs/AGENT-DELIVERY.md). make test && make smoke when runtime touched.
 After merge: end-task — manually set Linear issue to Done (no GitHub↔Linear automation).
-Update docs/STATUS.md + ROADMAP checkboxes.
+Update docs/STATUS.md + ROADMAP.
 ```
 
 ---
@@ -44,12 +46,12 @@ Update docs/STATUS.md + ROADMAP checkboxes.
 ## Subagent Task template (mandatory for parent)
 
 ```
-Repo: HB01-2026_soft-push. Base: origin/main (pull latest).
+Repo: career-forge-v2. Base: origin/main (pull latest).
 
-Read AGENTS.md → docs/ROADMAP.md → docs/STATUS.md → docs/CHECKPOINT.md before coding.
-Scope: single issue HAC-XX only.
+Read AGENTS.md → docs/V2-PLAN.md → docs/ROADMAP.md → docs/STATUS.md → docs/CHECKPOINT.md before coding.
+Scope: single issue CAR-XX only.
 
-Branch: HAC-XX-title-slug
+Branch: CAR-XX-title-slug
 Acceptance: <from Linear get_issue>
 
 Before merge: triple gate — SHIP + PASS + VERIFIED.
@@ -64,15 +66,15 @@ Report: merge summary, gate verdicts, blockers.
 ```
 sessionStart hook
   → AGENTS.md
-  → ROADMAP.md           current sprint, deps
-  → SPRINT-BOARD.md      [P] parallel groups, milestones
-  → STATUS.md            parity matrix, last merge
-  → CHECKPOINT.md        product, stack, wow features
-  → issue scope          Linear MCP
+  → V2-PLAN.md         phases, locked decisions
+  → ROADMAP.md         current phase, CAR issues, [P]/[S]/[B]
+  → STATUS.md          parity matrix, last merge
+  → CHECKPOINT.md      product, stack, wow features
+  → issue scope        Linear MCP (CAR-XX)
   → claude-design-docs/  UI intent (when front-end)
       PRODUCT-SOURCE-OF-TRUTH.md first
-  → AGENT-DELIVERY.md    triple QA gate
-  → end-task-workflow    manual Linear Done
+  → AGENT-DELIVERY.md  triple QA gate
+  → end-task-workflow  manual Linear Done
 ```
 
 Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-LIFECYCLE.md)
@@ -83,12 +85,12 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 
 | Resource | Purpose |
 |----------|---------|
+| [V2-PLAN](./docs/V2-PLAN.md) | Canonical v2 execution plan + decision log |
 | [EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) | E2E tree, parallel dispatch, Postgres checkpointer |
 | [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) | GraphRun, GraphExecutor, AgentFactory, stream vs collect |
 | [ai-execution](./.cursor/rules/ai-execution.mdc) | GraphExecutor-only path for AI/LangGraph changes |
 | [AGENT-LIFECYCLE](./docs/engineering/AGENT-LIFECYCLE.md) | Session entry → planning → impl → QA → exit |
-| [SPRINT-BOARD](./docs/SPRINT-BOARD.md) | Sprint goals, [P] groups, fit/no-fit table |
-| [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Cloud bootstrap · Linear HTTP MCP · `HACKATON_LINEAR_API_KEY` |
+| [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Cloud bootstrap · Linear plugin |
 | [linear-delivery-workflow](./.cursor/rules/linear-delivery-workflow.mdc) | Branch, micro-PR, P/S/B classification |
 | [parallel-dispatch](./.cursor/rules/parallel-dispatch.mdc) | **Mandatory** parallel Task launch for [P] batches |
 | [end-task-workflow](./.cursor/rules/end-task-workflow.mdc) | **Manual Linear Done** (no GitHub integration) |
@@ -106,6 +108,8 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 | [langsmith-inspect skill](./.cursor/skills/langsmith-inspect/SKILL.md) | CLI commands, filters, Career Forge graph names |
 | [local-debug](./.cursor/rules/local-debug.mdc) | Docker, CORS, API smoke — always on runtime errors |
 | [local-debug skill](./.cursor/skills/local-debug/SKILL.md) | Stack ports, log paths, curl recipes, common fixes |
+
+Hackathon history: [docs/archive/](./docs/archive/)
 
 ---
 
@@ -134,30 +138,30 @@ Full workflow: [langsmith-inspect skill](./.cursor/skills/langsmith-inspect/SKIL
 
 ---
 
-## Cursor Cloud specific instructions
+## Cursor Cloud / Linear
 
-Cloud agents clone this repo only. Full bootstrap: [docs/CURSOR-CLOUD.md](./docs/CURSOR-CLOUD.md).
+Full bootstrap: [docs/CURSOR-CLOUD.md](./docs/CURSOR-CLOUD.md).
 
 | Item | Value |
 |------|-------|
-| Linear MCP config | [`.cursor/mcp.json`](./.cursor/mcp.json) — HTTP Bearer via `HACKATON_LINEAR_API_KEY` |
-| Secret name | `HACKATON_LINEAR_API_KEY` |
-| Dashboard | [cursor.com/dashboard/cloud-agents](https://cursor.com/dashboard/cloud-agents) → **Secrets** tab |
-| Linear key source | Linear → Settings → API → Personal API keys (hackas-borderless workspace) |
+| Linear workspace | [career-forge-v2](https://linear.app/career-forge-v2) |
+| Team key | `CAR` |
+| Preferred MCP | Cursor **Linear** plugin (OAuth) |
+| Branch format | `CAR-XX-title-slug` (no username prefix) |
 
-Do **not** commit API keys. Restart Cloud agents after adding or rotating secrets.
+Do **not** commit API keys.
 
 ---
 
 ## Linear branch naming
 
 ```
-HAC-XX-title-slug
+CAR-XX-title-slug
 ```
 
-Example: `HAC-18-live-roadmap-forge-langgraph-streaming`
+Example: `CAR-5-swap-goals-minimal-catalog-seeds-llm-tracks`
 
-Use Linear **Copy git branch name** when available. Branch name is for **git hygiene only** — status transitions are **manual** (see end-task-workflow).
+Branch name is for **git hygiene only** — status transitions are **manual** (see end-task-workflow).
 
 ---
 
@@ -165,6 +169,8 @@ Use Linear **Copy git branch name** when available. Branch name is for **git hyg
 
 > Onboarding → **Live Roadmap Forge (stream)** → skill graph reveal → **Validate with AI** → roadmap reacts.
 
-Design reference: [`claude-design-docs/prototype/README.md`](./claude-design-docs/prototype/README.md) — `http://localhost:8765/`
+v2 goals: `rag-engineer` · `agent-engineer` · `llm-evals` · `fine-tuning` — see [V2-PLAN](./docs/V2-PLAN.md).
+
+Design reference: [`claude-design-docs/prototype/README.md`](./claude-design-docs/prototype/README.md)
 
 UI source of truth: [`claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md`](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md)

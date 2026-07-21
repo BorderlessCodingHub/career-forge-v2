@@ -1,8 +1,8 @@
 # Career Forge — Claude Code context
 
-**Career Forge** (Soft Push) — AI-native learning system: adaptive skill graph, Live Roadmap Forge with streaming, AI-driven mastery validation.
+**Career Forge v2** — AI-native learning system for BASE/PSP: adaptive skill graph, Live Roadmap Forge with streaming, AI-driven mastery validation.
 
-Hackathon Borderless BASE 01/2026 · repo `HB01-2026_soft-push`
+Borderless Labs · `labs.borderlesscoding.com/career-forge` · Linear team **CAR** · plan: [docs/V2-PLAN.md](./docs/V2-PLAN.md)
 
 ## Stack
 
@@ -74,7 +74,7 @@ claude-design-docs/ prototype + design tokens
 
 ### Git workflow
 
-- Branch format: `HAC-XX-title-slug` (use Linear "Copy git branch name" when available)
+- Branch format: `CAR-XX-title-slug` (strip any `username/` prefix from Linear)
 - One issue = one branch = one merge
 - Target 200–500 LOC per merge
 - Before merge: triple QA gate (see below)
@@ -87,7 +87,7 @@ Three gates must pass: **SHIP + PASS + VERIFIED**
 
 | Gate | Tool | Verdict | What |
 |------|------|---------|------|
-| A — Evaluator | Code review (readonly) | SHIP / FIX / SPLIT | git diff, scope = single HAC issue, structure compliance |
+| A — Evaluator | Code review (readonly) | SHIP / FIX / SPLIT | git diff, scope = single CAR issue, structure compliance |
 | B — UI test | Playwright or manual | PASS / FAIL | Demo flows: goal, forge timeline, graph reveal, validation |
 | C — Agent verify | `make agent-verify` | VERIFIED / FAILED | API + Postgres structure proof |
 
@@ -180,23 +180,24 @@ Graph names: `diagnosis_interview`, `roadmap_forge`, `validation`, `mock_intervi
 
 At the start of a session involving implementation work, read in order:
 
-1. This file (CLAUDE.md)
-2. [ROADMAP.md](./docs/ROADMAP.md) — current sprint, dependencies
-3. [SPRINT-BOARD.md](./docs/SPRINT-BOARD.md) — [P] groups, milestones
+1. This file (CLAUDE.md) / [AGENTS.md](./AGENTS.md)
+2. [V2-PLAN.md](./docs/V2-PLAN.md) — phases, locked decisions
+3. [ROADMAP.md](./docs/ROADMAP.md) — current phase, CAR issues, [P]/[S]/[B]
 4. [STATUS.md](./docs/STATUS.md) — parity matrix, last merge
 5. [CHECKPOINT.md](./docs/CHECKPOINT.md) — product, stack, wow features
-6. Issue scope via Linear MCP
+6. Issue scope via Linear MCP (`CAR-XX`)
 7. [claude-design-docs/](./claude-design-docs/) when doing frontend work
 
 ## Documentation index
 
 | Need | Read |
 |------|------|
+| v2 plan | [V2-PLAN.md](./docs/V2-PLAN.md) |
 | Product overview | [CHECKPOINT.md](./docs/CHECKPOINT.md) |
-| Sprint status | [ROADMAP.md](./docs/ROADMAP.md), [SPRINT-BOARD.md](./docs/SPRINT-BOARD.md), [STATUS.md](./docs/STATUS.md) |
+| Current work | [ROADMAP.md](./docs/ROADMAP.md), [STATUS.md](./docs/STATUS.md) |
 | AI runtime | [EXECUTION-FLOW.md](./docs/engineering/EXECUTION-FLOW.md), [AI-EXECUTION.md](./docs/engineering/AI-EXECUTION.md) |
 | Repo structure | [REPO-STRUCTURE.md](./docs/engineering/REPO-STRUCTURE.md) |
-| Deploy | [DEPLOY-VPS.md](./docs/engineering/DEPLOY-VPS.md) |
+| Deploy Labs | [DEPLOY-LABS-MANUAL.md](./docs/DEPLOY-LABS-MANUAL.md) |
 | Diagnosis spec | [DIAGNOSIS-INTERVIEW.md](./docs/product/DIAGNOSIS-INTERVIEW.md), [ADR-001](./docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md) |
 | Delivery gates | [AGENT-DELIVERY.md](./docs/AGENT-DELIVERY.md) |
 | Agent lifecycle | [AGENT-LIFECYCLE.md](./docs/engineering/AGENT-LIFECYCLE.md) |

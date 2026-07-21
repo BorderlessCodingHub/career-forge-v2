@@ -2,24 +2,24 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Superseded (dimensions) — see [ADR-002](./ADR-002-universal-profile-framework.md) |
-| **Date** | 2026-05-25 |
-| **Deciders** | Career Forge team (hackathon) |
-| **Linear** | HAC-42 … HAC-46 · parent context HAC-33 (CV) |
+| **Status** | **Binding in v2** for Judge/Interviewer loop + CTRR 4 dims (Conceptual / Technical / Readiness / Resourcefulness). Dimension sprawl notes in ADR-002 are historical; v2 F2 keeps CTRR per [V2-PLAN.md](../V2-PLAN.md). |
+| **Date** | 2026-05-25 · v2 note 2026-07-21 |
+| **Deciders** | Career Forge team |
+| **Linear (v2)** | Prompt recalibration + soft gate in Phase 2 |
 
 ---
 
 ## Context
 
-### Hackathon rule (non-negotiable)
+### AI-first rule (non-negotiable)
 
 > If you remove AI, the project stops working. AI is the engine, not a sticker.
 
-Screen 2 (onboarding diagnosis) **must** be LLM-driven. The current rule-based `build_diagnosis_response()` and static `DIAG_ROUNDS` in the frontend violate this for the production path.
+Screen 2 (onboarding diagnosis) **must** be LLM-driven. Rule-based `build_diagnosis_response()` and static `DIAG_ROUNDS` in the frontend violate this for the production path.
 
 ### Audience
 
-**Career transition to tech** — often from zero or early study. We do **not** optimize for senior hiring signals (enterprise scale, staff-level ownership). Dimensions are reframed for **readiness**, not **hireability**.
+**v2:** BASE and PSP learners only — spectrum from early career (~6 months XP) to decades of experience. Optimize for readiness toward **LLM engineer** tracks, not enterprise staff hiring.
 
 ### Screen 1 inputs
 
@@ -73,8 +73,8 @@ Frontend is a **dumb renderer** — no hardcoded rounds in production.
 
 ### 4. CV policy
 
-| Now (HAC-33b + interview) | Later |
-|----------------------------|-------|
+| Now (CV + interview) | Later |
+|----------------------|-------|
 | PDF-only upload | DOCX, LinkedIn |
 | Text extract (no LLM) | — |
 | Optional LLM `CvSignals` struct once | Full résumé scoring |
@@ -99,32 +99,34 @@ No Demo Ana toggle on onboarding UI. One anonymous user per browser session.
 
 ### Positive
 
-- Meets hackathon AI-first requirement on identity engine
+- Meets AI-first requirement on identity engine
 - Sidebar "What the AI is mapping" reflects real `belief_state`
 - Auditable transcript + belief for demo / mentors
 
 ### Negative / tradeoffs
 
 - Requires LLM API key + latency budget per turn
-- More moving parts than keyword scoring — needs guardrails (HAC-46)
+- More moving parts than keyword scoring — needs guardrails (max rounds, LLM failure handling)
 
 ### Supersedes
 
 - Static `DIAG_ROUNDS` + keyword `DOMAIN_SIGNALS` as **production** diagnosis path
-- HAC-8 rule-only graph for user-facing onboarding (kept as fallback/dev)
+- Rule-only graph for user-facing onboarding (kept as fallback/dev)
 
 ---
 
 ## Implementation map
 
-| Linear | Scope |
-|--------|-------|
-| HAC-33 | CV epic — update scope per this ADR |
-| HAC-42 | Rubric schemas + Pydantic contracts |
-| HAC-43 | `diagnosis_interview` graph (Judge + Interviewer) |
-| HAC-44 | Multi-turn session API + Postgres |
-| HAC-45 | Frontend adaptive UI (replace static pills data) |
-| HAC-46 | Saturation, max rounds, LLM failure fallback |
+Shipped. v2 recalibration: [V2-PLAN.md](../V2-PLAN.md) Phase 2.
+
+| Area | Scope |
+|------|-------|
+| CV | PDF ingest + optional CvSignals |
+| Schemas | Rubric + Pydantic contracts |
+| Graph | `diagnosis_interview` (Judge + Interviewer) |
+| API | Multi-turn session + Postgres |
+| Frontend | Adaptive UI (API-driven questions) |
+| Guardrails | Saturation, max rounds, LLM failure fallback |
 
 **Spec:** [docs/product/DIAGNOSIS-INTERVIEW.md](../product/DIAGNOSIS-INTERVIEW.md)
 

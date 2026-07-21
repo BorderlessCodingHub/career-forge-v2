@@ -12,7 +12,7 @@ Systematic checklist for **local dev** failures: `failed to fetch`, CORS, Docker
 ## 1. Stack status
 
 ```bash
-cd /path/to/HB01-2026_soft-push
+cd /path/to/career-forge-v2
 docker compose ps
 make status   # if available
 ```

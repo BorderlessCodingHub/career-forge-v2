@@ -3,7 +3,7 @@
     "linear": {
       "url": "https://mcp.linear.app/mcp",
       "headers": {
-        "Authorization": "Bearer ${env:HACKATON_LINEAR_API_KEY}"
+        "Authorization": "Bearer ${env:LINEAR_API_KEY}"
       }
     },
     "playwright": {

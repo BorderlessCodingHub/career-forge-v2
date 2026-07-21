@@ -1,6 +1,6 @@
 # Research — OpenAI Native Web Search with LangChain
 
-> Context: HAC-54 (`research_enrich`) must use OpenAI native web search, not Tavily or a hand-rolled search API adapter.
+> Context: forge `research_enrich` uses OpenAI native web search, not Tavily or a hand-rolled search API adapter.
 
 ## Decision
 
@@ -111,7 +111,7 @@ def extract_search_citations(content_blocks: list[dict]) -> list[dict]:
 
 Use `response.text` only for the grounded answer summary, not for source extraction.
 
-## Proposed HAC-54 Runtime Contract
+## Proposed runtime contract (`research_enrich`)
 
 Keep the existing Forge SSE timeline, but make `research_enrich` emit native-search artifacts:
 
@@ -172,7 +172,7 @@ For this hackathon UX, use an application-level loop first:
 4. Build a structured `StudyPlan`.
 5. Run a mini evaluator (`FORGE_EVALUATOR_MODEL`) over the plan.
 6. If evaluator returns `revise`, pass `previous_plan + evaluator_feedback + research_state + learner_context` back into the planner and retry up to a small iteration cap.
-7. Keep sources stream-only for HAC-54; persist final plan/graph in HAC-55.
+7. Keep sources stream-only during forge SSE; persist final plan/graph with StudyPlan persistence.
 
 This produces visible live feedback now without adopting WebSocket mode or background polling.
 
@@ -181,4 +181,4 @@ This produces visible live feedback now without adopting WebSocket mode or backg
 - Should search be forced? If yes, use `tool_choice`/model invocation settings that require the web tool, rather than hoping the model chooses it.
 - Should we use `web_search` now and ignore older `web_search_preview`, or pin to the exact LangChain version's supported built-in tool list?
 - Which domains should be preferred for learning references (official docs, MDN, FastAPI, OpenAI, roadmap.sh, etc.)?
-- Should sources be persisted with the generated graph in HAC-55, or only streamed in HAC-54?
+- Should sources be persisted with the generated graph, or only streamed during forge?

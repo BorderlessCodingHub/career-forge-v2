@@ -1,8 +1,8 @@
-# Agent lifecycle — Career Forge
+# Agent lifecycle — Career Forge v2
 
-> **Navigation:** [AGENTS.md](../../AGENTS.md) · [ROADMAP](../ROADMAP.md) · [SPRINT-BOARD](../SPRINT-BOARD.md) · [AGENT-DELIVERY](../AGENT-DELIVERY.md)
+> **Navigation:** [AGENTS.md](../../AGENTS.md) · [V2-PLAN](../V2-PLAN.md) · [ROADMAP](../ROADMAP.md) · [AGENT-DELIVERY](../AGENT-DELIVERY.md)
 
-Engineering lifecycle for hackathon agents working on **HAC-XX** issues.
+Engineering lifecycle for agents working on **CAR-XX** issues (Linear team Career Forge V2).
 
 ---
 
@@ -14,7 +14,7 @@ Entry → Planning → Implementation → Triple QA → Exit
 
 | Phase | Flowchart | Artifacts |
 |-------|-----------|-----------|
-| Session entry | [lifecycle-session-planning.png](./lifecycle-session-planning.png) | AGENTS.md, ROADMAP, STATUS, CHECKPOINT |
+| Session entry | [lifecycle-session-planning.png](./lifecycle-session-planning.png) | AGENTS.md, V2-PLAN, ROADMAP, STATUS, CHECKPOINT |
 | Planning | same | P/S/B classification, parallel dispatch |
 | Implementation + QA + Exit | [lifecycle-implementation-qa-exit.png](./lifecycle-implementation-qa-exit.png) | branch, triple gate, end-task |
 
@@ -25,12 +25,12 @@ Entry → Planning → Implementation → Triple QA → Exit
 **Trigger:** `sessionStart` hook → agent reads context in order:
 
 1. [AGENTS.md](../../AGENTS.md) — index + Task template
-2. [docs/ROADMAP.md](../ROADMAP.md) — current sprint / batch
-3. [docs/SPRINT-BOARD.md](../SPRINT-BOARD.md) — [P]/[S] classification, parallel groups
+2. [docs/V2-PLAN.md](../V2-PLAN.md) — phases + locked decisions
+3. [docs/ROADMAP.md](../ROADMAP.md) — current phase / CAR issues / [P][S][B]
 4. [docs/STATUS.md](../STATUS.md) — parity matrix, last merge
 5. [docs/CHECKPOINT.md](../CHECKPOINT.md) — product north star, demo script
 
-**Rule:** Never start coding before reading all five core docs.
+**Rule:** Never start coding before reading the core docs above.
 
 ---
 
@@ -38,7 +38,7 @@ Entry → Planning → Implementation → Triple QA → Exit
 
 **Rule:** [linear-delivery-workflow](../../.cursor/rules/linear-delivery-workflow.mdc)
 
-Classify each issue in the current batch:
+Classify each issue in the current batch (from ROADMAP / V2-PLAN):
 
 | Class | Meaning | Action |
 |-------|---------|--------|
@@ -49,6 +49,8 @@ Classify each issue in the current batch:
 **Rule (mandatory):** [parallel-dispatch](../../.cursor/rules/parallel-dispatch.mdc)
 
 When **2+ issues** are class **P** with satisfied dependencies, the parent agent **MUST** launch Task subagents in **ONE message** (parallel). Never serialize parallel-safe work.
+
+Example F1 Track A: CAR-5, CAR-6, CAR-8 are **[P]** after deps satisfied; CAR-7 is **[S]** after CAR-5+CAR-6.
 
 Reference: [lifecycle-session-planning.png](./lifecycle-session-planning.png)
 
@@ -61,12 +63,12 @@ Per issue:
 ```bash
 git checkout main && git pull origin main
 # start-task: Linear → In Progress
-git checkout -b HAC-XX-title-slug
+git checkout -b CAR-XX-title-slug
 ```
 
 | Area | Path |
 |------|------|
-| Frontend | `apps/frontend/src/` — Next.js + TypeScript + Tailwind |
+| Frontend | `apps/frontend/` — Next.js + TypeScript + Tailwind |
 | Backend | `apps/backend/src/career_forge/` — FastAPI + LangGraph + Pydantic |
 | Structure reference | [REPO-STRUCTURE.md](./REPO-STRUCTURE.md) |
 | Shared contracts | Pydantic models, OpenAPI |
@@ -108,14 +110,14 @@ After merge:
 
 1. Linear MCP `save_issue` → **Done** (manual — no GitHub integration)
 2. Update [STATUS.md](../STATUS.md) — parity matrix, last merge
-3. Update [ROADMAP.md](../ROADMAP.md) — checkbox
+3. Update [ROADMAP.md](../ROADMAP.md) — checkbox / issue row
 4. Merge to `main` and push
 
 ---
 
 ## 6. Self-critique before merge
 
-Before marking an issue Done, agents MUST run a structural self-critique (HAC-31+):
+Before marking an issue Done, agents MUST run a structural self-critique:
 
 1. **Duplicate scan** — no parallel `database.py` vs `db/session.py`; no duplicate schema/utils modules
 2. **Structure compliance** — tree matches [REPO-STRUCTURE.md](./REPO-STRUCTURE.md)
@@ -129,21 +131,21 @@ Document any intentional deviations in the PR/commit message.
 
 ## Issue ID convention
 
-All hackathon issues use **`HAC-XX`** prefix (team `hackaton-q1`).
+v2 issues use **`CAR-XX`** (team Career Forge V2).
 
-Branch format: `HAC-XX-title-slug` (lowercase, hyphens).
+Branch format: `CAR-XX-title-slug` (lowercase, hyphens; no username prefix).
 
 ---
 
 ## Subagent Task template
 
 ```
-Repo: HB01-2026_soft-push. Base: origin/main (pull latest).
+Repo: career-forge-v2. Base: origin/main (pull latest).
 
-Read AGENTS.md → docs/ROADMAP.md → docs/STATUS.md → docs/CHECKPOINT.md.
-Scope: single issue HAC-XX only.
+Read AGENTS.md → docs/V2-PLAN.md → docs/ROADMAP.md → docs/STATUS.md → docs/CHECKPOINT.md.
+Scope: single issue CAR-XX only.
 
-Branch: HAC-XX-title-slug
+Branch: CAR-XX-title-slug
 Acceptance: <from Linear get_issue>
 
 Before merge: triple gate — SHIP + PASS + VERIFIED.
@@ -153,4 +155,4 @@ Report: merge summary, gate verdicts, blockers.
 
 ---
 
-*Career Forge · HB01-2026 · Programadores Sem Pátria*
+*Career Forge v2 · Borderless Labs*

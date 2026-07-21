@@ -6,7 +6,7 @@ Mandatory before any merge to main. Three gates must pass: **SHIP + PASS + VERIF
 
 1. Run `git diff main...HEAD` to review all changes
 2. Evaluate:
-   - Scope: changes address single HAC-XX issue only
+   - Scope: changes address single CAR-XX issue only
    - Structure: follows REPO-STRUCTURE.md conventions
    - No duplicate modules, orphan files, or legacy paths
    - AI layer: no per-graph streaming, uses GraphExecutor only
@@ -39,7 +39,7 @@ Mandatory before any merge to main. Three gates must pass: **SHIP + PASS + VERIF
 
 ```
 git checkout main && git pull origin main
-git merge --no-ff HAC-XX-title-slug
+git merge --no-ff CAR-XX-title-slug
 git push origin main
 ```
 

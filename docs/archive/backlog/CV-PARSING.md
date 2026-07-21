@@ -1,6 +1,6 @@
 # Backlog — CV parsing
 
-> **Authority:** [ADR-001 § CV policy](../decisions/ADR-001-adaptive-diagnosis-ctrr.md) · **Linear:** HAC-33 · **Rule:** `.cursor/rules/cv-ingest.mdc`
+> **Authority:** [ADR-001 § CV policy](../../decisions/ADR-001-adaptive-diagnosis-ctrr.md) · **Linear:** HAC-33 · **Rule:** `.cursor/rules/cv-ingest.mdc`
 
 > **Status:** UI attach done (home-screen-v1). PDF ingest + signals in HAC-33 / HAC-43.
 

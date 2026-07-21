@@ -5,7 +5,7 @@ alwaysApply: true
 
 # End-task workflow (mandatory)
 
-**Context:** This hackathon Linear workspace has **no GitHub app integration**. Merging a branch named `HAC-XX-...` does **NOT** auto-move issues to Done.
+**Context:** Linear workspace **Career Forge V2** has **no GitHub app integration**. Merging a branch named `CAR-XX-...` does **NOT** auto-move issues to Done.
 
 Agents MUST run this checklist **after every completed issue**.
 
@@ -29,7 +29,7 @@ git pull origin main
 git log -1 --oneline
 ```
 
-Confirm the merge commit references `HAC-XX` in message or branch.
+Confirm the merge commit references `CAR-XX` in message or branch.
 
 ### 2. Move Linear issue → Done (manual)
 
@@ -37,7 +37,7 @@ Use Linear MCP:
 
 ```
 save_issue({
-  id: "HAC-XX",
+  id: "CAR-XX",
   state: "Done"
 })
 ```
@@ -47,15 +47,15 @@ Or ask the user to drag to Done if MCP unavailable.
 **Also verify:** issue was `In Progress` while working. Set at start:
 
 ```
-save_issue({ id: "HAC-XX", state: "In Progress" })
+save_issue({ id: "CAR-XX", state: "In Progress" })
 ```
 
 ### 3. Update living docs
 
 | File | Update |
 |------|--------|
-| `docs/STATUS.md` | Parity matrix row, current batch, last merge = HAC-XX |
-| `docs/ROADMAP.md` | Check off `- [x] HAC-XX` |
+| `docs/STATUS.md` | Parity matrix row, current phase, last merge = CAR-XX |
+| `docs/ROADMAP.md` | Mark issue done / update phase checklist |
 
 ### 4. Self-critique before merge
 
@@ -70,7 +70,7 @@ Before reporting end-task complete, scan the diff for structural drift:
 ### 5. Report to user
 
 ```
-End-task complete: HAC-XX
+End-task complete: CAR-XX
 - Merge: <commit sha / summary>
 - Linear: Done
 - STATUS + ROADMAP updated
@@ -85,8 +85,8 @@ Before coding on an issue:
 
 1. `get_issue` — read acceptance criteria
 2. `save_issue` state **`In Progress`**
-3. Branch: `HAC-XX-title-slug`
-4. Read ROADMAP → STATUS → CHECKPOINT
+3. Branch: `CAR-XX-title-slug`
+4. Read V2-PLAN → ROADMAP → STATUS → CHECKPOINT
 
 ---
 
@@ -102,7 +102,7 @@ Before coding on an issue:
 
 ## Docs-only / harness changes
 
-Still run end-task: Linear Done + STATUS + ROADMAP checkbox.
+Still run end-task: Linear Done + STATUS + ROADMAP update when an issue exists.
 
 Triple gate: evaluator only (skip Playwright/agent-verify if no runtime impact).
 
