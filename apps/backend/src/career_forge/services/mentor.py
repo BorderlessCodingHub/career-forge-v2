@@ -15,15 +15,14 @@ from career_forge.db.repositories.user import get_by_external_id
 from career_forge.demo.ana_state import DEMO_ANA_SKILL_STATE, DEMO_ANA_VALIDATIONS
 from career_forge.schemas.common import SkillStatus
 from career_forge.schemas.mentor import MentorContextSnapshot, MentorRequest, MentorResponse
-from career_forge.services.roadmap import load_roadmap_catalog, read_evidence
+from career_forge.services.roadmap import read_evidence, resolve_skill_node_catalog_entry
 
 
 def _catalog_node(node_id: str) -> dict[str, Any] | None:
-    catalog = load_roadmap_catalog()
-    for node in catalog["nodes"]:
-        if node["id"] == node_id:
-            return node
-    return None
+    try:
+        return resolve_skill_node_catalog_entry(None, node_id)
+    except ValueError:
+        return None
 
 
 def _demo_context(node_id: str | None) -> MentorContextSnapshot:

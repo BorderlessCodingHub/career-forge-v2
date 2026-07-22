@@ -20,7 +20,8 @@
 |------------|--------|
 | Headline | *"Where do you want to go?"* |
 | Subhead | Optional — keep minimal; no long explanatory paragraph required |
-| Cards | Backend active; Data / Frontend disabled "Coming soon" |
+| Cards | **Four** v2 LLM tracks (all active): `rag-engineer`, `agent-engineer`, `llm-evals`, `fine-tuning` — labels from `CAREER_GOALS` in `onboarding-data.ts` |
+| Default | `rag-engineer` pre-selected |
 | Layout | **Minimal** — compact row cards, no heavy chrome (icons, meta badges, footer notes) |
 | Motivation | Required in happy path — feeds downstream AI |
 | CTA | Single primary action to onboarding |
@@ -146,7 +147,7 @@
 | Constraint | Detail |
 |------------|--------|
 | Entry | Topbar **`mentor-report-link`** on artifact routes → `/report` |
-| Goal | Human career goal label from `CAREER_GOALS` map (`formatGoalForDisplay`) — **never** raw slug (`ai-ml`) |
+| Goal | Human career goal label from `CAREER_GOALS` map (`formatGoalForDisplay`) — **never** raw slug (`rag-engineer`) |
 | Topic headline | Human-readable title — **never** raw slug (`node-1-…`) as primary label; `formatNodeTitleForDisplay` fallback humanizes hyphens |
 | Validation card | Score + status pill; **`mentor-report-entry-{node_id}`** |
 | Mentor summary | Structured sections — **Main gaps** (bullets), **Positive evidence** (bullets when present), **Next step** (intervention callout) — not a single dense paragraph |

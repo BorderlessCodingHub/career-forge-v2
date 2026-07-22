@@ -9,121 +9,139 @@ from typing import Any
 DEMO_ANA_EXTERNAL_ID = "demo-ana"
 
 DEMO_ANA_PROFILE = {
-    "track_id": "backend-beginner",
-    "goal": "Backend para APIs em space tech",
-    "motivation": "Quero construir serviços que alimentem missões espaciais.",
+    "track_id": "rag-engineer-beginner",
+    "goal": "rag-engineer",
+    "motivation": "I want to ship grounded RAG systems for production knowledge bases.",
 }
 
-# Pitch-ready graph: js/git validated, http/db in progress, rest ready to validate live.
+# Pitch-ready graph on rag-engineer-beginner spine.
 DEMO_ANA_SKILL_STATE: dict[str, dict[str, Any]] = {
-    "js": {
+    "rag-embeddings": {
         "status": "aprovado",
         "mastery_score": 65,
         "priority": "low",
         "evidence": {
-            "strengths": ["Sintaxe e lógica JavaScript sólidas"],
+            "strengths": ["Solid grasp of embedding fundamentals"],
             "gaps": [],
-            "next_action": "Avançar para HTTP e APIs.",
+            "next_action": "Advance to chunking and retrieval.",
         },
     },
-    "git": {
+    "rag-chunking": {
         "status": "aprovado",
         "mastery_score": 78,
         "priority": "low",
         "evidence": {
-            "strengths": ["Versionamento com commits e branches"],
+            "strengths": ["Chooses chunk size and overlap thoughtfully"],
             "gaps": [],
-            "next_action": "Aplicar Git em fluxo de API.",
+            "next_action": "Apply chunking in a retrieval pipeline.",
         },
     },
-    "http": {
+    "rag-retrieval": {
         "status": "em_estudo",
         "mastery_score": 42,
         "priority": "high",
-        "rationale": "Lacuna principal — foco do onboarding",
+        "rationale": "Primary gap — focus of onboarding",
     },
-    "db": {
+    "rag-rerank": {
         "status": "recomendado",
         "mastery_score": 35,
         "priority": "high",
     },
-    "rest": {
+    "rag-grounding": {
         "status": "validar",
         "mastery_score": 0,
         "priority": "high",
-        "rationale": "Próximo passo — validação ao vivo no pitch",
+        "rationale": "Next step — live validation",
     },
-    "auth": {"status": "bloqueado", "mastery_score": 0, "priority": None},
-    "final": {"status": "bloqueado", "mastery_score": 0, "priority": None},
+    "rag-eval": {"status": "bloqueado", "mastery_score": 0, "priority": None},
+    "rag-production": {"status": "bloqueado", "mastery_score": 0, "priority": None},
 }
 
 DEMO_ANA_VALIDATIONS: list[dict[str, Any]] = [
     {
-        "skill_node_id": "js",
+        "skill_node_id": "rag-embeddings",
         "score": 65,
         "passed": True,
-        "feedback": "Domínio sólido de JavaScript básico — pronto para APIs.",
+        "feedback": "Solid embeddings fundamentals — ready for chunking.",
         "questions": [
             {
-                "id": "js-q1",
+                "id": "rag-emb-q1",
                 "index": 1,
                 "label": "conceito",
-                "prompt": "Com suas palavras, explique variáveis e tipos em JS.",
-                "rubric_criterion": "Entender tipos primitivos e let/const",
+                "prompt": "In your own words, what does an embedding capture about text?",
+                "rubric_criterion": "Describe embedding as dense semantic vector",
             },
             {
-                "id": "js-q2",
+                "id": "rag-emb-q2",
                 "index": 2,
                 "label": "aplicação",
-                "prompt": "Como você aplicaria funções e arrays em um projeto?",
-                "rubric_criterion": "Manipular arrays e funções",
+                "prompt": "How would you pick an embedding model for a product corpus?",
+                "rubric_criterion": "Name size vs quality trade-off",
             },
             {
-                "id": "js-q3",
+                "id": "rag-emb-q3",
                 "index": 3,
                 "label": "aprofundamento",
-                "prompt": "Explique closures para um colega iniciante.",
-                "rubric_criterion": "Conceito de escopo e closures",
+                "prompt": "Explain cosine similarity to a junior teammate.",
+                "rubric_criterion": "Interpret similarity on a small example",
             },
         ],
         "answers": [
-            {"question_id": "js-q1", "answer": "let e const definem escopo; tipos primitivos incluem string e number."},
-            {"question_id": "js-q2", "answer": "Uso map/filter em arrays e funções puras para transformar dados."},
-            {"question_id": "js-q3", "answer": "Closure é função que lembra variáveis do escopo externo."},
+            {
+                "question_id": "rag-emb-q1",
+                "answer": "An embedding is a dense vector that places similar meaning nearby in space.",
+            },
+            {
+                "question_id": "rag-emb-q2",
+                "answer": "I balance latency and quality — start with a strong open model and measure recall.",
+            },
+            {
+                "question_id": "rag-emb-q3",
+                "answer": "Cosine similarity measures angle between vectors; closer to 1 means more similar.",
+            },
         ],
     },
     {
-        "skill_node_id": "git",
+        "skill_node_id": "rag-chunking",
         "score": 78,
         "passed": True,
-        "feedback": "Bom domínio de Git — commits, branches e merge básico.",
+        "feedback": "Good chunking judgment — size, overlap, and metadata.",
         "questions": [
             {
-                "id": "git-q1",
+                "id": "rag-chunk-q1",
                 "index": 1,
                 "label": "conceito",
-                "prompt": "O que é um commit e por que versionar código?",
-                "rubric_criterion": "Entender commits e histórico",
+                "prompt": "When would you prefer semantic chunking over fixed windows?",
+                "rubric_criterion": "Explain fixed vs semantic chunking",
             },
             {
-                "id": "git-q2",
+                "id": "rag-chunk-q2",
                 "index": 2,
                 "label": "aplicação",
-                "prompt": "Como você criaria uma branch para uma feature?",
-                "rubric_criterion": "Branches e fluxo básico",
+                "prompt": "How do you choose chunk size for a docs corpus?",
+                "rubric_criterion": "Justify chunk size for a sample corpus",
             },
             {
-                "id": "git-q3",
+                "id": "rag-chunk-q3",
                 "index": 3,
                 "label": "aprofundamento",
-                "prompt": "Explique merge vs rebase para um colega.",
-                "rubric_criterion": "Integrar mudanças",
+                "prompt": "Why does chunk metadata matter at retrieval time?",
+                "rubric_criterion": "Show how metadata survives into retrieval",
             },
         ],
         "answers": [
-            {"question_id": "git-q1", "answer": "Commit registra snapshot; versionamento permite colaborar e reverter."},
-            {"question_id": "git-q2", "answer": "git checkout -b feature/api e commits incrementais."},
-            {"question_id": "git-q3", "answer": "Merge junta históricos; rebase reaplica commits em cima da main."},
+            {
+                "question_id": "rag-chunk-q1",
+                "answer": "Semantic chunking when section boundaries matter more than token windows.",
+            },
+            {
+                "question_id": "rag-chunk-q2",
+                "answer": "I start around 400–800 tokens with overlap and tune on retrieval evals.",
+            },
+            {
+                "question_id": "rag-chunk-q3",
+                "answer": "Source and section metadata let the answer cite and filter chunks correctly.",
+            },
         ],
     },
 ]

@@ -1,0 +1,154 @@
+{
+  "track": {
+    "id": "agent-engineer-beginner",
+    "title": "Agent Engineering",
+    "description": "Minimal catalog for agent systems — tools, MCP, planning, and failure modes."
+  },
+  "categories": [
+    { "id": "fundamentos", "label": "Foundations" },
+    { "id": "core", "label": "Agent Core" },
+    { "id": "integracao", "label": "Production" }
+  ],
+  "nodes": [
+    {
+      "id": "agent-tool-use",
+      "title": "Tool use patterns",
+      "category": "fundamentos",
+      "description": "Function calling and tool schemas",
+      "icon": "code",
+      "side": "left",
+      "sort_order": 1,
+      "prerequisites": [],
+      "outcomes": [
+        "Define a tool schema the model can call",
+        "Handle tool results and continue the loop",
+        "Bound arguments and validate tool outputs"
+      ],
+      "rubric": [
+        "Writes a clear tool JSON schema",
+        "Explains tool-call → result → next turn",
+        "Names a validation rule for tool args"
+      ]
+    },
+    {
+      "id": "agent-mcp",
+      "title": "MCP and connectors",
+      "category": "fundamentos",
+      "description": "Model Context Protocol basics",
+      "icon": "git",
+      "side": "right",
+      "sort_order": 2,
+      "prerequisites": ["agent-tool-use"],
+      "outcomes": [
+        "Explain MCP client/server roles",
+        "Expose a simple MCP tool or resource",
+        "Connect an agent to an MCP server"
+      ],
+      "rubric": [
+        "Describes MCP client vs server",
+        "Lists tools vs resources briefly",
+        "Shows how an agent discovers MCP tools"
+      ]
+    },
+    {
+      "id": "agent-planning",
+      "title": "Planning loops",
+      "category": "core",
+      "description": "Plan, act, observe cycles",
+      "icon": "server",
+      "side": "left",
+      "sort_order": 3,
+      "prerequisites": ["agent-mcp"],
+      "outcomes": [
+        "Implement a plan-act-observe loop",
+        "Break a goal into tool-sized steps",
+        "Stop when success criteria are met"
+      ],
+      "rubric": [
+        "Outlines plan → act → observe",
+        "Gives an example multi-step plan",
+        "Defines a clear stop condition"
+      ]
+    },
+    {
+      "id": "agent-memory",
+      "title": "Agent memory",
+      "category": "core",
+      "description": "Short-term and long-term context",
+      "icon": "database",
+      "side": "right",
+      "sort_order": 4,
+      "prerequisites": ["agent-planning"],
+      "outcomes": [
+        "Distinguish working memory vs durable store",
+        "Persist useful facts across sessions",
+        "Avoid stuffing irrelevant history into context"
+      ],
+      "rubric": [
+        "Contrasts short-term vs long-term memory",
+        "Describes what is worth persisting",
+        "Names a context-window risk"
+      ]
+    },
+    {
+      "id": "agent-failure-modes",
+      "title": "Failure modes",
+      "category": "core",
+      "description": "Loops, tool abuse, unsafe actions",
+      "icon": "code",
+      "side": "left",
+      "sort_order": 5,
+      "prerequisites": ["agent-memory"],
+      "outcomes": [
+        "Detect and break infinite tool loops",
+        "Add guardrails for destructive tools",
+        "Recover gracefully from tool errors"
+      ],
+      "rubric": [
+        "Names at least two agent failure modes",
+        "Proposes a loop / retry limit",
+        "Describes a safe failure for tool errors"
+      ]
+    },
+    {
+      "id": "agent-observability",
+      "title": "Agent observability",
+      "category": "integracao",
+      "description": "Traces, tool spans, evals",
+      "icon": "key",
+      "side": "right",
+      "sort_order": 6,
+      "prerequisites": ["agent-failure-modes"],
+      "outcomes": [
+        "Trace each tool call and model turn",
+        "Log decisions that led to a bad outcome",
+        "Score agent runs with simple evals"
+      ],
+      "rubric": [
+        "Describes a useful agent trace",
+        "Links a failure to a logged span",
+        "Names a basic agent eval signal"
+      ]
+    },
+    {
+      "id": "agent-ship",
+      "title": "Ship an agent",
+      "category": "integracao",
+      "description": "Deploy a constrained agent path",
+      "icon": "boxes",
+      "side": "left",
+      "sort_order": 7,
+      "prerequisites": ["agent-observability"],
+      "outcomes": [
+        "Ship a single-purpose agent with tool allowlist",
+        "Document runbook for operators",
+        "Set cost and latency budgets"
+      ],
+      "rubric": [
+        "Defines allowlisted tools for a use case",
+        "Lists operator-facing failure playbooks",
+        "States cost/latency limits"
+      ]
+    }
+  ]
+}

@@ -13,8 +13,8 @@ from career_forge.services.mentor import build_mentor_response
 
 SAMPLE_REQUEST = MentorRequest(
     user_id="demo-ana",
-    node_id="rest",
-    node_title="APIs REST",
+    node_id="rag-grounding",
+    node_title="Grounded generation",
     message="Onde errei na validação de REST?",
 )
 
@@ -23,7 +23,7 @@ class TestMentorService:
     def test_build_mentor_response_matches_contract(self) -> None:
         from career_forge.services.mentor import _demo_context
 
-        context = _demo_context("rest")
+        context = _demo_context("rag-grounding")
         result = build_mentor_response(SAMPLE_REQUEST, context)
         assert isinstance(result, MentorResponse)
         assert result.reply
@@ -32,7 +32,7 @@ class TestMentorService:
     def test_gaps_intent_uses_memory(self) -> None:
         from career_forge.services.mentor import _demo_context
 
-        context = _demo_context("rest")
+        context = _demo_context("rag-grounding")
         request = SAMPLE_REQUEST.model_copy(update={"message": "Quais lacunas eu ainda tenho?"})
         result = build_mentor_response(request, context)
         assert "lacuna" in result.reply.lower() or "revis" in result.reply.lower()
@@ -40,7 +40,7 @@ class TestMentorService:
     def test_references_intent_returns_outcomes(self) -> None:
         from career_forge.services.mentor import _demo_context
 
-        context = _demo_context("rest")
+        context = _demo_context("rag-grounding")
         request = SAMPLE_REQUEST.model_copy(update={"message": "Me dê referências para estudar"})
         result = build_mentor_response(request, context)
         assert result.references or "refer" in result.reply.lower()
@@ -51,7 +51,7 @@ class TestMentorAgent:
     async def test_mentor_agent_via_graph_executor(self) -> None:
         from career_forge.services.mentor import _demo_context
 
-        context = _demo_context("rest")
+        context = _demo_context("rag-grounding")
         store = InMemoryGraphRunStore()
         executor = GraphExecutor(store=store)
         run = GraphRun(
@@ -79,7 +79,7 @@ class TestMentorAgent:
 
 
 def test_get_mentor_context_api(client) -> None:
-    response = client.get("/mentor/context", params={"user_id": "demo-ana", "node_id": "rest"})
+    response = client.get("/mentor/context", params={"user_id": "demo-ana", "node_id": "rag-grounding"})
     assert response.status_code == 200
     payload = response.json()
     assert "validation_count" in payload

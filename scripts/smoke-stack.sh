@@ -6,7 +6,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 API_URL="${BACKEND_URL:-${API_URL:-http://localhost:8000}}"
-WEB_URL="${FRONTEND_URL:-${WEB_URL:-http://localhost:${WEB_HOST_PORT:-3000}}}"
+WEB_URL="${FRONTEND_URL:-${WEB_URL:-http://localhost:${WEB_HOST_PORT:-3000}/career-forge}}"
 
 wait_for_url() {
   local url="$1"
@@ -31,7 +31,7 @@ docker compose config -q
 if ! curl -sf "${API_URL}/health" >/dev/null 2>&1; then
   echo "smoke-stack: starting docker compose (--wait)"
   export WEB_HOST_PORT="${WEB_HOST_PORT:-3300}"
-  export WEB_URL="http://localhost:${WEB_HOST_PORT}"
+  export WEB_URL="http://localhost:${WEB_HOST_PORT}/career-forge"
   docker compose up -d --build --wait
 fi
 

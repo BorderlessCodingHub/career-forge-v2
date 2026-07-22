@@ -14,7 +14,7 @@ from career_forge.services.validation import build_validation_questions
 
 STRONG_REST_ANSWERS = [
     ValidationAnswer(
-        question_id="rest-q1",
+        question_id="rag-grounding-q1",
         answer=(
             "Para um recurso users eu usaria GET /users para listar, GET /users/:id para detalhe, "
             "POST /users para criar, PUT /users/:id para substituir, PATCH para atualizar parcial "
@@ -22,14 +22,14 @@ STRONG_REST_ANSWERS = [
         ),
     ),
     ValidationAnswer(
-        question_id="rest-q2",
+        question_id="rag-grounding-q2",
         answer=(
             "PUT é idempotente — repetir a mesma requisição não cria duplicatas. "
             "POST não é idempotente porque cada chamada pode criar um novo recurso."
         ),
     ),
     ValidationAnswer(
-        question_id="rest-q3",
+        question_id="rag-grounding-q3",
         answer=(
             "Erros JSON consistentes incluem status code 400 para validação, 404 quando o recurso "
             "não existe e 500 para falha interna, sempre com code, message e details."
@@ -39,23 +39,23 @@ STRONG_REST_ANSWERS = [
 
 WEAK_REST_ANSWERS = [
     ValidationAnswer(
-        question_id="rest-q1",
+        question_id="rag-grounding-q1",
         answer="REST é quando duas aplicações trocam dados. POST /users cria usuário.",
     ),
     ValidationAnswer(
-        question_id="rest-q2",
+        question_id="rag-grounding-q2",
         answer="Acho que POST e PUT são parecidos, não sei direito.",
     ),
     ValidationAnswer(
-        question_id="rest-q3",
+        question_id="rag-grounding-q3",
         answer="Retorna erro genérico quando dá ruim.",
     ),
 ]
 
 SAMPLE_PAYLOAD = ValidationRequest(
     user_id="demo-ana",
-    node_id="rest",
-    node_title="APIs REST",
+    node_id="rag-grounding",
+    node_title="Grounded generation",
     rubric=[
         "Lista endpoints CRUD para um recurso",
         "Explica idempotência de PUT vs POST",
@@ -93,9 +93,9 @@ class TestValidationEngine:
 
 class TestValidationQuestions:
     def test_build_questions_from_rubric(self) -> None:
-        payload = build_validation_questions("http")
-        assert payload.node_id == "http"
-        assert payload.node_title == "HTTP básico"
+        payload = build_validation_questions("rag-retrieval")
+        assert payload.node_id == "rag-retrieval"
+        assert payload.node_title == "Vector retrieval"
         assert len(payload.questions) == 3
         assert payload.questions[0].prompt
         assert payload.questions[0].rubric_criterion
@@ -123,10 +123,10 @@ async def test_execute_collect_validation_graph(executor: GraphExecutor) -> None
 
 
 def test_get_validation_questions_api(client) -> None:
-    response = client.get("/validation/questions", params={"node_id": "rest"})
+    response = client.get("/validation/questions", params={"node_id": "rag-grounding"})
     assert response.status_code == 200
     payload = response.json()
-    assert payload["node_id"] == "rest"
+    assert payload["node_id"] == "rag-grounding"
     assert len(payload["questions"]) == 3
 
 
@@ -142,12 +142,12 @@ def test_post_validation_api(client) -> None:
     assert payload["status"] == "completed"
     assert payload["run_id"]
     assert payload["validation"]["score"] >= 0
-    assert payload["node_id"] == "rest"
+    assert payload["node_id"] == "rag-grounding"
     assert payload["node_status"] in ("aprovado", "revisar")
 
 
 def test_post_validation_rejects_short_answers(client) -> None:
     body = SAMPLE_PAYLOAD.model_dump()
-    body["answers"] = [{"question_id": "rest-q1", "answer": "   "}]
+    body["answers"] = [{"question_id": "rag-grounding-q1", "answer": "   "}]
     response = client.post("/validation", json=body)
     assert response.status_code == 422

@@ -14,13 +14,13 @@ def _sample_diagnosis() -> DiagnosisResponse:
         {
             "profile": {
                 "label": "Iniciante com base em JavaScript",
-                "track_id": "backend-beginner",
+                "track_id": "rag-engineer-beginner",
                 "persona_slug": "iniciante_js",
             },
             "strengths": ["JavaScript"],
             "gaps": ["HTTP"],
-            "starting_priorities": ["http"],
-            "estimated_mastery": {"js": 65},
+            "starting_priorities": ["rag-retrieval"],
+            "estimated_mastery": {"rag-embeddings": 65},
         },
     )
 
@@ -32,10 +32,10 @@ def test_demo_ana_endpoint(client):
         diagnosis=_sample_diagnosis(),
         roadmap=build_roadmap_from_catalog(),
         validations=[
-            {"node_id": "js", "score": 65, "passed": True, "feedback": "ok"},
-            {"node_id": "git", "score": 78, "passed": True, "feedback": "ok"},
+            {"node_id": "rag-embeddings", "score": 65, "passed": True, "feedback": "ok"},
+            {"node_id": "rag-chunking", "score": 78, "passed": True, "feedback": "ok"},
         ],
-        pitch_node_id="rest",
+        pitch_node_id="rag-grounding",
     )
 
     with patch("career_forge.api.demo.get_demo_ana", return_value=bundle):
@@ -46,5 +46,5 @@ def test_demo_ana_endpoint(client):
     assert payload["user_id"] == "demo-ana"
     assert payload["display_name"] == "Ana"
     assert len(payload["validations"]) == 2
-    assert payload["pitch_node_id"] == "rest"
+    assert payload["pitch_node_id"] == "rag-grounding"
     assert payload["roadmap"]["nodes"]

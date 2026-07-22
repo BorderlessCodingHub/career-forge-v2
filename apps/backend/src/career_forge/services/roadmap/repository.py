@@ -79,7 +79,7 @@ def _ensure_user_row_for_catalog_node(
     roadmap: RoadmapResponse,
 ) -> UserSkillNodeRow:
     node = next(item for item in roadmap.nodes if item.node_id == node_id)
-    catalog = load_roadmap_catalog()
+    catalog = load_roadmap_catalog(roadmap.track.id if roadmap.track else None)
     catalog_node = next(
         (item for item in catalog["nodes"] if item["id"] == node_id),
         None,

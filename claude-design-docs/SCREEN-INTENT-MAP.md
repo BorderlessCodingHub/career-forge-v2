@@ -20,7 +20,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 
 | # | App route | Prototype hash (legacy) | `data-screen` | Wow? | Must match | Can evolve |
 |---|-----------|-------------------------|---------------|------|------------|------------|
-| 1 | `/` | `goal` | `goal-picker` | — | Headline PT-BR, 3 career cards, motivation textarea, single CTA | Card hover, validation toast |
+| 1 | `/` | `goal` | `goal-picker` | — | Headline PT-BR, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA | Card hover, validation toast |
 | 2 | `/onboarding` | `diag` | `diagnostic` | — | Chat layout, 4–6 Q thread, recap of goal | Streaming vs batch API |
 | 3 | `/onboarding/edit` | `result` ⚠️ | `diagnosis-editable` | — | **Editable** lists, add/remove, CTA **"Generate roadmap"** | Drag-reorder, autosave |
 | 4 | `/roadmap/forge` | `forge` ⚠️ | `forge-stream` | **P0** | **Timeline only**, numbered steps, **no graph during stream** | SSE reconnect, scroll |

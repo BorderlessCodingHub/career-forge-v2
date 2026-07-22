@@ -5,8 +5,8 @@ type CareerGoal = {
 };
 
 export const CAREER_GOALS: CareerGoal[] = [
-  { id: "fullstack", title: "Fullstack Engineer", active: true },
-  { id: "data", title: "Data Engineer", active: true },
-  { id: "ai-ml", title: "AI & ML Engineer", active: true },
-  { id: "web3", title: "Web3", active: true },
+  { id: "rag-engineer", title: "Production RAG & Advanced Retrieval", active: true },
+  { id: "agent-engineer", title: "Agent Engineering", active: true },
+  { id: "llm-evals", title: "LLM Evaluation & Observability", active: true },
+  { id: "fine-tuning", title: "Fine-Tuning & Alignment", active: true },
 ];

@@ -85,7 +85,7 @@ def test_apply_transcript_overrides_maps_negative_proof() -> None:
 
 def test_interviewer_payload_lists_do_not_ask() -> None:
     intake = DiagnosisIntake(
-        goal_id="ai-ml",
+        goal_id="agent-engineer",
         motivation="Quero ser engenheiro de IA",
         years_xp="0-1",
     )

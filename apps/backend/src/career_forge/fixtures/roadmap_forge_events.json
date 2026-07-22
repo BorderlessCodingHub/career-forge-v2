@@ -12,7 +12,7 @@
   {
     "type": "node_updated",
     "node": {
-      "node_id": "git",
+      "node_id": "rag-chunking",
       "status": "aprovado",
       "mastery_score": 78,
       "priority": "low"
@@ -27,21 +27,21 @@
     "type": "graph_ready",
     "graph": [
       {
-        "node_id": "js",
+        "node_id": "rag-embeddings",
         "title": "JavaScript base",
         "status": "aprovado",
         "mastery_score": 65,
         "priority": "low"
       },
       {
-        "node_id": "git",
+        "node_id": "rag-chunking",
         "title": "Git e GitHub",
         "status": "aprovado",
         "mastery_score": 78,
         "priority": "low"
       },
       {
-        "node_id": "http",
+        "node_id": "rag-retrieval",
         "title": "HTTP básico",
         "status": "recomendado",
         "mastery_score": 42,
@@ -49,28 +49,28 @@
         "rationale": "Próximo nó da cadeia crítica"
       },
       {
-        "node_id": "db",
+        "node_id": "rag-rerank",
         "title": "Banco relacional",
         "status": "recomendado",
         "mastery_score": 35,
         "priority": "medium"
       },
       {
-        "node_id": "rest",
-        "title": "APIs REST",
+        "node_id": "rag-grounding",
+        "title": "Grounded generation",
         "status": "bloqueado",
         "mastery_score": 0,
         "priority": "high"
       },
       {
-        "node_id": "auth",
+        "node_id": "rag-eval",
         "title": "Autenticação JWT",
         "status": "bloqueado",
         "mastery_score": 0,
         "priority": "medium"
       },
       {
-        "node_id": "final",
+        "node_id": "rag-production",
         "title": "Projeto: API CRUD",
         "status": "bloqueado",
         "mastery_score": 0,

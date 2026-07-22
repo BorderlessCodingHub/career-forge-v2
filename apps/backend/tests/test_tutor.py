@@ -18,7 +18,7 @@ CONCEPTS = ["idempotência de PUT", "status codes HTTP"]
 def _node() -> UserSkillNode:
     return UserSkillNode(
         node_id=NODE_ID,
-        title="APIs REST",
+        title="Grounded generation",
         status=SkillStatus.RECOMENDADO,
         mastery_score=0,
         priority=Priority.HIGH,
@@ -49,7 +49,7 @@ def test_tutor_context_grounds_in_concepts_refs_gaps(client) -> None:
         session.commit()
 
     with SessionLocal() as session:
-        ctx = load_tutor_context(session, "tutor-ctx", NODE_ID, "APIs REST")
+        ctx = load_tutor_context(session, "tutor-ctx", NODE_ID, "Grounded generation")
 
     assert ctx.key_concepts == CONCEPTS
     assert any(ref.title == "MDN HTTP" for ref in ctx.references)
@@ -63,7 +63,7 @@ def test_post_tutor_returns_grounded_reply(client) -> None:
         json={
             "user_id": "tutor-chat",
             "node_id": NODE_ID,
-            "node_title": "APIs REST",
+            "node_title": "Grounded generation",
             "message": "O que é idempotência de PUT?",
         },
     )
@@ -78,7 +78,7 @@ def test_tutor_context_endpoint(client) -> None:
     _sync(client, "tutor-ep")
     response = client.get(
         "/tutor/context",
-        params={"user_id": "tutor-ep", "node_id": NODE_ID, "node_title": "APIs REST"},
+        params={"user_id": "tutor-ep", "node_id": NODE_ID, "node_title": "Grounded generation"},
     )
     assert response.status_code == 200
     assert response.json()["key_concepts"] == CONCEPTS

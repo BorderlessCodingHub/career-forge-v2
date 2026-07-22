@@ -23,7 +23,7 @@ _SAMPLE = DiagnosisRequest(
     years_xp="0-1",
     answers={
         "level": "Já programo em JavaScript há alguns meses.",
-        "git": "Subi um projeto no GitHub.",
+        "rag-chunking": "Subi um projeto no GitHub.",
     },
 )
 
@@ -97,7 +97,7 @@ def test_confirm_and_forge_from_profile(
         assert profile.goal == "backend"
         motor = load_forge_motor_input(session, external_user_id)
         assert motor["goal_id"] == "backend"
-        assert motor["answers"]["git"]
+        assert motor["answers"]["rag-chunking"]
 
 
 def test_forge_without_diagnosis_or_profile_returns_404(client) -> None:

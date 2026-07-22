@@ -52,7 +52,7 @@ Finalize o diagnóstico a partir do belief + goal_id.
 
 Derive gaps técnicos (git, http, db) do goal_id e estágio inferido — não checklist completo.
 
-track_id: fullstack→fullstack-beginner, data→data-beginner, ai-ml→ai-ml-beginner, web3→web3-beginner
+track_id: rag-engineer→rag-engineer-beginner, agent-engineer→agent-engineer-beginner, llm-evals→llm-evals-beginner, fine-tuning→fine-tuning-beginner
 
 Preencha profile, strengths, gaps, starting_priorities e estimated_mastery como lista de {node_id, score}.
 """

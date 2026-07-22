@@ -1,6 +1,6 @@
 {
   "today_focus": {
-    "node_id": "http",
+    "node_id": "rag-retrieval",
     "title": "HTTP básico",
     "duration_minutes": 40,
     "objective": "Métodos HTTP, status codes e headers comuns"

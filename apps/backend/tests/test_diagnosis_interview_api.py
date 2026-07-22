@@ -20,7 +20,7 @@ from tests.mocks.diagnosis_interview_llm import MockDiagnosisInterviewLlm
 
 START_BODY = {
     "user_id": "test-user",
-    "goal_id": "fullstack",
+    "goal_id": "rag-engineer",
     "motivation": "Quero migrar de carreira para tecnologia e construir APIs.",
     "years_xp": "0-1",
 }
@@ -89,7 +89,7 @@ def test_interview_turn_until_complete(client) -> None:
 
     assert payload["status"] == "complete"
     assert payload["diagnosis"] is not None
-    assert payload["diagnosis"]["profile"]["track_id"] == "fullstack-beginner"
+    assert payload["diagnosis"]["profile"]["track_id"] == "rag-engineer-beginner"
 
 
 def test_turn_unknown_session_404(client) -> None:

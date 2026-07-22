@@ -1,4 +1,4 @@
-"""Seed skill_nodes from data/roadmap.json and optional demo user Ana."""
+"""Seed skill_nodes from data/catalog/*.json and optional demo user Ana."""
 
 from __future__ import annotations
 
@@ -22,30 +22,15 @@ from career_forge.demo.ana_state import (
     DEMO_ANA_VALIDATIONS,
     load_demo_diagnosis,
 )
+from career_forge.paths import list_catalog_paths, roadmap_json_path
 
 
-def _default_roadmap_path() -> Path:
-    env_path = os.environ.get("ROADMAP_JSON_PATH")
-    if env_path:
-        return Path(env_path)
-    start = Path(__file__).resolve().parent
-    for parent in (start, *start.parents):
-        candidate = parent / "data" / "roadmap.json"
-        if candidate.is_file():
-            return candidate
-    return start.parents[2] / "data" / "roadmap.json"
-
-
-ROADMAP_PATH = _default_roadmap_path()
-
-
-def load_roadmap(path: Path = ROADMAP_PATH) -> dict:
+def load_roadmap(path: Path) -> dict:
     with path.open(encoding="utf-8") as f:
         return json.load(f)
 
 
-def seed_skill_nodes(session, roadmap: dict | None = None) -> int:
-    roadmap = roadmap or load_roadmap()
+def seed_skill_nodes(session, roadmap: dict) -> int:
     track_id = roadmap["track"]["id"]
     count = 0
 
@@ -72,6 +57,20 @@ def seed_skill_nodes(session, roadmap: dict | None = None) -> int:
 
     session.commit()
     return count
+
+
+def seed_all_catalogs(session, paths: list[Path] | None = None) -> dict[str, int]:
+    """Seed every track JSON; returns {track_id: node_count}."""
+    catalog_paths = paths if paths is not None else list_catalog_paths()
+    if not catalog_paths:
+        raise FileNotFoundError("No catalog JSON files found — set CATALOG_DIR or ROADMAP_JSON_PATH")
+
+    results: dict[str, int] = {}
+    for path in catalog_paths:
+        roadmap = load_roadmap(path)
+        track_id = roadmap["track"]["id"]
+        results[track_id] = seed_skill_nodes(session, roadmap)
+    return results
 
 
 def seed_demo_ana(session) -> User:
@@ -166,16 +165,27 @@ def main() -> None:
     parser.add_argument(
         "--roadmap",
         type=Path,
-        default=ROADMAP_PATH,
-        help="Path to roadmap.json (default: repo data/roadmap.json)",
+        default=None,
+        help="Seed a single roadmap JSON (default: all files under data/catalog/)",
     )
     args = parser.parse_args()
 
-    roadmap = load_roadmap(args.roadmap)
     session = SessionLocal()
     try:
-        node_count = seed_skill_nodes(session, roadmap)
-        print(f"Seeded {node_count} skill_nodes for track '{roadmap['track']['id']}'")
+        if args.roadmap is not None:
+            roadmap = load_roadmap(args.roadmap)
+            node_count = seed_skill_nodes(session, roadmap)
+            print(f"Seeded {node_count} skill_nodes for track '{roadmap['track']['id']}'")
+        elif os.environ.get("ROADMAP_JSON_PATH"):
+            path = roadmap_json_path()
+            roadmap = load_roadmap(path)
+            node_count = seed_skill_nodes(session, roadmap)
+            print(f"Seeded {node_count} skill_nodes for track '{roadmap['track']['id']}'")
+        else:
+            results = seed_all_catalogs(session)
+            total = sum(results.values())
+            tracks = ", ".join(f"{tid}={n}" for tid, n in sorted(results.items()))
+            print(f"Seeded {total} skill_nodes across {len(results)} tracks ({tracks})")
 
         if args.demo_ana:
             user = seed_demo_ana(session)

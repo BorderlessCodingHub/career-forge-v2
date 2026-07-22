@@ -24,7 +24,7 @@ import { CvDropzone } from "./CvDropzone";
 
 export function GoalPicker() {
   const router = useRouter();
-  const [selected, setSelected] = useState("fullstack");
+  const [selected, setSelected] = useState("rag-engineer");
   const [motivation, setMotivationValue] = useState("");
   const [yearsXp, setYearsXpValue] = useState<YearsXpRange | "">("");
   const [cvAttachment, setCvAttachmentState] = useState<CvAttachment | null>(null);

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from typing import Literal
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from career_forge.db.models.profile import Profile
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.errors import ChecklistItemNotFoundError, NodeNotFoundError
@@ -27,16 +29,24 @@ from career_forge.services.roadmap.repository import (
 )
 
 
+def _profile_track_id(session: Session, user) -> str | None:
+    if user is None:
+        return None
+    profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
+    return profile.track_id if profile is not None else None
+
+
 def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResponse:
     """Join skill catalog with per-user state from Postgres."""
-    catalog = load_roadmap_catalog()
     user = get_by_external_id(session, user_id)
+    track_id = _profile_track_id(session, user)
+    catalog = load_roadmap_catalog(track_id)
     if user is None:
-        return build_roadmap_from_catalog()
+        return build_roadmap_from_catalog(track_id=track_id)
 
     state_by_node = _user_state_map(session, user)
     if not state_by_node:
-        return build_roadmap_from_catalog()
+        return build_roadmap_from_catalog(track_id=track_id)
 
     track = catalog["track"]
     catalog_nodes = sorted(catalog["nodes"], key=lambda n: n.get("sort_order", 0))

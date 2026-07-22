@@ -26,7 +26,7 @@ FIXTURES = (
     / "career_forge"
     / "fixtures"
 )
-ROADMAP_JSON = Path(__file__).resolve().parents[3] / "data" / "roadmap.json"
+ROADMAP_JSON = Path(__file__).resolve().parents[3] / "data" / "catalog" / "rag-engineer-beginner.json"
 
 
 def load_fixture(name: str) -> dict | list:
@@ -38,13 +38,13 @@ class TestDiagnosisResponse:
     def test_parses_fixture(self) -> None:
         data = load_fixture("diagnosis_response.json")
         model = DiagnosisResponse.model_validate(data)
-        assert model.profile.label.startswith("Iniciante")
-        assert "http" in model.starting_priorities
-        assert model.estimated_mastery["git"] == 78
+        assert model.profile.label.startswith("Beginner")
+        assert "rag-retrieval" in model.starting_priorities
+        assert model.estimated_mastery["rag-chunking"] == 78
 
     def test_rejects_invalid_mastery(self) -> None:
         data = load_fixture("diagnosis_response.json")
-        data["estimated_mastery"]["js"] = 150
+        data["estimated_mastery"]["rag-embeddings"] = 150
         with pytest.raises(ValidationError):
             DiagnosisResponse.model_validate(data)
 
@@ -91,7 +91,7 @@ class TestSkillGraphState:
         assert state["status"] == "running"
         assert state["max_iterations"] == 3
         profile = DiagnosisResponse.model_validate(state["profile"])
-        assert profile.profile.track_id == "backend-beginner"
+        assert profile.profile.track_id == "rag-engineer-beginner"
 
 
 class TestValidationResponse:
@@ -109,6 +109,6 @@ class TestPlanUpdateResponse:
         model = PlanUpdateResponse.model_validate(
             load_fixture("plan_update_response.json"),
         )
-        assert model.today_focus.node_id == "http"
+        assert model.today_focus.node_id == "rag-retrieval"
         assert model.today_focus.duration_minutes == 40
-        assert "HTTP" in model.next_mission
+        assert "retrieval" in model.next_mission.lower() or "HTTP" in model.next_mission

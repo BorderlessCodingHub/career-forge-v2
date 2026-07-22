@@ -29,7 +29,7 @@ class TestReadEvidenceLegacy:
                 {"type": "metadata", "sort_order": 4},
                 {"type": "task", "title": "Build API"},
                 {"type": "reference", "title": "Docs"},
-                {"type": "task", "id": f"{REMEDIATION_PREFIX}rest", "source": "gap"},
+                {"type": "task", "id": f"{REMEDIATION_PREFIX}rag-grounding", "source": "gap"},
                 {"type": "validation", "strengths": ["s"], "gaps": ["g"], "next_action": "n"},
             ],
         )
@@ -38,7 +38,7 @@ class TestReadEvidenceLegacy:
         assert [t["title"] for t in env.checklist if t["type"] == "task"] == ["Build API"]
         assert env.reference_items() == [{"type": "reference", "title": "Docs"}]
         assert len(env.remediation) == 1
-        assert env.remediation[0]["id"] == f"{REMEDIATION_PREFIX}rest"
+        assert env.remediation[0]["id"] == f"{REMEDIATION_PREFIX}rag-grounding"
         assert env.validation == {"strengths": ["s"], "gaps": ["g"], "next_action": "n"}
 
     def test_task_items_appends_remediation_after_checklist_tasks(self) -> None:

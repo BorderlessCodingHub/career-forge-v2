@@ -15,13 +15,18 @@ from career_forge.ai.streaming.langchain_events import (
 from career_forge.schemas.diagnosis import DiagnosisProfile, DiagnosisRequest, DiagnosisResponse
 
 GOAL_TRACKS: dict[str, str] = {
-    "backend": "backend-beginner",
-    "data": "backend-beginner",
-    "frontend": "backend-beginner",
+    "rag-engineer": "rag-engineer-beginner",
+    "agent-engineer": "agent-engineer-beginner",
+    "llm-evals": "llm-evals-beginner",
+    "fine-tuning": "fine-tuning-beginner",
+    # Legacy hackathon goal ids → default LLM track
+    "backend": "rag-engineer-beginner",
+    "data": "rag-engineer-beginner",
+    "frontend": "rag-engineer-beginner",
 }
 
 DOMAIN_SIGNALS: dict[str, tuple[str, ...]] = {
-    "js": (
+    "rag-embeddings": (
         "javascript",
         "js",
         "programação",
@@ -29,9 +34,11 @@ DOMAIN_SIGNALS: dict[str, tuple[str, ...]] = {
         "lógica",
         "iniciante",
         "meses",
+        "embedding",
+        "vector",
     ),
-    "git": ("git", "github", "commit", "branch", "version", "versionar", "reposit"),
-    "http": (
+    "rag-chunking": ("git", "github", "commit", "branch", "version", "versionar", "reposit", "chunk"),
+    "rag-retrieval": (
         "http",
         "api",
         "rest",
@@ -42,8 +49,10 @@ DOMAIN_SIGNALS: dict[str, tuple[str, ...]] = {
         "endpoint",
         "cliente",
         "servidor",
+        "retrieval",
+        "retriev",
     ),
-    "db": (
+    "rag-rerank": (
         "banco",
         "sql",
         "postgres",
@@ -52,36 +61,44 @@ DOMAIN_SIGNALS: dict[str, tuple[str, ...]] = {
         "formulário",
         "persist",
         "tabela",
+        "rerank",
     ),
 }
 
 DOMAIN_GAPS: dict[str, str] = {
-    "http": "HTTP e APIs REST — métodos, status codes e contrato",
-    "db": "Banco relacional — modelagem e SQL aplicado",
-    "git": "Git avançado — branches, merge e fluxo colaborativo",
-    "js": "JavaScript aplicado — sintaxe e raciocínio assíncrono",
-    "rest": "APIs REST — recursos, verbos e stateless",
-    "auth": "Autenticação — sessões, tokens e fluxo seguro",
+    "rag-retrieval": "Vector retrieval — top-k search and relevance debugging",
+    "rag-rerank": "Reranking — hybrid retrieval and candidate lift",
+    "rag-chunking": "Chunking — size, overlap, and metadata",
+    "rag-embeddings": "Embeddings — semantic vectors and similarity",
+    "rag-grounding": "Grounded generation — citations and refuse-when-empty",
+    "rag-eval": "RAG evaluation — faithfulness and relevance metrics",
 }
 
 DOMAIN_STRENGTHS: dict[str, str] = {
-    "js": "Já entende lógica básica e sintaxe JavaScript",
-    "git": "Já usou GitHub superficialmente para versionar projetos",
-    "http": "Consegue explicar diferença entre frontend e backend",
-    "db": "Tem noção de persistência de dados em aplicações",
+    "rag-embeddings": "Already understands basic programming logic",
+    "rag-chunking": "Has used GitHub to version projects",
+    "rag-retrieval": "Can explain client vs server at a high level",
+    "rag-rerank": "Has a notion of persistence in applications",
 }
 
 DEFAULT_MASTERY: dict[str, int] = {
-    "js": 55,
-    "git": 45,
-    "http": 30,
-    "db": 25,
-    "rest": 0,
-    "auth": 0,
-    "final": 0,
+    "rag-embeddings": 55,
+    "rag-chunking": 45,
+    "rag-retrieval": 30,
+    "rag-rerank": 25,
+    "rag-grounding": 0,
+    "rag-eval": 0,
+    "rag-production": 0,
 }
 
-PRIORITY_ORDER = ("http", "git", "db", "js", "rest", "auth")
+PRIORITY_ORDER = (
+    "rag-retrieval",
+    "rag-chunking",
+    "rag-rerank",
+    "rag-embeddings",
+    "rag-grounding",
+    "rag-eval",
+)
 
 YEARS_XP_BOOST: dict[str, int] = {
     "0-1": 0,
@@ -137,16 +154,16 @@ def build_diagnosis_response(payload: DiagnosisRequest) -> DiagnosisResponse:
             mastery[domain] = min(100, mastery[domain] + xp_boost)
 
     if re.search(r"space|foguet|orbit|satél|satel", payload.motivation.lower()):
-        mastery["http"] = min(100, mastery["http"] + 8)
+        mastery["rag-retrieval"] = min(100, mastery["rag-retrieval"] + 8)
 
     avg_score = sum(mastery.values()) // max(len(mastery), 1)
     label, persona = _profile_label(payload.goal_id, avg_score, payload.answers)
-    track_id = GOAL_TRACKS.get(payload.goal_id, "backend-beginner")
+    track_id = GOAL_TRACKS.get(payload.goal_id, "rag-engineer-beginner")
 
     strengths: list[str] = []
     gaps: list[str] = []
 
-    for domain in ("js", "git", "http", "db"):
+    for domain in ("rag-embeddings", "rag-chunking", "rag-retrieval", "rag-rerank"):
         score = mastery.get(domain, 0)
         if score >= 55 and domain in DOMAIN_STRENGTHS:
             strengths.append(DOMAIN_STRENGTHS[domain])
@@ -156,20 +173,20 @@ def build_diagnosis_response(payload: DiagnosisRequest) -> DiagnosisResponse:
     if not strengths:
         strengths.append("Motivação clara sobre o objetivo de carreira escolhido")
 
-    if "auth" not in gaps and mastery.get("http", 0) < 60:
-        gaps.append(DOMAIN_GAPS["auth"])
+    if DOMAIN_GAPS["rag-eval"] not in gaps and mastery.get("rag-retrieval", 0) < 60:
+        gaps.append(DOMAIN_GAPS["rag-eval"])
 
-    if "rest" not in gaps and mastery.get("http", 0) < 55:
-        gaps.append(DOMAIN_GAPS["rest"])
+    if DOMAIN_GAPS["rag-grounding"] not in gaps and mastery.get("rag-retrieval", 0) < 55:
+        gaps.append(DOMAIN_GAPS["rag-grounding"])
 
     if len(gaps) < 2:
-        gaps.append("Persistência relacional — modelagem e SQL aplicado")
+        gaps.append("Chunking and retrieval quality — iterate on corpus fit")
 
     starting_priorities = [
         node_id
         for node_id in PRIORITY_ORDER
         if mastery.get(node_id, 100) < 70
-    ][:3] or ["http", "git", "db"]
+    ][:3] or ["rag-retrieval", "rag-chunking", "rag-rerank"]
 
     return DiagnosisResponse(
         profile=DiagnosisProfile(

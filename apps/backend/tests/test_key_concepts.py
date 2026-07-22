@@ -14,7 +14,7 @@ CONCEPTS = ["idempotência de PUT", "status codes HTTP", "design de recursos RES
 def _node() -> UserSkillNode:
     return UserSkillNode(
         node_id=NODE_ID,
-        title="APIs REST",
+        title="Grounded generation",
         status=SkillStatus.RECOMENDADO,
         mastery_score=0,
         priority=Priority.HIGH,

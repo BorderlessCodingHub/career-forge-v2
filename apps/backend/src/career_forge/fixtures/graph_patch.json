@@ -1,14 +1,14 @@
 {
   "patches": [
     {
-      "node_id": "http",
+      "node_id": "rag-retrieval",
       "status": "recomendado",
       "mastery_estimated": 42,
       "priority": "high",
       "rationale": "Lacuna crítica na cadeia HTTP → REST → Auth"
     },
     {
-      "node_id": "git",
+      "node_id": "rag-chunking",
       "status": "aprovado",
       "mastery_estimated": 78,
       "priority": "low",
