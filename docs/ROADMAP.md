@@ -16,7 +16,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 | Issue | Title | Class |
 |-------|-------|-------|
-| [CAR-5](https://linear.app/career-forge-v2/issue/CAR-5) | Swap goals + minimal catalog seeds (LLM tracks) | [P] |
+| [CAR-5](https://linear.app/career-forge-v2/issue/CAR-5) | Swap goals + minimal catalog seeds (LLM tracks) | [P] ✅ Done |
 | [CAR-6](https://linear.app/career-forge-v2/issue/CAR-6) | Cost instrumentation (global pool + per-user cap) | [P] |
 | [CAR-8](https://linear.app/career-forge-v2/issue/CAR-8) | Draft must-have nodes (4 LLM goals) | [P] |
 
@@ -24,7 +24,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
-| [CAR-7](https://linear.app/career-forge-v2/issue/CAR-7) | Synthetic cost gate run + Yuri report | [S] | CAR-5, CAR-6 |
+| [CAR-7](https://linear.app/career-forge-v2/issue/CAR-7) | Synthetic cost gate run + Yuri report | [S] | CAR-6 (CAR-5 ✅) |
 
 ### Track B — external **[B]**
 

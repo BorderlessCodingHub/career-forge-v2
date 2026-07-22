@@ -2,7 +2,7 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-07-21** · Last merge: *(none yet under CAR — v2 docs cleanup in progress)*  
+Last updated: **2026-07-22** · Last merge: **CAR-5** ([PR #2](https://github.com/BorderlessCodingHub/career-forge-v2/pull/2) · `ab6fa13`)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · Project: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7)
 
 ---
@@ -17,9 +17,9 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 
 | Track | Item | Status |
 |-------|------|--------|
-| A | CAR-5 Goals + seeds (LLM tracks) | Todo |
+| A | CAR-5 Goals + seeds (LLM tracks) | Done |
 | A | CAR-6 Cost instrumentation | Todo |
-| A | CAR-7 Synthetic cost gate + Yuri report | Todo (blocked by CAR-5/6) |
+| A | CAR-7 Synthetic cost gate + Yuri report | Todo (blocked by CAR-6) |
 | A | CAR-8 Must-have node drafts | Todo |
 | B | CAR-9 Labs nginx `/career-forge` | Backlog (Brunno / domain) |
 
@@ -35,7 +35,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | AI execution (GraphExecutor / Factory) | ✅ Keep | See engineering/AI-EXECUTION.md |
 | Diagnosis CTRR (ADR-001) | ✅ Keep | Recalibrate prompts in F2; soft gate |
 | Labs deploy path | ⚠️ Partial | App deploy OK; nginx path pending (CAR-9) |
-| 4 LLM goals + catalog seeds | ⬜ F1 | CAR-5 |
+| 4 LLM goals + catalog seeds | ✅ Done | CAR-5 — `data/catalog/` ×4 tracks |
 | Cost pool + per-user cap | ⬜ F1 | CAR-6 |
 | English-first | ⬜ F2 | |
 | Platform auth (`borderless-api`) | ⬜ F3 | |
