@@ -84,7 +84,7 @@ def test_humanize_node_id_strips_prefix_and_hyphens() -> None:
 
 
 def test_resolve_goal_display_maps_known_slug() -> None:
-    assert _resolve_goal_display("ai-ml") == "AI & ML Engineer"
+    assert _resolve_goal_display("rag-engineer") == "Production RAG & Advanced Retrieval"
 
 
 def test_resolve_goal_display_passes_through_human_text() -> None:
@@ -99,7 +99,7 @@ def test_get_mentor_report_resolves_goal_slug_from_profile(client, diagnosis_dic
         json={
             "user_id": external_id,
             "diagnosis": diagnosis_dict,
-            "goal_id": "ai-ml",
+            "goal_id": "agent-engineer",
             "motivation": "APIs para space tech",
             "years_xp": "0-1",
             "answers": {"level": "Já programo em JavaScript."},
@@ -109,7 +109,7 @@ def test_get_mentor_report_resolves_goal_slug_from_profile(client, diagnosis_dic
 
     response = client.get(f"/mentor-report?user_id={external_id}")
     assert response.status_code == 200
-    assert response.json()["goal"] == "AI & ML Engineer"
+    assert response.json()["goal"] == "Agent Engineering"
 
 
 def test_evidence_from_skill_row_reads_validation_from_list() -> None:
@@ -188,10 +188,10 @@ def _sample_report() -> MentorReportResponse:
         goal="Backend para APIs em space tech",
         track_title="Backend Developer",
         profile_label="Iniciante com base em JavaScript",
-        learner_gaps=["HTTP", "APIs REST"],
+        learner_gaps=["HTTP", "Grounded generation"],
         validations=[
             MentorReportValidationEntry(
-                node_id="js",
+                node_id="rag-embeddings",
                 node_title="JavaScript",
                 score=65,
                 status=ValidationStatus.APROVADO,
@@ -202,7 +202,7 @@ def _sample_report() -> MentorReportResponse:
                 validated_at=datetime(2026, 5, 25, 12, 0, tzinfo=UTC),
             ),
             MentorReportValidationEntry(
-                node_id="git",
+                node_id="rag-chunking",
                 node_title="Git & GitHub",
                 score=78,
                 status=ValidationStatus.APROVADO,
@@ -229,7 +229,7 @@ def test_mentor_report_endpoint(client):
     assert len(payload["validations"]) == 2
     assert payload["validations"][0]["node_title"] == "JavaScript"
     assert payload["validations"][0]["recommended_intervention"]
-    assert payload["learner_gaps"] == ["HTTP", "APIs REST"]
+    assert payload["learner_gaps"] == ["HTTP", "Grounded generation"]
 
 
 def test_mentor_report_not_found(client):

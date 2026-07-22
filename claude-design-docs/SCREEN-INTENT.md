@@ -146,7 +146,7 @@
 | Constraint | Detail |
 |------------|--------|
 | Entry | Topbar **`mentor-report-link`** on artifact routes → `/report` |
-| Goal | Human career goal label from `CAREER_GOALS` map (`formatGoalForDisplay`) — **never** raw slug (`ai-ml`) |
+| Goal | Human career goal label from `CAREER_GOALS` map (`formatGoalForDisplay`) — **never** raw slug (`rag-engineer`) |
 | Topic headline | Human-readable title — **never** raw slug (`node-1-…`) as primary label; `formatNodeTitleForDisplay` fallback humanizes hyphens |
 | Validation card | Score + status pill; **`mentor-report-entry-{node_id}`** |
 | Mentor summary | Structured sections — **Main gaps** (bullets), **Positive evidence** (bullets when present), **Next step** (intervention callout) — not a single dense paragraph |

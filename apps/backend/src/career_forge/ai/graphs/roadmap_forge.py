@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import os
 import re
 from collections.abc import AsyncIterator
@@ -29,7 +28,6 @@ from career_forge.ai.tools.study_plan_planner import (
     StudyPlanPlanner,
     build_study_plan_planner_from_env,
 )
-from career_forge.paths import roadmap_json_path
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.services.forge_planning import (
@@ -41,8 +39,7 @@ from career_forge.services.forge_context import (
     LearnerForgeContext,
     build_forge_context_from_input,
 )
-
-ROADMAP_PATH = roadmap_json_path()
+from career_forge.services.roadmap.catalog import load_roadmap_catalog
 
 DEFAULT_STREAM_DELAY_SEC = 1.5
 MAX_RESEARCH_ITERATIONS = 3
@@ -56,9 +53,8 @@ FORGE_STEPS = (
 )
 
 
-def _load_catalog() -> dict[str, Any]:
-    with ROADMAP_PATH.open(encoding="utf-8") as handle:
-        return json.load(handle)
+def _load_catalog(track_id: str | None = None) -> dict[str, Any]:
+    return load_roadmap_catalog(track_id)
 
 
 def _mastery_to_status(score: int) -> SkillStatus:
@@ -79,7 +75,7 @@ def _mastery_to_priority(score: int, is_priority: bool) -> Priority:
 
 def build_accumulated_graph(diagnosis: DiagnosisResponse) -> list[UserSkillNode]:
     """Deterministic graph from catalog + diagnosis mastery scores."""
-    catalog = _load_catalog()
+    catalog = _load_catalog(diagnosis.profile.track_id)
     mastery = diagnosis.estimated_mastery
     priority_set = set(diagnosis.starting_priorities)
     nodes: list[UserSkillNode] = []

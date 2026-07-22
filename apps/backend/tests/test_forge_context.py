@@ -8,7 +8,7 @@ from career_forge.services.forge_context import build_forge_context_from_input
 DIAGNOSIS = {
     "profile": {
         "label": "Iniciante com foco em IA/ML",
-        "track_id": "ai-ml",
+        "track_id": "agent-engineer-beginner",
         "persona_slug": "iniciante_ai_ml",
     },
     "strengths": ["Motivação clara"],
@@ -23,14 +23,14 @@ def test_build_forge_context_from_plain_input() -> None:
         user_id="user-1",
         input_data={
             "diagnosis": DIAGNOSIS,
-            "goal_id": "ai-ml",
+            "goal_id": "agent-engineer",
             "motivation": "Quero ser AI engineer.",
             "years_xp": "0-1",
             "answers": {"q-r1-1": "Nada."},
         },
     )
 
-    assert context.goal_id == "ai-ml"
+    assert context.goal_id == "agent-engineer"
     assert context.interview_answers["q-r1-1"] == "Nada."
     assert "Falta de prática" in context.compact_summary()
 
@@ -44,7 +44,7 @@ def test_build_forge_context_prefers_profile_envelope_intake() -> None:
                 "version": 2,
                 "diagnosis": DIAGNOSIS,
                 "intake": {
-                    "goal_id": "ai-ml",
+                    "goal_id": "agent-engineer",
                     "motivation": "Motivação persistida",
                     "answers": {"prova": "Nada."},
                 },

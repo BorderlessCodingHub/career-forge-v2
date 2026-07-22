@@ -24,7 +24,7 @@ services:
       ENV: ${ENV:-local}
       DEBUG: ${DEBUG:-true}
       SEED_DEMO_ANA: ${SEED_DEMO_ANA:-true}
-      ROADMAP_JSON_PATH: /data/roadmap.json
+      CATALOG_DIR: /data/catalog
       API_HOST: 0.0.0.0
       API_PORT: 8000
       OPENAI_API_KEY: ${OPENAI_API_KEY}

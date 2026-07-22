@@ -1,0 +1,154 @@
+{
+  "track": {
+    "id": "rag-engineer-beginner",
+    "title": "Production RAG & Advanced Retrieval",
+    "description": "Minimal catalog for RAG engineering — embeddings through production retrieval systems."
+  },
+  "categories": [
+    { "id": "fundamentos", "label": "Foundations" },
+    { "id": "core", "label": "RAG Core" },
+    { "id": "integracao", "label": "Production" }
+  ],
+  "nodes": [
+    {
+      "id": "rag-embeddings",
+      "title": "Embeddings fundamentals",
+      "category": "fundamentos",
+      "description": "Vector representations for text",
+      "icon": "code",
+      "side": "left",
+      "sort_order": 1,
+      "prerequisites": [],
+      "outcomes": [
+        "Explain what an embedding captures about text",
+        "Choose a reasonable embedding model for a corpus",
+        "Compute and compare cosine similarity"
+      ],
+      "rubric": [
+        "Describes embedding as dense semantic vector",
+        "Names a trade-off between model size and quality",
+        "Interprets similarity scores on a small example"
+      ]
+    },
+    {
+      "id": "rag-chunking",
+      "title": "Chunking strategies",
+      "category": "fundamentos",
+      "description": "Split documents for retrieval",
+      "icon": "git",
+      "side": "right",
+      "sort_order": 2,
+      "prerequisites": ["rag-embeddings"],
+      "outcomes": [
+        "Split documents with fixed and semantic chunking",
+        "Choose chunk size and overlap for a use case",
+        "Preserve metadata (source, section) on chunks"
+      ],
+      "rubric": [
+        "Explains when fixed vs semantic chunking wins",
+        "Justifies chunk size for a sample corpus",
+        "Shows how metadata survives into retrieval"
+      ]
+    },
+    {
+      "id": "rag-retrieval",
+      "title": "Vector retrieval",
+      "category": "core",
+      "description": "Index and top-k search",
+      "icon": "server",
+      "side": "left",
+      "sort_order": 3,
+      "prerequisites": ["rag-chunking"],
+      "outcomes": [
+        "Build a vector index over chunked documents",
+        "Run top-k retrieval for a user query",
+        "Debug empty or low-relevance result sets"
+      ],
+      "rubric": [
+        "Describes index build and query path",
+        "Names failure modes (bad query, wrong chunking)",
+        "Proposes a fix for low relevance"
+      ]
+    },
+    {
+      "id": "rag-rerank",
+      "title": "Reranking",
+      "category": "core",
+      "description": "Cross-encoder and hybrid rerank",
+      "icon": "database",
+      "side": "right",
+      "sort_order": 4,
+      "prerequisites": ["rag-retrieval"],
+      "outcomes": [
+        "Apply a reranker on top-k candidates",
+        "Compare dense-only vs hybrid retrieval",
+        "Measure lift from reranking on a sample set"
+      ],
+      "rubric": [
+        "Explains why rerank follows retrieval",
+        "Describes hybrid BM25 + dense briefly",
+        "Defines a simple before/after metric"
+      ]
+    },
+    {
+      "id": "rag-grounding",
+      "title": "Grounded generation",
+      "category": "core",
+      "description": "Cite context, reduce hallucination",
+      "icon": "code",
+      "side": "left",
+      "sort_order": 5,
+      "prerequisites": ["rag-rerank"],
+      "outcomes": [
+        "Prompt the model to answer only from retrieved context",
+        "Attach citations or source ids to answers",
+        "Detect and refuse when context is insufficient"
+      ],
+      "rubric": [
+        "Shows a grounded prompt pattern",
+        "Explains citation / source attribution",
+        "Describes refusal when context is empty"
+      ]
+    },
+    {
+      "id": "rag-eval",
+      "title": "RAG evaluation",
+      "category": "integracao",
+      "description": "Faithfulness and relevance metrics",
+      "icon": "key",
+      "side": "right",
+      "sort_order": 6,
+      "prerequisites": ["rag-grounding"],
+      "outcomes": [
+        "Define faithfulness and context relevance metrics",
+        "Build a small golden Q&A set for a corpus",
+        "Run offline eval and interpret failures"
+      ],
+      "rubric": [
+        "Defines at least two RAG metrics",
+        "Describes a golden-set workflow",
+        "Links a failed case to a pipeline stage"
+      ]
+    },
+    {
+      "id": "rag-production",
+      "title": "Production RAG",
+      "category": "integracao",
+      "description": "Serving, caching, observability",
+      "icon": "boxes",
+      "side": "left",
+      "sort_order": 7,
+      "prerequisites": ["rag-eval"],
+      "outcomes": [
+        "Serve a RAG endpoint with latency budgets",
+        "Add basic tracing for retrieval + generation",
+        "Plan re-index and cache invalidation"
+      ],
+      "rubric": [
+        "Names production concerns (latency, cost, freshness)",
+        "Describes a minimal observability path",
+        "Outlines re-index / cache strategy"
+      ]
+    }
+  ]
+}

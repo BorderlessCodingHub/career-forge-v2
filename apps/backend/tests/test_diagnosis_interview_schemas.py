@@ -137,7 +137,7 @@ class TestDiagnosisIntake:
         intake = DiagnosisIntake.model_validate(
             {
                 "user_id": "u1",
-                "goal_id": "ai-ml",
+                "goal_id": "agent-engineer",
                 "motivation": "Quero migrar de carreira para tecnologia.",
             },
         )
@@ -150,7 +150,7 @@ class TestDiagnosisSession:
         session = DiagnosisSession(
             session_id="sess-1",
             intake=DiagnosisIntake(
-                goal_id="fullstack",
+                goal_id="rag-engineer",
                 motivation="Quero migrar de carreira para tecnologia.",
             ),
             round_count=1,
@@ -170,7 +170,7 @@ class TestDiagnosisSession:
         session = DiagnosisSession(
             session_id="sess-2",
             intake=DiagnosisIntake(
-                goal_id="data",
+                goal_id="llm-evals",
                 motivation="Quero migrar de carreira para tecnologia.",
             ),
             round_count=MAX_INTERVIEW_ROUNDS,

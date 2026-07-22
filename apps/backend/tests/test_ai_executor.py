@@ -24,7 +24,7 @@ _FORGE_DIAGNOSIS = build_diagnosis_response(
         motivation="APIs para space tech",
         answers={
             "level": "Já programo em JavaScript há alguns meses.",
-            "git": "Subi um projeto no GitHub.",
+            "rag-chunking": "Subi um projeto no GitHub.",
         },
     ),
 ).model_dump()
@@ -163,7 +163,7 @@ async def test_execute_collect_diagnosis_graph(executor: GraphExecutor) -> None:
             "motivation": "Quero trabalhar com APIs para space tech no futuro.",
             "answers": {
                 "level": "Já programo em JavaScript há alguns meses.",
-                "git": "Subi um projeto no GitHub.",
+                "rag-chunking": "Subi um projeto no GitHub.",
             },
         },
     )
@@ -171,4 +171,4 @@ async def test_execute_collect_diagnosis_graph(executor: GraphExecutor) -> None:
     assert result.run.status == "completed"
     assert result.run.output is not None
     assert result.run.output["graph_name"] == "diagnosis"
-    assert result.run.output["output"]["profile"]["track_id"] == "backend-beginner"
+    assert result.run.output["output"]["profile"]["track_id"] == "rag-engineer-beginner"

@@ -20,7 +20,7 @@ class Profile(Base):
         unique=True,
         nullable=False,
     )
-    track_id: Mapped[str] = mapped_column(String(64), nullable=False, default="backend-beginner")
+    track_id: Mapped[str] = mapped_column(String(64), nullable=False, default="rag-engineer-beginner")
     goal: Mapped[str | None] = mapped_column(Text, nullable=True)
     motivation: Mapped[str | None] = mapped_column(Text, nullable=True)
     diagnosis: Mapped[dict | None] = mapped_column(JSONB, nullable=True)

@@ -9,23 +9,23 @@ from career_forge.services.roadmap import build_roadmap_from_catalog
 
 WEAK_REST_ANSWERS = [
     ValidationAnswer(
-        question_id="rest-q1",
+        question_id="rag-grounding-q1",
         answer="REST é quando duas aplicações trocam dados. POST /users cria usuário.",
     ),
     ValidationAnswer(
-        question_id="rest-q2",
+        question_id="rag-grounding-q2",
         answer="Acho que POST e PUT são parecidos, não sei direito.",
     ),
     ValidationAnswer(
-        question_id="rest-q3",
+        question_id="rag-grounding-q3",
         answer="Retorna erro genérico quando dá ruim.",
     ),
 ]
 
 SAMPLE_PAYLOAD = ValidationRequest(
     user_id="demo-ana",
-    node_id="rest",
-    node_title="APIs REST",
+    node_id="rag-grounding",
+    node_title="Grounded generation",
     rubric=[
         "Lista endpoints CRUD para um recurso",
         "Explica idempotência de PUT vs POST",
@@ -77,33 +77,33 @@ def _passed_validation() -> ValidationResponse:
 class TestAdaptivePatch:
     def test_failure_marks_node_revisar_and_blocks_dependents(self) -> None:
         graph = _user_skill_nodes()
-        patch = build_adaptive_patch("rest", _failed_validation(), graph)
+        patch = build_adaptive_patch("rag-grounding", _failed_validation(), graph)
 
-        rest_patch = next(item for item in patch.patches if item.node_id == "rest")
+        rest_patch = next(item for item in patch.patches if item.node_id == "rag-grounding")
         assert rest_patch.status == SkillStatus.REVISAR
         assert rest_patch.priority.value == "high"
 
         blocked_ids = {item.node_id for item in patch.patches if item.status == SkillStatus.BLOQUEADO}
-        assert "auth" in blocked_ids
-        assert "final" in blocked_ids
+        assert "rag-eval" in blocked_ids
+        assert "rag-production" in blocked_ids
         assert patch.continue_research is True
 
     def test_pass_unlocks_next_node(self) -> None:
         graph = _user_skill_nodes()
         for node in graph:
-            if node.node_id in {"js", "git", "http", "db"}:
+            if node.node_id in {"rag-embeddings", "rag-chunking", "rag-retrieval", "rag-rerank"}:
                 node.status = SkillStatus.APROVADO
-            if node.node_id == "rest":
+            if node.node_id == "rag-grounding":
                 node.status = SkillStatus.EM_ESTUDO
-            if node.node_id in {"auth", "final"}:
+            if node.node_id in {"rag-eval", "rag-production"}:
                 node.status = SkillStatus.BLOQUEADO
 
-        patch = build_adaptive_patch("rest", _passed_validation(), graph)
+        patch = build_adaptive_patch("rag-grounding", _passed_validation(), graph)
 
-        rest_patch = next(item for item in patch.patches if item.node_id == "rest")
+        rest_patch = next(item for item in patch.patches if item.node_id == "rag-grounding")
         assert rest_patch.status == SkillStatus.APROVADO
 
-        auth_patch = next((item for item in patch.patches if item.node_id == "auth"), None)
+        auth_patch = next((item for item in patch.patches if item.node_id == "rag-eval"), None)
         assert auth_patch is not None
         assert auth_patch.status == SkillStatus.VALIDAR
         assert auth_patch.priority.value == "high"
@@ -156,13 +156,13 @@ class TestAdaptivePatchGeneratedNodes:
 
 class TestPlanUpdate:
     def test_build_plan_update_for_failure(self) -> None:
-        plan = build_plan_update("rest", "APIs REST", _failed_validation())
-        assert plan.today_focus.node_id == "rest"
+        plan = build_plan_update("rag-grounding", "Grounded generation", _failed_validation())
+        assert plan.today_focus.node_id == "rag-grounding"
         assert plan.today_focus.duration_minutes == 45
-        assert "REST" in plan.next_mission
+        assert "Grounded generation" in plan.next_mission
 
     def test_build_plan_update_for_pass(self) -> None:
-        plan = build_plan_update("rest", "APIs REST", _passed_validation())
+        plan = build_plan_update("rag-grounding", "Grounded generation", _passed_validation())
         assert plan.today_focus.duration_minutes == 30
 
 
@@ -177,6 +177,6 @@ def test_post_validation_returns_adaptive_payload(client) -> None:
     revisar_nodes = [
         node["status"]
         for node in payload["roadmap"]["nodes"]
-        if node["node_id"] == "rest"
+        if node["node_id"] == "rag-grounding"
     ]
     assert revisar_nodes == ["revisar"]

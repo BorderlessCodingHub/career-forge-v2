@@ -1,0 +1,154 @@
+{
+  "track": {
+    "id": "fine-tuning-beginner",
+    "title": "Fine-Tuning & Alignment",
+    "description": "Minimal catalog for fine-tuning — data prep, SFT, LoRA, DPO, and serving."
+  },
+  "categories": [
+    { "id": "fundamentos", "label": "Foundations" },
+    { "id": "core", "label": "Training Core" },
+    { "id": "integracao", "label": "Alignment & Serve" }
+  ],
+  "nodes": [
+    {
+      "id": "ft-data-prep",
+      "title": "Fine-tune data prep",
+      "category": "fundamentos",
+      "description": "Curate instruction and preference data",
+      "icon": "code",
+      "side": "left",
+      "sort_order": 1,
+      "prerequisites": [],
+      "outcomes": [
+        "Format instruction/response pairs for SFT",
+        "Filter low-quality or leaked examples",
+        "Split train/eval without contamination"
+      ],
+      "rubric": [
+        "Shows a valid SFT example format",
+        "Names quality filters",
+        "Explains contamination risk"
+      ]
+    },
+    {
+      "id": "ft-sft",
+      "title": "Supervised fine-tuning",
+      "category": "fundamentos",
+      "description": "SFT training loop basics",
+      "icon": "git",
+      "side": "right",
+      "sort_order": 2,
+      "prerequisites": ["ft-data-prep"],
+      "outcomes": [
+        "Run a small SFT job on an open model",
+        "Monitor loss and overfitting signals",
+        "Compare base vs SFT on a held-out set"
+      ],
+      "rubric": [
+        "Describes SFT objective briefly",
+        "Names overfitting signals",
+        "Defines a base vs SFT comparison"
+      ]
+    },
+    {
+      "id": "ft-lora",
+      "title": "LoRA / PEFT",
+      "category": "core",
+      "description": "Parameter-efficient fine-tuning",
+      "icon": "server",
+      "side": "left",
+      "sort_order": 3,
+      "prerequisites": ["ft-sft"],
+      "outcomes": [
+        "Configure LoRA rank and target modules",
+        "Explain PEFT trade-offs vs full fine-tune",
+        "Merge or serve adapters correctly"
+      ],
+      "rubric": [
+        "Explains LoRA adapters at a high level",
+        "Names a PEFT vs full-FT trade-off",
+        "Describes adapter merge/serve path"
+      ]
+    },
+    {
+      "id": "ft-eval",
+      "title": "Fine-tune evaluation",
+      "category": "core",
+      "description": "Task evals for tuned models",
+      "icon": "database",
+      "side": "right",
+      "sort_order": 4,
+      "prerequisites": ["ft-lora"],
+      "outcomes": [
+        "Eval tuned models on task golden sets",
+        "Watch for regression on general capability",
+        "Decide ship / iterate from eval evidence"
+      ],
+      "rubric": [
+        "Lists task + regression evals",
+        "Explains capability regression risk",
+        "Ties a ship decision to numbers"
+      ]
+    },
+    {
+      "id": "ft-dpo",
+      "title": "Preference alignment (DPO)",
+      "category": "core",
+      "description": "Preference pairs and DPO",
+      "icon": "code",
+      "side": "left",
+      "sort_order": 5,
+      "prerequisites": ["ft-eval"],
+      "outcomes": [
+        "Build chosen/rejected preference pairs",
+        "Explain DPO vs RLHF at a high level",
+        "Run a small preference-tuning pass"
+      ],
+      "rubric": [
+        "Shows a preference pair example",
+        "Contrasts DPO and RLHF briefly",
+        "Names a preference-data pitfall"
+      ]
+    },
+    {
+      "id": "ft-serve",
+      "title": "Serve custom models",
+      "category": "integracao",
+      "description": "Inference for fine-tuned weights",
+      "icon": "key",
+      "side": "right",
+      "sort_order": 6,
+      "prerequisites": ["ft-dpo"],
+      "outcomes": [
+        "Serve a fine-tuned or adapter model",
+        "Version models and roll back safely",
+        "Track cost and latency in production"
+      ],
+      "rubric": [
+        "Describes a serve path for adapters",
+        "Explains versioning / rollback",
+        "Names cost or latency knobs"
+      ]
+    },
+    {
+      "id": "ft-alignment",
+      "title": "Alignment checklist",
+      "category": "integracao",
+      "description": "Safety and policy fit",
+      "icon": "boxes",
+      "side": "left",
+      "sort_order": 7,
+      "prerequisites": ["ft-serve"],
+      "outcomes": [
+        "Run a basic safety / policy eval suite",
+        "Document allowed and disallowed behaviors",
+        "Escalate risky failures before ship"
+      ],
+      "rubric": [
+        "Lists safety checks before release",
+        "States policy boundaries clearly",
+        "Describes escalation for risky fails"
+      ]
+    }
+  ]
+}

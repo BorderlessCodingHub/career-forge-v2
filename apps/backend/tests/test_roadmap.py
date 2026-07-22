@@ -20,21 +20,21 @@ from career_forge.services.roadmap import (
 class TestRoadmapCatalog:
     def test_build_roadmap_from_catalog_has_nodes(self) -> None:
         roadmap = build_roadmap_from_catalog()
-        assert roadmap.track.id == "backend-beginner"
+        assert roadmap.track.id == "rag-engineer-beginner"
         assert len(roadmap.nodes) >= 6
         node_ids = {node.node_id for node in roadmap.nodes}
-        assert "http" in node_ids
-        assert "final" in node_ids
+        assert "rag-retrieval" in node_ids
+        assert "rag-production" in node_ids
 
     def test_demo_state_marks_http_in_progress(self) -> None:
         roadmap = build_roadmap_from_catalog()
-        http = next(n for n in roadmap.nodes if n.node_id == "http")
+        http = next(n for n in roadmap.nodes if n.node_id == "rag-retrieval")
         assert http.status == SkillStatus.EM_ESTUDO
         assert http.mastery_score == 42
 
     def test_demo_state_marks_rest_ready_to_validate(self) -> None:
         roadmap = build_roadmap_from_catalog()
-        rest = next(n for n in roadmap.nodes if n.node_id == "rest")
+        rest = next(n for n in roadmap.nodes if n.node_id == "rag-grounding")
         assert rest.status == SkillStatus.VALIDAR
 
 
@@ -42,7 +42,7 @@ def test_get_roadmap_api(client) -> None:
     response = client.get("/roadmap/?user_id=demo-ana")
     assert response.status_code == 200
     payload = response.json()
-    assert payload["track"]["id"] == "backend-beginner"
+    assert payload["track"]["id"] == "rag-engineer-beginner"
     assert len(payload["nodes"]) >= 6
     assert payload["nodes"][0]["node_id"]
 
@@ -50,7 +50,7 @@ def test_get_roadmap_api(client) -> None:
 def test_sync_roadmap_api(client) -> None:
     nodes = [
         UserSkillNode(
-            node_id="http",
+            node_id="rag-retrieval",
             title="HTTP básico",
             status=SkillStatus.RECOMENDADO,
             mastery_score=55,
@@ -62,7 +62,7 @@ def test_sync_roadmap_api(client) -> None:
     )
     assert response.status_code == 200
     payload = response.json()
-    http = next(n for n in payload["nodes"] if n["node_id"] == "http")
+    http = next(n for n in payload["nodes"] if n["node_id"] == "rag-retrieval")
     assert http["mastery_score"] == 55
 
 
@@ -95,7 +95,7 @@ def test_generated_rows_keep_persisted_sort_order_and_evidence() -> None:
 
 def test_delete_stale_generated_rows_removes_only_old_generated_rows() -> None:
     generated = SimpleNamespace(skill_node=SimpleNamespace(track_id="ai-generated"))
-    catalog = SimpleNamespace(skill_node=SimpleNamespace(track_id="backend-beginner"))
+    catalog = SimpleNamespace(skill_node=SimpleNamespace(track_id="rag-engineer-beginner"))
     kept = SimpleNamespace(skill_node=SimpleNamespace(track_id="ai-generated"))
     deleted: list[object] = []
     session = SimpleNamespace(delete=lambda row: deleted.append(row))
@@ -159,7 +159,7 @@ def test_checklist_counts_completed_items() -> None:
 def test_patch_checklist_api_persists_progress(client) -> None:
     nodes = [
         UserSkillNode(
-            node_id="http",
+            node_id="rag-retrieval",
             title="HTTP básico",
             status=SkillStatus.RECOMENDADO,
             mastery_score=10,
@@ -173,12 +173,12 @@ def test_patch_checklist_api_persists_progress(client) -> None:
     )
     assert sync_response.status_code == 200
     synced = sync_response.json()
-    http = next(n for n in synced["nodes"] if n["node_id"] == "http")
+    http = next(n for n in synced["nodes"] if n["node_id"] == "rag-retrieval")
     task_id = http["tasks"][0]["id"]
     ref_id = http["references"][0]["id"]
 
     toggle_task = client.patch(
-        "/roadmap/nodes/http/checklist",
+        "/roadmap/nodes/rag-retrieval/checklist",
         json={
             "user_id": "checklist-user",
             "item_type": "task",
@@ -187,12 +187,12 @@ def test_patch_checklist_api_persists_progress(client) -> None:
         },
     )
     assert toggle_task.status_code == 200
-    after_task = next(n for n in toggle_task.json()["nodes"] if n["node_id"] == "http")
+    after_task = next(n for n in toggle_task.json()["nodes"] if n["node_id"] == "rag-retrieval")
     assert after_task["checklist_completed"] == 1
     assert after_task["tasks"][0]["done"] is True
 
     toggle_ref = client.patch(
-        "/roadmap/nodes/http/checklist",
+        "/roadmap/nodes/rag-retrieval/checklist",
         json={
             "user_id": "checklist-user",
             "item_type": "reference",
@@ -201,14 +201,14 @@ def test_patch_checklist_api_persists_progress(client) -> None:
         },
     )
     assert toggle_ref.status_code == 200
-    after_ref = next(n for n in toggle_ref.json()["nodes"] if n["node_id"] == "http")
+    after_ref = next(n for n in toggle_ref.json()["nodes"] if n["node_id"] == "rag-retrieval")
     assert after_ref["checklist_completed"] == 2
     assert after_ref["checklist_total"] == 2
 
 
 def test_patch_checklist_rejects_unknown_item(client) -> None:
     response = client.patch(
-        "/roadmap/nodes/http/checklist",
+        "/roadmap/nodes/rag-retrieval/checklist",
         json={
             "user_id": "demo-ana",
             "item_type": "task",

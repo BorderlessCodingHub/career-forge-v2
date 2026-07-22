@@ -21,10 +21,10 @@ SAMPLE_PAYLOAD = DiagnosisRequest(
     answers={
         "level": "Já programo em JavaScript há alguns meses, mas ainda me sinto iniciante em backend.",
         "prior": "Fiz um curso online de JS e subi um projeto no GitHub.",
-        "git": "Sim, subi um projeto no GitHub mas não domino branches.",
+        "rag-chunking": "Sim, subi um projeto no GitHub mas não domino branches.",
         "client_server": "Frontend é o que o usuário vê. Backend processa dados no servidor.",
-        "http": "Acho que sim, mas nunca prestei atenção em métodos ou status codes.",
-        "db": "Acho que uma tela com formulário… mas o backend salva no banco.",
+        "rag-retrieval": "Acho que sim, mas nunca prestei atenção em métodos ou status codes.",
+        "rag-rerank": "Acho que uma tela com formulário… mas o backend salva no banco.",
     },
 )
 
@@ -33,11 +33,11 @@ class TestDiagnosisEngine:
     def test_build_diagnosis_response_matches_contract(self) -> None:
         diagnosis = build_diagnosis_response(SAMPLE_PAYLOAD)
         assert isinstance(diagnosis, DiagnosisResponse)
-        assert diagnosis.profile.track_id == "backend-beginner"
+        assert diagnosis.profile.track_id == "rag-engineer-beginner"
         assert diagnosis.strengths
         assert diagnosis.gaps
         assert diagnosis.starting_priorities
-        assert "http" in diagnosis.estimated_mastery
+        assert "rag-retrieval" in diagnosis.estimated_mastery
 
     def test_space_tech_motivation_boosts_http(self) -> None:
         diagnosis = build_diagnosis_response(SAMPLE_PAYLOAD)
@@ -48,14 +48,14 @@ class TestDiagnosisEngine:
                 },
             ),
         )
-        assert diagnosis.estimated_mastery["http"] >= baseline.estimated_mastery["http"]
+        assert diagnosis.estimated_mastery["rag-retrieval"] >= baseline.estimated_mastery["rag-retrieval"]
 
     def test_years_xp_boosts_mastery(self) -> None:
         baseline = build_diagnosis_response(SAMPLE_PAYLOAD)
         with_xp = build_diagnosis_response(
             SAMPLE_PAYLOAD.model_copy(update={"years_xp": "5+"}),
         )
-        assert with_xp.estimated_mastery["http"] > baseline.estimated_mastery["http"]
+        assert with_xp.estimated_mastery["rag-retrieval"] > baseline.estimated_mastery["rag-retrieval"]
 
 
 @pytest.fixture
@@ -86,7 +86,7 @@ def test_post_diagnosis_api(client) -> None:
     payload = response.json()
     assert payload["status"] == "completed"
     assert payload["run_id"]
-    assert payload["diagnosis"]["profile"]["track_id"] == "backend-beginner"
+    assert payload["diagnosis"]["profile"]["track_id"] == "rag-engineer-beginner"
     assert payload["diagnosis"]["strengths"]
 
 

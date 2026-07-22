@@ -59,7 +59,7 @@ def _generated_node() -> UserSkillNode:
 
 STRONG_REST_ANSWERS = [
     ValidationAnswer(
-        question_id="rest-mi-q1",
+        question_id="rag-grounding-mi-q1",
         answer=(
             "Para um recurso users eu usaria GET /users para listar, GET /users/:id para detalhe, "
             "POST /users para criar, PUT /users/:id para substituir, PATCH para atualizar parcial "
@@ -67,42 +67,42 @@ STRONG_REST_ANSWERS = [
         ),
     ),
     ValidationAnswer(
-        question_id="rest-mi-q2",
+        question_id="rag-grounding-mi-q2",
         answer=(
             "PUT é idempotente — repetir a mesma requisição não cria duplicatas. "
             "POST não é idempotente porque cada chamada pode criar um novo recurso."
         ),
     ),
     ValidationAnswer(
-        question_id="rest-mi-q3",
+        question_id="rag-grounding-mi-q3",
         answer=(
             "Erros JSON consistentes incluem status code 400 para validação, 404 quando o recurso "
             "não existe e 500 para falha interna, sempre com code, message e details."
         ),
     ),
     ValidationAnswer(
-        question_id="rest-mi-q4",
+        question_id="rag-grounding-mi-q4",
         answer=(
             "Para corrigir endpoints CRUD incompletos, eu listaria GET/POST/PUT/PATCH/DELETE "
             "para cada recurso e documentaria o contrato JSON de cada rota."
         ),
     ),
     ValidationAnswer(
-        question_id="rest-mi-q5",
+        question_id="rag-grounding-mi-q5",
         answer=(
             "Na próxima tentativa eu praticaria idempotência PUT vs POST com exemplos curl "
             "e compararia o comportamento de repetir a mesma requisição."
         ),
     ),
     ValidationAnswer(
-        question_id="rest-mi-q6",
+        question_id="rag-grounding-mi-q6",
         answer=(
             "Para projetar rotas REST para tarefas, eu criaria GET /tasks, POST /tasks, "
             "GET /tasks/:id, PUT /tasks/:id, DELETE /tasks/:id com JSON serializado."
         ),
     ),
     ValidationAnswer(
-        question_id="rest-mi-q7",
+        question_id="rag-grounding-mi-q7",
         answer=(
             "Se um colega travou em validar payload, eu mostraria schema JSON com campos "
             "obrigatórios e retorno 400 com message e details consistentes."
@@ -111,14 +111,14 @@ STRONG_REST_ANSWERS = [
 ]
 
 WEAK_REST_ANSWERS = [
-    ValidationAnswer(question_id=f"rest-mi-q{i}", answer="Acho que REST troca dados. Não sei direito.")
+    ValidationAnswer(question_id=f"rag-grounding-mi-q{i}", answer="Acho que REST troca dados. Não sei direito.")
     for i in range(1, 8)
 ]
 
 SAMPLE_PAYLOAD = MockInterviewRequest(
     user_id="demo-ana",
-    node_id="rest",
-    node_title="APIs REST",
+    node_id="rag-grounding",
+    node_title="Grounded generation",
     rubric=[
         "Lista endpoints CRUD para um recurso",
         "Explica idempotência de PUT vs POST",
@@ -263,24 +263,24 @@ class TestMockInterviewMcq:
             MockInterviewSessionRecord(
                 session_id="sess-1",
                 user_id="demo-ana",
-                node_id="rest",
-                node_title="APIs REST",
+                node_id="rag-grounding",
+                node_title="Grounded generation",
                 rubric=["c1", "c2"],
-                answer_key={"rest-mi-q1": "A", "rest-mi-q2": "B"},
+                answer_key={"rag-grounding-mi-q1": "A", "rag-grounding-mi-q2": "B"},
                 questions_public=[],
             ),
         )
         payload = MockInterviewRequest(
             user_id="demo-ana",
-            node_id="rest",
-            node_title="APIs REST",
+            node_id="rag-grounding",
+            node_title="Grounded generation",
             session_id="sess-1",
             answers=[
-                ValidationAnswer(question_id="rest-mi-q1", answer="A"),
-                ValidationAnswer(question_id="rest-mi-q2", answer="B"),
-                ValidationAnswer(question_id="rest-mi-q3", answer="A"),
-                ValidationAnswer(question_id="rest-mi-q4", answer="A"),
-                ValidationAnswer(question_id="rest-mi-q5", answer="A"),
+                ValidationAnswer(question_id="rag-grounding-mi-q1", answer="A"),
+                ValidationAnswer(question_id="rag-grounding-mi-q2", answer="B"),
+                ValidationAnswer(question_id="rag-grounding-mi-q3", answer="A"),
+                ValidationAnswer(question_id="rag-grounding-mi-q4", answer="A"),
+                ValidationAnswer(question_id="rag-grounding-mi-q5", answer="A"),
             ],
         )
         result, _ = evaluate_mcq_session(payload)
@@ -290,14 +290,14 @@ class TestMockInterviewMcq:
 
 class TestMockInterviewQuestions:
     def test_build_questions_returns_five_to_seven(self) -> None:
-        payload = build_mock_interview_questions("rest")
-        assert payload.node_id == "rest"
-        assert payload.node_title == "APIs REST"
+        payload = build_mock_interview_questions("rag-grounding")
+        assert payload.node_id == "rag-grounding"
+        assert payload.node_title == "Grounded generation"
         assert 5 <= len(payload.questions) <= 7
         assert payload.total_questions == len(payload.questions)
 
     def test_questions_have_phases(self) -> None:
-        payload = build_mock_interview_questions("http")
+        payload = build_mock_interview_questions("rag-retrieval")
         phases = {question.phase for question in payload.questions}
         assert "base" in phases
         assert "gap_probe" in phases
@@ -326,10 +326,10 @@ async def test_execute_collect_mock_interview_graph(executor: GraphExecutor) -> 
 
 
 def test_get_mock_interview_questions_api(client) -> None:
-    response = client.get("/mock-interview/questions", params={"node_id": "rest"})
+    response = client.get("/mock-interview/questions", params={"node_id": "rag-grounding"})
     assert response.status_code == 200
     payload = response.json()
-    assert payload["node_id"] == "rest"
+    assert payload["node_id"] == "rag-grounding"
     assert payload["format"] == "mcq"
     assert payload["session_id"]
     assert 5 <= len(payload["questions"]) <= 7
@@ -345,13 +345,13 @@ def test_get_mock_interview_questions_unknown_node(client) -> None:
 
 
 def test_post_mock_interview_api(client) -> None:
-    body = _mcq_payload_from_questions(client, "rest")
+    body = _mcq_payload_from_questions(client, "rag-grounding")
     response = client.post("/mock-interview", json=body)
     assert response.status_code == 200
     payload = response.json()
     assert payload["status"] == "completed"
     assert payload["validation"]["score"] >= 0
-    assert payload["node_id"] == "rest"
+    assert payload["node_id"] == "rag-grounding"
     assert payload["node_status"] in ("aprovado", "revisar")
 
 

@@ -20,10 +20,56 @@ from career_forge.schemas.diagnosis_interview import (
 )
 
 TRACK_BY_GOAL = {
-    "fullstack": "fullstack-beginner",
-    "data": "data-beginner",
-    "ai-ml": "ai-ml-beginner",
-    "web3": "web3-beginner",
+    "rag-engineer": "rag-engineer-beginner",
+    "agent-engineer": "agent-engineer-beginner",
+    "llm-evals": "llm-evals-beginner",
+    "fine-tuning": "fine-tuning-beginner",
+}
+
+MASTERY_NODES_BY_GOAL = {
+    "rag-engineer": [
+        "rag-embeddings",
+        "rag-chunking",
+        "rag-retrieval",
+        "rag-rerank",
+        "rag-grounding",
+        "rag-eval",
+        "rag-production",
+    ],
+    "agent-engineer": [
+        "agent-tool-use",
+        "agent-mcp",
+        "agent-planning",
+        "agent-memory",
+        "agent-failure-modes",
+        "agent-observability",
+        "agent-ship",
+    ],
+    "llm-evals": [
+        "evals-metrics",
+        "evals-llm-judge",
+        "evals-datasets",
+        "evals-regression",
+        "evals-tracing",
+        "evals-online",
+        "evals-llmops",
+    ],
+    "fine-tuning": [
+        "ft-data-prep",
+        "ft-sft",
+        "ft-lora",
+        "ft-eval",
+        "ft-dpo",
+        "ft-serve",
+        "ft-alignment",
+    ],
+}
+
+GOAL_GAPS = {
+    "rag-engineer": ["Grounded retrieval and citation discipline"],
+    "agent-engineer": ["Tool-loop failure modes and MCP connectors"],
+    "llm-evals": ["Judge calibration and regression gates"],
+    "fine-tuning": ["LoRA setup and preference-data quality"],
 }
 
 
@@ -94,7 +140,7 @@ def _apply_rich_answer(belief: BeliefState, text: str) -> None:
             "Ritmo e consistência mencionados na resposta",
         )
 
-    if any(token in lower for token in ("git", "github", "api", "projeto", "app", "deploy")):
+    if any(token in lower for token in ("rag-chunking", "github", "api", "projeto", "app", "deploy")):
         _boost_dim(
             belief,
             "background_transfer",
@@ -200,19 +246,24 @@ class MockDiagnosisInterviewLlm:
         belief: BeliefState,
         intake: DiagnosisIntake,
     ) -> DiagnosisResponse:
-        track_id = TRACK_BY_GOAL.get(intake.goal_id, "career-beginner")
+        track_id = TRACK_BY_GOAL.get(intake.goal_id, "rag-engineer-beginner")
         velocity = belief.dimensions["learning_velocity"].confidence
         proof = belief.dimensions["hands_on_proof"].confidence
 
-        mastery = {
-            "js": int(velocity * 100),
-            "git": int(min(1.0, proof + 0.1) * 70),
-            "http": int(min(1.0, proof) * 65),
-            "db": int(min(1.0, proof - 0.1) * 60),
-            "rest": int(belief.dimensions["background_transfer"].confidence * 50),
-            "auth": 0,
-            "final": 0,
-        }
+        node_ids = MASTERY_NODES_BY_GOAL.get(
+            intake.goal_id,
+            MASTERY_NODES_BY_GOAL["rag-engineer"],
+        )
+        scores = [
+            int(velocity * 100),
+            int(min(1.0, proof + 0.1) * 70),
+            int(min(1.0, proof) * 65),
+            int(min(1.0, proof - 0.1) * 60),
+            int(belief.dimensions["background_transfer"].confidence * 50),
+            0,
+            0,
+        ]
+        mastery = {node_id: scores[i] for i, node_id in enumerate(node_ids)}
 
         strengths = [
             belief.dimensions["motivation_goal"].note or "Motivação clara para a transição",
@@ -226,19 +277,9 @@ class MockDiagnosisInterviewLlm:
         if velocity < 0.65:
             gaps.append("Consistência de estudo — rotina semanal mensurável")
 
-        goal_gaps = {
-            "fullstack": ["HTTP/APIs e integração frontend-backend"],
-            "data": ["SQL aplicado e pipelines de dados"],
-            "ai-ml": ["Fundamentos de ML e experimentação reprodutível"],
-            "web3": ["Smart contracts e segurança básica on-chain"],
-        }
-        gaps.extend(goal_gaps.get(intake.goal_id, ["Fundamentos de engenharia de software"])[:1])
+        gaps.extend(GOAL_GAPS.get(intake.goal_id, ["Fundamentos de engenharia de software"])[:1])
 
-        priorities = ["http", "git", "db"]
-        if intake.goal_id == "data":
-            priorities = ["db", "http", "git"]
-        elif intake.goal_id == "ai-ml":
-            priorities = ["http", "db", "git"]
+        priorities = list(node_ids[2:5])
 
         return DiagnosisResponse(
             profile=DiagnosisProfile(

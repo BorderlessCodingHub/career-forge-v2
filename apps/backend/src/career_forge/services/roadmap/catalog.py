@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from career_forge.db.models.skill_node import SkillNode
 from career_forge.demo.ana_state import DEMO_ANA_SKILL_STATE
-from career_forge.paths import roadmap_json_path
+from career_forge.paths import DEFAULT_TRACK_ID, list_catalog_paths, roadmap_json_path
 
 ROADMAP_PATH = roadmap_json_path()
 
@@ -24,9 +24,27 @@ DEFAULT_DEMO_STATE: dict[str, dict[str, Any]] = {
 }
 
 
-def load_roadmap_catalog(path: Path = ROADMAP_PATH) -> dict[str, Any]:
-    with path.open(encoding="utf-8") as handle:
+def load_roadmap_catalog(
+    track_id: str | None = None,
+    path: Path | None = None,
+) -> dict[str, Any]:
+    """Load one track catalog.
+
+    ``path`` wins when provided (tests). Otherwise resolve via
+    ``roadmap_json_path(track_id)`` (default track: rag-engineer-beginner).
+    """
+    resolved = path if path is not None else roadmap_json_path(track_id)
+    with resolved.open(encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def load_all_catalogs() -> list[dict[str, Any]]:
+    """Load every seeded track catalog (for resolve-by-node-id)."""
+    catalogs: list[dict[str, Any]] = []
+    for catalog_path in list_catalog_paths():
+        with catalog_path.open(encoding="utf-8") as handle:
+            catalogs.append(json.load(handle))
+    return catalogs
 
 
 def resolve_skill_node_catalog_entry(session: Session | None, node_id: str) -> dict[str, Any]:
@@ -34,9 +52,18 @@ def resolve_skill_node_catalog_entry(session: Session | None, node_id: str) -> d
     persisted AI-generated row (`track_id=ai-generated`), so downstream features
     (mock interview, validation) work for both seeded and StudyPlan nodes.
     """
-    for node in load_roadmap_catalog()["nodes"]:
-        if node["id"] == node_id:
-            return node
+    for catalog in load_all_catalogs():
+        for node in catalog.get("nodes", []):
+            if node["id"] == node_id:
+                return node
+
+    # Fallback: default track only (covers ROADMAP_JSON_PATH single-file mode)
+    try:
+        for node in load_roadmap_catalog(DEFAULT_TRACK_ID)["nodes"]:
+            if node["id"] == node_id:
+                return node
+    except FileNotFoundError:
+        pass
 
     if session is not None:
         row = session.get(SkillNode, node_id)

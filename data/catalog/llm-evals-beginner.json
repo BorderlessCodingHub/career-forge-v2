@@ -1,0 +1,154 @@
+{
+  "track": {
+    "id": "llm-evals-beginner",
+    "title": "LLM Evaluation & Observability",
+    "description": "Minimal catalog for LLMOps — metrics, judges, regression, and online evals."
+  },
+  "categories": [
+    { "id": "fundamentos", "label": "Foundations" },
+    { "id": "core", "label": "Eval Core" },
+    { "id": "integracao", "label": "LLMOps" }
+  ],
+  "nodes": [
+    {
+      "id": "evals-metrics",
+      "title": "Eval metrics",
+      "category": "fundamentos",
+      "description": "Task metrics and score design",
+      "icon": "code",
+      "side": "left",
+      "sort_order": 1,
+      "prerequisites": [],
+      "outcomes": [
+        "Pick metrics that match the product risk",
+        "Separate automatic vs human-rated scores",
+        "Avoid vanity metrics that ignore failure cost"
+      ],
+      "rubric": [
+        "Names metrics for a given task type",
+        "Contrasts automatic vs human labels",
+        "Flags a misleading metric"
+      ]
+    },
+    {
+      "id": "evals-llm-judge",
+      "title": "LLM-as-judge",
+      "category": "fundamentos",
+      "description": "Judge prompts and calibration",
+      "icon": "git",
+      "side": "right",
+      "sort_order": 2,
+      "prerequisites": ["evals-metrics"],
+      "outcomes": [
+        "Write a judge rubric with clear criteria",
+        "Calibrate judge scores against human labels",
+        "Detect judge bias and position effects"
+      ],
+      "rubric": [
+        "Shows a structured judge rubric",
+        "Describes calibration against humans",
+        "Names a known judge failure mode"
+      ]
+    },
+    {
+      "id": "evals-datasets",
+      "title": "Eval datasets",
+      "category": "core",
+      "description": "Golden sets and coverage",
+      "icon": "server",
+      "side": "left",
+      "sort_order": 3,
+      "prerequisites": ["evals-llm-judge"],
+      "outcomes": [
+        "Build a versioned golden dataset",
+        "Cover edge cases and safety slices",
+        "Track dataset provenance and labels"
+      ],
+      "rubric": [
+        "Describes golden-set versioning",
+        "Lists slices worth covering",
+        "Explains label provenance"
+      ]
+    },
+    {
+      "id": "evals-regression",
+      "title": "Regression gates",
+      "category": "core",
+      "description": "CI evals before ship",
+      "icon": "database",
+      "side": "right",
+      "sort_order": 4,
+      "prerequisites": ["evals-datasets"],
+      "outcomes": [
+        "Run offline evals in CI on every change",
+        "Set pass/fail thresholds with owners",
+        "Bisect regressions to prompt or model changes"
+      ],
+      "rubric": [
+        "Describes CI eval placement",
+        "States a threshold policy",
+        "Outlines regression bisect steps"
+      ]
+    },
+    {
+      "id": "evals-tracing",
+      "title": "Tracing & spans",
+      "category": "core",
+      "description": "LangSmith-style observability",
+      "icon": "code",
+      "side": "left",
+      "sort_order": 5,
+      "prerequisites": ["evals-regression"],
+      "outcomes": [
+        "Instrument LLM calls with traces",
+        "Attach inputs/outputs for debugging",
+        "Filter traces by error and latency"
+      ],
+      "rubric": [
+        "Explains what belongs in a span",
+        "Shows how to debug from a trace",
+        "Names useful filters (error, latency)"
+      ]
+    },
+    {
+      "id": "evals-online",
+      "title": "Online evaluation",
+      "category": "integracao",
+      "description": "Production sampling and feedback",
+      "icon": "key",
+      "side": "right",
+      "sort_order": 6,
+      "prerequisites": ["evals-tracing"],
+      "outcomes": [
+        "Sample live traffic for offline review",
+        "Collect user feedback signals safely",
+        "Compare online vs offline metric drift"
+      ],
+      "rubric": [
+        "Describes safe production sampling",
+        "Names a feedback signal",
+        "Explains offline/online drift"
+      ]
+    },
+    {
+      "id": "evals-llmops",
+      "title": "LLMOps loop",
+      "category": "integracao",
+      "description": "Close the improvement loop",
+      "icon": "boxes",
+      "side": "left",
+      "sort_order": 7,
+      "prerequisites": ["evals-online"],
+      "outcomes": [
+        "Turn eval failures into backlog items",
+        "Schedule model/prompt refresh cadences",
+        "Report eval health to stakeholders"
+      ],
+      "rubric": [
+        "Links a failure to a backlog item",
+        "Proposes a refresh cadence",
+        "Sketches a stakeholder eval report"
+      ]
+    }
+  ]
+}

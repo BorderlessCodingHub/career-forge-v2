@@ -35,7 +35,7 @@ def mock_llm() -> None:
 
 SAMPLE_INTAKE = DiagnosisIntake(
     user_id="test-user",
-    goal_id="fullstack",
+    goal_id="rag-engineer",
     motivation="Quero migrar de carreira para tecnologia e trabalhar com APIs.",
     years_xp="0-1",
 )
@@ -115,7 +115,7 @@ class TestDiagnosisInterviewGraph:
 
         assert output["status"] == "complete"
         diagnosis = DiagnosisResponse.model_validate(output["diagnosis"])
-        assert diagnosis.profile.track_id == "fullstack-beginner"
+        assert diagnosis.profile.track_id == "rag-engineer-beginner"
         assert diagnosis.strengths
         assert diagnosis.gaps
 

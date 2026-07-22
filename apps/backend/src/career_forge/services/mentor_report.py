@@ -28,10 +28,10 @@ _NODE_ID_PREFIX = re.compile(r"^node-\d+-", re.IGNORECASE)
 _SLUG_PATTERN = re.compile(r"^[a-z0-9-]+$")
 
 GOAL_DISPLAY_LABELS: dict[str, str] = {
-    "fullstack": "Fullstack Engineer",
-    "data": "Data Engineer",
-    "ai-ml": "AI & ML Engineer",
-    "web3": "Web3",
+    "rag-engineer": "Production RAG & Advanced Retrieval",
+    "agent-engineer": "Agent Engineering",
+    "llm-evals": "LLM Evaluation & Observability",
+    "fine-tuning": "Fine-Tuning & Alignment",
     "backend": "Backend Developer",
 }
 
@@ -94,8 +94,8 @@ def get_mentor_report(session: Session, user_id: str) -> MentorReportResponse:
     if diagnosis is None:
         diagnosis = DiagnosisResponse.model_validate(diagnosis_raw)
 
-    catalog = load_roadmap_catalog()
-    track_title = catalog.get("track", {}).get("title", "Backend Developer")
+    catalog = load_roadmap_catalog(profile.track_id if profile else None)
+    track_title = catalog.get("track", {}).get("title", "Career Forge")
     raw_goal = (profile.goal if profile and profile.goal else None) or diagnosis.profile.label
     goal = _resolve_goal_display(raw_goal)
 

@@ -49,7 +49,7 @@ def _judge_output(**overrides: RubricDimension) -> JudgeBeliefOutput:
 
 SAMPLE_INTAKE = DiagnosisIntake(
     user_id="test-user",
-    goal_id="fullstack",
+    goal_id="rag-engineer",
     motivation="Quero migrar de carreira para tecnologia e construir APIs.",
     years_xp="0-1",
 )
@@ -107,15 +107,15 @@ async def test_finalize_diagnosis_invokes_finalize_schema(llm: OpenAiDiagnosisIn
     expected = FinalizeDiagnosisOutput(
         profile=DiagnosisProfile(
             label="Iniciante em transição",
-            track_id="fullstack-beginner",
+            track_id="rag-engineer-beginner",
             persona_slug="transicao_iniciante",
         ),
         strengths=["Motivação clara"],
         gaps=["Prova prática"],
-        starting_priorities=["http", "git"],
+        starting_priorities=["rag-retrieval", "rag-chunking"],
         estimated_mastery=[
-            EstimatedMasteryEntry(node_id="js", score=40),
-            EstimatedMasteryEntry(node_id="git", score=30),
+            EstimatedMasteryEntry(node_id="rag-embeddings", score=40),
+            EstimatedMasteryEntry(node_id="rag-chunking", score=30),
         ],
     )
     llm._client.invoke = AsyncMock(return_value=expected)
@@ -123,5 +123,5 @@ async def test_finalize_diagnosis_invokes_finalize_schema(llm: OpenAiDiagnosisIn
     diagnosis = await llm.finalize_diagnosis(belief, SAMPLE_INTAKE)
 
     llm._client.invoke.assert_awaited_once()
-    assert diagnosis.profile.track_id == "fullstack-beginner"
+    assert diagnosis.profile.track_id == "rag-engineer-beginner"
     assert diagnosis.strengths == ["Motivação clara"]

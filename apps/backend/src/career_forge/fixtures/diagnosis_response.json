@@ -1,26 +1,26 @@
 {
   "profile": {
-    "label": "Iniciante com base em JavaScript",
-    "track_id": "backend-beginner",
-    "persona_slug": "iniciante_js"
+    "label": "Beginner with retrieval fundamentals",
+    "track_id": "rag-engineer-beginner",
+    "persona_slug": "rag_beginner"
   },
   "strengths": [
-    "Já entende lógica básica e sintaxe JavaScript",
-    "Já usou GitHub superficialmente para versionar projetos"
+    "Understands embedding fundamentals",
+    "Can reason about chunking and overlap"
   ],
   "gaps": [
-    "HTTP e APIs REST",
-    "Autenticação JWT",
-    "Banco relacional e modelagem SQL"
+    "Vector retrieval and top-k debugging",
+    "Grounded generation with citations",
+    "RAG evaluation metrics"
   ],
-  "starting_priorities": ["http", "git", "db"],
+  "starting_priorities": ["rag-retrieval", "rag-chunking", "rag-rerank"],
   "estimated_mastery": {
-    "js": 65,
-    "git": 78,
-    "http": 42,
-    "db": 35,
-    "rest": 0,
-    "auth": 0,
-    "final": 0
+    "rag-embeddings": 65,
+    "rag-chunking": 78,
+    "rag-retrieval": 42,
+    "rag-rerank": 35,
+    "rag-grounding": 0,
+    "rag-eval": 0,
+    "rag-production": 0
   }
 }

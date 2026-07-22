@@ -15,9 +15,9 @@ from career_forge.services.graph_state import apply_graph_patch
 from career_forge.services.roadmap import get_user_roadmap, load_roadmap_catalog, sync_user_graph
 
 
-def _catalog_nodes() -> list[dict[str, Any]]:
+def _catalog_nodes(track_id: str | None = None) -> list[dict[str, Any]]:
     return sorted(
-        load_roadmap_catalog()["nodes"],
+        load_roadmap_catalog(track_id)["nodes"],
         key=lambda node: node.get("sort_order", 0),
     )
 
@@ -54,10 +54,10 @@ def _persistable_checklist_items(items: list[dict]) -> list[dict[str, str]]:
     ]
 
 
-def _nodes_meta(current_graph: list[UserSkillNode]) -> list[dict[str, Any]]:
+def _nodes_meta(current_graph: list[UserSkillNode], track_id: str | None = None) -> list[dict[str, Any]]:
     """Unified node metadata: static catalog plus persisted AI-generated nodes
     from the user's current graph, so dependency math works for both (HAC-64)."""
-    catalog_nodes = _catalog_nodes()
+    catalog_nodes = _catalog_nodes(track_id)
     catalog_ids = {node["id"] for node in catalog_nodes}
     meta = [
         {
@@ -198,9 +198,10 @@ def build_adaptive_patch(
     node_id: str,
     validation: ValidationResponse,
     current_graph: list[UserSkillNode],
+    track_id: str | None = None,
 ) -> GraphPatch:
     """Build deterministic GraphPatch from validation outcome."""
-    nodes_meta = _nodes_meta(current_graph)
+    nodes_meta = _nodes_meta(current_graph, track_id=track_id)
     meta_by_id = {node["id"]: node for node in nodes_meta}
     status_by_id = _status_map(current_graph)
     current_by_id = {node.node_id: node for node in current_graph}
@@ -292,7 +293,7 @@ def recalibrate_from_catalog(
 
     roadmap = build_roadmap_from_catalog()
     graph = _roadmap_to_graph(roadmap)
-    patch = build_adaptive_patch(node_id, validation, graph)
+    patch = build_adaptive_patch(node_id, validation, graph, track_id=roadmap.track.id)
     updated_graph = apply_graph_patch(graph, patch)
     updated_roadmap = _apply_graph_to_roadmap(roadmap, updated_graph)
     plan = build_plan_update(node_id, node_title, validation)
@@ -310,7 +311,9 @@ def recalibrate_after_validation(
     try:
         roadmap = get_user_roadmap(session, user_id)
         graph = _roadmap_to_graph(roadmap)
-        patch = build_adaptive_patch(node_id, validation, graph)
+        patch = build_adaptive_patch(
+            node_id, validation, graph, track_id=roadmap.track.id
+        )
         updated_graph = apply_graph_patch(graph, patch)
         updated_roadmap = sync_user_graph(session, user_id, updated_graph)
         plan = build_plan_update(node_id, node_title, validation)

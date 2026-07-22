@@ -29,7 +29,7 @@ _SAMPLE = DiagnosisRequest(
     motivation="APIs para space tech",
     answers={
         "level": "Já programo em JavaScript há alguns meses.",
-        "git": "Subi um projeto no GitHub.",
+        "rag-chunking": "Subi um projeto no GitHub.",
     },
 )
 
@@ -48,8 +48,8 @@ class TestRoadmapForgeEngine:
         diagnosis = DiagnosisResponse.model_validate(diagnosis_dict)
         graph = build_accumulated_graph(diagnosis)
         node_ids = {node.node_id for node in graph}
-        assert "http" in node_ids
-        assert "final" in node_ids
+        assert "rag-retrieval" in node_ids
+        assert "rag-production" in node_ids
 
     def test_timeline_ends_with_graph_ready(self, diagnosis_dict: dict) -> None:
         from career_forge.schemas.diagnosis import DiagnosisResponse

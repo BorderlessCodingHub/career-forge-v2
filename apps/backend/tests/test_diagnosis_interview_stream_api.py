@@ -22,7 +22,7 @@ from tests.mocks.diagnosis_interview_llm import MockDiagnosisInterviewLlm
 
 START_BODY = {
     "user_id": "test-user",
-    "goal_id": "fullstack",
+    "goal_id": "rag-engineer",
     "motivation": "Quero migrar de carreira para tecnologia e construir APIs.",
     "years_xp": "0-1",
 }

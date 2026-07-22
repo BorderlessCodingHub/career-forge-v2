@@ -108,9 +108,10 @@ def _merge_node(
 
 def build_roadmap_from_catalog(
     user_state: dict[str, dict[str, Any]] | None = None,
+    track_id: str | None = None,
 ) -> RoadmapResponse:
     """File-based fallback when Postgres is unavailable or user has no rows."""
-    catalog = load_roadmap_catalog()
+    catalog = load_roadmap_catalog(track_id)
     state = user_state or DEFAULT_DEMO_STATE
     track = catalog["track"]
     nodes = [
