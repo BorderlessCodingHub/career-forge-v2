@@ -13,6 +13,7 @@ from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
 from career_forge.ai.streaming.sse import format_sse
 from career_forge.db.session import get_db
 from career_forge.schemas.forge import ForgeRunRequest, ForgeRunResponse
+from career_forge.services.cost_guard import get_cost_guard
 from career_forge.services.forge_persistence import persist_graph_ready
 from career_forge.services.profile_diagnosis import load_forge_motor_input
 
@@ -52,6 +53,8 @@ async def forge_run(
         user_id=body.user_id,
         input=_build_forge_input(body, motor_input),
     )
+    # Fail fast before enqueue (same gate as GraphExecutor).
+    get_cost_guard().check(run)
     store.save(run)
 
     return ForgeRunResponse(

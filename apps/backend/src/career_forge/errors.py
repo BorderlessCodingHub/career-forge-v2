@@ -7,6 +7,14 @@ observable HTTP responses are unchanged.
 
 from __future__ import annotations
 
+from typing import Literal
+
+QuotaExhaustedCode = Literal["global_pool", "per_user_cap"]
+
+QUOTA_EXHAUSTED_MESSAGE = (
+    "experimental quota exhausted — come back on day 1 of next month"
+)
+
 
 class DomainError(Exception):
     """Base domain error. `status_code` maps to the HTTP status at the boundary."""
@@ -34,3 +42,13 @@ class MockInterviewSessionNotFoundError(NotFoundError):
 
 class ProfileNotFoundError(NotFoundError):
     """No confirmed diagnosis/profile for the user."""
+
+
+class QuotaExhaustedError(DomainError):
+    """Global pool or per-user forge cap exhausted (CAR-6 kill-switch)."""
+
+    status_code = 429
+
+    def __init__(self, code: QuotaExhaustedCode) -> None:
+        self.code = code
+        super().__init__(QUOTA_EXHAUSTED_MESSAGE)
