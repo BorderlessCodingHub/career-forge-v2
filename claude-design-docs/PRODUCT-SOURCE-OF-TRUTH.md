@@ -123,7 +123,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
-| `/` Goal picker | Hero + 3 cards + motivation field | Animation library, form validation UX |
+| `/` Goal picker | Hero + **4** LLM track cards + motivation field | Animation library, form validation UX |
 | `/onboarding` | Chat diagnostic, 4–6 Q feel; short negative answers like "Nothing." are valid evidence | Streaming vs batch API |
 | `/onboarding/edit` | **Editable** strengths/gaps/priorities + **"Generate roadmap"** | HAC-53: view-first, pencil/trash, dnd-kit reorder, redo diagnosis |
 | `/roadmap/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; manual **"View roadmap"** CTA after `graph_ready` | SSE wiring, scroll behavior |
@@ -176,6 +176,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Artifact roadmap chrome | Centered page `<h1>` + inline mentor card | Topbar track name + actions | **`ArtifactShell`** topbar (`artifact-topbar`): right cluster `items-end` — single `mentor-report-link` (`h-9`, `FileText` icon slot) + track name block (no ring in topbar); **`TrailProgressRing`** (`trail-progress-ring`, ~44px, mint stroke) centered in **page intro** below subtitle when checklist items exist — `getTrailChecklistProgressPct` item-pooled; label **Study progress**; adaptive view (`?adaptive=1`) = subtitle + highlighted spine node only — **no** `MissionBanner` on canvas; without session → silent server fallback | **Code wins** — de-cluttered topbar; trail progress on canvas intro | 2026-05-30 |
 | Spine card connectors | Dashed SVG branches (`prototype/skill-graph.jsx`) | Dashed grey graph edges (Code Breakers ref) | **`VerticalSpine`** / **`VerticalSpineSkeleton`**: 3-zone flex row — card + solid **`roadmap-connector-{id}`** (2px, `min-w-6 max-w-[120px]`) + spine dot; colors: `bg-border` default, `bg-warning` when `revisar`, `bg-accent-mint` when selected; skeleton connector stubs match loaded layout; `scrollIntoView` on select; selected dot mint glow | **Code wins** — solid status-colored branches on vertical artifact canvas | 2026-05-30 |
 | Mentor evidence report | Dense paragraph `mentor_summary`; slug as headline; raw `goal_id` as Goal | N/A | **`/report`** — `MentorReportView`: `formatGoalForDisplay` + backend `_resolve_goal_display` (slug `rag-engineer` → `Production RAG & Advanced Retrieval`; human strings pass through); `formatNodeTitleForDisplay` for topics; structured **Mentor summary** — gaps / correct answers / next step bullets; legacy `mentor_summary` split when structured fields empty; list-shaped StudyPlan evidence on backend | **Code wins** — mentor scan UX | 2026-07-21 |
+| Goal picker catalog (CAR-5) | Hackathon goals (fullstack / data / ai-ml / web3); some "Coming soon" | Prototype still has legacy ids | **`CAREER_GOALS`**: `rag-engineer`, `agent-engineer`, `llm-evals`, `fine-tuning` — all `active: true`; default selection `rag-engineer`; titles match track catalog seeds | **Code wins** — v2 LLM tracks; prototype goal list lags | 2026-07-22 |
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
 | Deploy badge (global footer) | Not in prototype | N/A | Fixed bottom strip on all routes — `DeployBadge` in root layout (`z-auto`, not `z-50`) so `NodeDrawer` / `MentorDrawer` (`z-40` backdrop, `z-50` panel) paint above; `local dev` when `NEXT_PUBLIC_BUILD_*` unset; prod `deploy {sha} · {time}`; health dot polls `GET /health` | **Code wins** — operational debug chrome below modals; not pitch UX | 2026-05-28 |
@@ -203,4 +204,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: 2026-05-30 — `/report` human Goal labels + structured summary*
+*Last updated: 2026-07-22 — CAR-5 goal picker: four LLM tracks (`rag-engineer` default)*

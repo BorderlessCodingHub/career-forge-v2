@@ -44,8 +44,8 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 
 | | |
 |---|---|
-| **Old** | Hero + 3 cards + motivation textarea |
-| **New** | Same |
+| **Old** | Hero + 3–4 hackathon career cards + motivation textarea |
+| **New** | Hero + **4** v2 LLM track cards (`rag-engineer`, `agent-engineer`, `llm-evals`, `fine-tuning`) + motivation; default `rag-engineer` |
 | **Route** | `/` · `data-screen="goal-picker"` |
 
 ---

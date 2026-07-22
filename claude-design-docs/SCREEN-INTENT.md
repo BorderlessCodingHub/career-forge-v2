@@ -20,7 +20,8 @@
 |------------|--------|
 | Headline | *"Where do you want to go?"* |
 | Subhead | Optional — keep minimal; no long explanatory paragraph required |
-| Cards | Backend active; Data / Frontend disabled "Coming soon" |
+| Cards | **Four** v2 LLM tracks (all active): `rag-engineer`, `agent-engineer`, `llm-evals`, `fine-tuning` — labels from `CAREER_GOALS` in `onboarding-data.ts` |
+| Default | `rag-engineer` pre-selected |
 | Layout | **Minimal** — compact row cards, no heavy chrome (icons, meta badges, footer notes) |
 | Motivation | Required in happy path — feeds downstream AI |
 | CTA | Single primary action to onboarding |
