@@ -17,6 +17,7 @@ from career_forge.ai.streaming.langchain_events import LangChainStreamEvent, par
 from career_forge.ai.streaming.normalize import normalize_langchain_event
 from career_forge.schemas.forge import ForgeErrorEvent
 from career_forge.schemas.stream_events import dump_stream_event
+from career_forge.services.cost_guard import CostGuard, get_cost_guard
 
 
 class GraphExecutor:
@@ -26,9 +27,14 @@ class GraphExecutor:
         self,
         factory: AgentFactory | None = None,
         store: GraphRunStore | None = None,
+        cost_guard: CostGuard | None = None,
     ) -> None:
         self._factory = factory or get_agent_factory()
         self._store = store or get_graph_run_store()
+        self._cost_guard_override = cost_guard
+
+    def _cost_guard(self) -> CostGuard:
+        return self._cost_guard_override if self._cost_guard_override is not None else get_cost_guard()
 
     async def execute(
         self,
@@ -36,6 +42,7 @@ class GraphExecutor:
         *,
         stream: bool = False,
     ) -> GraphRunResult | AsyncIterator[dict[str, Any]]:
+        self._cost_guard().check(run)
         if stream:
             return self._execute_stream(run)
         return await self._execute_collect(run)
@@ -52,6 +59,7 @@ class GraphExecutor:
                 if payload is not None:
                     record_normalized_event(run, payload)
             finalize_run(run)
+            self._cost_guard().record(run)
         except Exception as exc:  # noqa: BLE001 — record run failure centrally
             finalize_run(run, error=str(exc))
             self._store.save(run)
@@ -74,6 +82,7 @@ class GraphExecutor:
                         record_normalized_event(run, payload)
                         yield payload
                 finalize_run(run)
+                self._cost_guard().record(run)
             except Exception as exc:  # noqa: BLE001
                 finalize_run(run, error=str(exc))
                 yield dump_stream_event(ForgeErrorEvent(message=str(exc)))

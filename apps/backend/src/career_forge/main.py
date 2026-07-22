@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from career_forge.api.router import api_router
 from career_forge.config import settings
-from career_forge.errors import DomainError
+from career_forge.errors import DomainError, QuotaExhaustedError
 from career_forge.logging_config import configure_logging
 
 
@@ -20,6 +20,11 @@ async def lifespan(_app: FastAPI):
 
 async def _domain_error_handler(_request: Request, exc: DomainError) -> JSONResponse:
     """Map transport-agnostic domain errors to HTTP, preserving status codes."""
+    if isinstance(exc, QuotaExhaustedError):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": {"message": str(exc), "code": exc.code}},
+        )
     return JSONResponse(status_code=exc.status_code, content={"detail": str(exc)})
 
 

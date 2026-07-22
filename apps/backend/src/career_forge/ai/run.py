@@ -38,6 +38,9 @@ class GraphRun(BaseModel):
     raw_events: list[dict[str, Any]] = Field(default_factory=list)
     normalized_events: list[dict[str, Any]] = Field(default_factory=list)
     error: str | None = None
+    billable: bool = True
+    exclude_reason: str | None = None
+    estimated_cost_brl: float | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     completed_at: datetime | None = None

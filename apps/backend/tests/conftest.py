@@ -7,6 +7,7 @@ from career_forge.ai.llm.diagnosis_interview import (
 )
 from career_forge.ai.run import set_graph_run_store
 from career_forge.main import app
+from career_forge.services.cost_guard import set_cost_guard
 from career_forge.services.diagnosis_session import (
     InMemoryDiagnosisSessionStore,
     set_diagnosis_session_service,
@@ -28,6 +29,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
 
     reset_mock_interview_sessions()
     set_graph_run_store(None)
+    set_cost_guard(None)
     set_diagnosis_session_store(None)
     set_diagnosis_interview_llm(MockDiagnosisInterviewLlm())
     set_diagnosis_session_service(
@@ -37,8 +39,8 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     reset_mock_interview_sessions()
     reset_diagnosis_interview_llm()
     set_graph_run_store(None)
+    set_cost_guard(None)
     set_diagnosis_session_store(None)
-
 
 @pytest.fixture
 def client():

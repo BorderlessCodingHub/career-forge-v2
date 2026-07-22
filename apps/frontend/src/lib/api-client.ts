@@ -35,6 +35,13 @@ import {
   type ForgeStreamSideEffects,
 } from "@/lib/forge-stream";
 import { getUserId } from "@/lib/user-session";
+import {
+  QUOTA_EXHAUSTED_COPY,
+  isQuotaExhaustedMessage,
+  toUserFacingApiError,
+} from "@/lib/quota";
+
+export { QUOTA_EXHAUSTED_COPY, isQuotaExhaustedMessage };
 
 /** Public API base, or "" for same-origin (Next rewrites → API_INTERNAL_URL on the server). */
 function resolveBackendUrl(): string {
@@ -86,8 +93,8 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     );
   }
   if (!res.ok) {
-    const message = await readApiErrorMessage(res);
-    throw new Error(`API ${path} failed: ${message}`);
+    const detail = await readApiErrorMessage(res);
+    throw new Error(toUserFacingApiError(res.status, detail));
   }
   return res.json() as Promise<T>;
 }
