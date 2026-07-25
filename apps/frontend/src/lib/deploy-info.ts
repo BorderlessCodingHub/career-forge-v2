@@ -7,7 +7,8 @@ function getPublicBackendUrl(): string {
     process.env.NEXT_PUBLIC_BACKEND_URL?.trim() ||
     process.env.NEXT_PUBLIC_API_URL?.trim();
   if (fromEnv) return fromEnv.replace(/\/$/, "");
-  return "";
+  // Same-origin under Next basePath (rewrites → API_INTERNAL_URL).
+  return (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
 }
 
 export function shortBuildSha(sha: string | undefined): string {
@@ -52,7 +53,7 @@ export function apiHealthLabel(state: ApiHealthState): string {
 
 export async function fetchApiHealthState(): Promise<ApiHealthState> {
   const base = getPublicBackendUrl();
-  const url = base ? `${base}/health` : "/health";
+  const url = `${base}/health`;
 
   try {
     const res = await fetch(url, { cache: "no-store" });

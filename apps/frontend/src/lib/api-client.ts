@@ -43,13 +43,19 @@ import {
 
 export { QUOTA_EXHAUSTED_COPY, isQuotaExhaustedMessage };
 
-/** Public API base, or "" for same-origin (Next rewrites → API_INTERNAL_URL on the server). */
+/** Next basePath for same-origin API calls (see next.config.mjs). */
+function sameOriginApiBase(): string {
+  return (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
+}
+
+/** Public API base, or basePath for same-origin (Next rewrites → API_INTERNAL_URL). */
 function resolveBackendUrl(): string {
   const fromEnv =
     process.env.NEXT_PUBLIC_BACKEND_URL?.trim() ||
     process.env.NEXT_PUBLIC_API_URL?.trim();
   if (fromEnv) return fromEnv.replace(/\/$/, "");
-  return "";
+  // Empty NEXT_PUBLIC_* → browser hits /career-forge/diagnosis/... (rewritten server-side).
+  return sameOriginApiBase();
 }
 
 const backendUrl = resolveBackendUrl();

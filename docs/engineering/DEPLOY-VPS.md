@@ -10,11 +10,24 @@ Product-level deployment overview lives in [docs/CHECKPOINT.md](../CHECKPOINT.md
 
 ## Assumptions
 
-1. You have an existing `nginx` installation on the VPS.
-2. You have DNS `A` records pointing to this VPS for:
+1. You have an existing `nginx` installation on the VPS **or** you expose the frontend via Cloudflare Tunnel to a path gateway (e.g. `labs.borderlesscoding.com/career-forge`).
+2. For the classic nginx+subdomain setup, you have DNS `A` records pointing to this VPS for:
    - `APP_DOMAIN` (frontend)
    - `API_DOMAIN` (backend + SSE)
 3. You can SSH into the VPS.
+
+The Next app uses `basePath: /career-forge`. Under labs path routing (gateway + Tunnel), leave `NEXT_PUBLIC_BACKEND_URL` / `NEXT_PUBLIC_API_URL` empty so the browser calls same-origin `/career-forge/…` API prefixes; compose sets `API_INTERNAL_URL=http://backend:8000` for Next rewrites (SSE without browser CORS to `:18000`). Set `CORS_ORIGINS` to include `https://labs.borderlesscoding.com` and/or `https://labs-gateway.yuri-491.workers.dev` on the backend.
+
+## Labs path checklist (gateway + Tunnel)
+
+1. Deploy frontend+backend on VPS (`docker-compose.prod.yml`); frontend listens on `FRONTEND_HOST_PORT` (default `13000`).
+2. Cloudflare Tunnel → `http://127.0.0.1:13000` (public origin **without** `/career-forge` path — Next serves under basePath).
+3. Set labs-gateway `CAREER_FORGE_ORIGIN` to that tunnel HTTPS origin.
+4. Backend `CORS_ORIGINS=https://labs.borderlesscoding.com,https://labs-gateway.yuri-491.workers.dev` (Origin has no path).
+5. Leave `NEXT_PUBLIC_BACKEND_URL` / `NEXT_PUBLIC_API_URL` empty in the frontend image build so API calls stay same-origin under `/career-forge`.
+6. Smoke: `curl -i https://labs-gateway…/career-forge` and `…/career-forge/health`.
+
+For host-nginx path blocks (`/career-forge` + `/career-forge/api`), see [DEPLOY-LABS-MANUAL.md](../DEPLOY-LABS-MANUAL.md).
 
 ## Files in this repo
 
@@ -53,10 +66,10 @@ GHCR image names must be **lowercase**. This project publishes under `ghcr.io/pe
 
 | Variable | Example |
 |----------|---------|
-| `NEXT_PUBLIC_BACKEND_URL` | `https://api.yourdomain.com` |
-| `NEXT_PUBLIC_API_URL` | `https://api.yourdomain.com` |
+| `NEXT_PUBLIC_BACKEND_URL` | _(empty for labs same-origin)_ or `https://api.yourdomain.com` |
+| `NEXT_PUBLIC_API_URL` | _(empty for labs same-origin)_ or `https://api.yourdomain.com` |
 
-These are baked into the frontend image at **build** time in CI.
+These are baked into the frontend image at **build** time in CI. For labs path + Tunnel/gateway, prefer empty so the client uses `/career-forge/…` with Next rewrites.
 
 ### Package visibility
 
@@ -87,7 +100,7 @@ Set at minimum:
 - `APP_DOMAIN` and `API_DOMAIN`
 - `CERTBOT_EMAIL`
 - `OPENAI_API_KEY` and `LANGSMITH_API_KEY`
-- `CORS_ORIGINS` must include `https://$APP_DOMAIN`
+- `CORS_ORIGINS` must include the browser origin (`https://$APP_DOMAIN`, or `https://labs.borderlesscoding.com` when the app is served under `/career-forge` — Origin has no path)
 - `FRONTEND_HOST_PORT` and `BACKEND_HOST_PORT` must be free on the host (defaults `13000` / `18000`)
 - `GHCR_IMAGE_NAMESPACE=ghcr.io/pedroalano`
 - `IMAGE_TAG=latest` (must match tags pushed by CI)
@@ -212,8 +225,8 @@ docker compose -f docker-compose.prod.yml up -d
 | `Bind for 0.0.0.0:5432 failed` | Wrong compose file (dev) | Use `docker-compose.prod.yml` only |
 | `invalid number of arguments in proxy_set_header` | Bare `envsubst` wiped `$host` | Use updated `render-nginx.sh` (restricted substitution) |
 | `python: command not found` in deploy job | SSH health check used Python | Fixed in workflow: uses `curl -fsS https://$API_DOMAIN/health` |
-| `failed to fetch` in browser | CORS | `CORS_ORIGINS=https://$APP_DOMAIN` and restart backend |
-| Onboarding SSE 404 on `/diagnosis/interview/.../stream` | Frontend CI built with empty `NEXT_PUBLIC_*` — browser calls API path on **app** domain (Next 404) | Fixed in repo: Next rewrites via `API_INTERNAL_URL` + same-origin client. Re-deploy frontend. Optional: set GitHub vars `NEXT_PUBLIC_BACKEND_URL=https://$API_DOMAIN` |
+| `failed to fetch` in browser | CORS | `CORS_ORIGINS` must match browser Origin (`https://$APP_DOMAIN` or `https://labs.borderlesscoding.com`); restart backend |
+| Onboarding SSE 404 on `/diagnosis/interview/.../stream` | Missing rewrite / wrong path | Same-origin client calls `/career-forge/diagnosis/...` (basePath). Ensure `API_INTERNAL_URL` is set on the frontend container and image includes current `next.config.mjs`. Optional: set GitHub vars `NEXT_PUBLIC_BACKEND_URL=https://$API_DOMAIN` for separate API origin |
 | Forge/roadmap empty or 500 after deploy | Missing catalog seed / `roadmap.json` | Ensure `data/roadmap.json` exists on VPS; check backend logs for seed errors; restart backend after fixing mount |
 
 ## Deploy badge (frontend footer)
@@ -234,6 +247,7 @@ To verify a deploy landed: open `https://$APP_DOMAIN`, compare footer SHA with `
 
 ## Notes
 
-- Ensure `CORS_ORIGINS` includes `https://$APP_DOMAIN`.
-- nginx SSE block disables buffering for `/forge/…`.
-- Frontend public API URLs come from CI build args (`NEXT_PUBLIC_*` variables).
+- Ensure `CORS_ORIGINS` includes `https://$APP_DOMAIN` (or `https://labs.borderlesscoding.com` for the labs path gateway).
+- Frontend uses Next `basePath: /career-forge`. Same-origin API calls go to `/career-forge/diagnosis/…`, `/career-forge/forge/…`, etc.; Next rewrites them to `API_INTERNAL_URL` (compose sets `http://backend:8000`). Leave `NEXT_PUBLIC_BACKEND_URL` / `NEXT_PUBLIC_API_URL` empty for that mode so SSE stays same-origin.
+- nginx SSE block disables buffering for `/forge/…` (subdomain nginx templates). Under labs+Tunnel, the gateway hits the Next port directly — rewrites handle SSE.
+- Optional cross-origin API: CI build args `NEXT_PUBLIC_*` pointing at a public API origin (or nginx `/career-forge/api`).
