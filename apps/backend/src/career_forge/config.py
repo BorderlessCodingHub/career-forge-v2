@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # Cost instrumentation (CAR-6) — hard stop pool + per-user forge cap
     monthly_api_budget_brl: float = 500.0
     forge_cap_per_user_month: int = 2
-    cost_p95_brl_per_run: float = 1.0  # stub until CAR-7 measures real P95
+    cost_p95_brl_per_run: float = 1.10  # CAR-7 gate P95 (rounded; see docs/reports/*-cost-gate.md)
     cost_buffer_factor: float = 1.10
 
     @property

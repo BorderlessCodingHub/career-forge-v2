@@ -1,4 +1,4 @@
-.PHONY: smoke agent-verify up down status test stack-smoke seed help
+.PHONY: smoke agent-verify up down status test stack-smoke seed cost-gate help
 
 COMPOSE ?= docker compose
 
@@ -10,6 +10,7 @@ help:
 	@echo "  make test          Backend pytest (apps/backend)"
 	@echo "  make smoke         Full harness + stack health"
 	@echo "  make seed           Seed skill catalog + demo Ana (requires DATABASE_URL)"
+	@echo "  make cost-gate     CAR-7 synthetic cost gate + Yuri report"
 	@echo "  make stack-smoke   Docker stack health only"
 
 # Full smoke — harness + monorepo + stack health (starts docker if needed)
@@ -53,3 +54,6 @@ test:
 seed:
 	@echo "== Seed catalog + demo Ana =="
 	@cd apps/backend && PYTHONPATH=src python -m scripts.seed --demo-ana
+
+cost-gate:
+	@bash scripts/cost-gate.sh
