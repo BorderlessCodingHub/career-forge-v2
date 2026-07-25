@@ -1,0 +1,2 @@
+# Gate run artifacts (JSONL / summary) — keep markdown reports
+.runtime/
