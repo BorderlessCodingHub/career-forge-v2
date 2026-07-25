@@ -4,7 +4,8 @@ Step-by-step for Pedro. These are the **manual** steps only.
 Code changes (Next.js basePath, 4 tracks, forge cap, GHCR namespace) are delivered as a single PR — merge that first, then follow this guide.
 
 **Target URL:** `https://labs.borderlesscoding.com/career-forge`  
-**API URL:** `https://labs.borderlesscoding.com/career-forge/api`  
+**API (preferred):** same-origin under basePath — browser calls `/career-forge/diagnosis/…`, `/career-forge/health`, etc.; Next rewrites to the backend via `API_INTERNAL_URL`.  
+**API (alternate nginx split):** `https://labs.borderlesscoding.com/career-forge/api` → backend `:18000` (set `NEXT_PUBLIC_*` to that origin).  
 **VPS ports (localhost only):** frontend `13000`, backend `18000`
 
 ---
@@ -63,10 +64,14 @@ Você vai usar esse token em dois lugares:
 
 **Org repo → Settings → Secrets and variables → Actions → Variables**
 
+**Preferred (labs-gateway / Tunnel / same-origin rewrites):** leave both empty (or unset the GitHub variables) so the browser uses `/career-forge/…` and Next rewrites to `API_INTERNAL_URL`.
+
 | Variable | Value |
 |----------|-------|
-| `NEXT_PUBLIC_BACKEND_URL` | `https://labs.borderlesscoding.com/career-forge/api` |
-| `NEXT_PUBLIC_API_URL` | `https://labs.borderlesscoding.com/career-forge/api` |
+| `NEXT_PUBLIC_BACKEND_URL` | _(empty)_ |
+| `NEXT_PUBLIC_API_URL` | _(empty)_ |
+
+**Alternate (host nginx `/career-forge/api` split from §3):** set both to `https://labs.borderlesscoding.com/career-forge/api`.
 
 These are baked into the frontend image at **build time** — if you change them later, you must rebuild + redeploy the frontend.
 
@@ -128,12 +133,15 @@ APP_DOMAIN=labs.borderlesscoding.com
 API_DOMAIN=labs.borderlesscoding.com
 CERTBOT_EMAIL=                                 # not needed, TLS managed externally
 
-# --- CORS (browser origin) ---
-CORS_ORIGINS=https://labs.borderlesscoding.com
+# --- CORS (browser origin — scheme+host, no path) ---
+# Include workers.dev while labs DNS/gateway cutover is pending.
+CORS_ORIGINS=https://labs.borderlesscoding.com,https://labs-gateway.yuri-491.workers.dev
 
-# --- Frontend URLs (baked at build time via CI — these drive runtime fallback only) ---
-NEXT_PUBLIC_BACKEND_URL=https://labs.borderlesscoding.com/career-forge/api
-NEXT_PUBLIC_API_URL=https://labs.borderlesscoding.com/career-forge/api
+# --- Frontend URLs (baked at build time via CI) ---
+# Preferred: leave empty → same-origin /career-forge/… + Next rewrites.
+# Alternate nginx /api split: https://labs.borderlesscoding.com/career-forge/api
+NEXT_PUBLIC_BACKEND_URL=
+NEXT_PUBLIC_API_URL=
 
 # --- Backend behavior ---
 ENV=production
@@ -285,16 +293,19 @@ docker compose -f docker-compose.prod.yml exec backend python -m scripts.seed
 # API health (internal)
 curl -fsS http://127.0.0.1:18000/health
 
-# API health (through nginx)
+# Same-origin health via Next rewrite (preferred empty NEXT_PUBLIC_* mode)
+curl -fsS https://labs.borderlesscoding.com/career-forge/health
+
+# API health through nginx /api split (only if using alternate NEXT_PUBLIC_* = …/career-forge/api)
 curl -fsS https://labs.borderlesscoding.com/career-forge/api/health
 
-# Frontend (through nginx)
+# Frontend
 curl -fsS -o /dev/null -w "%{http_code}" https://labs.borderlesscoding.com/career-forge
 # Expected: 200
 
-# SSE probe (should stay open — Ctrl+C to stop)
+# SSE probe — same-origin rewrite mode (Ctrl+C to stop)
 curl -N -H "Accept: text/event-stream" \
-  https://labs.borderlesscoding.com/career-forge/api/forge/<any-run-id>/stream
+  https://labs.borderlesscoding.com/career-forge/forge/<any-run-id>/stream
 ```
 
 Health response must be:
@@ -333,9 +344,10 @@ docker compose -f docker-compose.prod.yml up -d --no-build
 |---------|-------------|-----|
 | `502 Bad Gateway` on `/career-forge` | Frontend container not running | `docker compose -f docker-compose.prod.yml ps` → check status |
 | `502 Bad Gateway` on `/career-forge/api/` | Backend not healthy yet | Wait for healthcheck: `docker compose -f docker-compose.prod.yml logs -f backend` |
-| Frontend loads but API calls fail (`failed to fetch`) | `CORS_ORIGINS` missing | Ensure `CORS_ORIGINS=https://labs.borderlesscoding.com` in `.env` and restart backend |
-| Assets 404 (`/_next/static/...`) | Next.js built without `basePath` | Ensure PR with `basePath: '/career-forge'` is merged and image rebuilt |
-| SSE stream closes immediately / no events | nginx buffering on | Confirm `proxy_buffering off` is in the API location block |
+| Frontend loads but API calls fail (`failed to fetch`) | `CORS_ORIGINS` missing / wrong | Ensure `CORS_ORIGINS` includes browser Origin (`https://labs.borderlesscoding.com` and/or `https://labs-gateway.yuri-491.workers.dev`); restart backend |
+| Assets 404 (`/_next/static/...`) | Next.js built without `basePath` | Ensure image includes `basePath: '/career-forge'` and rebuild |
+| API 404 on `/career-forge/diagnosis/…` with empty `NEXT_PUBLIC_*` | Missing Next rewrite / `API_INTERNAL_URL` | Confirm frontend container has `API_INTERNAL_URL=http://backend:8000` and current `next.config.mjs` (includes `knowledge-gaps`, `tutor`, `/health`) |
+| SSE stream closes immediately / no events | nginx buffering on | Confirm `proxy_buffering off` is in the API location block (nginx `/api` mode) |
 | Forge routes return 404 from API | nginx stripping prefix wrong | Check trailing slash on `proxy_pass http://127.0.0.1:18000/;` in API block |
 | `manifest unknown` on docker pull | `IMAGE_TAG` mismatch or images not pushed yet | Check GitHub Actions — wait for push job to succeed |
 | Seed fails: no skill_nodes | `data/roadmap.json` missing on VPS | `ls data/roadmap.json` in deploy dir — must exist after `git clone` |

@@ -1,4 +1,11 @@
-/** API path prefixes proxied to the backend when API_INTERNAL_URL is set (prod compose). */
+/** Public path when served behind labs.borderlesscoding.com (or similar). */
+const BASE_PATH = "/career-forge";
+
+/**
+ * API path prefixes proxied to the backend when API_INTERNAL_URL is set (prod compose).
+ * With basePath, Next.js automatically prefixes rewrite `source` (e.g. /career-forge/diagnosis/...).
+ * External `destination` URLs are not prefixed.
+ */
 const API_PREFIXES = [
   "diagnosis",
   "forge",
@@ -8,20 +15,33 @@ const API_PREFIXES = [
   "mentor-report",
   "mock-interview",
   "demo",
+  "knowledge-gaps",
+  "tutor",
 ];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: BASE_PATH,
+  env: {
+    // Same-origin fetch("/diagnosis/...") must include basePath; Link/router already do.
+    NEXT_PUBLIC_BASE_PATH: BASE_PATH,
+  },
   output: "standalone",
-  basePath: "/career-forge",
   async rewrites() {
     const internal = process.env.API_INTERNAL_URL?.replace(/\/$/, "");
     if (!internal) return [];
 
-    return API_PREFIXES.map((prefix) => ({
-      source: `/${prefix}/:path*`,
-      destination: `${internal}/${prefix}/:path*`,
-    }));
+    return [
+      ...API_PREFIXES.map((prefix) => ({
+        source: `/${prefix}/:path*`,
+        destination: `${internal}/${prefix}/:path*`,
+      })),
+      // Exact health check (footer badge); not covered by :path* prefixes above.
+      {
+        source: "/health",
+        destination: `${internal}/health`,
+      },
+    ];
   },
 };
 
