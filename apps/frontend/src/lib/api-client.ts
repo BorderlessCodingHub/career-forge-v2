@@ -223,7 +223,7 @@ export async function startForgeRunFromProfile(
   userId?: string,
 ): Promise<ForgeRunResponse> {
   const resolvedUserId = userId ?? getUserId();
-  return apiFetch<ForgeRunResponse>("/forge", {
+  return apiFetch<ForgeRunResponse>("/forge/runs", {
     method: "POST",
     body: JSON.stringify({ user_id: resolvedUserId }),
   });

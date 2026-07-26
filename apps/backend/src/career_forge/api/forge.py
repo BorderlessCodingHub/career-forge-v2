@@ -38,11 +38,16 @@ def _build_forge_input(
 
 
 @router.post("", response_model=ForgeRunResponse, status_code=202)
+@router.post("/runs", response_model=ForgeRunResponse, status_code=202)
 async def forge_run(
     body: ForgeRunRequest,
     db: Session = Depends(get_db),
 ) -> ForgeRunResponse:
-    """Enqueue roadmap forge run — client streams via GET /forge/{run_id}/stream."""
+    """Enqueue roadmap forge run — client streams via GET /forge/{run_id}/stream.
+
+    ``POST /forge/runs`` is preferred behind Next.js (App Router page occupies ``/forge``).
+    ``POST /forge`` remains for direct API / tests.
+    """
     motor_input: dict[str, Any] | None = None
     if body.diagnosis is None:
         motor_input = load_forge_motor_input(db, body.user_id)
