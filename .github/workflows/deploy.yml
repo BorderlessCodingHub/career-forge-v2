@@ -1,12 +1,11 @@
 name: Deploy production (VPS)
 
-# DEPLOY PAUSED — auto-deploy on push to main is disabled while we iterate.
-# Re-enable the `push:` block below when ready to ship again.
-# Manual run: Actions → "Deploy production (VPS)" → Run workflow.
+# Auto-deploy on push to main (re-enabled CAR-13). Manual run still available:
+# Actions → "Deploy production (VPS)" → Run workflow.
 on:
   workflow_dispatch:
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
 
 concurrency:
   group: deploy-production
@@ -72,7 +71,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script_stop: true
-          # VPS deploy script — runs only on workflow_dispatch while push-to-main is paused.
+          # VPS deploy script — pull GHCR images and restart prod stack.
           script: |
             set -euo pipefail
 

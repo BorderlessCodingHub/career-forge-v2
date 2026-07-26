@@ -25,6 +25,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
 | [CAR-7](https://linear.app/career-forge-v2/issue/CAR-7) | Synthetic cost gate run + Yuri report | [S] ✅ Done | Report delivered — Yuri go/no-go pending |
+| [CAR-13](https://linear.app/career-forge-v2/issue/CAR-13) | Re-enable auto-deploy on push to `main` | [S] ✅ Done | Paused in CAR-7; restored `push: branches: [main]` |
 
 ### Track B — external **[B]**
 
