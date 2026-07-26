@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 from career_forge.db.models.profile import Profile
 from career_forge.db.models.user import User
 from career_forge.errors import ProfileNotFoundError
+from career_forge.paths import normalize_catalog_track_id
+from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.profile_diagnosis import (
     DiagnosisConfirmRequest,
     DiagnosisConfirmResponse,
@@ -17,6 +19,17 @@ from career_forge.schemas.profile_diagnosis import (
     ProfileDiagnosisRecord,
     parse_profile_diagnosis,
 )
+
+
+def _with_normalized_track(diagnosis: DiagnosisResponse) -> DiagnosisResponse:
+    track_id = normalize_catalog_track_id(diagnosis.profile.track_id)
+    if track_id == diagnosis.profile.track_id:
+        return diagnosis
+    return diagnosis.model_copy(
+        update={
+            "profile": diagnosis.profile.model_copy(update={"track_id": track_id}),
+        },
+    )
 
 
 def resolve_or_create_user(
@@ -57,8 +70,9 @@ def confirm_diagnosis(
         answers=body.answers,
         cv_signals=body.cv_signals,
     )
-    record = ProfileDiagnosisRecord(diagnosis=body.diagnosis, intake=intake)
-    track_id = body.diagnosis.profile.track_id
+    diagnosis = _with_normalized_track(body.diagnosis)
+    record = ProfileDiagnosisRecord(diagnosis=diagnosis, intake=intake)
+    track_id = diagnosis.profile.track_id
 
     profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
     if profile is None:
@@ -99,9 +113,10 @@ def load_forge_motor_input(session: Session, external_id: str) -> dict[str, Any]
     if record is None:
         raise ProfileNotFoundError(f"No confirmed diagnosis for user {external_id!r}")
 
+    diagnosis = _with_normalized_track(record.diagnosis)
     intake = record.intake.model_dump(mode="json")
     return {
-        "diagnosis": record.diagnosis.model_dump(mode="json"),
+        "diagnosis": diagnosis.model_dump(mode="json"),
         "goal_id": intake["goal_id"],
         "motivation": intake["motivation"],
         "years_xp": intake.get("years_xp"),

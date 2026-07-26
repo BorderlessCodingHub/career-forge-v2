@@ -3,7 +3,7 @@
 > Borderless · labs.borderlesscoding.com/career-forge  
 > Executor: Pedro Alano  
 > Prazo estimado: 4–5 semanas ·  
-> **Atualizado:** 2026-07-20 — grill + respostas Yuri (auth platform, budget, público BASE/PSP)
+> **Atualizado:** 2026-07-25 — F2 grill decisions + Linear CAR-14…18; prior 2026-07-20 Yuri (auth, budget, BASE/PSP)
 
 ---
 
@@ -142,7 +142,26 @@ Soft gate: abaixo da nota mínima → aviso + forge lean (não bloqueia no pilot
 **Critério de aceite:** golden cases + cobertura ≥70% dos must-haves sign-offados  
 **Inclui:** soft gate no diagnóstico; prompts CTRR calibrados; english-first  
 **Pré-requisito:** gate F1 aprovado; must-haves com sign-off (ou baseline por silêncio)  
-**Sem alunos reais.**
+**Sem alunos reais.** Mentor fora de escopo F2.
+
+#### Decisões travadas (grill 2026-07-25)
+
+| # | Decisão |
+|---|--------|
+| F2.1 | Pedro pontua 16 golden cases com rubric escrita; Yuri spot-check 4 (1/goal) |
+| F2.2 | Lean forge = mesmo grafo + mesmo stream UX; só prune (sem pipeline “barato”) |
+| F2.3 | English hard cutover em F2; pt-BR só em F3 (sem flag half-i18n) |
+| F2.4 | ≥70% = cobertura **pós-forge** dos must-haves nos golden runs (por goal), não inventário do catálogo |
+| F2.5 | Uma barra global de soft gate para os 4 goals |
+| F2.6 | Pedro autor dos 16 casos sintéticos |
+| F2.7 | Soft-gate warning no summary do diagnóstico **e** na entrada do forge |
+| F2.8 | Soft gate quando `mean(4 dims CTRR) < cutoff` (cutoff afinado nos golden cases) |
+| F2.9 | Fixtures versionadas no repo (`tests/golden/` ou `data/golden_cases/`); LangSmith opcional |
+| F2.10 | Lean prune = must-haves + uma camada de foundation (prereqs) |
+| F2.11 | Validation = alinhamento leve de prompts/catálogo aos LLM goals; sem redesign UX/grafo |
+| F2.12 | Trabalho interno sem externo começa cedo; harness + aceite golden esperam must-haves frozen |
+
+Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) · CAR-14…CAR-18
 
 ---
 
@@ -210,3 +229,17 @@ Branch format: `CAR-XX-title-slug` (sem prefixo de username).
 | Issue | Title |
 |-------|-------|
 | [CAR-9](https://linear.app/career-forge-v2/issue/CAR-9) | Labs nginx path `/career-forge` (blocked on Brunno) — Backlog |
+
+---
+
+## Linear backlog — F2
+
+Project: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)
+
+| Issue | Title | Class | Blocked by |
+|-------|-------|-------|------------|
+| [CAR-14](https://linear.app/career-forge-v2/issue/CAR-14) | CTRR prompt/rubric recalibration + light validation align | [S] | — (internal start OK) |
+| [CAR-15](https://linear.app/career-forge-v2/issue/CAR-15) | Soft gate: global bar + lean prune + warnings | [S] | CAR-14 |
+| [CAR-16](https://linear.app/career-forge-v2/issue/CAR-16) | English-first hard cutover | [P] | — (∥ CAR-14) |
+| [CAR-17](https://linear.app/career-forge-v2/issue/CAR-17) | Must-have forge enforcement + ≥70% harness | [S] | CAR-8 freeze, CAR-15 |
+| [CAR-18](https://linear.app/career-forge-v2/issue/CAR-18) | 16 golden cases + rubric + Yuri spot-check | [S] | CAR-14…17 |
