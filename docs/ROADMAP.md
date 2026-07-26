@@ -34,18 +34,23 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 ---
 
-## Phase 2 — Goals LLM + prompts + english-first (placeholders)
+## Phase 2 — Goals LLM + prompts + english-first
 
-**Prerequisite:** F1 cost gate approved; must-haves sign-off (or silence baseline).  
-**No real students.** Acceptance: golden cases + ≥70% must-have coverage; soft gate on diagnosis.
+**Project:** [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
+**Prerequisite:** F1 cost GO (Yuri); must-haves frozen for harness/golden acceptance (CAR-8 sign-off or silence baseline).  
+**No real students.** Mentor out of scope. Acceptance: golden cases + ≥70% **post-forge** must-have coverage.
 
-- [ ] CTRR prompts/rubrics for BASE/PSP spectrum (4 goals)
-- [ ] Soft gate (lean forge + warning below bar)
-- [ ] Catalog + prompts enforce must-have nodes
-- [ ] English-first UI / prompts / reports
-- [ ] 16 golden cases (4 goals × 4 CTRR dims)
+Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 
-Create Linear issues when F1 gate closes.
+| Issue | Title | Class | Blocked by |
+|-------|-------|-------|------------|
+| [CAR-14](https://linear.app/career-forge-v2/issue/CAR-14) | CTRR prompt/rubric recalibration + light validation align | [S] | — |
+| [CAR-15](https://linear.app/career-forge-v2/issue/CAR-15) | Soft gate: global CTRR bar + lean forge prune + warnings | [S] | CAR-14 |
+| [CAR-16](https://linear.app/career-forge-v2/issue/CAR-16) | English-first hard cutover (UI + prompts + reports) | [P] | — (∥ CAR-14) |
+| [CAR-17](https://linear.app/career-forge-v2/issue/CAR-17) | Must-have enforcement in forge + ≥70% coverage harness | [S] | CAR-8 freeze, CAR-15 |
+| [CAR-18](https://linear.app/career-forge-v2/issue/CAR-18) | 16 golden cases + rubric + Yuri spot-check (F2 QA) | [S] | CAR-14…17 |
+
+**Start order:** CAR-14 + CAR-16 in parallel when ready → CAR-15 → CAR-17 (after must-have freeze) → CAR-18 last.
 
 ---
 
