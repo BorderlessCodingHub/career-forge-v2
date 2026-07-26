@@ -348,6 +348,7 @@ docker compose -f docker-compose.prod.yml up -d --no-build
 | Assets 404 (`/_next/static/...`) | Next.js built without `basePath` | Ensure image includes `basePath: '/career-forge'` and rebuild |
 | API 404 on `/career-forge/diagnosis/…` with empty `NEXT_PUBLIC_*` | Missing Next rewrite / `API_INTERNAL_URL` | Confirm frontend container has `API_INTERNAL_URL=http://backend:8000` and current `next.config.mjs` (includes `knowledge-gaps`, `tutor`, `/health`) |
 | `/career-forge/health` returns Next.js 404 HTML; badge **API unreachable**; `:18000/health` OK | Rewrites baked at **build** without `API_INTERNAL_URL` | Rebuild frontend with `API_INTERNAL_URL=http://backend:8000` build-arg (CAR-19); runtime-only env is too late |
+| `POST /career-forge/forge` → **405**; badge API ok | Rewrite only had `/${prefix}/:path*` — exact `/forge` missed | Exact rewrite `/${prefix}` + `/${prefix}/:path*` (CAR-20); rebuild frontend |
 | SSE stream closes immediately / no events | nginx buffering on | Confirm `proxy_buffering off` is in the API location block (nginx `/api` mode) |
 | Forge routes return 404 from API | nginx stripping prefix wrong | Check trailing slash on `proxy_pass http://127.0.0.1:18000/;` in API block |
 | `manifest unknown` on docker pull | `IMAGE_TAG` mismatch or images not pushed yet | Check GitHub Actions — wait for push job to succeed |
