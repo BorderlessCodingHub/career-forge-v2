@@ -2,10 +2,10 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-07-26** · Last merge: **CAR-13** · prior **CAR-7** · **CAR-6** ([PR #4](https://github.com/BorderlessCodingHub/career-forge-v2/pull/4))  
+Last updated: **2026-07-26** · Last merge: **CAR-19** · prior **CAR-13** · **CAR-7**  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)
 
-**Deploy:** Auto-deploy on push to `main` is **live again** (CAR-13) — [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml). Manual: Actions → Deploy production (VPS) → Run workflow.
+**Deploy:** Auto-deploy on push to `main` is live (CAR-13). Frontend same-origin rewrites require `API_INTERNAL_URL` at **image build** (CAR-19) — `/career-forge/health` → backend.
 
 ---
 
@@ -25,6 +25,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | A | CAR-8 Must-have node drafts | Todo |
 | B | CAR-9 Labs nginx `/career-forge` | Backlog (Brunno / domain) |
 | — | CAR-13 Re-enable auto-deploy on push to `main` | Done — `push: branches: [main]` restored in deploy.yml |
+| — | CAR-19 Bake `API_INTERNAL_URL` into frontend image | Done — Labs `/career-forge/health` rewrite fixed |
 
 **Cost gate:** run 2026-07-24 · Forge P95 **R$1.10** · Hard stop R$500/mo · Approval ceiling R$700 · **No students until Yuri approves**
 
