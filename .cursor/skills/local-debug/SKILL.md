@@ -150,5 +150,6 @@ docker compose exec backend pytest
 | Interview 500 | Missing `OPENAI_API_KEY` | Set in `.env`, restart backend |
 | Frontend can't reach API | Wrong `NEXT_PUBLIC_BACKEND_URL` | Must be host URL, not Docker service name |
 | `make test` fails with `connection refused` on `localhost:5432` | Postgres was not started before pytest | Run `make test` from repo root (boots `postgres`, waits readiness, runs `alembic upgrade head`, then pytest) |
+| Forge page `network error`, 0 steps | Diagnosis `track_id` saved as goal slug (`rag-engineer`) but catalog is `rag-engineer-beginner.json`; SSE yields FileNotFoundError then connection abort masks as network error | Fixed via `normalize_catalog_track_id` in `paths.py` + persist/load forge input; click **Tentar novamente** after backend reload |
 
 **When you find a new local-only trick, append it to section 8 of this skill.**

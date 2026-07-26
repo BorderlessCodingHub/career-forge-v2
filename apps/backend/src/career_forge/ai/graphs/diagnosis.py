@@ -12,18 +12,11 @@ from career_forge.ai.streaming.langchain_events import (
     emit_chain_stream,
     new_run_id,
 )
+from career_forge.paths import GOAL_TO_CATALOG_TRACK, DEFAULT_TRACK_ID
 from career_forge.schemas.diagnosis import DiagnosisProfile, DiagnosisRequest, DiagnosisResponse
 
-GOAL_TRACKS: dict[str, str] = {
-    "rag-engineer": "rag-engineer-beginner",
-    "agent-engineer": "agent-engineer-beginner",
-    "llm-evals": "llm-evals-beginner",
-    "fine-tuning": "fine-tuning-beginner",
-    # Legacy hackathon goal ids → default LLM track
-    "backend": "rag-engineer-beginner",
-    "data": "rag-engineer-beginner",
-    "frontend": "rag-engineer-beginner",
-}
+# Re-export for callers/tests that import GOAL_TRACKS from this module.
+GOAL_TRACKS: dict[str, str] = GOAL_TO_CATALOG_TRACK
 
 DOMAIN_SIGNALS: dict[str, tuple[str, ...]] = {
     "rag-embeddings": (
@@ -158,7 +151,7 @@ def build_diagnosis_response(payload: DiagnosisRequest) -> DiagnosisResponse:
 
     avg_score = sum(mastery.values()) // max(len(mastery), 1)
     label, persona = _profile_label(payload.goal_id, avg_score, payload.answers)
-    track_id = GOAL_TRACKS.get(payload.goal_id, "rag-engineer-beginner")
+    track_id = GOAL_TRACKS.get(payload.goal_id, DEFAULT_TRACK_ID)
 
     strengths: list[str] = []
     gaps: list[str] = []

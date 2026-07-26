@@ -59,21 +59,31 @@ export default function ForgePage() {
   const connectStream = useCallback(
     async (runId: string) => {
       setStatus("streaming");
+      let streamMessage: string | null = null;
 
-      const collected = await streamForgeRun(runId, {
-        onEvent: (event) => {
-          setEvents((previous) => [...previous, event]);
-        },
-        onComplete: (allEvents) => {
-          finishForge(allEvents);
-        },
-        onError: (message) => {
-          setError(message);
-        },
-      });
+      try {
+        const collected = await streamForgeRun(runId, {
+          onEvent: (event) => {
+            setEvents((previous) => [...previous, event]);
+          },
+          onComplete: (allEvents) => {
+            finishForge(allEvents);
+          },
+          onError: (message) => {
+            streamMessage = message;
+            setError(message);
+            setStatus("error");
+          },
+        });
 
-      if (collected.length > 0 && !collected.some((event) => event.type === "graph_ready")) {
-        finishForge(collected);
+        if (collected.length > 0 && !collected.some((event) => event.type === "graph_ready")) {
+          finishForge(collected);
+        }
+      } catch (err) {
+        // SSE abort after a typed error event often surfaces as a generic
+        // network failure — prefer the server message when we already have it.
+        if (streamMessage) throw new Error(streamMessage);
+        throw err;
       }
     },
     [finishForge],

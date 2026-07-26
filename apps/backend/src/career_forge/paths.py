@@ -7,6 +7,48 @@ from pathlib import Path
 
 DEFAULT_TRACK_ID = "rag-engineer-beginner"
 
+# Goal slugs (onboarding) → catalog file stems under data/catalog/
+GOAL_TO_CATALOG_TRACK: dict[str, str] = {
+    "rag-engineer": "rag-engineer-beginner",
+    "agent-engineer": "agent-engineer-beginner",
+    "llm-evals": "llm-evals-beginner",
+    "fine-tuning": "fine-tuning-beginner",
+    # Legacy hackathon goal ids → default LLM track
+    "backend": "rag-engineer-beginner",
+    "data": "rag-engineer-beginner",
+    "frontend": "rag-engineer-beginner",
+}
+
+
+def normalize_catalog_track_id(track_or_goal: str | None) -> str:
+    """Map goal slug or LLM drift to an on-disk catalog track id.
+
+    Finalize prompts ask for ``rag-engineer→rag-engineer-beginner``, but the LLM
+    sometimes returns the bare goal slug. Without this, forge crashes looking for
+    ``data/catalog/rag-engineer.json``.
+    """
+    if not track_or_goal or not track_or_goal.strip():
+        return DEFAULT_TRACK_ID
+
+    raw = track_or_goal.strip()
+    mapped = GOAL_TO_CATALOG_TRACK.get(raw)
+    if mapped is not None:
+        return mapped
+
+    try:
+        directory = catalog_dir()
+    except FileNotFoundError:
+        return raw
+
+    if (directory / f"{raw}.json").is_file():
+        return raw
+
+    beginner = f"{raw}-beginner"
+    if (directory / f"{beginner}.json").is_file():
+        return beginner
+
+    return raw
+
 
 def _find_data_root() -> Path:
     start = Path(__file__).resolve().parent
@@ -43,7 +85,7 @@ def roadmap_json_path(track_id: str | None = None) -> Path:
     if env_path:
         return Path(env_path)
 
-    resolved_track = track_id or DEFAULT_TRACK_ID
+    resolved_track = normalize_catalog_track_id(track_id)
     path = catalog_dir() / f"{resolved_track}.json"
     if path.is_file():
         return path

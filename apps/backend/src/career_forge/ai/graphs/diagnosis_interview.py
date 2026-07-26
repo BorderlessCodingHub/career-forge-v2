@@ -11,6 +11,7 @@ from career_forge.ai.llm.diagnosis_interview import (
     DiagnosisInterviewLlmError,
     get_diagnosis_interview_llm,
 )
+from career_forge.paths import normalize_catalog_track_id
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.diagnosis_interview import (
     MAX_QUESTIONS_PER_TURN,
@@ -67,6 +68,14 @@ async def _finalize_session(
     llm: Any,
 ) -> tuple[DiagnosisSession, DiagnosisResponse]:
     diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+    # LLM sometimes returns bare goal slug (rag-engineer) — coerce to catalog id.
+    track_id = normalize_catalog_track_id(diagnosis.profile.track_id)
+    if track_id != diagnosis.profile.track_id:
+        diagnosis = diagnosis.model_copy(
+            update={
+                "profile": diagnosis.profile.model_copy(update={"track_id": track_id}),
+            },
+        )
     updated = session.model_copy(
         update={"status": "complete", "diagnosis": diagnosis},
     )
