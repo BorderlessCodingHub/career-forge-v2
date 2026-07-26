@@ -55,6 +55,7 @@ jobs:
             NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
             NEXT_PUBLIC_BUILD_SHA=${{ github.sha }}
             NEXT_PUBLIC_BUILD_TIME=${{ github.event.head_commit.timestamp }}
+            API_INTERNAL_URL=http://backend:8000
           tags: |
             ghcr.io/pedroalano/career-forge-frontend:latest
             ghcr.io/pedroalano/career-forge-frontend:${{ github.sha }}

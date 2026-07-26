@@ -28,8 +28,11 @@ const nextConfig = {
   },
   output: "standalone",
   async rewrites() {
-    const internal = process.env.API_INTERNAL_URL?.replace(/\/$/, "");
-    if (!internal) return [];
+    // Must be available at `next build` (Docker builder). Runtime-only compose
+    // env is too late — empty rewrites → /career-forge/health 404 on Labs.
+    const internal = (
+      process.env.API_INTERNAL_URL?.trim() || "http://backend:8000"
+    ).replace(/\/$/, "");
 
     return [
       ...API_PREFIXES.map((prefix) => ({
