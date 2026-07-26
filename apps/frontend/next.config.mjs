@@ -35,11 +35,18 @@ const nextConfig = {
     ).replace(/\/$/, "");
 
     return [
-      ...API_PREFIXES.map((prefix) => ({
-        source: `/${prefix}/:path*`,
-        destination: `${internal}/${prefix}/:path*`,
-      })),
-      // Exact health check (footer badge); not covered by :path* prefixes above.
+      // Exact prefix roots first — POST /forge, POST /validation, etc. do not match /:path*
+      ...API_PREFIXES.flatMap((prefix) => [
+        {
+          source: `/${prefix}`,
+          destination: `${internal}/${prefix}`,
+        },
+        {
+          source: `/${prefix}/:path*`,
+          destination: `${internal}/${prefix}/:path*`,
+        },
+      ]),
+      // Exact health check (footer badge).
       {
         source: "/health",
         destination: `${internal}/health`,
