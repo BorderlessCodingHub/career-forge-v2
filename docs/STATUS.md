@@ -5,7 +5,7 @@
 Last updated: **2026-07-26** · Last merge: **CAR-20** · prior **CAR-19** · **CAR-13**  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)
 
-**Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Exact API root rewrites for `POST /forge` etc. (CAR-20).
+**Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` to avoid App Router page 405 (CAR-20).
 
 ---
 
@@ -26,7 +26,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | B | CAR-9 Labs nginx `/career-forge` | Backlog (Brunno / domain) |
 | — | CAR-13 Re-enable auto-deploy on push to `main` | Done — `push: branches: [main]` restored in deploy.yml |
 | — | CAR-19 Bake `API_INTERNAL_URL` into frontend image | Done — Labs `/career-forge/health` rewrite fixed |
-| — | CAR-20 Exact Next rewrite for `POST /forge` | Done — Labs Gerar roadmap 405 fixed |
+| — | CAR-20 `POST /forge/runs` (avoid `/forge` page 405) | Done — Labs verified (API JSON, not Next 405) |
 
 **Cost gate:** run 2026-07-24 · Forge P95 **R$1.10** · Hard stop R$500/mo · Approval ceiling R$700 · **No students until Yuri approves**
 
