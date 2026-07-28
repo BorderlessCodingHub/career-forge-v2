@@ -23,7 +23,8 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | A | CAR-6 Cost instrumentation | Done |
 | A | CAR-7 Synthetic cost gate + Yuri report | Done — report `docs/reports/2026-07-24-cost-gate.md` · **GO** (R$72.53 projected ≪ R$500) · awaiting Yuri sign-off |
 | A | CAR-8 Must-have node drafts | Todo |
-| B | CAR-9 Labs nginx `/career-forge` | Backlog (Brunno / domain) |
+| B | CAR-9 Labs path `/career-forge` | Done — reverse proxy (not host nginx) |
+| B | CAR-21 Labs forge SSE stream | Backlog — broken after path OK |
 | — | CAR-13 Re-enable auto-deploy on push to `main` | Done — `push: branches: [main]` restored in deploy.yml |
 | — | CAR-19 Bake `API_INTERNAL_URL` into frontend image | Done — Labs `/career-forge/health` rewrite fixed |
 | — | CAR-20 `POST /forge/runs` (avoid `/forge` page 405) | Done — Labs verified (API JSON, not Next 405) |
@@ -53,7 +54,7 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 | LangGraph motor (diagnosis → forge → validation) | ✅ Keep | Untouched by design (V2-PLAN) |
 | AI execution (GraphExecutor / Factory) | ✅ Keep | See engineering/AI-EXECUTION.md |
 | Diagnosis CTRR (ADR-001) | ✅ Keep | Recalibrate prompts in F2; soft gate |
-| Labs deploy path | ⚠️ Partial | Auto-deploy on `main` (CAR-13); same-origin API rewrite baked at build (CAR-19); nginx path pending (CAR-9) |
+| Labs deploy path | ⚠️ Partial | Auto-deploy on `main` (CAR-13); same-origin rewrite (CAR-19/20); path OK via reverse proxy (CAR-9); forge SSE broken (CAR-21) |
 | 4 LLM goals + catalog seeds | ✅ Done | CAR-5 — `data/catalog/` ×4 tracks |
 | Cost pool + per-user cap | ✅ Done | CAR-6 — CostGuard + usage_monthly + 429 kill-switch |
 | F1 synthetic cost gate report | ✅ Done | CAR-7 — 24 forges + samples · GO vs R$500/R$700 |
@@ -70,7 +71,7 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 
 | Item | Owner | Status |
 |------|-------|--------|
-| nginx path + domain pointing | Brunno | Open (CAR-9) |
+| Labs forge SSE through reverse proxy | Pedro | Open (CAR-21) — path fixed in CAR-9 |
 | Org `borderlesscodinghub` access | Pedro / Yuri | Partial OK |
 
 ---
