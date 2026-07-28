@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
-from career_forge.ai.streaming.sse import format_sse
+from career_forge.ai.streaming.sse import format_sse, sse_connected_body, sse_response
 from career_forge.db.session import get_db
 from career_forge.schemas.forge import ForgeRunRequest, ForgeRunResponse
 from career_forge.services.cost_guard import get_cost_guard
@@ -85,4 +85,4 @@ async def forge_stream(run_id: str) -> StreamingResponse:
             yield format_sse(event)
         persist_graph_ready(run.user_id, graph_ready_event)
 
-    return StreamingResponse(sse_body(), media_type="text/event-stream")
+    return sse_response(sse_connected_body(sse_body()))

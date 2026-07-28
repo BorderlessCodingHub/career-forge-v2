@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 
 from career_forge.ai.llm.diagnosis_interview import DiagnosisInterviewLlmError
-from career_forge.ai.streaming.sse import format_sse
+from career_forge.ai.streaming.sse import format_sse, sse_connected_body, sse_response
 from career_forge.schemas.diagnosis_interview import (
     InterviewStartRequest,
     InterviewTurnRequest,
@@ -51,7 +51,7 @@ async def start_diagnosis_interview_stream(
         except DiagnosisInterviewLlmError as exc:
             yield format_sse({"type": "error", "message": exc.retry_message})
 
-    return StreamingResponse(sse_body(), media_type="text/event-stream")
+    return sse_response(sse_connected_body(sse_body()))
 
 
 @router.get("/interview/{session_id}", response_model=InterviewTurnResponse)
@@ -107,4 +107,4 @@ async def submit_diagnosis_turn_stream(
         except DiagnosisInterviewLlmError as exc:
             yield format_sse({"type": "error", "message": exc.retry_message})
 
-    return StreamingResponse(sse_body(), media_type="text/event-stream")
+    return sse_response(sse_connected_body(sse_body()))
