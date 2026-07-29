@@ -1,5 +1,7 @@
 # Must-have nodes — F1 draft (CAR-8)
 
+> Versão em português: [README.pt-BR.md](./README.pt-BR.md)
+
 Lean forge acceptance in F2 measures **≥70% post-forge coverage** of these must-haves (per goal), via human QA — not job RAG in the product ([V2-PLAN.md](../../V2-PLAN.md)).
 
 | Goal | Doc | Nodes | Corpus size |
