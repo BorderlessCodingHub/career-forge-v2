@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     cost_p95_brl_per_run: float = 1.10  # CAR-7 gate P95 (rounded; see docs/reports/*-cost-gate.md)
     cost_buffer_factor: float = 1.10
 
+    # Auth scaffold (CAR-23 / ADR-003) — anon JWT; Borderless issuer in F3
+    jwt_secret: str = "career-forge-dev-jwt-secret-change-me-32b+"
+    jwt_anon_ttl_days: int = 90
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [

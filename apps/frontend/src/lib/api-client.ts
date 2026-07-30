@@ -34,7 +34,7 @@ import {
   parseForgeStreamEvent,
   type ForgeStreamSideEffects,
 } from "@/lib/forge-stream";
-import { getUserId } from "@/lib/user-session";
+import { ensureAccessToken, getUserId } from "@/lib/user-session";
 import {
   QUOTA_EXHAUSTED_COPY,
   isQuotaExhaustedMessage,
@@ -80,11 +80,16 @@ async function readApiErrorMessage(res: Response): Promise<string> {
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = await ensureAccessToken();
   let res: Response;
   try {
     res = await fetch(`${backendUrl}${path}`, {
       ...init,
-      headers: { "Content-Type": "application/json", ...init?.headers },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        ...init?.headers,
+      },
     });
   } catch (cause) {
     const origin =
@@ -138,13 +143,17 @@ async function consumeDiagnosisInterviewStream(
 ): Promise<InterviewTurnResponse> {
   let finalResponse: InterviewTurnResponse | null = null;
   let streamError: Error | null = null;
+  const token = await ensureAccessToken();
 
   try {
     await consumeFetchEventStream<DiagnosisStreamEvent>(
       `${backendUrl}${path}`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(body),
       },
       (_eventName, payload) => {
