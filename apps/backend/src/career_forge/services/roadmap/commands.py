@@ -81,6 +81,8 @@ def sync_user_graph(
     session: Session,
     user_id: str,
     nodes: list[UserSkillNode],
+    *,
+    commit: bool = True,
 ) -> RoadmapResponse:
     """Upsert forge graph into user_skill_nodes and return merged roadmap."""
     user = ensure_user(session, user_id)
@@ -115,7 +117,10 @@ def sync_user_graph(
                 ),
             )
 
-    session.commit()
+    if commit:
+        session.commit()
+    else:
+        session.flush()
     return get_user_roadmap(session, user_id)
 
 
