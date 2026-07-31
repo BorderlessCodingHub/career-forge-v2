@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from career_forge.api.deps import ExternalId
 from career_forge.db.session import get_db
 from career_forge.errors import DomainError
 from career_forge.schemas.roadmap import ChecklistToggleRequest, RoadmapResponse, RoadmapSyncRequest
@@ -15,11 +16,11 @@ router = APIRouter()
 
 @router.get("/", response_model=RoadmapResponse)
 def get_roadmap(
-    user_id: str = "demo-ana",
+    external_id: ExternalId,
     db: Session = Depends(get_db),
 ) -> RoadmapResponse:
     try:
-        return roadmap_service.get_user_roadmap(db, user_id)
+        return roadmap_service.get_user_roadmap(db, external_id)
     except Exception:
         db.rollback()
         return roadmap_service.build_roadmap_from_catalog()
@@ -28,10 +29,11 @@ def get_roadmap(
 @router.post("/sync", response_model=RoadmapResponse)
 def sync_roadmap(
     body: RoadmapSyncRequest,
+    external_id: ExternalId,
     db: Session = Depends(get_db),
 ) -> RoadmapResponse:
     try:
-        return roadmap_service.sync_user_graph(db, body.user_id, body.nodes)
+        return roadmap_service.sync_user_graph(db, external_id, body.nodes)
     except Exception:
         db.rollback()
         return roadmap_service.build_roadmap_from_catalog(
@@ -51,12 +53,13 @@ def sync_roadmap(
 def patch_node_checklist(
     node_id: str,
     body: ChecklistToggleRequest,
+    external_id: ExternalId,
     db: Session = Depends(get_db),
 ) -> RoadmapResponse:
     try:
         return roadmap_service.toggle_checklist_item(
             db,
-            body.user_id,
+            external_id,
             node_id,
             body.item_type,
             body.item_id,

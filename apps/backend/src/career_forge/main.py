@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from career_forge.api.router import api_router
+from career_forge.auth.middleware import BearerAuthMiddleware
 from career_forge.config import settings
 from career_forge.errors import DomainError, QuotaExhaustedError
 from career_forge.logging_config import configure_logging
@@ -43,6 +44,8 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    # Added after CORS so it runs first on the request (Starlette reverse order).
+    app.add_middleware(BearerAuthMiddleware)
 
     app.include_router(api_router)
     app.add_exception_handler(DomainError, _domain_error_handler)

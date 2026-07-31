@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from career_forge.ai.executor import get_graph_executor
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
 from career_forge.ai.streaming.sse import format_sse, sse_connected_body, sse_response
+from career_forge.api.deps import ExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.forge import ForgeRunRequest, ForgeRunResponse
 from career_forge.services.cost_guard import get_cost_guard
@@ -41,21 +42,24 @@ def _build_forge_input(
 @router.post("/runs", response_model=ForgeRunResponse, status_code=202)
 async def forge_run(
     body: ForgeRunRequest,
+    external_id: ExternalId,
     db: Session = Depends(get_db),
 ) -> ForgeRunResponse:
     """Enqueue roadmap forge run — client streams via GET /forge/{run_id}/stream.
 
     ``POST /forge/runs`` is preferred behind Next.js (App Router page occupies ``/forge``).
     ``POST /forge`` remains for direct API / tests.
+
+    Identity comes from Bearer ``sub`` (ADR-003); body ``user_id`` is ignored.
     """
     motor_input: dict[str, Any] | None = None
     if body.diagnosis is None:
-        motor_input = load_forge_motor_input(db, body.user_id)
+        motor_input = load_forge_motor_input(db, external_id)
 
     store = get_graph_run_store()
     run = GraphRun(
         graph_name="roadmap_forge",
-        user_id=body.user_id,
+        user_id=external_id,
         input=_build_forge_input(body, motor_input),
     )
     # Fail fast before enqueue (same gate as GraphExecutor).
@@ -72,7 +76,10 @@ async def forge_run(
 
 @router.get("/{run_id}/stream")
 async def forge_stream(run_id: str) -> StreamingResponse:
-    """Stream forge events for an existing run via GraphExecutor (SSE)."""
+    """Stream forge events for an existing run via GraphExecutor (SSE).
+
+    Public until CAR-26 stream tickets (EventSource cannot send Bearer).
+    """
     store = get_graph_run_store()
     run = store.get(run_id)
     if run is None:

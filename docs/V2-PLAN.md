@@ -3,7 +3,7 @@
 > Borderless · labs.borderlesscoding.com/career-forge  
 > Executor: Pedro Alano  
 > Prazo estimado: 4–5 semanas ·  
-> **Atualizado:** 2026-07-25 — F2 grill decisions + Linear CAR-14…18; prior 2026-07-20 Yuri (auth, budget, BASE/PSP)
+> **Atualizado:** 2026-07-30 — ADR-003 forge recovery + auth scaffold (grill); prior 2026-07-25 F2 grill; 2026-07-20 Yuri
 
 ---
 
@@ -21,7 +21,7 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 
 | # | Decisão |
 |---|--------|
-| 1 | Auth via `borderless-api` (platform) — **não** na F1; entra na **F3** com o 1º humano. Magic link local do plano antigo: fora. |
+| 1 | Auth **issuer** via `borderless-api` (platform) — F3 com o 1º humano. **Amend 2026-07-30:** scaffold F3-ready (`AuthProvider` + Bearer JWT anon) ships **before** F3 per [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md). Magic link local: fora. |
 | 2 | Hard stop API: **R$500/mês** (pool global). **R$700** = teto de *aprovação* do gate F1 (não o kill-switch). |
 | 3 | Throttle: **pool global R$500** + **cap por usuário** (1–2 forges/mês; número fino pós-gate). |
 | 4 | Funil único (4 goals); barra de passagem por **evidência CTRR**, não por anos de XP. |
@@ -33,6 +33,9 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 | 10 | URL: **path** — `labs.borderlesscoding.com/career-forge` (landing) + `/career-forge/app` (produto). Frame depois, mesmo path. |
 | 11 | Must-haves: draft Pedro (1 pág/goal) → 1 rodada sign-off Yuri; silêncio = baseline. |
 | 12 | F1 em Track A (desbloqueado) / Track B (nginx path — aguarda Brunno/domínio). Restante de org/deploy Track B já OK. |
+| 13 | **Forge recovery (ADR-003):** lista histórica via `forge_artifacts`; deep-links `share` (read-only) + `resume` (single-use/~7d); open = promote snapshot; freeze-before-promote. |
+| 14 | **Auth wire:** `Authorization: Bearer`; SSE via **stream ticket**. Paralelo a F2; CAR-21 só bloqueia path Labs do stream. |
+| 15 | Email opcional (Slice 2) — store only; send resume = F3. Diagnosis mid-flight fora; diagnosis **result** reutilizável = Slice 2. |
 
 ---
 
@@ -56,8 +59,8 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 
 ### Autenticação
 
-- **F1/F2:** sem auth de aluno — só sintéticos / uso interno. Caps instrumentados, não expostos a BASE/PSP
-- **F3:** integração mínima com `borderless-api` (platform) — validar token → `user_id` estável; desbloqueia cap hard e piloto
+- **F1/F2 (amend 2026-07-30):** scaffold `AuthProvider` + JWT anon Bearer ([ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md)) — uso interno / recovery; **não** é auth de piloto BASE/PSP
+- **F3:** issuer `borderless-api` no mesmo middleware — validar token → `user_id` estável; desbloqueia cap hard e piloto
 - SSO/magic link local: fora de escopo v2 (platform é a regra do ecossistema)
 
 ### Demo user

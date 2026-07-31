@@ -6,6 +6,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from career_forge.ai.tools.mock_interview_mcq import generate_mcq_mock_interview
+from career_forge.api.deps import ExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.mock_interview import (
     MockInterviewQuestionsResponse,
@@ -22,15 +23,17 @@ router = APIRouter()
 
 @router.get("/questions", response_model=MockInterviewQuestionsResponse)
 async def get_mock_interview_questions(
+    external_id: ExternalId,
     node_id: str = Query(..., min_length=1),
-    user_id: str = Query("demo-ana", min_length=1),
     db: Session = Depends(get_db),
 ) -> MockInterviewQuestionsResponse:
     try:
-        study_block, learner = build_mock_interview_context(db, user_id=user_id, node_id=node_id)
+        study_block, learner = build_mock_interview_context(
+            db, user_id=external_id, node_id=node_id
+        )
         node = resolve_skill_node_catalog_entry(db, node_id)
         return await generate_mcq_mock_interview(
-            user_id=user_id,
+            user_id=external_id,
             node_id=node_id,
             study_block=study_block,
             learner=learner,
@@ -44,12 +47,17 @@ async def get_mock_interview_questions(
 @router.post("", response_model=MockInterviewRunResponse)
 async def run_mock_interview(
     body: MockInterviewRequest,
+    external_id: ExternalId,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ) -> MockInterviewRunResponse:
     """Run mock interview loop — orchestrated by assessment_flow (MCQ or legacy)."""
     try:
-        return await assessment_flow.run_mock_interview(db, body, background_tasks)
+        return await assessment_flow.run_mock_interview(
+            db,
+            body.model_copy(update={"user_id": external_id}),
+            background_tasks,
+        )
     except mock_interview_service.McqSessionError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except ValueError as exc:

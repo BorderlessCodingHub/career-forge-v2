@@ -7,6 +7,7 @@ from fastapi.responses import StreamingResponse
 
 from career_forge.ai.llm.diagnosis_interview import DiagnosisInterviewLlmError
 from career_forge.ai.streaming.sse import format_sse, sse_connected_body, sse_response
+from career_forge.api.deps import ExternalId
 from career_forge.schemas.diagnosis_interview import (
     InterviewStartRequest,
     InterviewTurnRequest,
@@ -25,11 +26,13 @@ router = APIRouter()
 @router.post("/interview/start", response_model=InterviewTurnResponse)
 async def start_diagnosis_interview(
     body: InterviewStartRequest,
+    external_id: ExternalId,
 ) -> InterviewTurnResponse:
     """Start adaptive diagnosis interview — intake + optional CV → first questions."""
     service = get_diagnosis_session_service()
+    payload = body.model_copy(update={"user_id": external_id})
     try:
-        return await service.start_interview(body)
+        return await service.start_interview(payload)
     except DiagnosisInterviewLlmError as exc:
         raise HTTPException(
             status_code=503,
@@ -40,13 +43,15 @@ async def start_diagnosis_interview(
 @router.post("/interview/start/stream")
 async def start_diagnosis_interview_stream(
     body: InterviewStartRequest,
+    external_id: ExternalId,
 ) -> StreamingResponse:
     """SSE stream — live mapping progress while starting the interview."""
     service = get_diagnosis_session_service()
+    payload = body.model_copy(update={"user_id": external_id})
 
     async def sse_body():
         try:
-            async for line in service.stream_interview_start(body):
+            async for line in service.stream_interview_start(payload):
                 yield line
         except DiagnosisInterviewLlmError as exc:
             yield format_sse({"type": "error", "message": exc.retry_message})
@@ -55,8 +60,12 @@ async def start_diagnosis_interview_stream(
 
 
 @router.get("/interview/{session_id}", response_model=InterviewTurnResponse)
-async def get_diagnosis_session(session_id: str) -> InterviewTurnResponse:
+async def get_diagnosis_session(
+    session_id: str,
+    external_id: ExternalId,
+) -> InterviewTurnResponse:
     """Resume an in-progress or completed diagnosis interview session."""
+    _ = external_id  # Bearer required (ADR-003)
     service = get_diagnosis_session_service()
     try:
         return service.get_session(session_id)
@@ -68,8 +77,10 @@ async def get_diagnosis_session(session_id: str) -> InterviewTurnResponse:
 async def submit_diagnosis_turn(
     session_id: str,
     body: InterviewTurnRequest,
+    external_id: ExternalId,
 ) -> InterviewTurnResponse:
     """Submit answers for current round → next questions or final diagnosis."""
+    _ = external_id
     service = get_diagnosis_session_service()
     try:
         return await service.submit_turn(session_id, body)
@@ -90,8 +101,10 @@ async def submit_diagnosis_turn(
 async def submit_diagnosis_turn_stream(
     session_id: str,
     body: InterviewTurnRequest,
+    external_id: ExternalId,
 ) -> StreamingResponse:
     """SSE stream — live mapping progress while processing a turn."""
+    _ = external_id
     service = get_diagnosis_session_service()
 
     async def sse_body():

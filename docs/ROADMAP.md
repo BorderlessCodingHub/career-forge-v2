@@ -36,6 +36,34 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 ---
 
+## Track — Forge recovery + auth scaffold (∥ F2)
+
+**Project:** [Forge recovery + auth scaffold](https://linear.app/career-forge-v2/project/forge-recovery-auth-scaffold-fab4691ea85e)  
+**ADR:** [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md) · grill 2026-07-30  
+**Parallel to F2.** CAR-21 blocks Labs stream-ticket only.
+
+### MVP
+
+| Issue | Title | Class | Blocked by |
+|-------|-------|-------|------------|
+| [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) | Epic: Forge recovery + auth scaffold | — | — |
+| [CAR-23](https://linear.app/career-forge-v2/issue/CAR-23) | AuthProvider + anon JWT Bearer middleware | [P] | — |
+| [CAR-24](https://linear.app/career-forge-v2/issue/CAR-24) | `forge_artifacts` + persist on forge complete | [S] | CAR-23 |
+| [CAR-25](https://linear.app/career-forge-v2/issue/CAR-25) | List / open + freeze-before-promote | [S] | CAR-24 |
+| [CAR-27](https://linear.app/career-forge-v2/issue/CAR-27) | Share + resume tokens + landing Continue | [S] | CAR-25 |
+| [CAR-26](https://linear.app/career-forge-v2/issue/CAR-26) | Forge SSE stream ticket | [S] | CAR-23; Labs ↔ CAR-21 |
+
+**Start order:** CAR-23 first → CAR-24 → CAR-25 → CAR-27; CAR-26 ∥ after CAR-23 (Labs ticket after CAR-21).
+
+### Slice 2 / 3
+
+| Issue | Title | Class |
+|-------|-------|-------|
+| [CAR-29](https://linear.app/career-forge-v2/issue/CAR-29) | Slice 2: `/forges` UI + optional email + diagnosis profile | [S] |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [S] |
+
+---
+
 ## Phase 2 — Goals LLM + prompts + english-first
 
 **Project:** [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
