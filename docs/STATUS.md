@@ -2,7 +2,7 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-07-31** · Last merge: **CAR-24** · prior **CAR-23** · **CAR-8**  
+Last updated: **2026-07-31** · Last merge: **CAR-25** · prior **CAR-24** · **CAR-23**  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` to avoid App Router page 405 (CAR-20).
@@ -55,8 +55,8 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 |-------|-------|-------|--------|
 | CAR-23 | AuthProvider + anon JWT Bearer middleware | [P] | Done — `career_forge/auth/` + Bearer wire; forge SSE public until CAR-26 |
 | CAR-24 | `forge_artifacts` + persist on forge complete | [S] | Done — BIGSERIAL + `public_id` UUID; snapshot on `graph_ready` |
-| CAR-25 | List / open + freeze-before-promote | [S] | Backlog (blocked by CAR-24 ✅) |
-| CAR-27 | Share + resume tokens + landing Continue | [S] | Backlog (blocked by CAR-25) |
+| CAR-25 | List / open + freeze-before-promote | [S] | Done — `GET /me/forges` + `POST …/open` freeze-before-promote |
+| CAR-27 | Share + resume tokens + landing Continue | [S] | Backlog (blocked by CAR-25 ✅) |
 | CAR-26 | Forge SSE stream ticket | [S] | Backlog (blocked by CAR-23 ✅; Labs ↔ CAR-21) |
 
 ---
@@ -77,7 +77,7 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 | Soft gate + lean forge | ⬜ F2 | CAR-15 — mean CTRR bar; must-haves + foundation |
 | F2 golden cases | ⬜ F2 | CAR-18 — 16 fixtures + Yuri spot-check 4 |
 | Auth scaffold (anon JWT Bearer) | ✅ Done | CAR-23 — `AuthProvider` + middleware; F3-ready Borderless swap |
-| Forge artifacts (historical snapshots) | ✅ Done | CAR-24 — `forge_artifacts` on `graph_ready`; list/open = CAR-25 |
+| Forge artifacts (historical snapshots) | ✅ Done | CAR-24 persist + CAR-25 list/open freeze-before-promote |
 | Platform auth (`borderless-api`) | ⬜ F3 | CAR-28 — Borderless issuer on same Bearer wire |
 | Rebrand + landing `/career-forge` | ⬜ F3 | |
 | BASE/PSP pilots | ⬜ F3 | After gate + F2 + auth |
