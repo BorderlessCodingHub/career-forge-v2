@@ -15,7 +15,7 @@ from career_forge.api.deps import ExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.forge import ForgeRunRequest, ForgeRunResponse
 from career_forge.services.cost_guard import get_cost_guard
-from career_forge.services.forge_persistence import persist_graph_ready
+from career_forge.services.forge_persistence import extract_goal_id, persist_graph_ready
 from career_forge.services.profile_diagnosis import load_forge_motor_input
 
 router = APIRouter()
@@ -95,6 +95,12 @@ async def forge_stream(run_id: str) -> StreamingResponse:
             if isinstance(event, dict) and event.get("type") == "graph_ready":
                 graph_ready_event = event
             yield format_sse(event)
-        persist_graph_ready(run.user_id, graph_ready_event)
+        goal_id = extract_goal_id(run.input if isinstance(run.input, dict) else None)
+        persist_graph_ready(
+            run.user_id,
+            graph_ready_event,
+            graph_run_id=run.id,
+            goal_id=goal_id,
+        )
 
     return sse_response(sse_connected_body(sse_body()))
