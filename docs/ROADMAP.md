@@ -47,7 +47,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
 | [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) | Epic: Forge recovery + auth scaffold | — | — |
-| [CAR-23](https://linear.app/career-forge-v2/issue/CAR-23) | AuthProvider + anon JWT Bearer middleware | [P] | — |
+| [CAR-23](https://linear.app/career-forge-v2/issue/CAR-23) | AuthProvider + anon JWT Bearer middleware | [P] ✅ Done | — |
 | [CAR-24](https://linear.app/career-forge-v2/issue/CAR-24) | `forge_artifacts` + persist on forge complete | [S] | CAR-23 |
 | [CAR-25](https://linear.app/career-forge-v2/issue/CAR-25) | List / open + freeze-before-promote | [S] | CAR-24 |
 | [CAR-27](https://linear.app/career-forge-v2/issue/CAR-27) | Share + resume tokens + landing Continue | [S] | CAR-25 |

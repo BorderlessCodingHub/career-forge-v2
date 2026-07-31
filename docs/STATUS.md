@@ -2,7 +2,7 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-07-28** · Last merge: **CAR-8** · prior **CAR-20** · **CAR-19**  
+Last updated: **2026-07-30** · Last merge: **CAR-23** · prior **CAR-8** · **CAR-20**  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` to avoid App Router page 405 (CAR-20).
@@ -47,6 +47,20 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 
 ---
 
+## Track — Forge recovery + auth scaffold (∥ F2)
+
+[Project](https://linear.app/career-forge-v2/project/forge-recovery-auth-scaffold-fab4691ea85e) · epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) · [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md)
+
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
+| CAR-23 | AuthProvider + anon JWT Bearer middleware | [P] | Done — `career_forge/auth/` + Bearer wire; forge SSE public until CAR-26 |
+| CAR-24 | `forge_artifacts` + persist on forge complete | [S] | Backlog (blocked by CAR-23 ✅) |
+| CAR-25 | List / open + freeze-before-promote | [S] | Backlog (blocked by CAR-24) |
+| CAR-27 | Share + resume tokens + landing Continue | [S] | Backlog (blocked by CAR-25) |
+| CAR-26 | Forge SSE stream ticket | [S] | Backlog (blocked by CAR-23 ✅; Labs ↔ CAR-21) |
+
+---
+
 ## Parity matrix (v2-relevant)
 
 | Area | Status | Notes |
@@ -62,7 +76,8 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 | Must-have node drafts (4 goals) | ✅ Drafted | CAR-8 — `docs/product/must-haves/`; freeze on Yuri sign-off or silence |
 | Soft gate + lean forge | ⬜ F2 | CAR-15 — mean CTRR bar; must-haves + foundation |
 | F2 golden cases | ⬜ F2 | CAR-18 — 16 fixtures + Yuri spot-check 4 |
-| Platform auth (`borderless-api`) | ⬜ F3 | |
+| Auth scaffold (anon JWT Bearer) | ✅ Done | CAR-23 — `AuthProvider` + middleware; F3-ready Borderless swap |
+| Platform auth (`borderless-api`) | ⬜ F3 | CAR-28 — Borderless issuer on same Bearer wire |
 | Rebrand + landing `/career-forge` | ⬜ F3 | |
 | BASE/PSP pilots | ⬜ F3 | After gate + F2 + auth |
 
