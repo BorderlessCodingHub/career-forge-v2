@@ -67,6 +67,9 @@ services:
     image: ${GHCR_IMAGE_NAMESPACE:-ghcr.io/local}/career-forge-frontend:${IMAGE_TAG:-local}
     environment:
       API_INTERNAL_URL: http://backend:8000
+      # Override Docker container hostname so Next listens on all interfaces.
+      HOSTNAME: "0.0.0.0"
+      PORT: "3000"
     ports:
       - "127.0.0.1:${FRONTEND_HOST_PORT:-13000}:3000"
     depends_on:

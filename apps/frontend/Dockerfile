@@ -34,6 +34,12 @@ RUN pnpm build
 FROM node:20-alpine AS production
 WORKDIR /app
 
+ENV NODE_ENV=production
+ENV PORT=3000
+# Docker sets HOSTNAME to the container id; Next binds to that eth0 IP and
+# healthchecks against 127.0.0.1 fail. Force all interfaces.
+ENV HOSTNAME=0.0.0.0
+
 # Next standalone server output.
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
