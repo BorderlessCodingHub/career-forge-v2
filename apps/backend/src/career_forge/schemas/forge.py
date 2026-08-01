@@ -112,3 +112,10 @@ class ForgeRunResponse(BaseModel):
     status: str
     events: list[dict[str, Any]]
     output: dict[str, Any] | None = None
+
+
+class ForgeStreamTicketResponse(BaseModel):
+    """Short-lived ticket for ``GET /forge/{run_id}/stream?ticket=`` (CAR-26)."""
+
+    ticket: str
+    expires_in: int

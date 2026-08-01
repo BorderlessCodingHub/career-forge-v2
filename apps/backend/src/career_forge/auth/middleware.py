@@ -10,7 +10,7 @@ from starlette.responses import JSONResponse, Response
 
 from career_forge.auth.providers import get_auth_provider
 
-# SSE cannot send Authorization until CAR-26 stream tickets.
+# Forge SSE stays Bearer-exempt; ticket is validated in the stream handler (CAR-26).
 _PUBLIC_EXACT = frozenset(
     {
         "/health",

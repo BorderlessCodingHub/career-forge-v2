@@ -238,8 +238,24 @@ export async function startForgeRunFromProfile(
   });
 }
 
-function forgeStreamUrl(runId: string): string {
-  return `${backendUrl}/forge/${runId}/stream`;
+type ForgeStreamTicketResponse = {
+  ticket: string;
+  expires_in: number;
+};
+
+function forgeStreamUrl(runId: string, ticket: string): string {
+  const params = new URLSearchParams({ ticket });
+  return `${backendUrl}/forge/${runId}/stream?${params.toString()}`;
+}
+
+/** CAR-26 — Bearer mint → short-lived ticket for SSE (EventSource-compatible). */
+async function mintForgeStreamTicket(
+  runId: string,
+): Promise<ForgeStreamTicketResponse> {
+  return apiFetch<ForgeStreamTicketResponse>(
+    `/forge/${runId}/stream-ticket`,
+    { method: "POST" },
+  );
 }
 
 export async function streamForgeRun(
@@ -249,8 +265,10 @@ export async function streamForgeRun(
   let state = createInitialForgeStreamState();
   let streamError: Error | null = null;
 
+  const { ticket } = await mintForgeStreamTicket(runId);
+
   await consumeFetchEventStream<RoadmapForgeEvent>(
-    forgeStreamUrl(runId),
+    forgeStreamUrl(runId, ticket),
     { method: "GET" },
     (_eventName, payload) => {
       if (payload.type === "error") {
