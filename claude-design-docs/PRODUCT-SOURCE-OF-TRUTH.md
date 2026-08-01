@@ -23,14 +23,14 @@ Agents compare all three before coding UI. After sessions that change layout, to
 ```
 Goal → Onboarding pill rounds → Editable diagnosis → [Generate roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
 
-Return visit (CAR-27): landing Continue / View all (/forges) / New forge · deep-links /share/{token} · /resume/{token}
+Return visit (CAR-27/29): landing Continue / View all (/forges) / New forge · optional **Forge again from last diagnosis** · deep-links /share/{token} · /resume/{token} (conflict chooser when local forges ≠ resume owner)
 ```
 
 **App modes (prototype + target app):**
 
 | Mode | Screens | Chrome |
 |------|---------|--------|
-| `setup` | Goal (+ recovery gate), `/forges`, `/resume/[token]`, diagnostic, diagnosis edit, forge, forge complete, validation | Onboarding stepper (01–07) optional/minimal; recovery surfaces = centered columns, no `ArtifactShell` |
+| `setup` | Goal (+ recovery gate), `/forges`, `/resume/[token]` (incl. conflict chooser), diagnostic, diagnosis edit, forge, forge complete (+ optional email store), validation | Onboarding stepper (01–07) optional/minimal; recovery surfaces = centered columns, no `ArtifactShell` |
 | `artifact` | Steady `/roadmap`, adaptive recalibration, **`/report`**, **`/share/[token]`** (read-only list, no shell) | Steady roadmap/`/report`: `ArtifactShell` topbar — logo; right cluster `items-end`; `mentor-report-link` → `/report` + track block; page intro = subtitle + optional `trail-progress-ring`; spine + solid `roadmap-connector-{id}` lines; **no** stepper / progress sidebar |
 
 Full screen-by-screen: [UX-FLOW.md](./UX-FLOW.md) · Must-match: [SCREEN-INTENT.md](./SCREEN-INTENT.md)
@@ -125,14 +125,14 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
-| `/` Goal picker / recovery | Hero + **4** LLM track cards + motivation; if ≥1 forge artifact → **Continue** / **View all** / **New forge** (`landing-recovery`) | Animation library, form validation UX |
-| `/forges` | Minimal artifact list — Open, Copy share, Copy resume | Rich UI (CAR-29) |
+| `/` Goal picker / recovery | Hero + **4** LLM track cards + motivation; if ≥1 forge artifact → **Continue** / **View all** / **New forge**; if saved diagnosis → **Forge again from last diagnosis** (`landing-recovery`) | Animation library, form validation UX |
+| `/forges` | Artifact list — Open, Rename, Copy share, **Revoke share**, Copy resume; optional re-forge from profile CTA | Visual polish |
 | `/share/[token]` | Read-only snapshot roadmap; **no** session adopt (API `GET /public/share/{token}`) | Visual polish |
-| `/resume/[token]` | Consume resume → adopt owner JWT → `/roadmap`; fail on reuse/expiry (API `POST /public/resume/{token}`) | Conflict chooser (CAR-29) |
+| `/resume/[token]` | Consume resume; **conflict chooser** when local forges exist for a different `external_id` (keep local vs switch); else adopt → `/roadmap` | Copy polish |
 | `/onboarding` | Chat diagnostic, 4–6 Q feel; short negative answers like "Nothing." are valid evidence | Streaming vs batch API |
-| `/onboarding/edit` | **Editable** strengths/gaps/priorities + **"Generate roadmap"** | HAC-53: view-first, pencil/trash, dnd-kit reorder, redo diagnosis |
+| `/onboarding/edit` | **Editable** strengths/gaps/priorities + **"Generate roadmap"**; also entry after profile hydrate (CAR-29 re-forge) | HAC-53: view-first, pencil/trash, dnd-kit reorder, redo diagnosis |
 | `/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; manual **"View roadmap"** CTA after `graph_ready` | SSE wiring, scroll behavior |
-| `/forge/complete` | Stream items fly into vertical layout; CAR-27 resume link **copy once** | Motion implementation |
+| `/forge/complete` | Stream items fly into vertical layout; resume link **copy once**; **optional email store** (no send) | Motion implementation |
 | `/roadmap` | **Vertical roadmap** steady state; track name in **artifact topbar** only; right cluster `items-end`; `mentor-report-link` bottom-aligned to track title; page intro (`pt-6`) = subtitle + centered **`trail-progress-ring`** when checklist items exist; spine nodes alternate left/right with solid **`roadmap-connector-{id}`** lines to spine dot; canvas compact study progress; drawer accordions + sticky validate CTA | Node detail panel, full AI sidebar (P2) |
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |
 | `/roadmap` (adaptive) | Roadmap state change + mentor/AI context | Drawer vs sidebar |
@@ -185,7 +185,8 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Forge events | Mock `FORGE_SCRIPT` | SSE from FastAPI (HAC-18) | SSE wired | Map SSE to timeline UI only | HAC-18 |
 | Prod persistence | Postgres diagnosis + graph runs | InMemory stores | HAC-58 — auto postgres when ENV=production | **Code wins** | HAC-58 |
 | Deploy badge (global footer) | Not in prototype | N/A | Fixed bottom strip on all routes — `DeployBadge` in root layout (`z-auto`, not `z-50`) so `NodeDrawer` / `MentorDrawer` (`z-40` backdrop, `z-50` panel) paint above; `local dev` when `NEXT_PUBLIC_BUILD_*` unset; prod `deploy {sha} · {time}`; health dot polls `GET /health` | **Code wins** — operational debug chrome below modals; not pitch UX | 2026-05-28 |
-| Forge recovery (CAR-27 / ADR-003) | Not in prototype | N/A | **`LandingRecoveryGate`** on `/` when `GET /me/forges` ≥1: Continue / View all / New forge (`data-screen="landing-recovery"`); minimal `/forges` (`forges-list`); app deep-links `/share/[token]` + `/resume/[token]`; API under **`/public/share`** + **`/public/resume`** so Next pages win on Labs same-origin; forge complete resume copy-once. MVP English copy on recovery surfaces (full EN cutover = CAR-16). Conflict chooser + email = CAR-29 | **Code wins** — MVP recovery; Slice 2 polish deferred | 2026-08-01 |
+| Forge recovery (CAR-27 / ADR-003) | Not in prototype | N/A | **`LandingRecoveryGate`** on `/` when `GET /me/forges` ≥1: Continue / View all / New forge (`data-screen="landing-recovery"`); `/forges` list; app deep-links `/share/[token]` + `/resume/[token]`; API under **`/public/share`** + **`/public/resume`**; forge complete resume copy-once. MVP English copy on recovery surfaces (full EN cutover = CAR-16) | **Code wins** — base recovery | 2026-08-01 |
+| Forge recovery Slice 2 (CAR-29) | Not in prototype | N/A | Rich **`/forges`**: Rename (`PATCH /me/forges/{id}`), **Revoke share**, re-forge CTA; **`/resume/[token]`** conflict chooser (`resume-conflict` / keep local / switch) before `adoptSession` when local forges ≠ resume owner; forge complete **optional email** store (`PATCH /me/email`, no SMTP); **`GET /me/profile`** + `hydrateOnboardingFromProfile` → `/onboarding/edit` or `startForgeRunFromProfile`; landing CTA **Forge again from last diagnosis** when profile has diagnosis (also empty-artifact + diagnosis gate → Welcome back / New from scratch) | **Code wins** — Slice 2 recovery polish; Borderless send = CAR-28 | 2026-08-01 |
 
 ---
 
@@ -210,4 +211,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: 2026-08-01 — CAR-27 ui-product-sync: recovery in flow + screen map, `/forge` paths, `/public/*` API vs app deep-links*
+*Last updated: 2026-08-01 — CAR-29 ui-product-sync: rich /forges, resume conflict, optional email, diagnosis re-forge + empty-diagnosis landing gate*

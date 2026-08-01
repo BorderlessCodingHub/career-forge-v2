@@ -138,10 +138,31 @@ export type ForgeLinkMintResponse = {
   path: string;
 };
 
+export type ForgeShareRevokeResponse = {
+  revoked: number;
+};
+
 export type ResumeConsumeResponse = {
   access_token: string;
   token_type: string;
   external_id: string;
+};
+
+export type MeEmailUpdateResponse = {
+  email: string;
+};
+
+export type MeProfileResponse = {
+  external_id: string;
+  email: string | null;
+  has_diagnosis: boolean;
+  diagnosis: DiagnosisResponse | null;
+  intake: {
+    goal_id: string;
+    motivation: string;
+    years_xp?: YearsXpRange | null;
+    answers?: Record<string, string>;
+  } | null;
 };
 
 export type ValidationStatus = "aprovado" | "revisar";

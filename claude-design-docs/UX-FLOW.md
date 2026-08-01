@@ -10,11 +10,11 @@
 ```
 Goal → Onboarding pill rounds → Editable diagnosis → [Generate roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
 
-Return visit (CAR-27): if ≥1 forge artifact → Continue last / View all (/forges) / New forge
-Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use)
+Return visit (CAR-27/29): if ≥1 forge artifact → Continue last / View all (/forges) / New forge; if saved diagnosis → Forge again from last diagnosis
+Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner)
 ```
 
-**Mental breadcrumb:** Goal → Diagnosis → Review diagnosis → Forge roadmap → Explore roadmap · Recovery: Continue / share / resume
+**Mental breadcrumb:** Goal → Diagnosis → Review diagnosis → Forge roadmap → Explore roadmap · Recovery: Continue / forges / share / resume / re-forge from profile
 
 5-min demo: [CHECKPOINT](../docs/CHECKPOINT.md#demo-script-5-min)
 
@@ -36,7 +36,7 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 | Step numbering | Implicit in the timeline | **1–N only during generation** — does not appear in the steady state |
 | App modes | Single chrome | **`setup`** (goal → forge) vs **`artifact`** (finished roadmap) |
 | AI in the dashboard | Contextual mentor drawer (P1) | **Ask AI** in the node drawer (roadmap.sh tutor style); full mentor drawer = optional P1 |
-| Return visit / recovery | Fresh GoalPicker every load; lost session if localStorage cleared | **CAR-27:** landing gate when ≥1 artifact; `/forges` list; share (read-only) + resume (single-use JWT adopt). Email / conflict chooser = CAR-29 |
+| Return visit / recovery | Fresh GoalPicker every load; lost session if localStorage cleared | **CAR-27+29:** landing gate when ≥1 artifact; rich `/forges` (rename/revoke); share + resume; resume **conflict chooser**; optional email store; re-forge from persisted diagnosis |
 
 ---
 
@@ -44,31 +44,32 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 
 ### 1. Goal Picker (`/`)
 
-The user declares their dream profession + motivation. **CAR-27:** returning users with ≥1 `forge_artifact` see a recovery gate first.
+The user declares their dream profession + motivation. **CAR-27/29:** returning users with ≥1 `forge_artifact` (or a saved diagnosis) see a recovery gate first.
 
 | | |
 |---|---|
 | **Old** | Hero + 3–4 hackathon career cards + motivation textarea |
 | **New** | Hero + **4** v2 LLM track cards (`rag-engineer`, `agent-engineer`, `llm-evals`, `fine-tuning`) + motivation; default `rag-engineer` |
-| **Return visit** | If `GET /me/forges` has items → **Continue** (open active/newest) / **View all** (`/forges`) / **New forge** (GoalPicker). Zero artifacts → GoalPicker only |
+| **Return visit** | If `GET /me/forges` has items → **Continue** / **View all** (`/forges`) / **New forge** (+ optional Forge again); if zero artifacts but `GET /me/profile` has diagnosis → Welcome back (**Forge again** / **New from scratch**); if diagnosis on ready gate → **Forge again from last diagnosis** (hydrate → `/onboarding/edit` or forge from profile). Zero artifacts + no diagnosis → GoalPicker only |
 | **Route** | `/` · `data-screen="goal-picker"` or `landing-recovery` |
 
 ---
 
-### 1b. Forges list (`/forges`) — CAR-27 MVP
+### 1b. Forges list (`/forges`) — CAR-29
 
-Minimal catalog of historical forge artifacts. Open (freeze-before-promote), copy **share** (read-only), copy **resume** (single-use ~7d). Polished UI = CAR-29.
+Catalog of historical forge artifacts. Open (freeze-before-promote), **Rename**, copy **share**, **Revoke share**, copy **resume**. Optional **Forge again from last diagnosis** when profile has diagnosis.
 
 | | |
 |---|---|
 | **Route** | `/forges` · `data-screen="forges-list"` |
+| **API** | `GET /me/forges` · `PATCH /me/forges/{public_id}` (title) · `POST …/share/revoke` |
 
-### 1c. Share / resume deep-links — CAR-27
+### 1c. Share / resume deep-links — CAR-27/29
 
 | Link | App route | API (Labs same-origin) | Behavior |
 |------|-----------|------------------------|----------|
 | Share | `/share/[token]` · `data-screen="share-readonly"` | `GET /public/share/{token}` | Read-only roadmap from artifact snapshot; **does not** adopt owner `user_id` |
-| Resume | `/resume/[token]` · `data-screen="resume-consume"` | `POST /public/resume/{token}` | Consumes token → writes owner JWT to localStorage → opens roadmap; second use fails |
+| Resume | `/resume/[token]` · `data-screen="resume-consume"` | `POST /public/resume/{token}` | Consumes token; if local Bearer has forges **and** `external_id` ≠ resume owner → **conflict chooser** (keep local / switch) before `adoptSession`; else adopt → open roadmap; second use fails |
 
 Copied links use **app** paths (`/share/…`, `/resume/…`), not `/public/…`.
 
@@ -146,6 +147,7 @@ Short explicit negative answers (for example, **"Nothing."**) are valid evidence
 | **New** | Each item/phrase of the stream **animates flying** into position on the **vertical roadmap layout**. Spine + left/right nodes materialize. No confetti — premium dev-tool |
 | **Route** | `/roadmap/forge/complete` · `data-screen="forge-reveal"` (app: `/forge/complete`) |
 | **CAR-27** | After reveal, show **resume link copy once** (single-use ~7d) beside roadmap CTA |
+| **CAR-29** | Optional **email store** (`PATCH /me/email`) — no send; for future CAR-28 delivery |
 
 After the animation → navigates to steady state (`/roadmap`).
 
@@ -232,10 +234,10 @@ After the animation → navigates to steady state (`/roadmap`).
 | Forge uniform nodes | ✅ HAC-25 |
 | Editable diagnosis screen | ⬜ Still hash `#result` placeholder |
 | Forge timeline-only (no graph during stream) | ⬜ Prototype keeps split forge layout (user approved layout HAC-25) |
-| Forge recovery (landing / forges / share / resume) | ⬜ Not in prototype — **code + this doc win** (CAR-27 / ADR-003) |
+| Forge recovery (landing / forges / share / resume / email / re-forge) | ⬜ Not in prototype — **code + this doc win** (CAR-27/29 / ADR-003) |
 
 Implementation target: this doc + [SCREEN-INTENT.md](./SCREEN-INTENT.md).
 
 ---
 
-*Last updated: 2026-08-01 — CAR-27 forge recovery (landing Continue, share/resume, `/forges`)*
+*Last updated: 2026-08-01 — CAR-29 ui-product-sync: empty+diagnosis Welcome back gate documented*

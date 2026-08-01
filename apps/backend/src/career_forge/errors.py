@@ -50,6 +50,18 @@ class ProfileNotFoundError(NotFoundError):
     """No confirmed diagnosis/profile for the user."""
 
 
+class ConflictError(DomainError):
+    """Resource conflict (e.g. unique email already taken)."""
+
+    status_code = 409
+
+
+class BadRequestError(DomainError):
+    """Invalid client input that is not a schema-validation failure."""
+
+    status_code = 400
+
+
 class QuotaExhaustedError(DomainError):
     """Global pool or per-user forge cap exhausted (CAR-6 kill-switch)."""
 

@@ -21,3 +21,9 @@ class ForgeArtifactSummary(BaseModel):
 
 class ForgeArtifactListResponse(BaseModel):
     items: list[ForgeArtifactSummary]
+
+
+class ForgeArtifactUpdateRequest(BaseModel):
+    """PATCH /me/forges/{public_id} — user-editable title (CAR-29)."""
+
+    title: str = Field(min_length=1, max_length=200)

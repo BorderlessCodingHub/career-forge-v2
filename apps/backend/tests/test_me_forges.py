@@ -168,3 +168,46 @@ def test_open_already_active_is_idempotent(raw_client: TestClient) -> None:
     assert {n["node_id"] for n in first.json()["nodes"]} == {
         n["node_id"] for n in second.json()["nodes"]
     }
+
+
+def test_patch_forge_title(raw_client: TestClient) -> None:
+    user = "me-forges-title"
+    artifact = persist_graph_ready(
+        user,
+        {"type": "graph_ready", "graph": _nodes("title")},
+        graph_run_id="run-title-1",
+        goal_id="rag-engineer",
+    )
+    assert artifact is not None
+    headers = _auth_headers(raw_client, user)
+
+    res = raw_client.patch(
+        f"/me/forges/{artifact.public_id}",
+        headers=headers,
+        json={"title": "  My custom roadmap  "},
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()
+    assert body["title"] == "My custom roadmap"
+    assert body["public_id"] == str(artifact.public_id)
+
+    listed = raw_client.get("/me/forges", headers=headers)
+    assert listed.status_code == 200
+    assert listed.json()["items"][0]["title"] == "My custom roadmap"
+
+
+def test_patch_forge_title_other_user_404(raw_client: TestClient) -> None:
+    artifact = persist_graph_ready(
+        "me-forges-title-owner",
+        {"type": "graph_ready", "graph": _nodes("ttl")},
+        graph_run_id="run-title-x",
+        goal_id="rag-engineer",
+    )
+    assert artifact is not None
+    thief = _auth_headers(raw_client, "me-forges-title-thief")
+    res = raw_client.patch(
+        f"/me/forges/{artifact.public_id}",
+        headers=thief,
+        json={"title": "stolen"},
+    )
+    assert res.status_code == 404

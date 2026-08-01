@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from career_forge.db.models.forge_artifact import ForgeArtifact
 from career_forge.db.models.skill_node import SkillNode
 from career_forge.db.repositories.user import ensure_user, get_by_external_id
-from career_forge.errors import NotFoundError
+from career_forge.errors import BadRequestError, NotFoundError
 from career_forge.schemas.common import UserSkillNode
 from career_forge.schemas.roadmap import (
     RoadmapCategory,
@@ -130,6 +130,33 @@ def artifact_summary(row: ForgeArtifact) -> dict[str, object]:
         "created_at": created,
         "graph_run_id": row.graph_run_id,
     }
+
+
+def update_forge_title(
+    session: Session,
+    external_id: str,
+    public_id: uuid.UUID,
+    title: str,
+) -> ForgeArtifact:
+    """Rename an owned forge artifact. Raises ForgeArtifactNotFoundError if missing."""
+    user = get_by_external_id(session, external_id)
+    if user is None:
+        raise ForgeArtifactNotFoundError("Forge artifact not found")
+    target = session.scalar(
+        select(ForgeArtifact).where(
+            ForgeArtifact.public_id == public_id,
+            ForgeArtifact.user_id == user.id,
+        ),
+    )
+    if target is None:
+        raise ForgeArtifactNotFoundError("Forge artifact not found")
+    cleaned = title.strip()
+    if not cleaned:
+        raise BadRequestError("Title must not be empty")
+    target.title = cleaned[:200]
+    session.commit()
+    session.refresh(target)
+    return target
 
 
 def roadmap_from_snapshot(artifact: ForgeArtifact) -> RoadmapResponse:

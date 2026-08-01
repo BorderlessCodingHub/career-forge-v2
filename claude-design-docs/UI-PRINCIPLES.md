@@ -119,7 +119,8 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ForgeTimelineItem` | reasoning / artifact / decision rows |
 | `ChatBubble` | Onboarding + mentor |
 | `PrimaryButton` / `GhostButton` | Actions |
-| `LandingRecoveryGate` | CAR-27 — `/` return-visit gate; lists forges then Continue / View all / New forge; falls open to `GoalPicker` when empty or API error |
+| `LandingRecoveryGate` | CAR-27/29 — `/` return-visit gate; Continue / View all / New forge; **Forge again from last diagnosis** when `GET /me/profile` has diagnosis; empty+diagnosis gate; falls open to `GoalPicker` when empty or API error |
+| `profile-reuse.ts` | CAR-29 — `hydrateOnboardingFromProfile` writes diagnosis + intake into sessionStorage for `/onboarding/edit` |
 | `DeployBadge` | Global fixed footer (`z-auto`) — deploy SHA/time + API health dot; stays **below** drawers (`z-40`/`z-50`); `local dev` when build env unset |
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); stats from `checklist-progress-stats.ts` |
 | `checklist-progress-stats` | Pure helpers: `getChecklistProgress` (per topic) + `getTrailChecklistProgressPct` (item-pooled across topics via `sum completed / sum total`) |
@@ -144,10 +145,10 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 |-------------|--------|
 | **All routes** | Fixed bottom `DeployBadge` (~32px, `z-auto`); root `body` uses `pb-8` so CTAs are not covered; overlays (node drawer, mentor drawer) use `z-40`/`z-50` and stack above the badge |
 | Marketing/entry | Centered hero, max-width ~720px |
-| Recovery (CAR-27) | Centered column ~`max-w-lg` / `max-w-2xl`; border+surface rows; Continue / Open primary, share/resume ghost — no cards-as-decoration beyond interactive list rows |
+| Recovery (CAR-27/29) | Centered column ~`max-w-lg` / `max-w-2xl`; border+surface rows; Continue / Open primary; share/resume/revoke/rename ghost; resume conflict chooser on `/resume/[token]` — no cards-as-decoration beyond interactive list rows |
 | Editable diagnosis | Structured lists, full-width, single CTA "Generate roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
-| Forge reveal | Animation overlay → vertical roadmap materializes; after done, resume copy-once block (`forge-resume-copy`) beside roadmap CTA |
+| Forge reveal | Animation overlay → vertical roadmap materializes; after done, resume copy-once (`forge-resume-copy`) + optional email store (`forge-email-store`) beside roadmap CTA |
 | Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-report-link` only; page intro = subtitle + optional centered `trail-progress-ring`; spine + uniform nodes + solid card↔dot connectors; **click node** → accordion drawer + sticky validate CTA; optional tutor row in drawer |
 | Mentor report | `/report` — learner header grid + validation cards; human **Goal** + topic titles; structured summary per entry; **Back to roadmap** CTA |
 | Validation | Focus mode — question card dominant, minimal chrome |

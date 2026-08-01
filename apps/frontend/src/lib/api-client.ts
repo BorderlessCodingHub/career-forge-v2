@@ -20,7 +20,11 @@ import type {
   TutorRunResponse,
   ChecklistToggleRequest,
   ForgeArtifactListResponse,
+  ForgeArtifactSummary,
   ForgeLinkMintResponse,
+  ForgeShareRevokeResponse,
+  MeEmailUpdateResponse,
+  MeProfileResponse,
   ResumeConsumeResponse,
   RoadmapResponse,
   RoadmapForgeEvent,
@@ -445,6 +449,39 @@ export async function mintResumeLink(publicId: string): Promise<ForgeLinkMintRes
     `/me/forges/${encodeURIComponent(publicId)}/resume`,
     { method: "POST" },
   );
+}
+
+export async function revokeShareLink(
+  publicId: string,
+): Promise<ForgeShareRevokeResponse> {
+  return apiFetch<ForgeShareRevokeResponse>(
+    `/me/forges/${encodeURIComponent(publicId)}/share/revoke`,
+    { method: "POST" },
+  );
+}
+
+export async function updateForgeTitle(
+  publicId: string,
+  title: string,
+): Promise<ForgeArtifactSummary> {
+  return apiFetch<ForgeArtifactSummary>(
+    `/me/forges/${encodeURIComponent(publicId)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ title }),
+    },
+  );
+}
+
+export async function getMyProfile(): Promise<MeProfileResponse> {
+  return apiFetch<MeProfileResponse>("/me/profile");
+}
+
+export async function updateMyEmail(email: string): Promise<MeEmailUpdateResponse> {
+  return apiFetch<MeEmailUpdateResponse>("/me/email", {
+    method: "PATCH",
+    body: JSON.stringify({ email }),
+  });
 }
 
 /** Public share fetch — no identity adoption (Bearer optional). */
