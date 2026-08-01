@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException
+import jwt
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
@@ -12,8 +13,17 @@ from career_forge.ai.executor import get_graph_executor
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
 from career_forge.ai.streaming.sse import format_sse, sse_connected_body, sse_response
 from career_forge.api.deps import ExternalId
+from career_forge.auth.stream_tickets import (
+    decode_forge_stream_ticket,
+    mint_forge_stream_ticket,
+    stream_ticket_ttl_seconds,
+)
 from career_forge.db.session import get_db
-from career_forge.schemas.forge import ForgeRunRequest, ForgeRunResponse
+from career_forge.schemas.forge import (
+    ForgeRunRequest,
+    ForgeRunResponse,
+    ForgeStreamTicketResponse,
+)
 from career_forge.services.cost_guard import get_cost_guard
 from career_forge.services.forge_persistence import extract_goal_id, persist_graph_ready
 from career_forge.services.profile_diagnosis import load_forge_motor_input
@@ -36,6 +46,34 @@ def _build_forge_input(
         )
     merged.update(body.input)
     return merged
+
+
+def _require_owned_run(run_id: str, external_id: str) -> GraphRun:
+    store = get_graph_run_store()
+    run = store.get(run_id)
+    if run is None:
+        raise HTTPException(status_code=404, detail=f"GraphRun {run_id} not found")
+    if run.user_id != external_id:
+        raise HTTPException(status_code=403, detail="Forge run belongs to another user")
+    return run
+
+
+def _validate_stream_ticket(run_id: str, ticket: str | None) -> GraphRun:
+    if not ticket:
+        raise HTTPException(status_code=401, detail="Missing or invalid stream ticket")
+    try:
+        claims = decode_forge_stream_ticket(ticket)
+    except (jwt.PyJWTError, ValueError):
+        raise HTTPException(status_code=401, detail="Missing or invalid stream ticket") from None
+    if claims["run_id"] != run_id:
+        raise HTTPException(status_code=401, detail="Missing or invalid stream ticket")
+    store = get_graph_run_store()
+    run = store.get(run_id)
+    if run is None:
+        raise HTTPException(status_code=404, detail=f"GraphRun {run_id} not found")
+    if run.user_id != claims["sub"]:
+        raise HTTPException(status_code=401, detail="Missing or invalid stream ticket")
+    return run
 
 
 @router.post("", response_model=ForgeRunResponse, status_code=202)
@@ -74,16 +112,31 @@ async def forge_run(
     )
 
 
+@router.post("/{run_id}/stream-ticket", response_model=ForgeStreamTicketResponse)
+async def forge_stream_ticket(
+    run_id: str,
+    external_id: ExternalId,
+) -> ForgeStreamTicketResponse:
+    """Mint a short-lived ticket for EventSource-compatible SSE (CAR-26)."""
+    _require_owned_run(run_id, external_id)
+    ticket = mint_forge_stream_ticket(external_id, run_id)
+    return ForgeStreamTicketResponse(
+        ticket=ticket,
+        expires_in=stream_ticket_ttl_seconds(),
+    )
+
+
 @router.get("/{run_id}/stream")
-async def forge_stream(run_id: str) -> StreamingResponse:
+async def forge_stream(
+    run_id: str,
+    ticket: str | None = Query(default=None),
+) -> StreamingResponse:
     """Stream forge events for an existing run via GraphExecutor (SSE).
 
-    Public until CAR-26 stream tickets (EventSource cannot send Bearer).
+    Requires ``?ticket=`` from ``POST /forge/{run_id}/stream-ticket`` (CAR-26).
+    Path remains Bearer-exempt so EventSource / query-ticket clients work.
     """
-    store = get_graph_run_store()
-    run = store.get(run_id)
-    if run is None:
-        raise HTTPException(status_code=404, detail=f"GraphRun {run_id} not found")
+    run = _validate_stream_ticket(run_id, ticket)
 
     executor = get_graph_executor()
     event_iter = await executor.execute(run, stream=True)

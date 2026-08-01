@@ -51,7 +51,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 | [CAR-24](https://linear.app/career-forge-v2/issue/CAR-24) | `forge_artifacts` + persist on forge complete | [S] ✅ Done | CAR-23 |
 | [CAR-25](https://linear.app/career-forge-v2/issue/CAR-25) | List / open + freeze-before-promote | [S] ✅ Done | CAR-24 |
 | [CAR-27](https://linear.app/career-forge-v2/issue/CAR-27) | Share + resume tokens + landing Continue | [S] | CAR-25 |
-| [CAR-26](https://linear.app/career-forge-v2/issue/CAR-26) | Forge SSE stream ticket | [S] | CAR-23; Labs ↔ CAR-21 |
+| [CAR-26](https://linear.app/career-forge-v2/issue/CAR-26) | Forge SSE stream ticket | [S] In Progress | CAR-23; Labs ↔ CAR-21 |
 
 **Start order:** CAR-23 first → CAR-24 → CAR-25 → CAR-27; CAR-26 ∥ after CAR-23 (Labs ticket after CAR-21).
 
