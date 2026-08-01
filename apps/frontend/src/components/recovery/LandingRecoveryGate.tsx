@@ -5,13 +5,20 @@ import { useEffect, useState } from "react";
 
 import { GoalPicker } from "@/components/diagnosis";
 import { Button } from "@/components/ui";
-import { listForges, openForge } from "@/lib/api-client";
+import {
+  getMyProfile,
+  listForges,
+  openForge,
+  startForgeRunFromProfile,
+} from "@/lib/api-client";
+import { setForgeRunId } from "@/lib/forge-session";
+import { hydrateOnboardingFromProfile } from "@/lib/profile-reuse";
 import type { ForgeArtifactSummary } from "@/types/contracts";
 
 type GateState =
   | { status: "loading" }
-  | { status: "empty" }
-  | { status: "ready"; items: ForgeArtifactSummary[] }
+  | { status: "empty"; hasDiagnosis: boolean }
+  | { status: "ready"; items: ForgeArtifactSummary[]; hasDiagnosis: boolean }
   | { status: "new-forge"; items: ForgeArtifactSummary[] }
   | { status: "error"; message: string };
 
@@ -28,13 +35,17 @@ export function LandingRecoveryGate() {
     let cancelled = false;
     (async () => {
       try {
-        const { items } = await listForges();
+        const [{ items }, profile] = await Promise.all([
+          listForges(),
+          getMyProfile().catch(() => null),
+        ]);
         if (cancelled) return;
+        const hasDiagnosis = Boolean(profile?.has_diagnosis);
         if (items.length === 0) {
-          setState({ status: "empty" });
+          setState({ status: "empty", hasDiagnosis });
           return;
         }
-        setState({ status: "ready", items });
+        setState({ status: "ready", items, hasDiagnosis });
       } catch (err) {
         if (cancelled) return;
         const message =
@@ -63,6 +74,38 @@ export function LandingRecoveryGate() {
     }
   }
 
+  async function handleReforgeFromProfile() {
+    setBusy(true);
+    try {
+      const profile = await getMyProfile();
+      if (!profile.has_diagnosis || !profile.diagnosis) {
+        setBusy(false);
+        setState({
+          status: "error",
+          message: "No saved diagnosis to reuse.",
+        });
+        return;
+      }
+      const hydrated = hydrateOnboardingFromProfile(profile);
+      if (hydrated) {
+        router.push("/onboarding/edit");
+        return;
+      }
+      const forge = await startForgeRunFromProfile();
+      setForgeRunId(forge.run_id);
+      router.push("/forge");
+    } catch (err) {
+      setBusy(false);
+      setState({
+        status: "error",
+        message:
+          err instanceof Error
+            ? err.message
+            : "Failed to start forge from profile",
+      });
+    }
+  }
+
   if (state.status === "loading") {
     return (
       <main className="min-h-screen grid-dots flex items-center justify-center p-8">
@@ -73,7 +116,48 @@ export function LandingRecoveryGate() {
     );
   }
 
-  if (state.status === "empty" || state.status === "new-forge") {
+  if (state.status === "empty") {
+    if (state.hasDiagnosis) {
+      return (
+        <main
+          className="min-h-screen grid-dots px-4 py-16"
+          data-screen="landing-recovery"
+        >
+          <div className="mx-auto max-w-lg space-y-6">
+            <div>
+              <h1 className="text-3xl font-semibold text-text-primary">
+                Welcome back
+              </h1>
+              <p className="mt-2 text-text-secondary">
+                You have a saved diagnosis. Forge again without re-interviewing,
+                or start from scratch.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button
+                data-testid="landing-reforge-profile"
+                disabled={busy}
+                onClick={() => void handleReforgeFromProfile()}
+              >
+                Forge again from last diagnosis
+              </Button>
+              <Button
+                variant="ghost"
+                data-testid="landing-new-forge"
+                disabled={busy}
+                onClick={() => setState({ status: "new-forge", items: [] })}
+              >
+                New from scratch
+              </Button>
+            </div>
+          </div>
+        </main>
+      );
+    }
+    return <GoalPicker />;
+  }
+
+  if (state.status === "new-forge") {
     return <GoalPicker />;
   }
 
@@ -84,7 +168,7 @@ export function LandingRecoveryGate() {
           <p className="text-text-secondary">{state.message}</p>
           <Button
             data-testid="landing-recovery-fallback"
-            onClick={() => setState({ status: "empty" })}
+            onClick={() => setState({ status: "empty", hasDiagnosis: false })}
           >
             Start new forge
           </Button>
@@ -93,7 +177,7 @@ export function LandingRecoveryGate() {
     );
   }
 
-  const { items } = state;
+  const { items, hasDiagnosis } = state;
   const last = pickContinueTarget(items);
 
   return (
@@ -120,7 +204,7 @@ export function LandingRecoveryGate() {
           ) : null}
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Button
             data-testid="landing-continue"
             disabled={busy}
@@ -136,6 +220,16 @@ export function LandingRecoveryGate() {
           >
             View all
           </Button>
+          {hasDiagnosis ? (
+            <Button
+              variant="ghost"
+              data-testid="landing-reforge-profile"
+              disabled={busy}
+              onClick={() => void handleReforgeFromProfile()}
+            >
+              Forge again from last diagnosis
+            </Button>
+          ) : null}
           <Button
             variant="ghost"
             data-testid="landing-new-forge"

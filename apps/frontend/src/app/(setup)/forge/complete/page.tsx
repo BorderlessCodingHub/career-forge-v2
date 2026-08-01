@@ -9,6 +9,7 @@ import {
   absoluteAppUrl,
   listForges,
   mintResumeLink,
+  updateMyEmail,
 } from "@/lib/api-client";
 import { getForgeGraph, type ForgeGraphNode } from "@/lib/forge-session";
 
@@ -18,6 +19,11 @@ export default function ForgeCompletePage() {
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailStatus, setEmailStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
+  const [emailError, setEmailError] = useState<string | null>(null);
   const resumeMintedRef = useRef(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const autoScrollRef = useRef(true);
@@ -82,6 +88,24 @@ export default function ForgeCompletePage() {
       cancelled = true;
     };
   }, [graph]);
+
+  async function handleSaveEmail() {
+    const next = email.trim();
+    if (!next) {
+      setEmailError("Enter an email to save.");
+      setEmailStatus("error");
+      return;
+    }
+    setEmailStatus("saving");
+    setEmailError(null);
+    try {
+      await updateMyEmail(next);
+      setEmailStatus("saved");
+    } catch (err) {
+      setEmailStatus("error");
+      setEmailError(err instanceof Error ? err.message : "Failed to save email");
+    }
+  }
 
   if (!graph?.length) {
     return (
@@ -167,6 +191,48 @@ export default function ForgeCompletePage() {
                   {resumeError ?? "Preparing resume link…"}
                 </p>
               )}
+            </div>
+
+            <div
+              className="rounded-md border border-border bg-surface px-4 py-3"
+              data-testid="forge-email-store"
+            >
+              <p className="text-sm font-medium text-text-primary">
+                Optional email (store only)
+              </p>
+              <p className="mt-1 text-sm text-text-secondary">
+                Saved for a future resume delivery. We do not send email yet.
+              </p>
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+                <input
+                  type="email"
+                  className="min-w-0 flex-1 rounded-md border border-border bg-bg px-3 py-2 text-sm text-text-primary"
+                  placeholder="you@example.com"
+                  value={email}
+                  data-testid="forge-email-input"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (emailStatus !== "idle") setEmailStatus("idle");
+                  }}
+                />
+                <Button
+                  variant="ghost"
+                  data-testid="forge-email-save"
+                  disabled={emailStatus === "saving"}
+                  onClick={() => void handleSaveEmail()}
+                >
+                  {emailStatus === "saving"
+                    ? "Saving…"
+                    : emailStatus === "saved"
+                      ? "Saved"
+                      : "Save email"}
+                </Button>
+              </div>
+              {emailError ? (
+                <p className="mt-2 text-sm text-red-400" data-testid="forge-email-error">
+                  {emailError}
+                </p>
+              ) : null}
             </div>
           </div>
         )}

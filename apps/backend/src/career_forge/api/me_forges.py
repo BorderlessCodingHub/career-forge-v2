@@ -1,4 +1,4 @@
-"""Bearer-scoped forge artifact list + open + share/resume mint (CAR-25/27)."""
+"""Bearer-scoped forge artifact list + open + share/resume mint (CAR-25/27/29)."""
 
 from __future__ import annotations
 
@@ -13,7 +13,11 @@ from career_forge.schemas.forge_access_tokens import (
     ForgeLinkMintResponse,
     ForgeShareRevokeResponse,
 )
-from career_forge.schemas.forge_artifacts import ForgeArtifactListResponse, ForgeArtifactSummary
+from career_forge.schemas.forge_artifacts import (
+    ForgeArtifactListResponse,
+    ForgeArtifactSummary,
+    ForgeArtifactUpdateRequest,
+)
 from career_forge.schemas.roadmap import RoadmapResponse
 from career_forge.services import forge_access_tokens as forge_access_tokens_service
 from career_forge.services import forge_artifacts as forge_artifacts_service
@@ -29,6 +33,21 @@ def list_my_forges(
     rows = forge_artifacts_service.list_forges(db, external_id)
     return ForgeArtifactListResponse(
         items=[ForgeArtifactSummary.model_validate(forge_artifacts_service.artifact_summary(row)) for row in rows],
+    )
+
+
+@router.patch("/forges/{public_id}", response_model=ForgeArtifactSummary)
+def update_my_forge(
+    public_id: UUID,
+    body: ForgeArtifactUpdateRequest,
+    external_id: ExternalId,
+    db: Session = Depends(get_db),
+) -> ForgeArtifactSummary:
+    row = forge_artifacts_service.update_forge_title(
+        db, external_id, public_id, body.title,
+    )
+    return ForgeArtifactSummary.model_validate(
+        forge_artifacts_service.artifact_summary(row),
     )
 
 

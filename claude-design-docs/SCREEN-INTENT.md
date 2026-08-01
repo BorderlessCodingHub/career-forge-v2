@@ -7,7 +7,7 @@
 
 ## Global rules
 
-- All user-facing copy: **Portuguese (Brazil)** — exception: CAR-27 recovery MVP surfaces may stay English until CAR-16 hard cutover
+- All user-facing copy: **Portuguese (Brazil)** — exception: CAR-27/29 recovery surfaces may stay English until CAR-16 hard cutover
 - Status enum: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar` — never rename without CHECKPOINT + API
 - No gamification (confetti, XP, streaks)
 - P0 wow moments must survive: **Forge stream**, **Animation reveal**, **Validation**, **Adaptive roadmap**
@@ -25,22 +25,23 @@
 | Layout | **Minimal** — compact row cards, no heavy chrome (icons, meta badges, footer notes) |
 | Motivation | Required in happy path — feeds downstream AI |
 | CTA | Single primary action to onboarding |
-| Recovery (CAR-27) | If user has ≥1 forge artifact → show **Continue** / **View all** / **New forge** before GoalPicker (`data-screen="landing-recovery"`) |
+| Recovery (CAR-27/29) | If ≥1 forge artifact → **Continue** / **View all** / **New forge**; if saved diagnosis (even with zero artifacts) → **Forge again from last diagnosis** (`landing-reforge-profile`); empty + no diagnosis → GoalPicker (`data-screen="landing-recovery"`) |
 
 **Can evolve:** hover states, validation toast, animation library
 
 ---
 
-## 1b. Forge recovery surfaces (CAR-27) — MUST match
+## 1b. Forge recovery surfaces (CAR-27/29) — MUST match
 
 | Constraint | Detail |
 |------------|--------|
-| `/forges` | List title/goal/date/active; actions Open, Copy share, Copy resume — functional MVP |
+| `/forges` | List title/goal/date/active; actions Open, **Rename**, Copy share, **Revoke share**, Copy resume; optional re-forge from profile when diagnosis exists |
 | Share | App route `/share/[token]` (read-only); API `GET /public/share/{token}` — **never** adopts owner session |
-| Resume | App route `/resume/[token]`; API `POST /public/resume/{token}` — sets local JWT to owner; second use / expiry must fail clearly |
-| Forge complete | Show resume link **copy once** after reveal (`data-testid="forge-resume-copy"`) |
-| Copy | Recovery MVP surfaces may use English until CAR-16 hard cutover |
-| Forbidden | Silent merge of conflicting sessions (chooser = CAR-29); email capture (CAR-29) |
+| Resume | App route `/resume/[token]`; API `POST /public/resume/{token}` — if local forges exist for a **different** `external_id` → chooser (**Keep local** / **Switch to resume**) before `adoptSession`; else auto-adopt → roadmap; second use / expiry must fail clearly |
+| Forge complete | Resume link **copy once** after reveal (`forge-resume-copy`); optional email store (`forge-email-store`) — **no SMTP** |
+| Landing / forges | When `GET /me/profile` has diagnosis → **Forge again from last diagnosis** (`landing-reforge-profile` / `forges-reforge-profile`) — hydrate session → `/onboarding/edit` or forge from profile; **New from scratch** still → GoalPicker + interview |
+| Copy | Recovery surfaces may use English until CAR-16 hard cutover |
+| Forbidden | Silent overwrite of conflicting local sessions; email **send** (CAR-28); mid-flight interview resume |
 
 ---
 
@@ -105,6 +106,7 @@
 | Result | Spine + category nodes materialize left/right |
 | Feel | Premium completion — **no confetti** |
 | Next | Auto or CTA → `/roadmap` steady state |
+| Post-reveal (CAR-27/29) | Resume link **copy once** (`forge-resume-copy`); optional email store (`forge-email-store`) — store only, no send |
 
 **Can evolve:** Framer Motion vs CSS, duration, stagger timing
 
@@ -177,11 +179,12 @@
 | Screen | `data-testid` |
 |--------|---------------|
 | Goal picker | `goal-picker` |
-| Landing recovery | `landing-continue` · `landing-view-all` · `landing-new-forge` · `landing-recovery-fallback` |
-| Forges list | `forge-row-{public_id}` · `forge-open-{id}` · `forge-share-{id}` · `forge-resume-{id}` |
+| Landing recovery | `landing-continue` · `landing-view-all` · `landing-new-forge` · `landing-reforge-profile` · `landing-recovery-fallback` |
+| Forges list | `forge-row-{public_id}` · `forge-open-{id}` · `forge-rename-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile` |
 | Share read-only | `share-node-list` · `share-error` |
-| Resume consume | `resume-working` · `resume-error` · `resume-home` |
+| Resume consume | `resume-working` · `resume-conflict` · `resume-keep-local` · `resume-switch` · `resume-error` · `resume-home` |
 | Forge complete resume | `forge-resume-copy` · `forge-resume-copy-btn` |
+| Forge complete email | `forge-email-store` · `forge-email-input` · `forge-email-save` · `forge-email-error` |
 | Editable diagnosis | `diagnosis-editable` |
 | Forge timeline | `forge-timeline` |
 | Vertical roadmap | `vertical-roadmap` |
@@ -192,4 +195,4 @@
 
 ---
 
-*Last updated: 2026-08-01 — CAR-27 forge recovery surfaces + Gate B hooks*
+*Last updated: 2026-08-01 — CAR-29 ui-product-sync pass: empty+diagnosis landing, email on reveal, rename testids*
