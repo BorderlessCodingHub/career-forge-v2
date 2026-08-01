@@ -7,7 +7,7 @@
 
 ## Global rules
 
-- All user-facing copy: **Portuguese (Brazil)**
+- All user-facing copy: **Portuguese (Brazil)** — exception: CAR-27 recovery MVP surfaces may stay English until CAR-16 hard cutover
 - Status enum: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar` — never rename without CHECKPOINT + API
 - No gamification (confetti, XP, streaks)
 - P0 wow moments must survive: **Forge stream**, **Animation reveal**, **Validation**, **Adaptive roadmap**
@@ -25,8 +25,22 @@
 | Layout | **Minimal** — compact row cards, no heavy chrome (icons, meta badges, footer notes) |
 | Motivation | Required in happy path — feeds downstream AI |
 | CTA | Single primary action to onboarding |
+| Recovery (CAR-27) | If user has ≥1 forge artifact → show **Continue** / **View all** / **New forge** before GoalPicker (`data-screen="landing-recovery"`) |
 
 **Can evolve:** hover states, validation toast, animation library
+
+---
+
+## 1b. Forge recovery surfaces (CAR-27) — MUST match
+
+| Constraint | Detail |
+|------------|--------|
+| `/forges` | List title/goal/date/active; actions Open, Copy share, Copy resume — functional MVP |
+| Share | App route `/share/[token]` (read-only); API `GET /public/share/{token}` — **never** adopts owner session |
+| Resume | App route `/resume/[token]`; API `POST /public/resume/{token}` — sets local JWT to owner; second use / expiry must fail clearly |
+| Forge complete | Show resume link **copy once** after reveal (`data-testid="forge-resume-copy"`) |
+| Copy | Recovery MVP surfaces may use English until CAR-16 hard cutover |
+| Forbidden | Silent merge of conflicting sessions (chooser = CAR-29); email capture (CAR-29) |
 
 ---
 
@@ -163,6 +177,11 @@
 | Screen | `data-testid` |
 |--------|---------------|
 | Goal picker | `goal-picker` |
+| Landing recovery | `landing-continue` · `landing-view-all` · `landing-new-forge` · `landing-recovery-fallback` |
+| Forges list | `forge-row-{public_id}` · `forge-open-{id}` · `forge-share-{id}` · `forge-resume-{id}` |
+| Share read-only | `share-node-list` · `share-error` |
+| Resume consume | `resume-working` · `resume-error` · `resume-home` |
+| Forge complete resume | `forge-resume-copy` · `forge-resume-copy-btn` |
 | Editable diagnosis | `diagnosis-editable` |
 | Forge timeline | `forge-timeline` |
 | Vertical roadmap | `vertical-roadmap` |
@@ -173,4 +192,4 @@
 
 ---
 
-*Last updated: 2026-05-30 — `/report` human Goal + topic titles*
+*Last updated: 2026-08-01 — CAR-27 forge recovery surfaces + Gate B hooks*

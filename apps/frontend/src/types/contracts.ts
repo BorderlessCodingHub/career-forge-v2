@@ -119,6 +119,31 @@ export type RoadmapResponse = {
   nodes: RoadmapNode[];
 };
 
+/** CAR-27 — forge artifact list item from GET /me/forges */
+export type ForgeArtifactSummary = {
+  public_id: string;
+  goal_id: string | null;
+  title: string;
+  is_active: boolean;
+  created_at: string;
+  graph_run_id: string;
+};
+
+export type ForgeArtifactListResponse = {
+  items: ForgeArtifactSummary[];
+};
+
+export type ForgeLinkMintResponse = {
+  token: string;
+  path: string;
+};
+
+export type ResumeConsumeResponse = {
+  access_token: string;
+  token_type: string;
+  external_id: string;
+};
+
 export type ValidationStatus = "aprovado" | "revisar";
 
 export type ValidationQuestion = {

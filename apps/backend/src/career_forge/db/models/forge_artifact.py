@@ -47,6 +47,11 @@ class ForgeArtifact(Base):
     )
 
     user: Mapped["User"] = relationship(back_populates="forge_artifacts")
+    access_tokens: Mapped[list["ForgeAccessToken"]] = relationship(
+        back_populates="artifact",
+        cascade="all, delete-orphan",
+    )
 
 
+from career_forge.db.models.forge_access_token import ForgeAccessToken  # noqa: E402
 from career_forge.db.models.user import User  # noqa: E402

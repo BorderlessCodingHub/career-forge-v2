@@ -8,6 +8,7 @@ from career_forge.api import (
     diagnosis,
     diagnosis_interview,
     forge,
+    forge_links,
     health,
     knowledge_gaps,
     me_forges,
@@ -31,6 +32,7 @@ api_router.include_router(
 )
 api_router.include_router(forge.router, prefix="/forge", tags=["forge"])
 api_router.include_router(me_forges.router, prefix="/me", tags=["me"])
+api_router.include_router(forge_links.router, tags=["forge-links"])
 api_router.include_router(roadmap.router, prefix="/roadmap", tags=["roadmap"])
 api_router.include_router(validation.router, prefix="/validation", tags=["validation"])
 api_router.include_router(mentor.router, prefix="/mentor", tags=["mentor"])

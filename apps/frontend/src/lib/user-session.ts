@@ -42,6 +42,14 @@ function setAccessToken(token: string, externalId: string): void {
   writeString(USER_ID_KEY, externalId, "local");
 }
 
+/** Adopt an owner session from a resume deep-link (CAR-27). Overwrites local JWT. */
+export function adoptSession(accessToken: string, externalId: string): void {
+  if (typeof window === "undefined") {
+    throw new Error("adoptSession() is client-only");
+  }
+  setAccessToken(accessToken, externalId);
+}
+
 let mintInFlight: Promise<string> | null = null;
 
 /**

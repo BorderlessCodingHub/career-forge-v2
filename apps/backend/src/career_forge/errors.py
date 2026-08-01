@@ -26,6 +26,12 @@ class NotFoundError(DomainError):
     status_code = 404
 
 
+class GoneError(DomainError):
+    """Resource existed but is no longer usable (e.g. consumed resume token)."""
+
+    status_code = 410
+
+
 class NodeNotFoundError(NotFoundError):
     """Roadmap node not found for the user."""
 

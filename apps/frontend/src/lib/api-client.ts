@@ -19,6 +19,9 @@ import type {
   TutorRequest,
   TutorRunResponse,
   ChecklistToggleRequest,
+  ForgeArtifactListResponse,
+  ForgeLinkMintResponse,
+  ResumeConsumeResponse,
   RoadmapResponse,
   RoadmapForgeEvent,
   RoadmapSyncNode,
@@ -416,5 +419,66 @@ export async function getMentorReport(userId?: string): Promise<MentorReportResp
   return apiFetch<MentorReportResponse>(
     `/mentor-report?user_id=${encodeURIComponent(resolvedUserId)}`,
   );
+}
+
+/** CAR-27 — list historical forge artifacts for the Bearer principal. */
+export async function listForges(): Promise<ForgeArtifactListResponse> {
+  return apiFetch<ForgeArtifactListResponse>("/me/forges");
+}
+
+/** CAR-27 — freeze-before-promote and return live roadmap. */
+export async function openForge(publicId: string): Promise<RoadmapResponse> {
+  return apiFetch<RoadmapResponse>(`/me/forges/${encodeURIComponent(publicId)}/open`, {
+    method: "POST",
+  });
+}
+
+export async function mintShareLink(publicId: string): Promise<ForgeLinkMintResponse> {
+  return apiFetch<ForgeLinkMintResponse>(
+    `/me/forges/${encodeURIComponent(publicId)}/share`,
+    { method: "POST" },
+  );
+}
+
+export async function mintResumeLink(publicId: string): Promise<ForgeLinkMintResponse> {
+  return apiFetch<ForgeLinkMintResponse>(
+    `/me/forges/${encodeURIComponent(publicId)}/resume`,
+    { method: "POST" },
+  );
+}
+
+/** Public share fetch — no identity adoption (Bearer optional). */
+export async function fetchSharedForge(token: string): Promise<RoadmapResponse> {
+  const res = await fetch(
+    `${backendUrl}/public/share/${encodeURIComponent(token)}`,
+  );
+  if (!res.ok) {
+    const detail = await readApiErrorMessage(res);
+    throw new Error(toUserFacingApiError(res.status, detail));
+  }
+  return res.json() as Promise<RoadmapResponse>;
+}
+
+/** Public resume consume — returns owner JWT for adoptSession. */
+export async function consumeResumeLink(
+  token: string,
+): Promise<ResumeConsumeResponse> {
+  const res = await fetch(
+    `${backendUrl}/public/resume/${encodeURIComponent(token)}`,
+    { method: "POST" },
+  );
+  if (!res.ok) {
+    const detail = await readApiErrorMessage(res);
+    throw new Error(toUserFacingApiError(res.status, detail));
+  }
+  return res.json() as Promise<ResumeConsumeResponse>;
+}
+
+/** Absolute app URL for copy-to-clipboard deep-links (respects basePath). */
+export function absoluteAppUrl(path: string): string {
+  if (typeof window === "undefined") return path;
+  const base = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `${window.location.origin}${base}${normalized}`;
 }
 

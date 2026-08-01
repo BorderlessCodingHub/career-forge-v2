@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     jwt_anon_ttl_days: int = 90
     # CAR-26 — short-lived forge SSE stream ticket (Bearer → ?ticket=)
     jwt_stream_ticket_ttl_seconds: int = 300
+    # CAR-27 — resume deep-link TTL (single-use + expiry)
+    jwt_resume_ttl_days: int = 7
 
     @property
     def cors_origin_list(self) -> list[str]:

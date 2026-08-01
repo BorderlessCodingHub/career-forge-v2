@@ -7,10 +7,12 @@
 ## Demo flow (canonical — HAC-21)
 
 ```
-/ → /onboarding → /onboarding/edit → /roadmap/forge → /roadmap/forge/complete → /roadmap → /validate/:topic → /roadmap (adaptive)
+/ → /onboarding → /onboarding/edit → /forge → /forge/complete → /roadmap → /validate/:topic → /roadmap (adaptive)
+
+Recovery (CAR-27): / (Continue|View all|New) · /forges · /share/:token · /resume/:token
 ```
 
-Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
+Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate** · Recovery: **Continue / forges / share / resume**
 
 5-min demo: [CHECKPOINT](../docs/CHECKPOINT.md#demo-script-5-min)
 
@@ -20,11 +22,14 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 
 | # | App route | Prototype hash (legacy) | `data-screen` | Wow? | Must match | Can evolve |
 |---|-----------|-------------------------|---------------|------|------------|------------|
-| 1 | `/` | `goal` | `goal-picker` | — | Headline PT-BR, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA | Card hover, validation toast |
+| 1 | `/` | `goal` | `goal-picker` / `landing-recovery` | — | Headline PT-BR, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA; if ≥1 artifact → Continue / View all / New forge | Card hover, validation toast |
+| 1b | `/forges` | — | `forges-list` | — | List artifacts; Open + Copy share + Copy resume | Rich UI (CAR-29) |
+| 1c | `/share/[token]` | — | `share-readonly` | — | Read-only roadmap; no session adopt | Visual polish |
+| 1d | `/resume/[token]` | — | `resume-consume` | — | Adopt owner JWT; fail on reuse/expiry | Conflict chooser (CAR-29) |
 | 2 | `/onboarding` | `diag` | `diagnostic` | — | Chat layout, 4–6 Q thread, recap of goal | Streaming vs batch API |
 | 3 | `/onboarding/edit` | `result` ⚠️ | `diagnosis-editable` | — | **Editable** lists, add/remove, CTA **"Generate roadmap"** | Drag-reorder, autosave |
-| 4 | `/roadmap/forge` | `forge` ⚠️ | `forge-stream` | **P0** | **Timeline only**, numbered steps, **no graph during stream** | SSE reconnect, scroll |
-| 4b | `/roadmap/forge/complete` | (inline reveal) ⚠️ | `forge-reveal` | **P0** | Items fly into vertical layout | Animation library |
+| 4 | `/forge` | `forge` ⚠️ | `forge-stream` | **P0** | **Timeline only**, numbered steps, **no graph during stream** | SSE reconnect, scroll |
+| 4b | `/forge/complete` | (inline reveal) ⚠️ | `forge-reveal` | **P0** | Items fly into vertical layout; CAR-27 resume link copy-once | Animation library |
 | 5 | `/roadmap` | `roadmap` ⚠️ | `vertical-roadmap` | **P0** | Vertical spine; cards show compact study `x/y` + mint bar when checklist items exist; drawer has full checklist + progress | Node detail panel, sidebar UX |
 | 6 | `/validate/:topic` | `validate` | `validation` | **P0** | Interview headline, Q progress, ScoreRing result | Question count (3±) |
 | 7 | `/roadmap` | `adaptive` | `adaptive-state` | **P0** | Roadmap diff after fail, mentor/AI context | Drawer vs sidebar |
@@ -46,7 +51,17 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 Full must-match: [SCREEN-INTENT.md](./SCREEN-INTENT.md)
 
 ### 1. Goal Picker (`/`)
-Declare dream role + motivation. Prototype: `screens-flow.jsx`
+Declare dream role + motivation. Prototype: `screens-flow.jsx`  
+**CAR-27:** `LandingRecoveryGate` — if ≥1 forge artifact → Continue / View all / New forge (`landing-recovery`).
+
+### 1b. Forges list (`/forges`)
+Minimal artifact catalog — Open, Copy share, Copy resume. Rich UI = CAR-29.
+
+### 1c. Share (`/share/[token]`)
+Read-only shared roadmap. Fetches `GET /public/share/{token}` — no session adopt.
+
+### 1d. Resume (`/resume/[token]`)
+Consume resume token → `adoptSession` → `/roadmap`. Fail clearly on reuse/expiry.
 
 ### 2. AI Diagnostic (`/onboarding`)
 Short diagnostic chat. Exit → editable diagnosis (not forge). Prototype: `screens-flow.jsx`
@@ -54,11 +69,11 @@ Short diagnostic chat. Exit → editable diagnosis (not forge). Prototype: `scre
 ### 3. Editable Diagnosis (`/onboarding/edit`) ⭐ NEW
 User edits/adds/removes strengths, gaps, recommendation. CTA: **"Generate roadmap"**. Replaces read-only confirmation.
 
-### 4. Live Roadmap Forge (`/roadmap/forge`) ⭐ REDESIGNED
+### 4. Live Roadmap Forge (`/forge`) ⭐ REDESIGNED
 Timeline-only stream, steps 1–N. No graph during generation. Prototype split layout is **legacy**.
 
-### 4b. Animation Reveal (`/roadmap/forge/complete`) ⭐ REDESIGNED
-Stream items animate into vertical roadmap positions.
+### 4b. Animation Reveal (`/forge/complete`) ⭐ REDESIGNED
+Stream items animate into vertical roadmap positions. **CAR-27:** resume link copy-once after reveal.
 
 ### 5. Vertical Roadmap (`/roadmap`) ⭐ REDESIGNED
 Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Reference: [roadmap-sh-vertical-ai-tutor.png](./references/roadmap-sh-vertical-ai-tutor.png)
@@ -107,10 +122,11 @@ Tokens: [design-tokens.md](./design-tokens.md)
 
 Do not add screens without Linear issue + CHECKPOINT update:
 
-- Auth / login
+- Auth / login / email capture (CAR-29 Slice 2 — not CAR-27 anon JWT recovery)
 - Admin / turma dashboard
 - Multi-track picker (beyond disabled cards)
 - Settings / change goal (post-MVP)
+- Polished multi-session conflict chooser (CAR-29)
 
 ---
 
@@ -119,6 +135,11 @@ Do not add screens without Linear issue + CHECKPOINT update:
 Playwright Gate B targets:
 
 - `data-testid="goal-picker"`
+- `data-testid="landing-continue"` · `landing-view-all` · `landing-new-forge` · `landing-recovery-fallback`
+- `data-testid="forge-row-{public_id}"` · `forge-open-{id}` · `forge-share-{id}` · `forge-resume-{id}`
+- `data-testid="share-node-list"` · `share-error`
+- `data-testid="resume-working"` · `resume-error` · `resume-home`
+- `data-testid="forge-resume-copy"` · `forge-resume-copy-btn`
 - `data-testid="diagnosis-editable"`
 - `data-testid="forge-timeline"`
 - `data-testid="vertical-roadmap"`
@@ -135,4 +156,4 @@ See [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md).
 
 ---
 
-*Last updated: 2026-05-30 — `/report` mentor evidence + structured summary testids*
+*Last updated: 2026-08-01 — CAR-27 recovery routes + Gate B hooks*
