@@ -1,0 +1,151 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { GoalPicker } from "@/components/diagnosis";
+import { Button } from "@/components/ui";
+import { listForges, openForge } from "@/lib/api-client";
+import type { ForgeArtifactSummary } from "@/types/contracts";
+
+type GateState =
+  | { status: "loading" }
+  | { status: "empty" }
+  | { status: "ready"; items: ForgeArtifactSummary[] }
+  | { status: "new-forge"; items: ForgeArtifactSummary[] }
+  | { status: "error"; message: string };
+
+function pickContinueTarget(items: ForgeArtifactSummary[]): ForgeArtifactSummary {
+  return items.find((item) => item.is_active) ?? items[0];
+}
+
+export function LandingRecoveryGate() {
+  const router = useRouter();
+  const [state, setState] = useState<GateState>({ status: "loading" });
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { items } = await listForges();
+        if (cancelled) return;
+        if (items.length === 0) {
+          setState({ status: "empty" });
+          return;
+        }
+        setState({ status: "ready", items });
+      } catch (err) {
+        if (cancelled) return;
+        const message =
+          err instanceof Error ? err.message : "Failed to load forges";
+        // Fail open into goal picker so onboarding still works.
+        setState({ status: "error", message });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function handleContinue(items: ForgeArtifactSummary[]) {
+    const target = pickContinueTarget(items);
+    setBusy(true);
+    try {
+      await openForge(target.public_id);
+      router.push("/roadmap");
+    } catch (err) {
+      setBusy(false);
+      setState({
+        status: "error",
+        message: err instanceof Error ? err.message : "Failed to open forge",
+      });
+    }
+  }
+
+  if (state.status === "loading") {
+    return (
+      <main className="min-h-screen grid-dots flex items-center justify-center p-8">
+        <p className="text-text-secondary" data-testid="landing-recovery-loading">
+          Checking your forges…
+        </p>
+      </main>
+    );
+  }
+
+  if (state.status === "empty" || state.status === "new-forge") {
+    return <GoalPicker />;
+  }
+
+  if (state.status === "error") {
+    return (
+      <main className="min-h-screen grid-dots p-8" data-screen="landing-recovery">
+        <div className="mx-auto max-w-lg space-y-4">
+          <p className="text-text-secondary">{state.message}</p>
+          <Button
+            data-testid="landing-recovery-fallback"
+            onClick={() => setState({ status: "empty" })}
+          >
+            Start new forge
+          </Button>
+        </div>
+      </main>
+    );
+  }
+
+  const { items } = state;
+  const last = pickContinueTarget(items);
+
+  return (
+    <main
+      className="min-h-screen grid-dots px-4 py-16"
+      data-screen="landing-recovery"
+    >
+      <div className="mx-auto max-w-lg space-y-6">
+        <div>
+          <h1 className="text-3xl font-semibold text-text-primary">
+            Welcome back
+          </h1>
+          <p className="mt-2 text-text-secondary">
+            You have {items.length} saved forge{items.length === 1 ? "" : "s"}.
+            Continue where you left off, browse all, or start a new one.
+          </p>
+        </div>
+
+        <div className="rounded-md border border-border bg-surface px-4 py-3">
+          <p className="text-sm text-text-secondary">Last forge</p>
+          <p className="mt-1 font-medium text-text-primary">{last.title}</p>
+          {last.goal_id ? (
+            <p className="mt-0.5 text-sm text-text-secondary">{last.goal_id}</p>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button
+            data-testid="landing-continue"
+            disabled={busy}
+            onClick={() => void handleContinue(items)}
+          >
+            Continue
+          </Button>
+          <Button
+            variant="ghost"
+            data-testid="landing-view-all"
+            disabled={busy}
+            onClick={() => router.push("/forges")}
+          >
+            View all
+          </Button>
+          <Button
+            variant="ghost"
+            data-testid="landing-new-forge"
+            disabled={busy}
+            onClick={() => setState({ status: "new-forge", items })}
+          >
+            New forge
+          </Button>
+        </div>
+      </div>
+    </main>
+  );
+}

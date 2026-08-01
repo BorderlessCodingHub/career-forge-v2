@@ -9,9 +9,12 @@
 
 ```
 Goal → Onboarding pill rounds → Editable diagnosis → [Generate roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
+
+Return visit (CAR-27): if ≥1 forge artifact → Continue last / View all (/forges) / New forge
+Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use)
 ```
 
-**Mental breadcrumb:** Goal → Diagnosis → Review diagnosis → Forge roadmap → Explore roadmap
+**Mental breadcrumb:** Goal → Diagnosis → Review diagnosis → Forge roadmap → Explore roadmap · Recovery: Continue / share / resume
 
 5-min demo: [CHECKPOINT](../docs/CHECKPOINT.md#demo-script-5-min)
 
@@ -33,6 +36,7 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 | Step numbering | Implicit in the timeline | **1–N only during generation** — does not appear in the steady state |
 | App modes | Single chrome | **`setup`** (goal → forge) vs **`artifact`** (finished roadmap) |
 | AI in the dashboard | Contextual mentor drawer (P1) | **Ask AI** in the node drawer (roadmap.sh tutor style); full mentor drawer = optional P1 |
+| Return visit / recovery | Fresh GoalPicker every load; lost session if localStorage cleared | **CAR-27:** landing gate when ≥1 artifact; `/forges` list; share (read-only) + resume (single-use JWT adopt). Email / conflict chooser = CAR-29 |
 
 ---
 
@@ -40,13 +44,33 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 
 ### 1. Goal Picker (`/`)
 
-**Unchanged.** The user declares their dream profession + motivation.
+The user declares their dream profession + motivation. **CAR-27:** returning users with ≥1 `forge_artifact` see a recovery gate first.
 
 | | |
 |---|---|
 | **Old** | Hero + 3–4 hackathon career cards + motivation textarea |
 | **New** | Hero + **4** v2 LLM track cards (`rag-engineer`, `agent-engineer`, `llm-evals`, `fine-tuning`) + motivation; default `rag-engineer` |
-| **Route** | `/` · `data-screen="goal-picker"` |
+| **Return visit** | If `GET /me/forges` has items → **Continue** (open active/newest) / **View all** (`/forges`) / **New forge** (GoalPicker). Zero artifacts → GoalPicker only |
+| **Route** | `/` · `data-screen="goal-picker"` or `landing-recovery` |
+
+---
+
+### 1b. Forges list (`/forges`) — CAR-27 MVP
+
+Minimal catalog of historical forge artifacts. Open (freeze-before-promote), copy **share** (read-only), copy **resume** (single-use ~7d). Polished UI = CAR-29.
+
+| | |
+|---|---|
+| **Route** | `/forges` · `data-screen="forges-list"` |
+
+### 1c. Share / resume deep-links — CAR-27
+
+| Link | App route | API (Labs same-origin) | Behavior |
+|------|-----------|------------------------|----------|
+| Share | `/share/[token]` · `data-screen="share-readonly"` | `GET /public/share/{token}` | Read-only roadmap from artifact snapshot; **does not** adopt owner `user_id` |
+| Resume | `/resume/[token]` · `data-screen="resume-consume"` | `POST /public/resume/{token}` | Consumes token → writes owner JWT to localStorage → opens roadmap; second use fails |
+
+Copied links use **app** paths (`/share/…`, `/resume/…`), not `/public/…`.
 
 ---
 
@@ -120,7 +144,8 @@ Short explicit negative answers (for example, **"Nothing."**) are valid evidence
 |---|---|
 | **Old** | Full graph appears in the right panel; MissionBanner; explore CTA |
 | **New** | Each item/phrase of the stream **animates flying** into position on the **vertical roadmap layout**. Spine + left/right nodes materialize. No confetti — premium dev-tool |
-| **Route** | `/roadmap/forge/complete` · `data-screen="forge-reveal"` |
+| **Route** | `/roadmap/forge/complete` · `data-screen="forge-reveal"` (app: `/forge/complete`) |
+| **CAR-27** | After reveal, show **resume link copy once** (single-use ~7d) beside roadmap CTA |
 
 After the animation → navigates to steady state (`/roadmap`).
 
@@ -207,9 +232,10 @@ After the animation → navigates to steady state (`/roadmap`).
 | Forge uniform nodes | ✅ HAC-25 |
 | Editable diagnosis screen | ⬜ Still hash `#result` placeholder |
 | Forge timeline-only (no graph during stream) | ⬜ Prototype keeps split forge layout (user approved layout HAC-25) |
+| Forge recovery (landing / forges / share / resume) | ⬜ Not in prototype — **code + this doc win** (CAR-27 / ADR-003) |
 
 Implementation target: this doc + [SCREEN-INTENT.md](./SCREEN-INTENT.md).
 
 ---
 
-*Last updated: 2026-05-28 — artifact topbar chrome, trail study summary, drawer accordions*
+*Last updated: 2026-08-01 — CAR-27 forge recovery (landing Continue, share/resume, `/forges`)*

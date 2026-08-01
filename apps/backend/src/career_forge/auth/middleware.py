@@ -11,6 +11,7 @@ from starlette.responses import JSONResponse, Response
 from career_forge.auth.providers import get_auth_provider
 
 # Forge SSE stays Bearer-exempt; ticket is validated in the stream handler (CAR-26).
+# Share/resume deep-links are public; token validity is enforced in handlers (CAR-27).
 _PUBLIC_EXACT = frozenset(
     {
         "/health",
@@ -23,6 +24,8 @@ _PUBLIC_EXACT = frozenset(
 )
 _PUBLIC_PREFIXES = ("/docs", "/redoc")
 _FORGE_STREAM_RE = re.compile(r"^/forge/[^/]+/stream$")
+_PUBLIC_SHARE_RE = re.compile(r"^/public/share/[^/]+$")
+_PUBLIC_RESUME_RE = re.compile(r"^/public/resume/[^/]+$")
 
 
 def is_public_path(path: str) -> bool:
@@ -31,6 +34,10 @@ def is_public_path(path: str) -> bool:
     if any(path.startswith(prefix) for prefix in _PUBLIC_PREFIXES):
         return True
     if _FORGE_STREAM_RE.match(path):
+        return True
+    if _PUBLIC_SHARE_RE.match(path):
+        return True
+    if _PUBLIC_RESUME_RE.match(path):
         return True
     return False
 

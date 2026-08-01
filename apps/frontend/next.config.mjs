@@ -7,6 +7,9 @@ const BASE_PATH = "/career-forge";
  * External `destination` URLs are not prefixed.
  */
 const API_PREFIXES = [
+  "auth",
+  "me",
+  "public",
   "diagnosis",
   "forge",
   "roadmap",
