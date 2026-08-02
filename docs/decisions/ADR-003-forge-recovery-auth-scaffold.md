@@ -63,6 +63,8 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 | **Slice 2** | Rich `/forges` UI · email capture · conflict chooser polish · reusable diagnosis profile |
 | **Slice 3** | Borderless issuer · email send · account merge |
 
+**Amend 2026-08-01 (grill):** Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) closed after MVP + Slice 2. Slice 3 ([CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)) stays F3 — blocked on `borderless-api` access; **zero implementation** until issuer contract is usable. Next eng: CAR-21 → F2.
+
 ### 6. Priority vs F2
 
 - Track runs **in parallel** with F2 (CAR-14…18).

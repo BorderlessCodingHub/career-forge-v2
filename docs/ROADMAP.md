@@ -36,17 +36,17 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 ---
 
-## Track — Forge recovery + auth scaffold (∥ F2)
+## Track — Forge recovery + auth scaffold (∥ F2) — ✅ epic closed
 
 **Project:** [Forge recovery + auth scaffold](https://linear.app/career-forge-v2/project/forge-recovery-auth-scaffold-fab4691ea85e)  
-**ADR:** [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md) · grill 2026-07-30  
-**Parallel to F2.** CAR-21 blocks Labs stream-ticket only.
+**ADR:** [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md) · grill 2026-07-30 · close-out grill 2026-08-01  
+**Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) Done** (MVP + Slice 2). Slice 3 deferred. **Next:** [CAR-21](https://linear.app/career-forge-v2/issue/CAR-21) → F2.
 
 ### MVP
 
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
-| [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) | Epic: Forge recovery + auth scaffold | — | — |
+| [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) | Epic: Forge recovery + auth scaffold | — | ✅ Done |
 | [CAR-23](https://linear.app/career-forge-v2/issue/CAR-23) | AuthProvider + anon JWT Bearer middleware | [P] ✅ Done | — |
 | [CAR-24](https://linear.app/career-forge-v2/issue/CAR-24) | `forge_artifacts` + persist on forge complete | [S] ✅ Done | CAR-23 |
 | [CAR-25](https://linear.app/career-forge-v2/issue/CAR-25) | List / open + freeze-before-promote | [S] ✅ Done | CAR-24 |
@@ -60,7 +60,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 | Issue | Title | Class |
 |-------|-------|-------|
 | [CAR-29](https://linear.app/career-forge-v2/issue/CAR-29) | Slice 2: `/forges` UI + optional email + diagnosis profile | [S] ✅ Done |
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [S] |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [S] → **F3** (blocked on `borderless-api`; zero prep) |
 
 ---
 
@@ -89,7 +89,7 @@ Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 **Prerequisite:** F2 golden cases OK.  
 **First humans BASE/PSP only after:** platform auth + hard caps + rebrand/landing.
 
-- [ ] Auth via `borderless-api` (platform)
+- [ ] Auth via `borderless-api` (platform) — [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) Slice 3 (deferred from CAR-22; blocked until issuer access)
 - [ ] Hard caps (pool R$500 + per-user)
 - [ ] Rebrand Borderless + i18n pt-BR
 - [ ] Landing Next.js at `/career-forge`

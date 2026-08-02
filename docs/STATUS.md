@@ -2,8 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-01** · Last merge: **CAR-29** · prior **CAR-27** · **CAR-26** · **CAR-25**  
-Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)
+Last updated: **2026-08-01** · Last merge: **CAR-29** · prior **CAR-27** · **CAR-26** · **CAR-25** · Epic **CAR-22** closed (Slice 3 deferred)  
+Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
+**Next eng:** [CAR-21](https://linear.app/career-forge-v2/issue/CAR-21) (Labs SSE) → F2 (CAR-14 ∥ CAR-16). **CAR-28** blocked on `borderless-api` — zero prep.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` to avoid App Router page 405 (CAR-20).
 
@@ -47,18 +48,22 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 
 ---
 
-## Track — Forge recovery + auth scaffold (∥ F2)
+## Track — Forge recovery + auth scaffold (∥ F2) — epic Done
 
-[Project](https://linear.app/career-forge-v2/project/forge-recovery-auth-scaffold-fab4691ea85e) · epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) · [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md)
+[Project](https://linear.app/career-forge-v2/project/forge-recovery-auth-scaffold-fab4691ea85e) · epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) **Done** (grill 2026-08-01) · [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md)
+
+MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)) deferred to F3** — no `borderless-api` access; zero implementation until issuer contract exists.
 
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
+| CAR-22 | Epic: Forge recovery + auth scaffold | — | Done — MVP + Slice 2; Slice 3 → F3 |
 | CAR-23 | AuthProvider + anon JWT Bearer middleware | [P] | Done — `career_forge/auth/` + Bearer wire |
 | CAR-24 | `forge_artifacts` + persist on forge complete | [S] | Done — BIGSERIAL + `public_id` UUID; snapshot on `graph_ready` |
 | CAR-25 | List / open + freeze-before-promote | [S] | Done — `GET /me/forges` + `POST …/open` freeze-before-promote |
 | CAR-27 | Share + resume tokens + landing Continue | [S] | Done — share/resume tokens + landing Continue + `/forges` MVP |
 | CAR-29 | Slice 2: rich `/forges` + email store + diagnosis re-forge | [S] | Done — rename/revoke, resume conflict chooser, `PATCH /me/email`, `GET /me/profile` re-forge |
 | CAR-26 | Forge SSE stream ticket | [S] | Done — `POST …/stream-ticket` + `GET …/stream?ticket=`; Labs path still ↔ CAR-21 |
+| CAR-28 | Slice 3: Borderless issuer + send resume + merge | [S] | Backlog / F3 — blocked on `borderless-api` |
 
 ---
 
@@ -82,7 +87,7 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 | Forge artifacts (historical snapshots) | ✅ Done | CAR-24 persist + CAR-25 list/open freeze-before-promote |
 | Forge recovery (share / resume / Continue) | ✅ Done | CAR-27 — `forge_access_tokens`; landing gate; `/share` + `/resume` deep-links |
 | Forge recovery Slice 2 | ✅ Done | CAR-29 — rich `/forges`, conflict chooser, email store, diagnosis re-forge |
-| Platform auth (`borderless-api`) | ⬜ F3 | CAR-28 — Borderless issuer on same Bearer wire |
+| Platform auth (`borderless-api`) | ⬜ F3 | CAR-28 deferred — blocked on issuer access; zero prep (grill 2026-08-01) |
 | Rebrand + landing `/career-forge` | ⬜ F3 | |
 | BASE/PSP pilots | ⬜ F3 | After gate + F2 + auth |
 
@@ -92,7 +97,8 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Internal work (CAR-14, CA
 
 | Item | Owner | Status |
 |------|-------|--------|
-| Labs forge SSE through reverse proxy | Pedro | Open (CAR-21) — path fixed in CAR-9 |
+| Labs forge SSE through reverse proxy | Pedro | Open (CAR-21) — **next eng focus**; path fixed in CAR-9 |
+| `borderless-api` issuer access (CAR-28) | Pedro / platform | Blocked — no access yet; Slice 3 deferred to F3 |
 | Org `borderlesscodinghub` access | Pedro / Yuri | Partial OK |
 
 ---
