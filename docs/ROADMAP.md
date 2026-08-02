@@ -33,6 +33,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 |-------|-------|-------|
 | [CAR-9](https://linear.app/career-forge-v2/issue/CAR-9) | Labs path `/career-forge` via reverse proxy | [B] ✅ Done (not host nginx) |
 | [CAR-21](https://linear.app/career-forge-v2/issue/CAR-21) | Labs forge SSE stream broken (reverse proxy) | [B] |
+| [CAR-30](https://linear.app/career-forge-v2/issue/CAR-30) | Labs roadmap GET HTML (page vs API collision) | [B] ✅ Done |
 
 ---
 

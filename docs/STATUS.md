@@ -2,11 +2,11 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-01** · Last merge: **CAR-29** · prior **CAR-27** · **CAR-26** · **CAR-25** · Epic **CAR-22** closed (Slice 3 deferred)  
+Last updated: **2026-08-01** · Last merge: **CAR-30** · prior **CAR-29** · **CAR-27** · Epic **CAR-22** closed (Slice 3 deferred)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
 **Next eng:** [CAR-21](https://linear.app/career-forge-v2/issue/CAR-21) (Labs SSE) → F2 (CAR-14 ∥ CAR-16). **CAR-28** blocked on `borderless-api` — zero prep.
 
-**Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` to avoid App Router page 405 (CAR-20).
+**Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
 ---
 
@@ -29,6 +29,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | — | CAR-13 Re-enable auto-deploy on push to `main` | Done — `push: branches: [main]` restored in deploy.yml |
 | — | CAR-19 Bake `API_INTERNAL_URL` into frontend image | Done — Labs `/career-forge/health` rewrite fixed |
 | — | CAR-20 `POST /forge/runs` (avoid `/forge` page 405) | Done — Labs verified (API JSON, not Next 405) |
+| — | CAR-30 `GET /roadmap/current` (avoid `/roadmap` page HTML) | Done — same-origin trail JSON, not Next DOCTYPE |
 
 **Cost gate:** run 2026-07-24 · Forge P95 **R$1.10** · Hard stop R$500/mo · Approval ceiling R$700 · **No students until Yuri approves**
 
@@ -74,7 +75,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | LangGraph motor (diagnosis → forge → validation) | ✅ Keep | Untouched by design (V2-PLAN) |
 | AI execution (GraphExecutor / Factory) | ✅ Keep | See engineering/AI-EXECUTION.md |
 | Diagnosis CTRR (ADR-001) | ✅ Keep | Recalibrate prompts in F2; soft gate |
-| Labs deploy path | ⚠️ Partial | Auto-deploy on `main` (CAR-13); same-origin rewrite (CAR-19/20); path OK via reverse proxy (CAR-9); forge SSE broken (CAR-21) |
+| Labs deploy path | ⚠️ Partial | Auto-deploy on `main` (CAR-13); same-origin rewrite (CAR-19/20/30); path OK via reverse proxy (CAR-9); forge SSE broken (CAR-21) |
 | 4 LLM goals + catalog seeds | ✅ Done | CAR-5 — `data/catalog/` ×4 tracks |
 | Cost pool + per-user cap | ✅ Done | CAR-6 — CostGuard + usage_monthly + 429 kill-switch |
 | F1 synthetic cost gate report | ✅ Done | CAR-7 — 24 forges + samples · GO vs R$500/R$700 |
