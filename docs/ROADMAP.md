@@ -32,7 +32,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 | Issue | Title | Class |
 |-------|-------|-------|
 | [CAR-9](https://linear.app/career-forge-v2/issue/CAR-9) | Labs path `/career-forge` via reverse proxy | [B] ✅ Done (not host nginx) |
-| [CAR-21](https://linear.app/career-forge-v2/issue/CAR-21) | Labs forge SSE stream broken (reverse proxy) | [B] |
+| [CAR-21](https://linear.app/career-forge-v2/issue/CAR-21) | Labs forge SSE stream broken (reverse proxy) | [B] ✅ Done |
 | [CAR-30](https://linear.app/career-forge-v2/issue/CAR-30) | Labs roadmap GET HTML (page vs API collision) | [B] ✅ Done |
 
 ---
@@ -41,7 +41,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Project:** [Forge recovery + auth scaffold](https://linear.app/career-forge-v2/project/forge-recovery-auth-scaffold-fab4691ea85e)  
 **ADR:** [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md) · grill 2026-07-30 · close-out grill 2026-08-01  
-**Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) Done** (MVP + Slice 2). Slice 3 deferred. **Next:** [CAR-21](https://linear.app/career-forge-v2/issue/CAR-21) → F2.
+**Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) Done** (MVP + Slice 2). Slice 3 deferred. **Next:** F2.
 
 ### MVP
 
@@ -52,9 +52,9 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 | [CAR-24](https://linear.app/career-forge-v2/issue/CAR-24) | `forge_artifacts` + persist on forge complete | [S] ✅ Done | CAR-23 |
 | [CAR-25](https://linear.app/career-forge-v2/issue/CAR-25) | List / open + freeze-before-promote | [S] ✅ Done | CAR-24 |
 | [CAR-27](https://linear.app/career-forge-v2/issue/CAR-27) | Share + resume tokens + landing Continue | [S] ✅ Done | CAR-25 |
-| [CAR-26](https://linear.app/career-forge-v2/issue/CAR-26) | Forge SSE stream ticket | [S] ✅ Done | CAR-23; Labs ↔ CAR-21 |
+| [CAR-26](https://linear.app/career-forge-v2/issue/CAR-26) | Forge SSE stream ticket | [S] ✅ Done | CAR-23; Labs SSE CAR-21 Done |
 
-**Start order:** CAR-23 first → CAR-24 → CAR-25 → CAR-27; CAR-26 ∥ after CAR-23 (Labs ticket after CAR-21).
+**Start order:** CAR-23 first → CAR-24 → CAR-25 → CAR-27; CAR-26 ∥ after CAR-23.
 
 ### Slice 2 / 3
 
