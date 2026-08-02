@@ -349,6 +349,7 @@ docker compose -f docker-compose.prod.yml up -d --no-build
 | API 404 on `/career-forge/diagnosis/…` with empty `NEXT_PUBLIC_*` | Missing Next rewrite / `API_INTERNAL_URL` | Confirm frontend container has `API_INTERNAL_URL=http://backend:8000` and current `next.config.mjs` (includes `knowledge-gaps`, `tutor`, `/health`) |
 | `/career-forge/health` returns Next.js 404 HTML; badge **API unreachable**; `:18000/health` OK | Rewrites baked at **build** without `API_INTERNAL_URL` | Rebuild frontend with `API_INTERNAL_URL=http://backend:8000` build-arg (CAR-19); runtime-only env is too late |
 | `POST /career-forge/forge` → **405**; badge API ok | App Router page `/forge` wins over afterFiles rewrite | FE uses `POST /forge/runs` (CAR-20); keep exact+nested rewrites for other roots |
+| `/career-forge/roadmap` shows `Unexpected token '<'` / DOCTYPE JSON error | App Router page `/roadmap` wins over afterFiles rewrite for `GET /roadmap/` | FE uses `GET /roadmap/current` (CAR-30); nested `/roadmap/sync` etc. still rewrite |
 | SSE stream closes immediately / no events | nginx buffering on | Confirm `proxy_buffering off` is in the API location block (nginx `/api` mode) |
 | Forge routes return 404 from API | nginx stripping prefix wrong | Check trailing slash on `proxy_pass http://127.0.0.1:18000/;` in API block |
 | `manifest unknown` on docker pull | `IMAGE_TAG` mismatch or images not pushed yet | Check GitHub Actions — wait for push job to succeed |

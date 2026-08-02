@@ -294,8 +294,9 @@ export async function streamForgeRun(
 
 export async function getRoadmap(userId?: string): Promise<RoadmapResponse> {
   const resolvedUserId = userId ?? getUserId();
+  // /roadmap/current avoids App Router page collision on Labs (CAR-30 / CAR-20 pattern).
   return apiFetch<RoadmapResponse>(
-    `/roadmap/?user_id=${encodeURIComponent(resolvedUserId)}`,
+    `/roadmap/current?user_id=${encodeURIComponent(resolvedUserId)}`,
   );
 }
 

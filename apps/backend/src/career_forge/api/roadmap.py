@@ -15,10 +15,16 @@ router = APIRouter()
 
 
 @router.get("/", response_model=RoadmapResponse)
+@router.get("/current", response_model=RoadmapResponse)
 def get_roadmap(
     external_id: ExternalId,
     db: Session = Depends(get_db),
 ) -> RoadmapResponse:
+    """Return the user's steady-state trail.
+
+    ``GET /roadmap/current`` is preferred behind Next.js (App Router page occupies
+    ``/roadmap``). ``GET /roadmap/`` remains for direct API / tests.
+    """
     try:
         return roadmap_service.get_user_roadmap(db, external_id)
     except Exception:

@@ -47,6 +47,16 @@ def test_get_roadmap_api(client) -> None:
     assert payload["nodes"][0]["node_id"]
 
 
+def test_get_roadmap_current_api(client) -> None:
+    """Preferred path behind Next.js (App Router page occupies /roadmap) — CAR-30."""
+    response = client.get("/roadmap/current", params={"user_id": "demo-ana"})
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["track"]["id"] == "rag-engineer-beginner"
+    assert len(payload["nodes"]) >= 6
+    assert payload["nodes"][0]["node_id"]
+
+
 def test_sync_roadmap_api(client) -> None:
     nodes = [
         UserSkillNode(
