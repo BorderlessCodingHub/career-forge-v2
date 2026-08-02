@@ -30,7 +30,7 @@ def build_validation_questions(
     node = resolve_skill_node_catalog_entry(session, node_id)
     rubric: list[str] = node.get("rubric") or []
     while len(rubric) < 3:
-        rubric.append(f"Demonstrar domínio prático de {node['title']}")
+        rubric.append(f"Demonstrate practical mastery of {node['title']}")
 
     questions = [
         ValidationQuestion(

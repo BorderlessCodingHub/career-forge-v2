@@ -60,7 +60,7 @@ def test_apply_schedule_overrides_maps_hours_per_day() -> None:
     assert constraints.confidence >= 0.76
     assert velocity.status == "mapped"
     assert velocity.confidence >= 0.76
-    assert "Rotina/tempo mencionados pelo usuário" in constraints.note
+    assert "Routine/time mentioned by the user" in constraints.note
 
 
 def test_apply_transcript_overrides_maps_negative_proof() -> None:
@@ -111,4 +111,13 @@ def test_interviewer_payload_lists_do_not_ask() -> None:
     )
     assert "## do_not_ask" in message
     assert "hands_on_proof" in message
-    assert "resposta negativa" in message.lower()
+    assert "negative" in message.lower()
+    assert "## goal_brief" in message
+    assert "Agent Engineer" in message
+    assert "final_instructions" in message
+
+
+def test_detect_negative_hands_on_english() -> None:
+    assert detect_negative_hands_on("I never built anything, theory only")
+    assert detect_negative_hands_on("no practice yet")
+    assert not detect_negative_hands_on("I shipped a small RAG notebook")

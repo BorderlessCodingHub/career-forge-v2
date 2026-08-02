@@ -266,29 +266,30 @@ class MockDiagnosisInterviewLlm:
         mastery = {node_id: scores[i] for i, node_id in enumerate(node_ids)}
 
         strengths = [
-            belief.dimensions["motivation_goal"].note or "Motivação clara para a transição",
+            belief.dimensions["motivation_goal"].note or "Clear motivation for this path",
         ]
         if proof >= 0.55:
-            strengths.append("Evidência prática citada na entrevista")
+            strengths.append("Cited practical evidence in the interview")
 
         gaps = []
         if proof < 0.65:
-            gaps.append("Prova prática — entregar um artefato mínimo (repo, demo ou deploy)")
+            gaps.append("Hands-on proof — ship a minimal artifact (repo, demo, or deploy)")
         if velocity < 0.65:
-            gaps.append("Consistência de estudo — rotina semanal mensurável")
+            gaps.append("Study consistency — measurable weekly routine")
 
-        gaps.extend(GOAL_GAPS.get(intake.goal_id, ["Fundamentos de engenharia de software"])[:1])
+        gaps.extend(GOAL_GAPS.get(intake.goal_id, ["LLM engineering fundamentals"])[:1])
 
         priorities = list(node_ids[2:5])
 
         return DiagnosisResponse(
             profile=DiagnosisProfile(
-                label=f"Iniciante em transição — {intake.goal_id}",
+                label=f"Early transition — {intake.goal_id}",
                 track_id=track_id,
-                persona_slug="transicao_iniciante",
+                persona_slug="early_transition",
             ),
             strengths=strengths[:3],
             gaps=gaps[:4],
             starting_priorities=priorities[:3],
             estimated_mastery=mastery,
+            profile_score=belief.mean_confidence(),
         )

@@ -27,19 +27,19 @@ PROFILE_DIMENSION_KEYS: tuple[RubricDimensionKey, ...] = (
 )
 
 PROFILE_DIMENSION_LABELS: dict[RubricDimensionKey, str] = {
-    "motivation_goal": "Objetivo",
-    "background_transfer": "De onde você vem",
-    "learning_velocity": "Ritmo de aprendizado",
-    "hands_on_proof": "Prova prática",
-    "constraints": "Contexto real",
+    "motivation_goal": "Goal",
+    "background_transfer": "Where you come from",
+    "learning_velocity": "Learning cadence",
+    "hands_on_proof": "Hands-on proof",
+    "constraints": "Real context",
 }
 
 PROFILE_DIMENSION_DESCRIPTIONS: dict[RubricDimensionKey, str] = {
-    "motivation_goal": "Por que esse caminho e alinhamento com sua meta",
-    "background_transfer": "Área anterior e hábitos que você traz para tech",
-    "learning_velocity": "Quanto pratica, com que frequência e consistência",
-    "hands_on_proof": "Maior coisa que construiu, tentou ou entregou",
-    "constraints": "Tempo/semana, idioma, budget, como estuda hoje",
+    "motivation_goal": "Why this path and alignment with your goal",
+    "background_transfer": "Prior domain and habits you bring into tech",
+    "learning_velocity": "How much you practice, how often, and how consistently",
+    "hands_on_proof": "Largest thing you have built, attempted, or shipped",
+    "constraints": "Hours/week, language, budget, how you study today",
 }
 
 SATURATION_CONFIDENCE_THRESHOLD = 0.75
@@ -61,7 +61,7 @@ class RubricDimension(BaseModel):
     status: RubricDimensionStatus = "pending"
     note: str = Field(
         default="",
-        description="Succinct PT-BR summary of what was inferred (intake, CV, or answers).",
+        description="Succinct English summary of what was inferred (intake, CV, or answers).",
     )
 
 
@@ -116,6 +116,13 @@ class BeliefState(BaseModel):
             if dim.status == "mapped" and dim.confidence >= threshold
         )
         return mapped / len(PROFILE_DIMENSION_KEYS)
+
+    def mean_confidence(self) -> float:
+        """Mean confidence across the 5 live profile dims (soft-gate contract)."""
+        if not PROFILE_DIMENSION_KEYS:
+            return 0.0
+        total = sum(self.dimensions[key].confidence for key in PROFILE_DIMENSION_KEYS)
+        return total / len(PROFILE_DIMENSION_KEYS)
 
 
 class CvAttachment(BaseModel):

@@ -2,7 +2,7 @@
 
 > **Authority:** [ADR-001](../decisions/ADR-001-adaptive-diagnosis-ctrr.md) (business decisions) · this doc (operational spec) · [V2-PLAN.md](../V2-PLAN.md) (v2 soft gate / audience)
 
-**Status:** Implemented in production path. v2 F2 recalibrates prompts for BASE/PSP + LLM tracks; pilot uses **soft gate** (lean forge + warning) below score bar.
+**Status:** Implemented in production path. **CAR-14 (2026-08-02):** Interviewer/Judge/Finalize prompts + fallback bank + validation templates recalibrated to **English** for BASE/PSP early↔staff across the 4 LLM goals. Live rubric remains the **5 profile dims** (`motivation_goal` … `constraints`). Finalize emits `profile_score = mean(5 confidences)` for CAR-15 soft gate. Soft gate / lean forge still pending CAR-15; full golden suite is CAR-18.
 
 ---
 
@@ -121,18 +121,20 @@ Execution: `GraphExecutor.execute(..., stream=False)` per turn.
 
 ### Interviewer system
 
-- Audience: career transition, beginner-friendly Portuguese
-- Input: `RUBRIC_JSON`, `BELIEF_JSON`, `TRANSCRIPT_JSON`, `INTAKE_JSON`
-- Rules: max 2 questions; only `confidence < 0.75`; no repeat of intake/CV/transcript; output JSON array
+- Audience: BASE/PSP early ↔ staff, **English**, LLM-track goals
+- Input: belief snapshot, interviewable, do_not_ask, **goal_brief** (per `goal_id`), transcript
+- Rules: max 2 questions; only interviewable keys; no rephrase of closed negatives; `topic` = EN label
 
 ### Judge system
 
-- Update confidence + evidence per `rubric_key`
+- Update confidence + evidence for the **5 live profile dims**
 - Output strict JSON matching `BeliefState`
 
 ### Finalize
 
-- Map saturated belief → `strengths`, `gaps`, `starting_priorities`, `estimated_mastery`
+- Map belief → `strengths`, `gaps`, `starting_priorities`, `estimated_mastery`
+- Gaps are LLM-track (not git/http/db checklist)
+- `profile_score` = mean of 5 dim confidences (CAR-15 soft-gate contract)
 
 ---
 

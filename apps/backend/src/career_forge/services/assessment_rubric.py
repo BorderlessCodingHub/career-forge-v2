@@ -16,19 +16,19 @@ import re
 
 PASS_THRESHOLD = 70
 
-QUESTION_LABELS = ("conceito", "aplicação", "aprofundamento")
+QUESTION_LABELS = ("concept", "application", "deepening")
 QUESTION_TEMPLATES = (
-    "Com suas palavras, {criterion}. Dê um exemplo prático.",
-    "Como você aplicaria isso em um projeto real: {criterion}?",
-    "Explique para um colega iniciante: {criterion}.",
+    "In your own words, {criterion}. Give a practical example.",
+    "How would you apply this in a real project: {criterion}?",
+    "Explain to a junior teammate: {criterion}.",
 )
 QUESTION_HINTS = {
-    "conceito": "Pense na definição e no porquê antes do como.",
-    "aplicação": "Use um exemplo concreto de projeto ou endpoint.",
-    "aprofundamento": "Explique como se estivesse ensinando um colega.",
+    "concept": "Start with the definition and the why before the how.",
+    "application": "Use a concrete project or pipeline example.",
+    "deepening": "Explain as if you were teaching a colleague.",
 }
 
-RUBRIC_KEYWORDS: dict[str, list[tuple[str, ...]]] = {
+_LEGACY_RUBRIC_KEYWORDS: dict[str, list[tuple[str, ...]]] = {
     "js": [
         ("let", "const", "var", "escopo", "hoisting", "block"),
         ("async", "await", "promise", "callback", "assíncron"),
@@ -64,6 +64,154 @@ RUBRIC_KEYWORDS: dict[str, list[tuple[str, ...]]] = {
         ("sql", "schema", "tabela", "modelagem", "coerente"),
         ("readme", "rodar", "local", "docker", "instala"),
     ],
+}
+
+_LLM_RUBRIC_KEYWORDS: dict[str, list[tuple[str, ...]]] = {
+    "rag-embeddings": [
+        ("embedding", "dense", "semantic", "vector"),
+        ("model", "size", "quality", "trade-off", "tradeoff"),
+        ("similarity", "score", "cosine", "example"),
+    ],
+    "rag-chunking": [
+        ("fixed", "semantic", "chunking", "chunk"),
+        ("chunk", "size", "corpus", "token"),
+        ("metadata", "retrieval", "survive"),
+    ],
+    "rag-retrieval": [
+        ("index", "query", "retrieval", "build"),
+        ("failure", "chunking", "query", "relevance"),
+        ("relevance", "fix", "rerank", "rewrite"),
+    ],
+    "rag-rerank": [
+        ("rerank", "retrieval", "cross-encoder"),
+        ("hybrid", "bm25", "dense"),
+        ("metric", "before", "after", "ndcg", "mrr"),
+    ],
+    "rag-grounding": [
+        ("grounded", "prompt", "context"),
+        ("citation", "source", "attribution"),
+        ("refusal", "empty", "context"),
+    ],
+    "rag-eval": [
+        ("faithfulness", "relevance", "metric", "ragas"),
+        ("golden", "dataset", "eval", "workflow"),
+        ("pipeline", "failed", "stage", "chunk"),
+    ],
+    "rag-production": [
+        ("latency", "cost", "freshness"),
+        ("observability", "trace", "log", "metric"),
+        ("re-index", "reindex", "cache"),
+    ],
+    "agent-tool-use": [
+        ("schema", "json", "tool", "parameter"),
+        ("tool-call", "result", "turn", "loop"),
+        ("validation", "args", "argument"),
+    ],
+    "agent-mcp": [
+        ("mcp", "client", "server"),
+        ("tools", "resources", "mcp"),
+        ("discover", "mcp", "tools"),
+    ],
+    "agent-planning": [
+        ("plan", "act", "observe"),
+        ("multi-step", "plan", "steps"),
+        ("stop", "condition", "halt"),
+    ],
+    "agent-memory": [
+        ("short-term", "long-term", "memory"),
+        ("persist", "store", "memory"),
+        ("context", "window", "overflow"),
+    ],
+    "agent-failure-modes": [
+        ("failure", "loop", "hallucinat"),
+        ("retry", "limit", "loop"),
+        ("safe", "failure", "tool", "error"),
+    ],
+    "agent-observability": [
+        ("trace", "span", "log"),
+        ("failure", "span", "logged"),
+        ("eval", "signal", "metric"),
+    ],
+    "agent-ship": [
+        ("allowlist", "tools", "permission"),
+        ("playbook", "failure", "operator"),
+        ("cost", "latency", "limit"),
+    ],
+    "evals-metrics": [
+        ("metric", "accuracy", "bleu", "task"),
+        ("automatic", "human", "label"),
+        ("misleading", "metric", "proxy"),
+    ],
+    "evals-llm-judge": [
+        ("judge", "rubric", "criteria"),
+        ("calibration", "human", "agreement"),
+        ("bias", "failure", "judge"),
+    ],
+    "evals-datasets": [
+        ("golden", "version", "dataset"),
+        ("slice", "coverage", "cohort"),
+        ("provenance", "label", "source"),
+    ],
+    "evals-regression": [
+        ("ci", "gate", "eval"),
+        ("threshold", "policy", "pass"),
+        ("bisect", "regression", "commit"),
+    ],
+    "evals-tracing": [
+        ("span", "trace", "attribute"),
+        ("debug", "trace", "latency"),
+        ("filter", "error", "latency"),
+    ],
+    "evals-online": [
+        ("sampling", "production", "online"),
+        ("feedback", "signal", "thumbs"),
+        ("drift", "offline", "online"),
+    ],
+    "evals-llmops": [
+        ("backlog", "failure", "ticket"),
+        ("refresh", "cadence", "dataset"),
+        ("stakeholder", "report", "eval"),
+    ],
+    "ft-data-prep": [
+        ("sft", "jsonl", "example", "format"),
+        ("quality", "filter", "dedup"),
+        ("contamination", "leak", "test"),
+    ],
+    "ft-sft": [
+        ("sft", "objective", "supervised"),
+        ("overfit", "memor", "loss"),
+        ("base", "sft", "comparison"),
+    ],
+    "ft-lora": [
+        ("lora", "adapter", "rank"),
+        ("peft", "full", "finetune", "trade"),
+        ("merge", "serve", "adapter"),
+    ],
+    "ft-eval": [
+        ("regression", "task", "eval"),
+        ("capability", "regression", "risk"),
+        ("ship", "metric", "threshold"),
+    ],
+    "ft-dpo": [
+        ("preference", "chosen", "rejected", "pair"),
+        ("dpo", "rlhf"),
+        ("preference", "pitfall", "noise"),
+    ],
+    "ft-serve": [
+        ("serve", "adapter", "endpoint"),
+        ("version", "rollback", "canary"),
+        ("cost", "latency", "batch"),
+    ],
+    "ft-alignment": [
+        ("safety", "check", "release"),
+        ("policy", "boundary", "refus"),
+        ("escalation", "risk", "fail"),
+    ],
+}
+
+RUBRIC_KEYWORDS: dict[str, list[tuple[str, ...]]] = {
+    **_LEGACY_RUBRIC_KEYWORDS,
+    **_LLM_RUBRIC_KEYWORDS,
 }
 
 RUBRIC_GAPS: dict[str, list[str]] = {
@@ -159,7 +307,22 @@ def score_answer(text: str, keywords: tuple[str, ...]) -> int:
     hits = sum(1 for keyword in keywords if keyword in lowered)
     length_bonus = min(len(lowered) // 50, 4)
     uncertainty = sum(
-        1 for token in ("acho", "não sei", "talvez", "nunca", "confuso", "não tenho certeza")
+        1
+        for token in (
+            "acho",
+            "não sei",
+            "talvez",
+            "nunca",
+            "confuso",
+            "não tenho certeza",
+            "i think",
+            "not sure",
+            "maybe",
+            "never",
+            "confused",
+            "don't know",
+            "do not know",
+        )
         if token in lowered
     )
     return max(0, min(100, 30 + hits * 14 + length_bonus * 6 - uncertainty * 12))
@@ -171,5 +334,9 @@ def keywords_for(node_id: str, rubric_index: int, rubric: list[str]) -> tuple[st
     if node_keywords and rubric_index < len(node_keywords):
         return node_keywords[rubric_index]
     criterion = rubric[rubric_index].lower() if rubric_index < len(rubric) else ""
-    tokens = tuple(token for token in re.findall(r"[a-záàâãéêíóôõúç0-9]+", criterion) if len(token) > 3)
-    return tokens or ("exemplo", "prática", "conceito")
+    tokens = tuple(
+        token
+        for token in re.findall(r"[a-záàâãéêíóôõúç0-9]+", criterion)
+        if len(token) > 3
+    )
+    return tokens or ("example", "practice", "concept")
