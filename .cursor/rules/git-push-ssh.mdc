@@ -1,0 +1,33 @@
+---
+description: Prefer local SSH git push/PR — BorderlessCodingHub blocks long-lived GitHub MCP PATs
+alwaysApply: true
+---
+
+# Git push / PR (Career Forge)
+
+**Canonical path for push + PR:** local terminal over **SSH**, not GitHub MCP.
+
+| Path | Use? |
+|------|------|
+| `git push` / `gh pr create` in the **user's terminal** | ✅ Yes |
+| Remote | `git@github.com:BorderlessCodingHub/career-forge-v2.git` |
+| Auth | SSH keys under `~/.ssh` |
+| GitHub MCP (`create_branch`, `push_files`, `create_pull_request`) | ❌ Avoid for this org |
+
+## Why
+
+`BorderlessCodingHub` rejects fine-grained PATs with lifetime **> 366 days**. GitHub MCP often hits that org policy (403). Yesterday-style workflows (e.g. CAR-30) succeeded via local SSH push.
+
+## Agent behavior
+
+1. **Commit locally** as usual (exclude unrelated files).
+2. For **push / PR**: give the user exact commands to run in their terminal, or run `git push` / `gh pr create` only when the shell has working SSH to GitHub.
+3. Do **not** retry GitHub MCP org writes after a 366-day PAT 403 — tell the user to push via SSH instead.
+4. `gh` may need `gh auth login` separately; SSH push does not depend on MCP.
+
+## Example (after local commit)
+
+```bash
+git push -u origin HEAD
+gh pr create --title "CAR-XX: …" --body "…"
+```

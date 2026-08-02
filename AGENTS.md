@@ -94,6 +94,7 @@ Full lifecycle: [docs/engineering/AGENT-LIFECYCLE.md](./docs/engineering/AGENT-L
 | [linear-delivery-workflow](./.cursor/rules/linear-delivery-workflow.mdc) | Branch, micro-PR, P/S/B classification |
 | [parallel-dispatch](./.cursor/rules/parallel-dispatch.mdc) | **Mandatory** parallel Task launch for [P] batches |
 | [end-task-workflow](./.cursor/rules/end-task-workflow.mdc) | **Manual Linear Done** (no GitHub integration) |
+| [git-push-ssh](./.cursor/rules/git-push-ssh.mdc) | Push/PR via local SSH — not GitHub MCP (org PAT policy) |
 | [dual-qa-gate](./.cursor/rules/dual-qa-gate.mdc) | Triple gate summary |
 | [agent-delivery-gate](./.cursor/rules/agent-delivery-gate.mdc) | SHIP + PASS + VERIFIED |
 | [end-session-smoke](./.cursor/rules/end-session-smoke.mdc) | `make smoke` before ending session |
@@ -148,6 +149,7 @@ Full bootstrap: [docs/CURSOR-CLOUD.md](./docs/CURSOR-CLOUD.md).
 | Team key | `CAR` |
 | Preferred MCP | Cursor **Linear** plugin (OAuth) |
 | Branch format | `CAR-XX-title-slug` (no username prefix) |
+| Push / PR | **SSH local** (`git@github.com:…` + `~/.ssh`) — see [git-push-ssh](./.cursor/rules/git-push-ssh.mdc). Do not use GitHub MCP for org pushes. |
 
 Do **not** commit API keys.
 
