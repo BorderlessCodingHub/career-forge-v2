@@ -37,6 +37,12 @@ class DiagnosisResponse(BaseModel):
         default_factory=dict,
         description="node_id → 0–100 estimated mastery before forge",
     )
+    profile_score: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=1.0,
+        description="Mean confidence across the 5 live profile dimensions (CAR-15 soft-gate input).",
+    )
 
     @field_validator("estimated_mastery")
     @classmethod

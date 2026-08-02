@@ -12,37 +12,37 @@ from career_forge.schemas.diagnosis_interview import (
 )
 
 COMPOUND_ROUND_ONE = (
-    "Conte a coisa mais concreta que você já fez ou tentou nesse caminho — "
-    "o que construiu, com quem e o que aprendeu.",
-    "Ex.: fiz um app em grupo na faculdade, uso Git básico, deploy no Vercel.",
+    "Tell me the most concrete thing you have built or tried on this path — "
+    "what you shipped, with whom, and what you learned.",
+    "e.g. group app in school, basic Git, deploy on Vercel, a small RAG notebook.",
 )
 
 FOLLOW_UP_BANK: dict[RubricDimensionKey, tuple[str, str]] = {
     "motivation_goal": (
-        "O que te motiva de verdade a seguir esse caminho agora?",
-        "Ex.: quero trabalhar com produto de IA e impacto global.",
+        "What truly motivates you to follow this path right now?",
+        "e.g. I want to ship AI product features with real user impact.",
     ),
     "background_transfer": (
-        "De onde você vem e o que do seu background ajuda nessa transição?",
-        "Ex.: venho de vendas, aprendi a explicar ideias complexas.",
+        "Where are you coming from, and what from your background helps this transition?",
+        "e.g. sales background — I explain complex ideas clearly.",
     ),
     "learning_velocity": (
-        "Com que frequência você pratica e como mantém consistência?",
-        "Ex.: 1h por dia durante a semana, projetos no fim de semana.",
+        "How often do you practice, and how do you stay consistent?",
+        "e.g. 1h weekdays, weekend projects.",
     ),
     "hands_on_proof": (
-        "Qual foi a entrega mais concreta que você já tentou?",
-        "Ex.: API simples no GitHub, dashboard, bot, pipeline.",
+        "What is the most concrete delivery you have attempted?",
+        "e.g. simple API on GitHub, dashboard, bot, eval harness.",
     ),
     "constraints": (
-        "Quais limitações reais você tem hoje (tempo, idioma, budget)?",
-        "Ex.: 8h/semana, inglês intermediário, sem bootcamp pago.",
+        "What real constraints do you have today (time, language, budget)?",
+        "e.g. 8h/week, intermediate English, no paid bootcamp.",
     ),
 }
 
 INTERVIEW_ROUND_LABELS: tuple[str, ...] = (
-    "Prática e rotina",
-    "Contexto e limitações",
+    "Practice and routine",
+    "Context and constraints",
 )
 
 ROUND_TWO_KEYS: tuple[RubricDimensionKey, ...] = (

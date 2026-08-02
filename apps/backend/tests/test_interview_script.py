@@ -78,7 +78,7 @@ class TestBuildRoundQuestions:
             questions=[
                 InterviewQuestion(
                     id="q-r1-1",
-                    topic="Prova prática",
+                    topic="Hands-on proof",
                     rubric_key="hands_on_proof",
                     question="?",
                     example_of_answer="?",
@@ -87,7 +87,7 @@ class TestBuildRoundQuestions:
             answers=[
                 InterviewAnswer(
                     question_id="q-r1-1",
-                    text="Estudo 8h por semana em português, sem budget extra.",
+                    text="I study 8 hours per week in English, no extra budget.",
                 ),
             ],
         )
@@ -99,5 +99,5 @@ class TestBuildRoundQuestions:
 class TestInterviewRoundLabels:
     def test_two_fixed_round_labels(self) -> None:
         assert len(INTERVIEW_ROUND_LABELS) == 2
-        assert INTERVIEW_ROUND_LABELS[0] == "Prática e rotina"
-        assert INTERVIEW_ROUND_LABELS[1] == "Contexto e limitações"
+        assert INTERVIEW_ROUND_LABELS[0] == "Practice and routine"
+        assert INTERVIEW_ROUND_LABELS[1] == "Context and constraints"

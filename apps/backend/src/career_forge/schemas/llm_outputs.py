@@ -100,11 +100,12 @@ class FinalizeDiagnosisOutput(BaseModel):
     starting_priorities: list[str] = Field(min_length=1)
     estimated_mastery: list[EstimatedMasteryEntry] = Field(min_length=1)
 
-    def to_diagnosis_response(self) -> DiagnosisResponse:
+    def to_diagnosis_response(self, *, profile_score: float = 0.0) -> DiagnosisResponse:
         return DiagnosisResponse(
             profile=self.profile,
             strengths=self.strengths,
             gaps=self.gaps,
             starting_priorities=self.starting_priorities,
             estimated_mastery={entry.node_id: entry.score for entry in self.estimated_mastery},
+            profile_score=profile_score,
         )

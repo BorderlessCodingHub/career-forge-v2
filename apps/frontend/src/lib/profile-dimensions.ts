@@ -12,28 +12,28 @@ const PROFILE_DIMENSIONS: Array<{
 }> = [
   {
     rubric_key: "motivation_goal",
-    label: "Objetivo",
-    description: "Por que esse caminho e alinhamento com sua meta",
+    label: "Goal",
+    description: "Why this path and alignment with your goal",
   },
   {
     rubric_key: "background_transfer",
-    label: "De onde você vem",
-    description: "Área anterior e hábitos que você traz para tech",
+    label: "Where you come from",
+    description: "Prior domain and habits you bring into tech",
   },
   {
     rubric_key: "learning_velocity",
-    label: "Ritmo de aprendizado",
-    description: "Quanto pratica, com que frequência e consistência",
+    label: "Learning cadence",
+    description: "How much you practice, how often, and how consistently",
   },
   {
     rubric_key: "hands_on_proof",
-    label: "Prova prática",
-    description: "Maior coisa que construiu, tentou ou entregou",
+    label: "Hands-on proof",
+    description: "Largest thing you have built, attempted, or shipped",
   },
   {
     rubric_key: "constraints",
-    label: "Contexto real",
-    description: "Tempo/semana, idioma, budget, como estuda hoje",
+    label: "Real context",
+    description: "Hours/week, language, budget, how you study today",
   },
 ];
 

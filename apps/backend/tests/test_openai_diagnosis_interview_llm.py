@@ -125,3 +125,4 @@ async def test_finalize_diagnosis_invokes_finalize_schema(llm: OpenAiDiagnosisIn
     llm._client.invoke.assert_awaited_once()
     assert diagnosis.profile.track_id == "rag-engineer-beginner"
     assert diagnosis.strengths == ["Motivação clara"]
+    assert diagnosis.profile_score == pytest.approx(0.0)

@@ -53,6 +53,7 @@ export type DiagnosisResponse = {
   gaps: string[];
   starting_priorities: string[];
   estimated_mastery: Record<string, number>;
+  profile_score?: number;
 };
 
 export type YearsXpRange = "0-1" | "1-3" | "3-5" | "5+";

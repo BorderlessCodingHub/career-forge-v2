@@ -49,30 +49,30 @@ def build_validation_response(payload: ValidationRequest) -> ValidationResponse:
             gaps.append(node_gaps[index])
 
     if not strengths:
-        strengths.append(f"Demonstra esforço em explicar {payload.node_title} com palavras próprias")
+        strengths.append(f"Shows effort explaining {payload.node_title} in their own words")
 
     if not gaps:
         if status == ValidationStatus.REVISAR:
-            gaps.append(f"Ainda faltam evidências concretas sobre critérios de {payload.node_title}")
+            gaps.append(f"Still missing concrete evidence on {payload.node_title} criteria")
         else:
-            gaps.append("Aprofunde com exemplos reais de projeto na próxima rodada")
+            gaps.append("Go deeper with real project examples on the next attempt")
 
     if status == ValidationStatus.REVISAR and len(gaps) < 2:
-        gaps.append("Respostas genéricas — faltam termos técnicos da rubrica")
+        gaps.append("Generic answers — missing rubric technical terms")
 
     next_action = NEXT_ACTIONS.get(
         payload.node_id,
-        f"Revise os critérios de {payload.node_title} e tente novamente com exemplos concretos.",
+        f"Review the criteria for {payload.node_title} and retry with concrete examples.",
     )
 
     mentor_summary = (
-        f"Para o mentor: validação de {payload.node_title} ({payload.node_id}) — "
+        f"For the mentor: validation of {payload.node_title} ({payload.node_id}) — "
         f"score {score}/100 ({status.value}). "
     )
     if gaps:
-        mentor_summary += f"Lacunas: {'; '.join(gaps[:2])}. "
+        mentor_summary += f"Gaps: {'; '.join(gaps[:2])}. "
     if strengths:
-        mentor_summary += f"Pontos fortes: {strengths[0]}. "
+        mentor_summary += f"Strengths: {strengths[0]}. "
     mentor_summary += next_action
 
     return ValidationResponse(

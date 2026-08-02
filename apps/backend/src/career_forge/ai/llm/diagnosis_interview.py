@@ -204,7 +204,7 @@ class OpenAiDiagnosisInterviewLlm:
             schema=FinalizeDiagnosisOutput,
             error_type=DiagnosisInterviewLlmError,
         )
-        return output.to_diagnosis_response()
+        return output.to_diagnosis_response(profile_score=belief.mean_confidence())
 
 
 _override_llm: DiagnosisInterviewLlm | None = None

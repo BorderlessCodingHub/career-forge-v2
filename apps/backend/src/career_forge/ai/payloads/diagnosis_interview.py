@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from career_forge.ai.prompts.diagnosis_interview import interviewer_brief_for_goal
 from career_forge.schemas.diagnosis_interview import (
     PROFILE_DIMENSION_LABELS,
     BeliefState,
@@ -15,17 +16,26 @@ from career_forge.schemas.diagnosis_interview import (
 )
 
 _NEGATIVE_PROOF_RE = re.compile(
-    r"\b(nunca|nadinha|nada|zero|sem pr[aá]tica|sem projeto|n[aã]o fiz|n[aã]o tenho|s[oó] teoria)\b",
+    r"\b("
+    r"nunca|nadinha|nada|zero|sem pr[aá]tica|sem projeto|n[aã]o fiz|n[aã]o tenho|s[oó] teoria|"
+    r"never|nothing|no practice|no projects|haven't built|have not built|theory only"
+    r")\b",
     re.IGNORECASE,
 )
 
 _CONSTRAINTS_RE = re.compile(
-    r"\b(hora[s]?|semana|dia[s]?|noite|portugu[eê]s|ingl[eê]s|budget|tempo)\b",
+    r"\b("
+    r"hora[s]?|semana|dia[s]?|noite|portugu[eê]s|ingl[eê]s|budget|tempo|"
+    r"hour[s]?|week|day[s]?|night|english|portuguese|time"
+    r")\b",
     re.IGNORECASE,
 )
 
 _CONSTRAINTS_CLEAR_RE = re.compile(
-    r"\b(tudo ok|tudo certo|sem restri|n[aã]o tenho restri|nao tenho restri|livre|flex[ií]vel|ta ok|t[aá] ok)\b",
+    r"\b("
+    r"tudo ok|tudo certo|sem restri|n[aã]o tenho restri|nao tenho restri|livre|flex[ií]vel|ta ok|t[aá] ok|"
+    r"all good|no constraints|no blockers|flexible|fine with me|no restrictions"
+    r")\b",
     re.IGNORECASE,
 )
 
@@ -58,15 +68,15 @@ def closed_dimensions_from_transcript(
 
 def build_transcript_digest(transcript: list[InterviewTurn]) -> str:
     if not transcript:
-        return "(sem rodadas anteriores)"
+        return "(no prior rounds)"
     lines: list[str] = []
     for index, turn in enumerate(transcript, start=1):
-        lines.append(f"### Rodada {index}")
+        lines.append(f"### Round {index}")
         answer_by_qid = {answer.question_id: answer.text for answer in turn.answers}
         for question in turn.questions:
-            answer = answer_by_qid.get(question.id, "").strip() or "(sem resposta)"
-            lines.append(f"- P [{question.rubric_key}]: {question.question}")
-            lines.append(f"  R: {answer}")
+            answer = answer_by_qid.get(question.id, "").strip() or "(no answer)"
+            lines.append(f"- Q [{question.rubric_key}]: {question.question}")
+            lines.append(f"  A: {answer}")
         lines.append("")
     return "\n".join(lines).strip()
 
@@ -99,7 +109,7 @@ def apply_schedule_overrides(belief: BeliefState, transcript: list[InterviewTurn
                     update={
                         "status": "mapped",
                         "confidence": max(dim.confidence, 0.76),
-                        "note": "Rotina/tempo mencionados pelo usuário",
+                        "note": "Routine/time mentioned by the user",
                         "evidence": [*dim.evidence, text[:120]][:5],
                     },
                 )
@@ -107,7 +117,7 @@ def apply_schedule_overrides(belief: BeliefState, transcript: list[InterviewTurn
 
 
 def apply_negative_proof_overrides(belief: BeliefState, transcript: list[InterviewTurn]) -> BeliefState:
-    """Deterministic guard: explicit 'nunca fiz' closes hands_on_proof."""
+    """Deterministic guard: explicit 'never built' closes hands_on_proof."""
     updated = belief.model_copy(deep=True)
     for turn in transcript:
         answer_by_qid = {answer.question_id: answer.text for answer in turn.answers}
@@ -120,7 +130,7 @@ def apply_negative_proof_overrides(belief: BeliefState, transcript: list[Intervi
                 update={
                     "status": "mapped",
                     "confidence": max(dim.confidence, 0.68),
-                    "note": "Sem prática hands-on ainda — resposta negativa explícita do usuário",
+                    "note": "No hands-on practice yet — explicit negative from the user",
                     "evidence": [*dim.evidence, text[:120]][:5],
                 },
             )
@@ -144,7 +154,7 @@ def apply_constraints_clear_overrides(
                 update={
                     "status": "mapped",
                     "confidence": max(dim.confidence, 0.78),
-                    "note": "Sem restrições relevantes — usuário confirmou",
+                    "note": "No relevant constraints — user confirmed",
                     "evidence": [*dim.evidence, text[:120]][:5],
                 },
             )
@@ -155,14 +165,19 @@ def apply_baseline_proof_override(belief: BeliefState) -> BeliefState:
     """Close hands_on when baseline was already confirmed (even below saturation threshold)."""
     updated = belief.model_copy(deep=True)
     dim = updated.dimensions["hands_on_proof"]
-    baseline_note = "sem prática" in dim.note.lower() or "baseline" in dim.note.lower()
+    note_lower = dim.note.lower()
+    baseline_note = (
+        "sem prática" in note_lower
+        or "no hands-on" in note_lower
+        or "baseline" in note_lower
+    )
     if dim.status != "mapped" and (baseline_note or dim.confidence >= 0.65):
         if baseline_note or detect_negative_hands_on(" ".join(dim.evidence)):
             updated.dimensions["hands_on_proof"] = dim.model_copy(
                 update={
                     "status": "mapped",
                     "confidence": max(dim.confidence, 0.68),
-                    "note": dim.note or "Sem prática hands-on ainda — baseline confirmado",
+                    "note": dim.note or "No hands-on practice yet — baseline confirmed",
                 },
             )
     return updated
@@ -191,14 +206,14 @@ def build_judge_user_message(
         "## intake",
         f"- goal_id: {intake.goal_id}",
         f"- motivation: {intake.motivation}",
-        f"- years_xp: {intake.years_xp or 'não informado'}",
+        f"- years_xp: {intake.years_xp or 'not provided'}",
     ]
     if cv_signals:
         sections.append(f"- cv_signals: {cv_signals}")
     if cv_text_excerpt:
         sections.append(f"- cv_excerpt: {cv_text_excerpt[:1500]}")
     if belief is not None:
-        sections.append("## belief_atual")
+        sections.append("## current_belief")
         for item in build_belief_snapshot(belief):
             sections.append(
                 f"- {item['key']}: {item['status']} ({item['confidence']}) — {item['note']}",
@@ -227,22 +242,24 @@ def build_interviewer_user_message(
     do_not_ask: list[str] = []
     for key in closed:
         if key in belief.interviewable_keys() or belief.dimensions[key].status == "mapped":
-            do_not_ask.append(f"{key} (já respondido no transcript)")
+            do_not_ask.append(f"{key} (already answered in transcript)")
 
     for key, dim in belief.dimensions.items():
         if dim.status == "mapped":
             do_not_ask.append(f"{key} (mapped)")
 
     if "hands_on_proof" in closed:
-        do_not_ask.append("hands_on_proof (resposta negativa — NÃO reformular)")
+        do_not_ask.append("hands_on_proof (negative answer — do NOT rephrase)")
 
     sections = [
         f"## round_count\n{round_count}",
         f"## max_questions\n{max_questions}",
         f"## goal_id\n{intake.goal_id}",
+        "## goal_brief",
+        interviewer_brief_for_goal(intake.goal_id),
         "## intake",
         f"- motivation: {intake.motivation}",
-        f"- years_xp: {intake.years_xp or 'não informado'}",
+        f"- years_xp: {intake.years_xp or 'not provided'}",
         "## belief_snapshot",
     ]
     for item in build_belief_snapshot(belief):
@@ -251,19 +268,19 @@ def build_interviewer_user_message(
         )
     sections.extend(
         [
-            f"## interviewable\n{interviewable or ['(nenhuma — retorne [])']}",
+            f"## interviewable\n{interviewable or ['(none — return [])']}",
             "## do_not_ask",
         ],
     )
-    sections.extend(f"- {line}" for line in do_not_ask or ["(nada)"])
+    sections.extend(f"- {line}" for line in do_not_ask or ["(nothing)"])
     sections.extend(["## transcript", build_transcript_digest(transcript)])
     sections.extend(
         [
-            "## instrucao_final",
-            "Gere 0–2 perguntas APENAS para keys em interviewable.",
-            "Se interviewable vazio, retorne questions: [].",
-            "Nunca repita eixo já em do_not_ask.",
-            "topic = label PT-BR (Prova prática, Contexto real), nunca rubric_key cru.",
+            "## final_instructions",
+            "Generate 0–2 questions ONLY for keys in interviewable.",
+            "If interviewable is empty, return questions: [].",
+            "Never repeat an axis already in do_not_ask.",
+            "topic = EN label (Hands-on proof, Real context), never the raw rubric_key.",
         ],
     )
     return "\n".join(sections)
