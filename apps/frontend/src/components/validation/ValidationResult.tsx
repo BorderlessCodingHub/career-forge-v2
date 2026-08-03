@@ -52,12 +52,12 @@ export function ValidationResult({
                 : "bg-warning/15 text-warning"
             }`}
           >
-            {passed ? "Aprovado" : "Revisar"}
+            {passed ? "Passed" : "Review"}
           </span>
           <p className="text-center text-sm text-text-secondary">
             {passed
-              ? "Evidências suficientes — mastery validado."
-              : "Você está perto, mas ainda não passou."}
+              ? "Enough evidence — mastery validated."
+              : "You are close, but not quite there yet."}
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export function ValidationResult({
           {result.strengths.length > 0 && (
             <div className="rounded-md border border-success/30 bg-success/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-success">
-                Você acertou
+                You got
               </p>
               <ul className="mt-3 space-y-2 text-sm text-text-secondary">
                 {result.strengths.map((item) => (
@@ -96,7 +96,7 @@ export function ValidationResult({
 
           <div className="rounded-md border border-accent/30 bg-accent/10 p-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-              Próximo passo
+              Next step
             </p>
             <p className="mt-2 text-sm text-text-secondary">{result.next_action}</p>
           </div>
@@ -107,7 +107,7 @@ export function ValidationResult({
               className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-text-secondary"
               onClick={() => setAccordionOpen((open) => !open)}
             >
-              <span>Resumo para o mentor (Borderless)</span>
+              <span>Summary for mentor (Borderless)</span>
               <span>{accordionOpen ? "▴" : "▾"}</span>
             </button>
             {accordionOpen && (
@@ -121,18 +121,18 @@ export function ValidationResult({
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <Link href={passed ? "/roadmap" : "/roadmap?adaptive=1"}>
-          <Button variant="ghost">← Voltar à trilha</Button>
+          <Button variant="ghost">← Back to trail</Button>
         </Link>
         <div className="flex flex-wrap gap-2">
           {!passed && planUpdate && (
             <Link href="/roadmap?adaptive=1">
               <Button data-testid="view-adaptive-roadmap">
-                Ver trilha adaptada →
+                See adapted trail →
               </Button>
             </Link>
           )}
           <Button variant="ghost" onClick={onRetry}>
-            Refazer validação
+            Retry validation
           </Button>
         </div>
       </div>

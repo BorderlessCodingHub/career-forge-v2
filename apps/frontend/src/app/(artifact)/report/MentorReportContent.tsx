@@ -23,7 +23,7 @@ export function MentorReportContent() {
         if (!cancelled) setReport(data);
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Falha ao carregar relatório");
+          setError(err instanceof Error ? err.message : "Failed to load report");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -39,7 +39,7 @@ export function MentorReportContent() {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-sm text-text-muted">
-        Carregando relatório para mentor…
+        Loading mentor report…
       </div>
     );
   }
@@ -47,7 +47,7 @@ export function MentorReportContent() {
   if (error || !report) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-10 text-center">
-        <p className="text-sm text-warning">{error ?? "Relatório indisponível"}</p>
+        <p className="text-sm text-warning">{error ?? "Report unavailable"}</p>
       </div>
     );
   }

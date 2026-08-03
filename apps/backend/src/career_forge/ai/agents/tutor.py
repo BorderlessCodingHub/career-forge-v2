@@ -40,7 +40,7 @@ class TutorAgentRunnable:
             {
                 "type": "progress",
                 "step": "compose_reply",
-                "message": f"Consultando conceitos de {payload.node_title or 'capítulo'}",
+                "message": f"Consulting concepts for {payload.node_title or 'chapter'}",
             },
         )
 

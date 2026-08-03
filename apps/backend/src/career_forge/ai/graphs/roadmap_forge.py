@@ -94,7 +94,7 @@ def build_accumulated_graph(diagnosis: DiagnosisResponse) -> list[UserSkillNode]
                 mastery_score=score,
                 priority=_mastery_to_priority(score, node_id in priority_set),
                 rationale=(
-                    "Próximo nó da cadeia crítica"
+                    "Next node on the critical path"
                     if node_id in priority_set
                     else None
                 ),
@@ -119,16 +119,16 @@ def build_forge_timeline(
 
 def build_forge_intro_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any]]:
     """Events up to the start of research_enrich."""
-    persona = diagnosis.profile.persona_slug or "perfil"
+    persona = diagnosis.profile.persona_slug or "profile"
     track = diagnosis.profile.track_id
-    top_strength = diagnosis.strengths[0] if diagnosis.strengths else "motivação clara"
-    top_gap = diagnosis.gaps[0] if diagnosis.gaps else "lacunas em backend"
+    top_strength = diagnosis.strengths[0] if diagnosis.strengths else "clear motivation"
+    top_gap = diagnosis.gaps[0] if diagnosis.gaps else "backend gaps"
     graph = build_accumulated_graph(diagnosis)
 
     events: list[dict[str, Any]] = [
         {
             "type": "reasoning_delta",
-            "text": f"Carregando catálogo `{track}` e cruzando com {persona}…",
+            "text": f"Loading catalog `{track}` and matching with {persona}…",
             "step": "load_topics",
         },
         {
@@ -138,13 +138,13 @@ def build_forge_intro_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any
         },
         {
             "type": "reasoning_delta",
-            "text": f"Priorizando lacunas: {top_gap[:80]}…",
+            "text": f"Prioritizing gaps: {top_gap[:80]}…",
             "step": "analyze_gaps",
         },
         {
             "type": "artifact_found",
-            "label": f"Sinal forte: {top_strength[:48]}",
-            "detail": "evidência do diagnóstico editável · pré-validado",
+            "label": f"Strong signal: {top_strength[:48]}",
+            "detail": "evidence from editable diagnosis · pre-validated",
         },
     ]
 
@@ -166,7 +166,7 @@ def build_forge_intro_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any
     events.append(
         {
             "type": "reasoning_delta",
-            "text": "Pesquisando fontes oficiais para enriquecer missões e referências…",
+            "text": "Searching official sources to enrich missions and references…",
             "step": "research_enrich",
         },
     )
@@ -188,7 +188,7 @@ def build_forge_tail_events(
         },
         {
             "type": "reasoning_delta",
-            "text": "Consolidando grafo acumulado com pré-requisitos e prioridades…",
+            "text": "Consolidating accumulated graph with prerequisites and priorities…",
             "step": "accumulate_graph",
         },
         {
@@ -209,28 +209,28 @@ def build_research_prompts(context: LearnerForgeContext) -> list[str]:
     return [
         build_research_prompt(
             context,
-            focus="roteiro oficial e pré-requisitos",
+            focus="official roadmap and prerequisites",
             instruction=(
-                "Encontre fontes oficiais para estruturar a jornada do objetivo do aluno. "
-                "Priorize roadmap.sh, docs oficiais de linguagem/framework e fundamentos."
+                "Find official sources to structure the learner's goal journey. "
+                "Prefer roadmap.sh, official language/framework docs, and fundamentals."
             ),
             summary=summary,
         ),
         build_research_prompt(
             context,
-            focus="projetos hands-on e evidência prática",
+            focus="hands-on projects and practical evidence",
             instruction=(
-                "Encontre fontes oficiais ou exemplos canônicos que ajudem o aluno a sair "
-                "de zero prática para projetos demonstráveis."
+                "Find official sources or canonical examples that help the learner go "
+                "from zero practice to demonstrable projects."
             ),
             summary=summary,
         ),
         build_research_prompt(
             context,
-            focus="APIs e produto real com IA",
+            focus="APIs and real AI products",
             instruction=(
-                "Encontre documentação oficial para construir APIs/produtos com IA, "
-                "incluindo OpenAI API quando fizer sentido."
+                "Find official documentation for building APIs/products with AI, "
+                "including the OpenAI API when relevant."
             ),
             summary=summary,
         ),
@@ -245,11 +245,11 @@ def build_research_prompt(
     summary: str,
 ) -> str:
     return (
-        "Use web_search obrigatoriamente. Faça uma busca focada, cite as fontes e "
-        "responda em português com no máximo 2 frases úteis para a UI.\n\n"
-        f"Foco desta busca: {focus}\n"
-        f"Instrução: {instruction}\n\n"
-        f"Contexto do aluno:\n{summary}\n"
+        "You must use web_search. Run a focused search, cite sources, and "
+        "reply in English with at most 2 useful sentences for the UI.\n\n"
+        f"Search focus: {focus}\n"
+        f"Instruction: {instruction}\n\n"
+        f"Learner context:\n{summary}\n"
     )
 
 
@@ -313,8 +313,8 @@ async def _sleep_between_events() -> None:
 def _planner_artifact(iteration: int) -> dict[str, Any]:
     return {
         "type": "artifact_found",
-        "label": f"Planner do roadmap: versão {iteration}",
-        "detail": "Plano de estudo estruturado com contexto, fontes e tarefas práticas.",
+        "label": f"Roadmap planner: version {iteration}",
+        "detail": "Structured study plan with context, sources, and practice tasks.",
     }
 
 
@@ -404,7 +404,7 @@ class RoadmapForgeGraphRunnable:
                         "forge_event": {
                             "type": "reasoning_delta",
                             "step": "revise_plan",
-                            "text": "Aplicando feedback do avaliador ao plano de estudos…",
+                            "text": "Applying evaluator feedback to the study plan…",
                         },
                     },
                 )

@@ -117,7 +117,7 @@ def get_mentor_report(session: Session, user_id: str) -> MentorReportResponse:
         gaps = list(evidence.get("gaps") or [])
         intervention = str(evidence.get("next_action") or "").strip()
         if not intervention and gaps:
-            intervention = f"Revisar com o aluno: {gaps[0]}"
+            intervention = f"Review with the learner: {gaps[0]}"
 
         status = ValidationStatus.APROVADO if row.passed else ValidationStatus.REVISAR
         entries.append(

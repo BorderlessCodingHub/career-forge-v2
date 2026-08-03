@@ -146,13 +146,13 @@ def _node_references(node_id: str | None) -> list[str]:
 
 def _intent(message: str) -> str:
     lowered = message.lower()
-    if re.search(r"\b(refer[eê]ncia|material|link|estudar|ler)\b", lowered):
+    if re.search(r"\b(referen[cs]e|material|link|study|read)\b", lowered):
         return "references"
-    if re.search(r"\b(erro|errei|lacuna|falhei|revisar|confus)\b", lowered):
+    if re.search(r"\b(error|mistake|gap|failed|fail|review|confus)\b", lowered):
         return "gaps"
-    if re.search(r"\b(praticar|exerc[ií]cio|como fa[cç]o|treinar)\b", lowered):
+    if re.search(r"\b(practice|exercise|how do i|train)\b", lowered):
         return "practice"
-    if re.search(r"\b(pr[oó]ximo|foco|prioridade|agora)\b", lowered):
+    if re.search(r"\b(next|focus|priority|now)\b", lowered):
         return "focus"
     return "general"
 
@@ -165,16 +165,16 @@ def _reply_references(
 ) -> str:
     if references:
         reply = (
-            f"Para {node_title}, comece por estas referências da trilha: "
+            f"For {node_title}, start with these trail references: "
             f"{'; '.join(references)}. "
         )
     else:
         reply = (
-            f"Para {node_title}, revise a documentação oficial do tópico e "
-            "monte um mini projeto aplicando o conceito em um endpoint real."
+            f"For {node_title}, review the official topic docs and "
+            "build a mini project applying the concept in a real endpoint."
         )
     if context.recent_gaps:
-        reply += f" Priorize fechar: {context.recent_gaps[0]}."
+        reply += f" Prioritize closing: {context.recent_gaps[0]}."
     return reply
 
 
@@ -187,23 +187,23 @@ def _reply_gaps(
     if context.recent_gaps:
         gap_text = "; ".join(context.recent_gaps[:2])
         return (
-            f"Vi que você ainda tem lacunas em {node_title}: {gap_text}. "
-            "Vamos atacar uma de cada vez — explique o conceito em voz alta e "
-            "compare com um exemplo concreto de API."
+            f"I see you still have gaps in {node_title}: {gap_text}. "
+            "Let's tackle one at a time — explain the concept out loud and "
+            "compare it with a concrete API example."
         )
     if context.failed_nodes:
         return (
-            f"Seus nós em revisão: {', '.join(context.failed_nodes)}. "
-            f"Em {node_title}, volte ao critério que falhou na validação antes de avançar."
+            f"Your nodes in review: {', '.join(context.failed_nodes)}. "
+            f"On {node_title}, return to the criterion that failed validation before advancing."
         )
     if context.last_validation_feedback:
         return (
-            f"Pelo histórico recente: {context.last_validation_feedback} "
-            f"Quer retomar {node_title} com um plano curto de 20 minutos?"
+            f"From recent history: {context.last_validation_feedback} "
+            f"Want to resume {node_title} with a short 20-minute plan?"
         )
     return (
-        f"Ainda não tenho evidência de falha em {node_title}. "
-        "Se algo ficou confuso, descreva o ponto exato que travou."
+        f"I do not have failure evidence for {node_title} yet. "
+        "If something is confusing, describe the exact sticking point."
     )
 
 
@@ -214,14 +214,14 @@ def _reply_practice(
     references: list[str],
 ) -> str:
     reply = (
-        f"Plano rápido para {node_title}: (1) leia um outcome da trilha, "
-        "(2) implemente um exemplo mínimo, (3) explique em voz alta como se "
-        "estivesse ensinando um colega. "
+        f"Quick plan for {node_title}: (1) read one trail outcome, "
+        "(2) implement a minimal example, (3) explain it out loud as if "
+        "teaching a peer. "
     )
     if context.current_node_status == SkillStatus.REVISAR.value:
-        reply += "Foque no critério que falhou na última validação antes de avançar."
+        reply += "Focus on the criterion that failed last validation before advancing."
     elif references:
-        reply += f"Referência sugerida: {references[0]}."
+        reply += f"Suggested reference: {references[0]}."
     return reply
 
 
@@ -233,18 +233,18 @@ def _reply_focus(
 ) -> str:
     if context.failed_nodes:
         return (
-            f"Seu foco agora: fechar {context.failed_nodes[0]} antes de avançar. "
-            f"Depois retome {node_title}."
+            f"Your focus now: close {context.failed_nodes[0]} before advancing. "
+            f"Then resume {node_title}."
         )
     if context.current_node_status in {SkillStatus.VALIDAR.value, SkillStatus.EM_ESTUDO.value}:
         return (
-            f"{node_title} está em {context.current_node_status.replace('_', ' ')} "
-            f"com mastery {context.current_node_mastery or 0}%. "
-            "Valide ou pratique mais antes de pular para o próximo nó."
+            f"{node_title} is in {context.current_node_status.replace('_', ' ')} "
+            f"with mastery {context.current_node_mastery or 0}%. "
+            "Validate or practice more before jumping to the next node."
         )
     return (
-        f"Continue {node_title} com evidência concreta — "
-        "a trilha só destrava mastery com validação, não com checkbox."
+        f"Keep going on {node_title} with concrete evidence — "
+        "the trail unlocks mastery through validation, not checkboxes."
     )
 
 
@@ -256,16 +256,16 @@ def _reply_general(
 ) -> str:
     memory_bits: list[str] = []
     if context.validation_count:
-        memory_bits.append(f"{context.validation_count} validações no histórico")
+        memory_bits.append(f"{context.validation_count} validations in history")
     if context.recent_strengths:
-        memory_bits.append(f"ponto forte: {context.recent_strengths[0]}")
+        memory_bits.append(f"strength: {context.recent_strengths[0]}")
     if context.recent_gaps:
-        memory_bits.append(f"lacuna recente: {context.recent_gaps[0]}")
+        memory_bits.append(f"recent gap: {context.recent_gaps[0]}")
     memory = ". ".join(memory_bits)
     return (
-        f"Sobre {node_title}: {payload.message.strip()} — "
-        f"tenho contexto da sua trilha ({memory or 'sem validações ainda'}). "
-        "Posso sugerir referências, revisar lacunas ou montar um plano de prática."
+        f"About {node_title}: {payload.message.strip()} — "
+        f"I have context from your trail ({memory or 'no validations yet'}). "
+        "I can suggest references, review gaps, or build a practice plan."
     )
 
 
@@ -286,7 +286,7 @@ def build_mentor_response(
     context: MentorContextSnapshot,
 ) -> MentorResponse:
     """Deterministic contextual mentor reply from learner memory (no LLM for MVP)."""
-    node_title = payload.node_title or "sua trilha"
+    node_title = payload.node_title or "your trail"
     references = _node_references(payload.node_id)
     intent = _intent(payload.message)
 

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 RETRY_MESSAGE = (
-    "A IA não respondeu agora. Tente novamente em alguns segundos — suas respostas foram salvas."
+    "AI did not respond just now. Try again in a few seconds — your answers were saved."
 )
 
 

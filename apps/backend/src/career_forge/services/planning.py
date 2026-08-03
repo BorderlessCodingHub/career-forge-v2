@@ -135,7 +135,7 @@ def _patches_on_pass(
             status=SkillStatus.APROVADO,
             mastery_estimated=validation.score,
             priority=Priority.LOW,
-            rationale="Mastery validado — seguir para próximo tópico",
+            rationale="Mastery validated — move to the next topic",
         ),
     ]
 
@@ -148,11 +148,11 @@ def _patches_on_pass(
                 status=SkillStatus.VALIDAR,
                 mastery_estimated=existing.mastery_score if existing else 0,
                 priority=Priority.HIGH,
-                rationale=f"Pré-requisitos concluídos — validar {unlock['title']}",
+                rationale=f"Prerequisites complete — validate {unlock['title']}",
             ),
         )
 
-    summary = f"{failed_node['title']} aprovado — trilha liberou próximo nó."
+    summary = f"{failed_node['title']} passed — trail unlocked the next node."
     return patches, summary
 
 
@@ -183,13 +183,13 @@ def _patches_on_fail(
                 status=SkillStatus.BLOQUEADO,
                 mastery_estimated=existing.mastery_score if existing else 0,
                 priority=Priority.LOW,
-                rationale=f"Bloqueado até revisar {failed_node['title']}",
+                rationale=f"Blocked until reviewing {failed_node['title']}",
             ),
         )
 
     summary = (
-        f"Falha em {failed_node['title']} — trilha repriorizou revisão "
-        f"e bloqueou {len(blocked)} nós dependentes."
+        f"Failure on {failed_node['title']} — trail reprioritized review "
+        f"and blocked {len(blocked)} dependent nodes."
     )
     return patches, summary
 

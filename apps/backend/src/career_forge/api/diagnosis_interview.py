@@ -70,7 +70,7 @@ async def get_diagnosis_session(
     try:
         return service.get_session(session_id)
     except DiagnosisSessionNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Sessão não encontrada.") from exc
+        raise HTTPException(status_code=404, detail="Session not found.") from exc
 
 
 @router.post("/interview/{session_id}/turn", response_model=InterviewTurnResponse)
@@ -85,9 +85,9 @@ async def submit_diagnosis_turn(
     try:
         return await service.submit_turn(session_id, body)
     except DiagnosisSessionNotFoundError as exc:
-        raise HTTPException(status_code=404, detail="Sessão não encontrada.") from exc
+        raise HTTPException(status_code=404, detail="Session not found.") from exc
     except DiagnosisSessionCompleteError as exc:
-        raise HTTPException(status_code=409, detail="Sessão já finalizada.") from exc
+        raise HTTPException(status_code=409, detail="Session already completed.") from exc
     except DiagnosisInterviewTurnError as exc:
         raise HTTPException(status_code=422, detail=exc.message) from exc
     except DiagnosisInterviewLlmError as exc:
@@ -112,9 +112,9 @@ async def submit_diagnosis_turn_stream(
             async for line in service.stream_interview_turn(session_id, body):
                 yield line
         except DiagnosisSessionNotFoundError:
-            yield format_sse({"type": "error", "message": "Sessão não encontrada."})
+            yield format_sse({"type": "error", "message": "Session not found."})
         except DiagnosisSessionCompleteError:
-            yield format_sse({"type": "error", "message": "Sessão já finalizada."})
+            yield format_sse({"type": "error", "message": "Session already completed."})
         except DiagnosisInterviewTurnError as exc:
             yield format_sse({"type": "error", "message": exc.message})
         except DiagnosisInterviewLlmError as exc:

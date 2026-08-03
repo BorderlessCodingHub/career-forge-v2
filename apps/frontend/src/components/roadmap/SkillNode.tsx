@@ -13,7 +13,7 @@ export function SkillNode({ node, selected = false, onSelect }: SkillNodeProps) 
   const showChecklistProgress = checklistTotal > 0;
 
   const ariaLabel = showChecklistProgress
-    ? `${node.title}. ${checklistCompleted} de ${checklistTotal} itens de estudo concluídos.`
+    ? `${node.title}. ${checklistCompleted} of ${checklistTotal} study items completed.`
     : node.title;
 
   return (
@@ -38,7 +38,7 @@ export function SkillNode({ node, selected = false, onSelect }: SkillNodeProps) 
             className="rounded-full bg-warning/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-warning"
             data-testid={`roadmap-node-${node.node_id}-revisar-badge`}
           >
-            Revisar
+            Review
           </span>
         )}
       </div>

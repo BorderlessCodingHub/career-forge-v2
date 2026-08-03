@@ -170,7 +170,7 @@ async def test_roadmap_forge_graph_collect(
     )
     assert any(
         event["type"] == "artifact_found"
-        and event.get("label") == "Avaliador do plano: ship"
+        and event.get("label") == "Plan evaluator: ship"
         for event in result.events
     )
     assert result.events[-1]["type"] == "graph_ready"

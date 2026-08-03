@@ -229,7 +229,7 @@ export function useDiagnosisInterview() {
         setError(
           cause instanceof Error
             ? cause.message
-            : "Não foi possível iniciar o diagnóstico.",
+            : "Could not start the diagnosis.",
         );
         setPhase("ready");
       }
@@ -297,7 +297,7 @@ export function useDiagnosisInterview() {
       setError(
         cause instanceof Error
           ? cause.message
-          : "Não foi possível enviar suas respostas. Tente novamente.",
+          : "Could not submit your answers. Please try again.",
       );
     } finally {
       if (!finished) {

@@ -109,7 +109,7 @@ class ValidationGraphRunnable:
             {
                 "type": "progress",
                 "step": "evaluate_rubric",
-                "message": f"Avaliando evidências de {payload.node_title}",
+                "message": f"Evaluating evidence for {payload.node_title}",
             },
         )
 

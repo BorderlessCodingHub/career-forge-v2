@@ -32,7 +32,7 @@ async def _domain_error_handler(_request: Request, exc: DomainError) -> JSONResp
 def create_app() -> FastAPI:
     app = FastAPI(
         title="Career Forge API",
-        description="Skill graph adaptativo — diagnóstico, forge e validação de mastery.",
+        description="Adaptive skill graph — diagnosis, forge, and mastery validation.",
         version="0.1.0",
         lifespan=lifespan,
     )

@@ -19,13 +19,13 @@ function ValidatePageContent() {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <p className="text-sm text-text-secondary">
-          Selecione um nó na trilha para iniciar a validação.
+          Select a node on the trail to start validation.
         </p>
         <Link
           href="/roadmap"
           className="mt-4 inline-block text-sm font-medium text-accent hover:underline"
         >
-          Voltar à trilha →
+          Back to trail →
         </Link>
       </div>
     );
@@ -39,7 +39,7 @@ export default function ValidatePage() {
     <Suspense
       fallback={
         <p className="py-20 text-center text-sm text-text-muted animate-pulse">
-          Carregando validação…
+          Loading validation…
         </p>
       }
     >

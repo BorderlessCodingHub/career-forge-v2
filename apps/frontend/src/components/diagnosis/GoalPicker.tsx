@@ -58,10 +58,10 @@ export function GoalPicker() {
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-16">
         <header className="mb-8">
           <span className="text-sm uppercase tracking-wide text-text-muted">
-            Passo 1 de 3
+            Step 1 of 3
           </span>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight text-text-primary md:text-5xl">
-            Para onde você quer ir?
+            Where do you want to go?
           </h1>
         </header>
 
@@ -83,7 +83,7 @@ export function GoalPicker() {
                 {goal.title}
               </span>
               {!goal.active && (
-                <span className="mt-2 block text-xs text-text-muted">Em breve</span>
+                <span className="mt-2 block text-xs text-text-muted">Coming soon</span>
               )}
             </button>
           ))}
@@ -94,14 +94,14 @@ export function GoalPicker() {
             htmlFor="motivation"
             className="flex items-center justify-between text-sm text-text-secondary"
           >
-            Por que esse caminho?
+            Why this path?
             <span className="text-text-muted">{motivation.length}/280</span>
           </label>
           <textarea
             id="motivation"
             data-testid="motivation-input"
             className="mt-2 min-h-[120px] w-full resize-none rounded-md border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
-            placeholder="Conte em suas palavras o que te motiva nesse caminho…"
+            placeholder="In your own words, what motivates you on this path…"
             value={motivation}
             onChange={(event) => {
               setMotivationValue(event.target.value.slice(0, 280));
@@ -110,7 +110,7 @@ export function GoalPicker() {
           />
           {touched && motivation.trim().length < 20 && (
             <p className="mt-2 text-sm text-warning">
-              Mínimo 20 caracteres para personalizar sua trilha.
+              At least 20 characters so we can personalize your trail.
             </p>
           )}
         </div>
@@ -120,7 +120,7 @@ export function GoalPicker() {
             htmlFor="years-xp"
             className="text-sm text-text-secondary"
           >
-            Anos de XP (se aplicável)
+            Years of experience (if applicable)
           </label>
           <Select
             id="years-xp"
@@ -128,7 +128,7 @@ export function GoalPicker() {
             className="mt-2"
             value={yearsXp}
             options={YEARS_XP_OPTIONS}
-            placeholder="Selecione…"
+            placeholder="Select…"
             onChange={(next) => {
               setYearsXpValue(next);
               setTouched(true);
@@ -136,14 +136,14 @@ export function GoalPicker() {
           />
           {touched && !yearsXp && (
             <p className="mt-2 text-sm text-warning">
-              Informe sua experiência para calibrar o diagnóstico.
+              Share your experience so we can calibrate the diagnosis.
             </p>
           )}
         </div>
 
         <div className="mt-6">
           <label className="text-sm text-text-secondary">
-            Currículo (opcional)
+            Resume (optional)
           </label>
           <CvDropzone
             attachment={cvAttachment}
@@ -164,7 +164,7 @@ export function GoalPicker() {
             disabled={!valid}
             onClick={handleContinue}
           >
-            Começar diagnóstico →
+            Start diagnosis →
           </Button>
         </div>
       </div>

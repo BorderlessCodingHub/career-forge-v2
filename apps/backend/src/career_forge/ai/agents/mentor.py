@@ -42,7 +42,7 @@ class MentorAgentRunnable:
             {
                 "type": "progress",
                 "step": "compose_reply",
-                "message": f"Consultando memória de {payload.node_title or 'trilha'}",
+                "message": f"Consulting memory for {payload.node_title or 'trail'}",
             },
         )
 

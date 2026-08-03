@@ -36,24 +36,24 @@ class McqSessionError(ValueError):
 
 
 BASE_LABELS = QUESTION_LABELS
-GAP_LABELS = ("lacuna 1", "lacuna 2")
-SCENARIO_LABELS = ("cenário 1", "cenário 2")
+GAP_LABELS = ("gap 1", "gap 2")
+SCENARIO_LABELS = ("scenario 1", "scenario 2")
 
 GAP_TEMPLATES = (
-    "Você mencionou dificuldade com: {criterion}. Como você corrigiria isso em um projeto real?",
-    "Aprofunde o ponto fraco: {criterion}. O que você faria diferente na próxima tentativa?",
+    "You mentioned difficulty with: {criterion}. How would you fix that in a real project?",
+    "Go deeper on the weak point: {criterion}. What would you do differently next time?",
 )
 
 SCENARIO_TEMPLATES = (
-    "Cenário prático: {criterion}. Descreva passo a passo como você resolveria.",
-    "Imagine um colega travou em: {criterion}. Como você explicaria e guiaria a solução?",
+    "Practical scenario: {criterion}. Describe step by step how you would solve it.",
+    "Imagine a teammate is stuck on: {criterion}. How would you explain and guide the solution?",
 )
 
 
 def _pad_rubric(rubric: list[str], node_title: str, count: int) -> list[str]:
     padded = list(rubric)
     while len(padded) < count:
-        padded.append(f"Demonstrar domínio prático de {node_title}")
+        padded.append(f"Demonstrate practical mastery of {node_title}")
     return padded
 
 
@@ -67,7 +67,7 @@ def _gap_criteria_for(node: dict[str, Any], raw_rubric: list[str]) -> list[str]:
             break
         criteria.append(extra)
     while len(criteria) < 2:
-        criteria.append(f"Evidência concreta sobre {node['title']}")
+        criteria.append(f"Concrete evidence on {node['title']}")
     return criteria
 
 
@@ -109,15 +109,15 @@ def build_mock_interview_questions(
                 index=index + 4,
                 label=GAP_LABELS[index],
                 prompt=GAP_TEMPLATES[index].format(criterion=criterion),
-                hint="Foque em ação concreta — o que você faria de diferente?",
+                hint="Focus on a concrete action — what would you do differently?",
                 rubric_criterion=criterion,
                 phase="gap_probe",
             ),
         )
 
     scenario_sources = outcomes[:2] if len(outcomes) >= 2 else [
-        f"Aplicar {node['title']} em um projeto real",
-        f"Ensinar {node['title']} para um colega iniciante",
+        f"Apply {node['title']} in a real project",
+        f"Teach {node['title']} to a junior teammate",
     ]
 
     for index, outcome in enumerate(scenario_sources):
@@ -128,7 +128,7 @@ def build_mock_interview_questions(
                 index=index + 6,
                 label=SCENARIO_LABELS[index],
                 prompt=SCENARIO_TEMPLATES[index].format(criterion=criterion),
-                hint="Use um exemplo concreto de projeto ou endpoint.",
+                hint="Use a concrete project or endpoint example.",
                 rubric_criterion=criterion,
                 phase="scenario",
             ),
@@ -189,7 +189,7 @@ def evaluate_mcq_session(payload: MockInterviewRequest) -> tuple[ValidationRespo
     for index, (question_id, expected) in enumerate(session.answer_key.items()):
         selected = answers_by_id.get(question_id, "")
         if selected not in {"A", "B", "C", "D"}:
-            gaps.append(f"Sem resposta válida para {question_id}")
+            gaps.append(f"No valid answer for {question_id}")
             continue
         criterion = session.rubric[index] if index < len(session.rubric) else question_id
         if selected == expected:
@@ -202,25 +202,25 @@ def evaluate_mcq_session(payload: MockInterviewRequest) -> tuple[ValidationRespo
     status = ValidationStatus.APROVADO if score >= PASS_THRESHOLD else ValidationStatus.REVISAR
 
     if not strengths:
-        strengths.append(f"Completou o mock interview MCQ de {payload.node_title}")
+        strengths.append(f"Completed the MCQ mock interview for {payload.node_title}")
 
     if not gaps and status == ValidationStatus.REVISAR:
-        gaps.append(f"Score {score}/100 abaixo do threshold — revise o bloco {payload.node_title}")
+        gaps.append(f"Score {score}/100 below threshold — review the {payload.node_title} block")
 
     next_action = (
-        f"Revise as lacunas de {payload.node_title} e refaça o mock interview."
+        f"Review the gaps for {payload.node_title} and retake the mock interview."
         if status == ValidationStatus.REVISAR
-        else f"Mastery validado em {payload.node_title} — avance para o próximo bloco."
+        else f"Mastery validated for {payload.node_title} — move to the next block."
     )
 
     mentor_summary = (
-        f"Mock interview MCQ de {payload.node_title} — "
-        f"{correct_count}/{total} acertos, score {score}/100 ({status.value}). "
+        f"MCQ mock interview for {payload.node_title} — "
+        f"{correct_count}/{total} correct, score {score}/100 ({status.value}). "
     )
     if gaps:
-        mentor_summary += f"Lacunas: {'; '.join(gaps[:3])}. "
+        mentor_summary += f"Gaps: {'; '.join(gaps[:3])}. "
     if strengths:
-        mentor_summary += f"Acertos: {strengths[0]}. "
+        mentor_summary += f"Hits: {strengths[0]}. "
     mentor_summary += next_action
 
     validation = ValidationResponse(

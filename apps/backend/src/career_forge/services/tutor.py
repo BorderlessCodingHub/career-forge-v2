@@ -34,7 +34,7 @@ def load_tutor_context(
         return TutorContext(node_id=node_id, node_title=node_title)
 
     references = [
-        TutorReference(title=str(ref.get("title") or "Referência"), url=ref.get("url"))
+        TutorReference(title=str(ref.get("title") or "Reference"), url=ref.get("url"))
         for ref in study_block.get("references") or []
     ]
     return TutorContext(

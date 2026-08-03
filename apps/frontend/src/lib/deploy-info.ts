@@ -22,7 +22,7 @@ export function formatBuildTime(iso: string | undefined): string {
   if (!trimmed) return "";
   const date = new Date(trimmed);
   if (Number.isNaN(date.getTime())) return trimmed;
-  return date.toLocaleString("pt-BR", {
+  return date.toLocaleString("en-US", {
     dateStyle: "short",
     timeStyle: "short",
   });

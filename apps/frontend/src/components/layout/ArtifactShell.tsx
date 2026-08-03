@@ -33,7 +33,7 @@ export function ArtifactShell({
           </div>
           <div>
             <p className="text-sm font-semibold text-text-primary">Career Forge</p>
-            <p className="text-xs text-text-muted">Trilha personalizada</p>
+            <p className="text-xs text-text-muted">Personalized trail</p>
           </div>
         </div>
 
@@ -42,12 +42,12 @@ export function ArtifactShell({
             <span className={topbarActionIconSlotClass} aria-hidden>
               <FileText className="h-4 w-4" />
             </span>
-            <span>Relatório mentor</span>
+            <span>Mentor report</span>
           </Link>
           <div className="text-right">
-            <p className="text-[10px] uppercase tracking-widest text-text-muted">Sua trilha</p>
+            <p className="text-[10px] uppercase tracking-widest text-text-muted">Your trail</p>
             <p className="text-sm font-medium text-text-primary">
-              {trackName ?? "Carregando trilha…"}
+              {trackName ?? "Loading trail…"}
             </p>
           </div>
         </div>

@@ -18,7 +18,7 @@ export function ForgeEventLine({ event, index }: ForgeEventLineProps) {
 
   if (event.type === "artifact_found") {
     return (
-      <ForgeStep step={`${index + 1} · evidência`}>
+      <ForgeStep step={`${index + 1} · evidence`}>
         <p className="font-medium text-accent-mint">{event.label}</p>
         <MarkdownText text={event.detail} />
         {event.sources && event.sources.length > 0 && (
@@ -52,7 +52,7 @@ export function ForgeEventLine({ event, index }: ForgeEventLineProps) {
 
   if (event.type === "node_updated") {
     return (
-      <ForgeStep step={`${index + 1} · nó`}>
+      <ForgeStep step={`${index + 1} · node`}>
         <p className="text-text-primary">
           <span className="text-accent">{event.node.node_id}</span>
           {event.node.mastery_score != null && (
@@ -68,7 +68,7 @@ export function ForgeEventLine({ event, index }: ForgeEventLineProps) {
 
   if (event.type === "step_complete") {
     return (
-      <ForgeStep step={`${index + 1} · concluído`}>
+      <ForgeStep step={`${index + 1} · done`}>
         <p className="text-success">Etapa {event.step} finalizada</p>
       </ForgeStep>
     );
@@ -78,7 +78,7 @@ export function ForgeEventLine({ event, index }: ForgeEventLineProps) {
     return (
       <ForgeStep step={`${index + 1} · pronto`}>
         <p className="text-success">
-          Trilha forjada — {event.graph.length} nós no grafo acumulado
+          Trail forged — {event.graph.length} nodes in the accumulated graph
         </p>
       </ForgeStep>
     );

@@ -32,7 +32,7 @@ class LearnerForgeContext(BaseModel):
             for part in [
                 f"goal_id: {self.goal_id}",
                 f"motivation: {self.motivation}",
-                f"years_xp: {self.years_xp or 'não informado'}",
+                f"years_xp: {self.years_xp or 'not provided'}",
                 f"profile: {self.diagnosis.profile.label}",
                 f"strengths: {'; '.join(self.diagnosis.strengths)}",
                 f"gaps: {'; '.join(self.diagnosis.gaps)}",
