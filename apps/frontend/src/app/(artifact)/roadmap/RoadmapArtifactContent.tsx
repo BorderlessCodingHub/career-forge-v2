@@ -110,7 +110,7 @@ export default function RoadmapArtifactPageContent() {
         setHighlightNodeId(adaptiveSession.nodeId);
         setSelectedNodeId(adaptiveSession.nodeId);
       } else {
-        setError(err instanceof Error ? err.message : "Falha ao carregar trilha");
+        setError(err instanceof Error ? err.message : "Failed to load trail");
       }
     } finally {
       setLoading(false);
@@ -214,11 +214,11 @@ export default function RoadmapArtifactPageContent() {
         data-testid="vertical-roadmap"
       >
         <div className="mx-auto max-w-3xl px-4 pt-6 text-center">
-          <p className="text-xs uppercase tracking-widest text-text-muted">Artefato · Trilha</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">Artifact · Trail</p>
           <p className="mt-2 text-sm text-text-secondary">
             {showingAdaptiveView
-              ? "A trilha reagiu ao seu desempenho — revise o nó destacado antes de avançar."
-              : "Clique em um nó para ver status, referências e validar mastery."}
+              ? "The trail reacted to your performance — review the highlighted node before moving on."
+              : "Click a node to see status, references, and validate mastery."}
           </p>
           {trailProgressPct != null && (
             <div className="mt-4 flex flex-col items-center gap-1.5">

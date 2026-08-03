@@ -29,13 +29,13 @@ def build_draft_study_plan(
         StudyPlanNode(
             node_id=node.node_id,
             title=node.title or node.node_id,
-            why_now=node.rationale or "Parte da trilha inicial para o objetivo escolhido.",
+            why_now=node.rationale or "Part of the initial trail for the chosen goal.",
             prerequisites=[],
             tasks=[
                 StudyPlanTask(
-                    title=f"Estudar {node.title or node.node_id}",
-                    outcome=f"Explicar e aplicar {node.title or node.node_id} em um exercício.",
-                    evidence_prompt="Publique uma evidência prática ou responda uma entrevista curta.",
+                    title=f"Study {node.title or node.node_id}",
+                    outcome=f"Explain and apply {node.title or node.node_id} in an exercise.",
+                    evidence_prompt="Publish practical evidence or answer a short interview.",
                 ),
             ],
             resources=resources[:3],
@@ -47,8 +47,8 @@ def build_draft_study_plan(
         goal=context.goal_id,
         learner_context_summary=context.compact_summary(),
         strategy=(
-            "Começar por fundamentos e prática guiada, conectando habilidades "
-            "transferíveis a projetos pequenos com evidência verificável."
+            "Start with foundations and guided practice, connecting transferable skills "
+            "to small projects with verifiable evidence."
         ),
         nodes=nodes or [_starter_node(resources)],
     )
@@ -56,13 +56,13 @@ def build_draft_study_plan(
 
 def evaluation_artifact(evaluation: StudyPlanEvaluation) -> dict[str, Any]:
     if evaluation.verdict == "ship":
-        detail = "Avaliador aprovou a estrutura inicial do plano."
+        detail = "Evaluator approved the initial plan structure."
     else:
         changes = "; ".join(evaluation.required_changes[:3] or evaluation.gaps[:3])
-        detail = f"Avaliador pediu revisão: {changes}"
+        detail = f"Evaluator requested revision: {changes}"
     return {
         "type": "artifact_found",
-        "label": f"Avaliador do plano: {evaluation.verdict}",
+        "label": f"Plan evaluator: {evaluation.verdict}",
         "detail": detail,
     }
 
@@ -133,13 +133,13 @@ def _priority_for_index(index: int) -> Priority:
 def _starter_node(resources: list[StudyResource]) -> StudyPlanNode:
     return StudyPlanNode(
         node_id="starter",
-        title="Primeiro projeto prático",
-        why_now="O diagnóstico precisa de evidência hands-on.",
+        title="First practical project",
+        why_now="The diagnosis needs hands-on evidence.",
         tasks=[
             StudyPlanTask(
-                title="Criar um mini-projeto",
-                outcome="Demonstrar prática mínima no objetivo escolhido.",
-                evidence_prompt="Mostre código, README ou explicação do que aprendeu.",
+                title="Create a mini-project",
+                outcome="Demonstrate minimal practice on the chosen goal.",
+                evidence_prompt="Show code, a README, or an explanation of what you learned.",
             ),
         ],
         resources=resources[:3],

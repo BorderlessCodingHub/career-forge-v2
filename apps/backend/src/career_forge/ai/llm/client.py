@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 TSchema = TypeVar("TSchema", bound=BaseModel)
 StructuredMethod = Literal["json_schema", "function_calling"]
 
-DEFAULT_KEY_ERROR = "OPENAI_API_KEY não configurada"
+DEFAULT_KEY_ERROR = "OPENAI_API_KEY is not configured"
 
 
 class StructuredLlmClient:

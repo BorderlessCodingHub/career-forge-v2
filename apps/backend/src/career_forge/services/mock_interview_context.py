@@ -74,43 +74,43 @@ def format_context_for_prompt(
     learner: LearnerForgeContext | None,
 ) -> str:
     lines = [
-        "## Capítulo de estudo",
-        f"Título (pode conter logística — extraia o tema técnico): {study_block['title']}",
-        f"Descrição: {study_block.get('description') or '—'}",
+        "## Study chapter",
+        f"Title (may include logistics — extract the technical topic): {study_block['title']}",
+        f"Description: {study_block.get('description') or '—'}",
     ]
     if study_block.get("rationale"):
         lines.append(f"Rationale: {study_block['rationale']}")
     if study_block.get("key_concepts"):
         lines.extend(
             [
-                "Conceitos-chave canônicos do capítulo (USE como base direta das perguntas):",
+                "Canonical chapter key concepts (USE as the direct base for questions):",
                 "; ".join(study_block["key_concepts"]),
             ],
         )
     if study_block.get("tasks"):
-        lines.append("Tarefas práticas (sinal do conteúdo técnico):")
+        lines.append("Practice tasks (signal of technical content):")
         for task in study_block["tasks"]:
-            title = task.get("title", "Tarefa")
+            title = task.get("title", "Task")
             outcome = task.get("outcome", "")
             evidence = task.get("evidence_prompt", "")
-            lines.append(f"- {title} | outcome: {outcome} | evidência: {evidence}")
+            lines.append(f"- {title} | outcome: {outcome} | evidence: {evidence}")
     if study_block.get("references"):
-        lines.append("Referências oficiais (use para ancorar perguntas):")
+        lines.append("Official references (use to anchor questions):")
         for ref in study_block["references"]:
             snippet = ref.get("snippet") or ref.get("description") or ""
             suffix = f" — {snippet}" if snippet else ""
             lines.append(f"- {ref.get('title', 'Ref')} ({ref.get('url', '')}){suffix}")
     if study_block.get("outcomes"):
-        lines.append("Outcomes esperados: " + "; ".join(study_block["outcomes"]))
+        lines.append("Expected outcomes: " + "; ".join(study_block["outcomes"]))
     if study_block.get("open_gaps"):
         lines.extend(
             [
                 "",
-                "## Lacunas abertas do aluno neste capítulo",
-                "Inclua 1-2 perguntas (fase gap_probe) que cubram estes conceitos ainda não dominados:",
+                "## Learner open gaps in this chapter",
+                "Include 1-2 questions (gap_probe phase) covering these not-yet-mastered concepts:",
                 "; ".join(study_block["open_gaps"]),
             ],
         )
     if learner is not None:
-        lines.extend(["", "## Perfil do learner", learner.compact_summary()])
+        lines.extend(["", "## Learner profile", learner.compact_summary()])
     return "\n".join(lines)

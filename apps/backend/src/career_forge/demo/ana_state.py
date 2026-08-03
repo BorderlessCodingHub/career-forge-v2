@@ -74,7 +74,7 @@ DEMO_ANA_VALIDATIONS: list[dict[str, Any]] = [
             {
                 "id": "rag-emb-q2",
                 "index": 2,
-                "label": "aplicação",
+                "label": "application",
                 "prompt": "How would you pick an embedding model for a product corpus?",
                 "rubric_criterion": "Name size vs quality trade-off",
             },
@@ -117,7 +117,7 @@ DEMO_ANA_VALIDATIONS: list[dict[str, Any]] = [
             {
                 "id": "rag-chunk-q2",
                 "index": 2,
-                "label": "aplicação",
+                "label": "application",
                 "prompt": "How do you choose chunk size for a docs corpus?",
                 "rubric_criterion": "Justify chunk size for a sample corpus",
             },

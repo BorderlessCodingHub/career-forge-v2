@@ -283,7 +283,7 @@ class TestRemediationTasks:
 
         gap_tasks = self._gap_tasks(client, "rem-inject")
         assert len(gap_tasks) == 1
-        assert gap_tasks[0]["title"].startswith("Reforçar")
+        assert gap_tasks[0]["title"].startswith("Reinforce")
         assert "praticar streaming" in gap_tasks[0]["evidence_prompt"]
 
         # original (non-gap) task is preserved

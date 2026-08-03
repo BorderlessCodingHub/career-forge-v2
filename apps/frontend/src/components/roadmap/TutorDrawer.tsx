@@ -51,7 +51,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
         { role: "assistant", content: response.tutor.reply },
       ]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao falar com o tutor");
+      setError(err instanceof Error ? err.message : "Failed to talk to the tutor");
       setMessages((current) => current.slice(0, -1));
     } finally {
       setLoading(false);
@@ -75,9 +75,9 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-5">
           <div>
-            <p className="text-sm font-semibold text-text-primary">Tutor do capítulo</p>
+            <p className="text-sm font-semibold text-text-primary">Chapter tutor</p>
             <p className="text-xs text-accent-mint">
-              foco em {node?.title ?? "este capítulo"}
+              focus on {node?.title ?? "this chapter"}
             </p>
           </div>
           <button
@@ -91,7 +91,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
 
         {context && context.key_concepts.length > 0 && (
           <div className="border-b border-border bg-surface px-6 py-3 text-xs text-text-secondary">
-            <span className="text-text-muted">Conceitos: </span>
+            <span className="text-text-muted">Concepts: </span>
             {context.key_concepts.slice(0, 4).join(" · ")}
             {context.open_gaps.length > 0 && (
               <span className="ml-1 text-warning">· foco: {context.open_gaps[0]}</span>
@@ -102,8 +102,8 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
         <div className="flex-1 space-y-3 overflow-y-auto px-5 py-5" data-testid="tutor-messages">
           {messages.length === 0 && (
             <p className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary">
-              Tire dúvidas técnicas sobre {node?.title ?? "este capítulo"}. O tutor responde
-              ancorado nos conceitos-chave, nas referências e nas suas lacunas.
+              Ask technical questions about {node?.title ?? "this chapter"}. The tutor answers
+              grounded in key concepts, references, and your gaps.
             </p>
           )}
           {messages.map((message, index) => (
@@ -119,7 +119,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
             </div>
           ))}
           {loading && (
-            <p className="text-sm text-text-muted animate-pulse">Tutor pensando…</p>
+            <p className="text-sm text-text-muted animate-pulse">Tutor thinking…</p>
           )}
         </div>
 
@@ -133,7 +133,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
               onKeyDown={(event) => {
                 if (event.key === "Enter") void send();
               }}
-              placeholder="Pergunte sobre o conteúdo deste capítulo..."
+              placeholder="Ask about this chapter's content..."
               className="flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted"
               data-testid="tutor-input"
             />
@@ -142,7 +142,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
               disabled={!draft.trim() || loading}
               data-testid="tutor-send"
             >
-              Enviar
+              Send
             </Button>
           </div>
         </div>

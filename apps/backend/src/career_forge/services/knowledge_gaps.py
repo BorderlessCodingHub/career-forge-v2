@@ -181,9 +181,9 @@ def _remediation_item(item_id: str, gap: KnowledgeGap) -> dict[str, str]:
     return {
         "type": "task",
         "id": item_id,
-        "title": f"Reforçar: {gap.concept}",
-        "outcome": "Fechar a lacuna detectada no mock interview",
-        "evidence_prompt": gap.suggested_remediation or f"Demonstre domínio de {gap.concept}",
+        "title": f"Reinforce: {gap.concept}",
+        "outcome": "Close the gap detected in the mock interview",
+        "evidence_prompt": gap.suggested_remediation or f"Demonstrate mastery of {gap.concept}",
         "source": "gap",
     }
 

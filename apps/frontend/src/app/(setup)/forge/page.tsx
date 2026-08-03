@@ -108,7 +108,7 @@ export default function ForgePage() {
       await connectStream(runId);
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Falha ao iniciar forge";
+        err instanceof Error ? err.message : "Failed to start forge";
       if (message.includes("404")) {
         router.replace("/onboarding/edit");
         return;
@@ -143,19 +143,19 @@ export default function ForgePage() {
             Live Roadmap Forge
           </p>
           <h1 className="mt-2 text-3xl font-semibold text-text-primary">
-            Forjando sua trilha personalizada
+            Forging your personalized trail
           </h1>
           <p className="mt-2 text-sm text-text-secondary">
             Timeline ao vivo — sem preview de grafo durante o stream.
           </p>
           <div className="mt-4 flex gap-4 text-xs text-text-muted">
             <span>{elapsedSec}s</span>
-            <span>{completedSteps} etapas concluídas</span>
+            <span>{completedSteps} steps completed</span>
             <span className="capitalize">{status}</span>
           </div>
           {status === "done" && (
             <p className="mt-3 text-sm text-accent-mint">
-              Plano pronto — revise o resultado e avance quando quiser.
+              Plan ready — review the result and continue when you want.
             </p>
           )}
         </div>
@@ -189,7 +189,7 @@ export default function ForgePage() {
               Tentar novamente
             </Button>
             <Link href="/onboarding/edit">
-              <Button variant="ghost">Voltar ao diagnóstico</Button>
+              <Button variant="ghost">Back to diagnosis</Button>
             </Link>
           </div>
         )}
@@ -200,7 +200,7 @@ export default function ForgePage() {
               <Button>Ver roadmap →</Button>
             </Link>
             <Link href="/onboarding/edit">
-              <Button variant="ghost">Voltar ao diagnóstico</Button>
+              <Button variant="ghost">Back to diagnosis</Button>
             </Link>
           </div>
         )}

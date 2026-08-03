@@ -40,12 +40,12 @@ type Tone = "strength" | "gap" | "priority";
 
 const NODE_LABELS: Record<string, string> = {
   js: "JavaScript base",
-  git: "Git e GitHub",
-  http: "HTTP básico",
-  db: "Banco relacional",
+  git: "Git and GitHub",
+  http: "HTTP basics",
+  db: "Relational database",
   rest: "APIs REST",
-  auth: "Autenticação JWT",
-  final: "Projeto: API CRUD",
+  auth: "JWT authentication",
+  final: "Project: CRUD API",
 };
 
 function resolveLabel(value: string): string {
@@ -85,7 +85,7 @@ function ViewItem({
           type="button"
           onClick={onEdit}
           className="rounded p-1 text-accent-mint transition hover:bg-accent-mint/10"
-          aria-label="Editar"
+          aria-label="Edit"
         >
           <Pencil size={14} />
         </button>
@@ -93,7 +93,7 @@ function ViewItem({
           type="button"
           onClick={onDelete}
           className="rounded p-1 text-red-500 transition hover:bg-red-500/10"
-          aria-label="Excluir"
+          aria-label="Delete"
         >
           <Trash2 size={14} />
         </button>
@@ -224,7 +224,7 @@ function EditableList({
             className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-accent/30 py-2 text-sm text-accent transition hover:bg-accent/5"
           >
             <Plus size={14} />
-            Adicionar {tone === "strength" ? "ponto forte" : "lacuna"}
+            Add {tone === "strength" ? "strength" : "gap"}
           </button>
         )}
       </div>
@@ -259,7 +259,7 @@ function SortableItem({ id, value }: { id: string; value: string }) {
       <button
         type="button"
         className="cursor-grab touch-none text-accent-mint/50 hover:text-accent-mint active:cursor-grabbing"
-        aria-label="Arrastar para reordenar"
+        aria-label="Drag to reorder"
         {...attributes}
         {...listeners}
       >
@@ -363,7 +363,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
   if (!diagnosis) {
     return (
       <main className="min-h-screen grid-dots p-8">
-        <p className="text-text-secondary">Carregando diagnóstico…</p>
+        <p className="text-text-secondary">Loading diagnosis…</p>
       </main>
     );
   }
@@ -381,7 +381,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
     const goalId = getSelectedGoal();
     const motivation = getMotivation();
     if (!goalId || !motivation) {
-      setError("Dados de onboarding incompletos. Refaça o diagnóstico.");
+      setError("Incomplete onboarding data. Please redo the diagnosis.");
       return;
     }
 
@@ -403,7 +403,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
       setError(
         err instanceof Error
           ? err.message
-          : "Falha ao confirmar diagnóstico ou iniciar o forge.",
+          : "Failed to confirm diagnosis or start the forge.",
       );
       setConfirming(false);
     }
@@ -423,29 +423,29 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
             Perfil: <strong className="text-text-primary">{diagnosis.profile.label}</strong>
           </div>
           <h1 className="mt-4 text-4xl font-semibold text-text-primary">
-            Seu diagnóstico
+            Your diagnosis
           </h1>
           <p className="mt-3 max-w-3xl text-text-secondary">
-            Ajuste fortes, lacunas e prioridades antes de forjar sua trilha. Esta
-            é a foto de hoje — ela recalibra a cada validação.
+            Adjust strengths, gaps, and priorities before forging your trail. This
+            is today's snapshot — it recalibrates after each validation.
           </p>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
           <EditableList
-            title="Pontos fortes"
+            title="Strengths"
             tone="strength"
             items={diagnosis.strengths}
             onChange={(strengths) => updateDiagnosis({ strengths })}
           />
           <EditableList
-            title="Lacunas"
+            title="Gaps"
             tone="gap"
             items={diagnosis.gaps}
             onChange={(gaps) => updateDiagnosis({ gaps })}
           />
           <ReorderableList
-            title="Prioridades iniciais"
+            title="Initial priorities"
             items={diagnosis.starting_priorities}
             onChange={(starting_priorities) =>
               updateDiagnosis({ starting_priorities })
@@ -454,9 +454,9 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
         </div>
 
         <div className="mt-6 rounded-md border border-border bg-surface p-5 text-sm text-text-secondary">
-          <strong className="text-text-primary">Avaliação por evidência.</strong>{" "}
-          Career Forge não deixa marcar tópicos como concluídos sem provar
-          entendimento numa entrevista com a IA.
+          <strong className="text-text-primary">Evidence-based assessment.</strong>{" "}
+          Career Forge does not let you mark topics complete without proving
+          understanding in an AI interview.
         </div>
 
         {error && (
@@ -467,14 +467,14 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Button variant="ghost" onClick={handleRestart} disabled={confirming}>
-            Refazer diagnóstico
+            Redo diagnosis
           </Button>
           <Button
             data-testid="generate-roadmap"
             onClick={() => void handleConfirmAndForge()}
             disabled={confirming}
           >
-            {confirming ? "Salvando e iniciando forge…" : "Gerar roadmap →"}
+            {confirming ? "Saving and starting forge…" : "Generate roadmap →"}
           </Button>
         </div>
       </div>

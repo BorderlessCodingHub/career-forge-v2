@@ -23,7 +23,7 @@ class OpenAiStudyPlanEvaluator:
             default_model="gpt-5.4-mini",
             temperature=0,
             method=None,
-            key_error="OPENAI_API_KEY não configurada. Configure a chave antes de avaliar o plano.",
+            key_error="OPENAI_API_KEY is not configured. Set the key before evaluating the plan.",
             model=model,
             api_key=api_key,
         )
@@ -33,12 +33,12 @@ class OpenAiStudyPlanEvaluator:
 
     def _evaluate_sync(self, plan: StudyPlan) -> StudyPlanEvaluation:
         system = (
-            "Você é o avaliador de qualidade do Career Forge. "
-            "Critique planos de estudo para transição de carreira em tech. "
-            "Marque revise se faltar sequência, prática, evidência, fontes ou aderência ao contexto."
+            "You are the Career Forge quality evaluator. "
+            "Critique study plans for tech career transitions. "
+            "Mark revise if sequence, practice, evidence, sources, or context fit is missing."
         )
         user = (
-            "Avalie este StudyPlan e retorne JSON estruturado:\n"
+            "Evaluate this StudyPlan and return structured JSON:\n"
             f"{plan.model_dump_json(indent=2)}"
         )
         return self._client.invoke(system=system, user=user, schema=StudyPlanEvaluation)

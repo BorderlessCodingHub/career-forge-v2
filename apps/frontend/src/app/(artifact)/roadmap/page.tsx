@@ -9,7 +9,7 @@ export default function RoadmapArtifactPage() {
     <Suspense
       fallback={
         <p className="py-20 text-center text-sm text-text-muted animate-pulse">
-          Carregando trilha…
+          Loading trail…
         </p>
       }
     >

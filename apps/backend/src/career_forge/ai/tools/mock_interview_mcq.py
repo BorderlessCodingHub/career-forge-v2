@@ -37,8 +37,8 @@ class McqQuestionDraft(BaseModel):
     concept: str = Field(
         min_length=2,
         max_length=120,
-        description="Conceito TÉCNICO específico testado (ex: 'list comprehension', "
-        "'np.reshape', 'idempotência de PUT'). Nunca logística de estudo.",
+        description="Specific TECHNICAL concept tested (e.g. 'list comprehension', "
+        "'np.reshape', 'PUT idempotency'). Never study-logistics language.",
     )
     hint: str | None = None
     options: list[McqOptionDraft] = Field(min_length=4, max_length=4)
@@ -60,8 +60,8 @@ class MockInterviewMcqDraft(BaseModel):
     subject: str = Field(
         min_length=2,
         max_length=120,
-        description="Assunto TÉCNICO do bloco, ignorando linguagem de logística do título "
-        "(ex: 'Python para AI/ML', 'APIs REST'). Determine isto ANTES das perguntas.",
+        description="TECHNICAL subject of the block, ignoring title logistics language "
+        "(e.g. 'Python for AI/ML', 'REST APIs'). Determine this BEFORE the questions.",
     )
     questions: list[McqQuestionDraft] = Field(min_length=5, max_length=7)
 
@@ -73,9 +73,9 @@ def _fallback_mcq_from_templates(node_id: str, session_db) -> MockInterviewQuest
     for item in template.questions:
         correct_text = item.rubric_criterion.rstrip(".")[:120]
         distractors = [
-            f"Conceito genérico sem aplicar {template.node_title}",
-            "Resposta superficial que não cobre o critério",
-            "Confunde termos ou pula a evidência prática",
+            f"Generic concept without applying {template.node_title}",
+            "Shallow answer that does not cover the criterion",
+            "Confuses terms or skips practical evidence",
         ]
         options = [
             MockInterviewOption(letter="A", text=correct_text),
@@ -174,25 +174,25 @@ class OpenAiMockInterviewMcqGenerator:
     ) -> MockInterviewMcqDraft:
         context = format_context_for_prompt(study_block, learner)
         system = (
-            "Você cria mock interviews de múltipla escolha que validam DOMÍNIO TÉCNICO do "
-            "conteúdo de um capítulo de estudo.\n\n"
-            "PASSO 1 — Determine o `subject`: o ASSUNTO TÉCNICO real do capítulo. "
-            "O título pode conter linguagem de logística de estudo (ex: 'criar rotina de estudo', "
-            "'Semanas 1–4', 'dominar o mínimo de'). IGNORE essa moldura e extraia o tema técnico "
-            "(ex: 'Python para AI/ML', 'APIs REST', 'Git e versionamento').\n\n"
-            "PASSO 2 — Gere 5 a 7 perguntas em português (BR) que testam COMPREENSÃO TÉCNICA do "
-            "subject. Cada pergunta tem exatamente 4 opções (A–D), uma única correta, e um `concept` "
-            "técnico específico (ex: 'list comprehension', 'np.reshape', 'idempotência de PUT').\n\n"
-            "PROIBIDO terminantemente: perguntas sobre hábitos de estudo, rotina, agenda, gestão de "
-            "tempo, motivação, como organizar o aprendizado, quantas horas estudar. Isso NÃO é "
-            "conhecimento técnico e não pode aparecer.\n\n"
-            "Misture fases: base (conceito fundamental), gap_probe (erro comum/lacuna típica), "
-            "scenario (aplicação prática). Distractors plausíveis mas claramente inferiores. "
-            "Ancore as perguntas nas referências oficiais fornecidas quando houver."
+            "You create multiple-choice mock interviews that validate TECHNICAL MASTERY of "
+            "a study chapter.\n\n"
+            "STEP 1 — Determine `subject`: the real TECHNICAL TOPIC of the chapter. "
+            "The title may include study-logistics language (e.g. 'build a study routine', "
+            "'Weeks 1–4', 'master the minimum of'). IGNORE that frame and extract the technical topic "
+            "(e.g. 'Python for AI/ML', 'REST APIs', 'Git and versioning').\n\n"
+            "STEP 2 — Generate 5 to 7 questions in English that test TECHNICAL UNDERSTANDING of "
+            "the subject. Each question has exactly 4 options (A–D), one correct answer, and a specific "
+            "technical `concept` (e.g. 'list comprehension', 'np.reshape', 'PUT idempotency').\n\n"
+            "STRICTLY FORBIDDEN: questions about study habits, routine, scheduling, time management, "
+            "motivation, how to organize learning, or how many hours to study. That is NOT "
+            "technical knowledge and must not appear.\n\n"
+            "Mix phases: base (fundamental concept), gap_probe (common mistake/typical gap), "
+            "scenario (practical application). Plausible but clearly weaker distractors. "
+            "Anchor questions in the official references when provided."
         )
         user = (
             f"{context}\n\n"
-            "Determine o subject técnico (ignorando logística do título) e gere o questionário MCQ agora."
+            "Determine the technical subject (ignoring title logistics) and generate the MCQ questionnaire now."
         )
         return self._client.invoke(system=system, user=user, schema=MockInterviewMcqDraft)
 

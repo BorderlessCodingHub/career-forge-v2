@@ -29,7 +29,7 @@ def _outcome_keywords(criterion: str) -> tuple[str, ...]:
     tokens = tuple(
         token for token in re.findall(r"[a-záàâãéêíóôõúç0-9]+", criterion.lower()) if len(token) > 3
     )
-    return tokens or ("projeto", "aplicar", "exemplo", "prática")
+    return tokens or ("project", "apply", "example", "practice")
 
 
 def _gap_keywords(criterion: str) -> tuple[str, ...]:
@@ -81,39 +81,39 @@ def build_mock_interview_response(payload: MockInterviewRequest) -> ValidationRe
         if answer_score < 60 and gap_index < len(node_gaps):
             gaps.append(f"[Follow-up] {node_gaps[gap_index]}")
         elif answer_score < 50:
-            criterion = rubric[index] if index < len(rubric) else "critério contextual"
-            gaps.append(f"Resposta superficial sobre: {criterion[:80]}")
+            criterion = rubric[index] if index < len(rubric) else "contextual criterion"
+            gaps.append(f"Shallow answer about: {criterion[:80]}")
 
     for index, answer_score in enumerate(per_answer_scores[5:], start=5):
         if answer_score < 55:
-            criterion = rubric[index] if index < len(rubric) else "cenário prático"
-            gaps.append(f"Cenário prático insuficiente: {criterion[:80]}")
+            criterion = rubric[index] if index < len(rubric) else "practical scenario"
+            gaps.append(f"Insufficient practical scenario: {criterion[:80]}")
 
     if not strengths:
-        strengths.append(f"Demonstra esforço em explicar {payload.node_title} com palavras próprias")
+        strengths.append(f"Shows effort explaining {payload.node_title} in their own words")
 
     if not gaps:
         if status == ValidationStatus.REVISAR:
-            gaps.append(f"Ainda faltam evidências concretas sobre critérios de {payload.node_title}")
+            gaps.append(f"Still missing concrete evidence on criteria for {payload.node_title}")
         else:
-            gaps.append("Aprofunde com exemplos reais de projeto na próxima rodada")
+            gaps.append("Go deeper with real project examples next round")
 
     if status == ValidationStatus.REVISAR and len(gaps) < 3:
-        gaps.append("Respostas genéricas — faltam termos técnicos da rubrica e cenários aplicados")
+        gaps.append("Generic answers — missing rubric technical terms and applied scenarios")
 
     next_action = NEXT_ACTIONS.get(
         payload.node_id,
-        f"Revise os critérios de {payload.node_title} e tente novamente com exemplos concretos.",
+        f"Review the criteria for {payload.node_title} and try again with concrete examples.",
     )
 
     mentor_summary = (
-        f"Para o mentor: mock interview de {payload.node_title} — "
-        f"{answer_count} perguntas contextuais, score {score}/100 ({status.value}). "
+        f"For the mentor: mock interview on {payload.node_title} — "
+        f"{answer_count} contextual questions, score {score}/100 ({status.value}). "
     )
     if gaps:
-        mentor_summary += f"Lacunas ({len(gaps)}): {'; '.join(gaps[:3])}. "
+        mentor_summary += f"Gaps ({len(gaps)}): {'; '.join(gaps[:3])}. "
     if strengths:
-        mentor_summary += f"Pontos fortes: {strengths[0]}. "
+        mentor_summary += f"Strengths: {strengths[0]}. "
     mentor_summary += next_action
 
     return ValidationResponse(
@@ -151,7 +151,7 @@ class MockInterviewGraphRunnable:
                 "type": "progress",
                 "step": "evaluate_contextual",
                 "message": (
-                    f"Avaliando {len(payload.answers)} respostas contextuais de {payload.node_title}"
+                    f"Evaluating {len(payload.answers)} contextual answers for {payload.node_title}"
                 ),
             },
         )

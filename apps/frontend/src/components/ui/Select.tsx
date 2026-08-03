@@ -36,7 +36,7 @@ export function Select<T extends string>({
   id,
   value,
   options,
-  placeholder = "Selecione…",
+  placeholder = "Select…",
   onChange,
   "data-testid": testId,
   className = "",

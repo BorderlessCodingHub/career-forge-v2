@@ -18,15 +18,15 @@ class TutorReplyDraft(BaseModel):
 
 
 def _format_context(context: TutorContext) -> str:
-    lines = [f"Capítulo: {context.node_title or context.node_id or 'trilha'}"]
+    lines = [f"Chapter: {context.node_title or context.node_id or 'trail'}"]
     if context.key_concepts:
-        lines.append("Conceitos-chave do capítulo: " + "; ".join(context.key_concepts))
+        lines.append("Chapter key concepts: " + "; ".join(context.key_concepts))
     if context.references:
-        lines.append("Referências oficiais:")
+        lines.append("Official references:")
         for ref in context.references:
             lines.append(f"- {ref.title}" + (f" ({ref.url})" if ref.url else ""))
     if context.open_gaps:
-        lines.append("Lacunas abertas do aluno (aborde proativamente): " + "; ".join(context.open_gaps))
+        lines.append("Learner open gaps (address proactively): " + "; ".join(context.open_gaps))
     return "\n".join(lines)
 
 
@@ -34,22 +34,22 @@ def _format_history(history: list[TutorMessage]) -> str:
     if not history:
         return ""
     turns = [f"{m.role}: {m.content}" for m in history[-6:]]
-    return "\n\n## Conversa anterior\n" + "\n".join(turns)
+    return "\n\n## Prior conversation\n" + "\n".join(turns)
 
 
 def _fallback_reply(message: str, context: TutorContext) -> TutorReplyDraft:
-    title = context.node_title or "este capítulo"
-    parts = [f"Sobre {title}: vamos destrinchar sua dúvida."]
+    title = context.node_title or "this chapter"
+    parts = [f"About {title}: let's break down your question."]
     if context.key_concepts:
         parts.append(
-            "Os conceitos centrais aqui são "
+            "The core concepts here are "
             + ", ".join(context.key_concepts[:4])
-            + ". Comece relacionando sua pergunta a eles."
+            + ". Start by relating your question to them."
         )
     if context.open_gaps:
-        parts.append(f"Atenção à sua lacuna aberta: {context.open_gaps[0]}.")
+        parts.append(f"Watch your open gap: {context.open_gaps[0]}.")
     if context.references:
-        parts.append(f"Referência para aprofundar: {context.references[0].title}.")
+        parts.append(f"Reference to go deeper: {context.references[0].title}.")
     return TutorReplyDraft(reply=" ".join(parts), used_concepts=context.key_concepts[:4])
 
 
@@ -71,16 +71,16 @@ class OpenAiTutor:
         context: TutorContext,
     ) -> TutorReplyDraft:
         system = (
-            "Você é um tutor técnico do Career Forge, focado em UM capítulo de estudo. "
-            "Responda à dúvida do aluno de forma didática e concisa (máx ~6 frases), em "
-            "português (BR). Ancore a explicação nos conceitos-chave e nas referências "
-            "oficiais fornecidas, citando-as pelo título quando relevante. Se o aluno tem "
-            "lacunas abertas, aborde-as proativamente. Não invente referências. Liste em "
-            "`used_concepts` os conceitos-chave que você efetivamente usou."
+            "You are a Career Forge technical tutor focused on ONE study chapter. "
+            "Answer the learner's question in a clear, concise way (max ~6 sentences), in "
+            "English. Ground the explanation in the key concepts and official references "
+            "provided, citing them by title when relevant. If the learner has open gaps, "
+            "address them proactively. Do not invent references. List in "
+            "`used_concepts` the key concepts you actually used."
         )
         user = (
             f"{_format_context(context)}{_format_history(history)}\n\n"
-            f"## Pergunta do aluno\n{message}\n\nResponda agora."
+            f"## Learner question\n{message}\n\nAnswer now."
         )
         return self._client.invoke(system=system, user=user, schema=TutorReplyDraft)
 

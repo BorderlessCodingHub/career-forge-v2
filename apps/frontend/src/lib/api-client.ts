@@ -183,7 +183,7 @@ async function consumeDiagnosisInterviewStream(
 
   if (streamError) throw streamError;
   if (!finalResponse) {
-    throw new Error("Stream terminou sem resposta final do diagnóstico.");
+    throw new Error("Stream ended without a final diagnosis response.");
   }
   return finalResponse;
 }

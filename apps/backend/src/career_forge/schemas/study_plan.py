@@ -43,8 +43,8 @@ class StudyPlanNode(BaseModel):
     why_now: str = Field(min_length=1)
     key_concepts: list[str] = Field(
         default_factory=list,
-        description="Conceitos TÉCNICOS atômicos que o capítulo ensina (ex: 'list "
-        "comprehension', 'idempotência de PUT'). Base canônica para mock e Q&A.",
+        description="Atomic TECHNICAL concepts the chapter teaches (e.g. 'list "
+        "comprehension', 'PUT idempotency'). Canonical base for mock and Q&A.",
     )
     prerequisites: list[str] = Field(default_factory=list)
     tasks: list[StudyPlanTask] = Field(min_length=1)

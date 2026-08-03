@@ -44,13 +44,13 @@ function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
     return (
       <div className="mt-5 rounded-md border border-border bg-surface p-4">
         <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-          Resumo para mentor
+          Mentor summary
         </p>
 
         {entry.gaps.length > 0 && (
           <div className="mt-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-warning">
-              Lacunas principais
+              Main gaps
             </p>
             <EvidenceBulletList items={entry.gaps} tone="warning" />
           </div>
@@ -59,7 +59,7 @@ function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
         {entry.strengths.length > 0 && (
           <div className="mt-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-success">
-              Evidências positivas
+              Positive evidence
             </p>
             <EvidenceBulletList items={entry.strengths} tone="success" />
           </div>
@@ -68,7 +68,7 @@ function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
         {entry.recommended_intervention.trim() && (
           <div className="mt-4 rounded-md border border-accent/30 bg-accent/10 p-3">
             <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-              Próximo passo
+              Next step
             </p>
             <p className="mt-2 text-sm text-text-secondary">
               {entry.recommended_intervention}
@@ -85,7 +85,7 @@ function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
   return (
     <div className="mt-5 rounded-md border border-border bg-surface p-4">
       <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-        Resumo para mentor
+        Mentor summary
       </p>
       <div className="mt-2 space-y-2 text-sm text-text-secondary">
         {legacyLines.map((line) => (
@@ -107,7 +107,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-widest text-text-muted">Tópico avaliado</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">Topic assessed</p>
           <h3 className="text-lg font-semibold text-text-primary">{displayTitle}</h3>
         </div>
         <div className="text-right">
@@ -132,19 +132,19 @@ export function MentorReportView({ report }: MentorReportViewProps) {
     <div className="mx-auto max-w-4xl px-4 py-10" data-screen="mentor-report" data-testid="mentor-report">
       <div className="mb-8 rounded-md border border-border bg-surface px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-          Relatório Borderless
+          Borderless report
         </p>
         <h1 className="mt-2 text-2xl font-semibold text-text-primary">
-          Evidências de aprendizado
+          Learning evidence
         </h1>
         <p className="mt-2 text-sm text-text-secondary">
-          Mentores veem o que o aluno demonstrou — não achismos.
+          Mentors see what the learner demonstrated — not guesswork.
         </p>
       </div>
 
       <div className="mb-8 grid gap-4 rounded-md border border-border bg-surface-elevated p-5 sm:grid-cols-2">
         <div>
-          <p className="text-xs uppercase tracking-widest text-text-muted">Aluno</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">Learner</p>
           <p className="mt-1 text-lg font-medium text-text-primary">{report.display_name}</p>
         </div>
         <div>
@@ -154,7 +154,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
           </p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-widest text-text-muted">Trilha</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">Trail</p>
           <p className="mt-1 text-sm text-text-secondary">{report.track_title}</p>
         </div>
         <div>
@@ -166,7 +166,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
       {report.learner_gaps.length > 0 && (
         <div className="mb-8 rounded-md border border-warning/30 bg-warning/5 p-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-warning">
-            Lacunas do diagnóstico inicial
+            Gaps from initial diagnosis
           </p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {report.learner_gaps.map((gap) => (
@@ -184,7 +184,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
       {report.validations.length === 0 ? (
         <div className="rounded-md border border-dashed border-border bg-surface p-8 text-center">
           <p className="text-sm text-text-muted">
-            Nenhuma validação registrada ainda. Peça ao aluno para validar um tópico na trilha.
+            No validations recorded yet. Ask the learner to validate a topic on the trail.
           </p>
         </div>
       ) : (
@@ -197,7 +197,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
 
       <div className="mt-8">
         <Link href="/roadmap">
-          <Button variant="ghost">← Voltar à trilha</Button>
+          <Button variant="ghost">← Back to trail</Button>
         </Link>
       </div>
     </div>

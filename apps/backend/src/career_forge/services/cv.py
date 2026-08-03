@@ -53,12 +53,12 @@ ROLE_KEYWORDS: dict[str, str] = {
     "data analyst": "Data Analyst",
     "devops": "DevOps Engineer",
     "intern": "Intern",
-    "estagiário": "Estagiário",
-    "estagiaria": "Estagiária",
-    "desenvolvedor": "Desenvolvedor",
-    "desenvolvedora": "Desenvolvedora",
-    "engenheiro de software": "Engenheiro de Software",
-    "engenheira de software": "Engenheira de Software",
+    "estagiário": "Intern",
+    "estagiaria": "Intern",
+    "desenvolvedor": "Developer",
+    "desenvolvedora": "Developer",
+    "engenheiro de software": "Software Engineer",
+    "engenheira de software": "Software Engineer",
 }
 
 YEARS_PATTERNS: list[tuple[re.Pattern[str], Literal["0-1", "1-3", "3-5", "5+"]]] = [

@@ -40,7 +40,7 @@ export function VerticalSpineSkeleton() {
       className="relative mx-auto max-w-3xl px-4 py-6"
       data-testid="vertical-spine-skeleton"
       aria-busy="true"
-      aria-label="Carregando trilha"
+      aria-label="Loading trail"
     >
       <div
         className="absolute bottom-0 left-1/2 top-0 w-px -translate-x-1/2 bg-border/60"

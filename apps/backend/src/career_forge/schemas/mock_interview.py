@@ -24,7 +24,7 @@ class MockInterviewQuestion(BaseModel):
 
     id: str
     index: int = Field(ge=1, le=7)
-    label: str = Field(description="Phase tag: conceito, aplicação, gap, cenário")
+    label: str = Field(description="Phase tag: concept, application, gap, scenario")
     prompt: str
     hint: str | None = None
     rubric_criterion: str

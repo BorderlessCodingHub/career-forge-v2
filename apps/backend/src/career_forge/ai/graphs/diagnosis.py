@@ -123,13 +123,13 @@ def _profile_label(goal_id: str, avg_score: int, answers: dict[str, str]) -> tup
         label = "Iniciante com base em JavaScript"
     elif avg_score >= 70:
         persona = "intermediario_backend"
-        label = "Desenvolvedor em transição para backend"
+        label = "Developer transitioning to backend"
     elif goal_id == "backend":
         persona = "iniciante_backend"
         label = "Iniciante focado em backend"
     else:
         persona = "explorador"
-        label = "Explorador em transição de carreira"
+        label = "Explorer in a career transition"
     return label, persona
 
 
@@ -164,7 +164,7 @@ def build_diagnosis_response(payload: DiagnosisRequest) -> DiagnosisResponse:
             gaps.append(DOMAIN_GAPS[domain])
 
     if not strengths:
-        strengths.append("Motivação clara sobre o objetivo de carreira escolhido")
+        strengths.append("Clear motivation about the chosen career goal")
 
     if DOMAIN_GAPS["rag-eval"] not in gaps and mastery.get("rag-retrieval", 0) < 60:
         gaps.append(DOMAIN_GAPS["rag-eval"])

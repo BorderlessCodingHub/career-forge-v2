@@ -13,7 +13,7 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Career Forge",
   description:
-    "Skill graph adaptativo — diagnostica, forja trilha ao vivo e valida mastery.",
+    "Adaptive skill graph — diagnose, forge a live trail, and validate mastery.",
 };
 
 export default function RootLayout({
@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="en">
       <body className={`${inter.variable} ${jetbrains.variable} font-sans pb-8`}>
         {children}
         <DeployBadge />

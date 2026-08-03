@@ -48,13 +48,13 @@ const MODE_COPY: Record<
 > = {
   loop: {
     screen: "mock-interview-loop",
-    title: "Mock interview — validação profunda",
+    title: "Mock interview — deep validation",
     subtitle:
-      "5–7 perguntas de múltipla escolha contextualizadas no seu bloco de estudo. O gabarito é validado na hora e recalibra a trilha.",
+      "5–7 multiple-choice questions grounded in your study block. Answers are scored immediately and recalibrate the trail.",
     badge: <BookOpen className="h-5 w-5" />,
-    loading: "Gerando perguntas contextualizadas…",
-    loadError: "Falha ao carregar mock interview",
-    footer: "Mock interview retroalimenta o plano — lacunas detectadas recalibram a trilha",
+    loading: "Generating contextualized questions…",
+    loadError: "Failed to load mock interview",
+    footer: "Mock interview feeds the plan — detected gaps recalibrate the trail",
     answerTestId: "mock-interview-answer",
     submitTestId: "mock-interview-submit",
   },
@@ -62,11 +62,11 @@ const MODE_COPY: Record<
     screen: "validation",
     title: "Pronto para validar seu aprendizado?",
     subtitle:
-      "A IA vai te entrevistar antes de liberar o próximo tópico. Pense como se estivesse explicando para um colega.",
+      "AI will interview you before unlocking the next topic. Think as if explaining to a peer.",
     badge: <BookOpenCheck className="h-5 w-5" />,
     loading: "Preparando entrevista…",
-    loadError: "Falha ao carregar entrevista",
-    footer: "Avaliação por evidência — não basta marcar como concluído",
+    loadError: "Failed to load interview",
+    footer: "Evidence-based assessment — checking a box is not enough",
     answerTestId: "validation-answer",
     submitTestId: "validation-submit",
   },
@@ -172,7 +172,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
       }
       setPhase("result");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao avaliar respostas");
+      setError(err instanceof Error ? err.message : "Failed to evaluate answers");
       setPhase("interview");
     }
   };
@@ -206,7 +206,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
       <div className="mx-auto max-w-lg py-20 text-center">
         <p className="text-sm text-danger">{error}</p>
         <Link href="/roadmap" className="mt-4 inline-block">
-          <Button variant="ghost">Voltar à trilha</Button>
+          <Button variant="ghost">Back to trail</Button>
         </Link>
       </div>
     );
@@ -253,7 +253,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
               Pergunta {String(currentIndex + 1).padStart(2, "0")} · {currentQuestion.label}
               {isMockQuestion(currentQuestion) && currentQuestion.phase !== "base" && (
                 <span className="ml-2 rounded bg-accent/20 px-1.5 py-0.5 text-accent">
-                  {currentQuestion.phase === "gap_probe" ? "lacuna" : "cenário"}
+                  {currentQuestion.phase === "gap_probe" ? "gap" : "scenario"}
                 </span>
               )}
             </p>
@@ -293,14 +293,14 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
                   onKeyDown={handleAnswerKeyDown}
-                  placeholder="Comece pela sua intuição..."
+                  placeholder="Start with your intuition..."
                   disabled={phase === "submitting"}
                   className="min-h-[160px] w-full resize-none rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-text-muted"
                   data-testid={copy.answerTestId}
                 />
                 <div className="mt-2 flex justify-between text-xs text-text-muted">
                   <span>{draft.length} caracteres · sem limite</span>
-                  <span>Enter para avançar · Shift+Enter nova linha</span>
+                  <span>Enter to continue · Shift+Enter new line</span>
                 </div>
               </>
             )}
@@ -318,7 +318,7 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
         <p className="text-xs text-text-muted">{copy.footer}</p>
         <div className="flex gap-2">
           <Link href="/roadmap">
-            <Button variant="ghost">Desistir</Button>
+            <Button variant="ghost">Give up</Button>
           </Link>
           <Button
             disabled={!canAdvance}
@@ -326,10 +326,10 @@ export function InterviewLoop({ nodeId, mode = "loop" }: InterviewLoopProps) {
             data-testid={copy.submitTestId}
           >
             {phase === "submitting"
-              ? "Avaliando…"
+              ? "Evaluating…"
               : currentIndex === questions.length - 1
-                ? "Enviar respostas →"
-                : "Próxima pergunta →"}
+                ? "Submit answers →"
+                : "Next question →"}
           </Button>
         </div>
       </div>

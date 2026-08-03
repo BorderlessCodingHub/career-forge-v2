@@ -104,7 +104,7 @@ class OpenAiDiagnosisInterviewLlm:
             self._client = StructuredLlmClient(model)
         except ValueError as exc:
             raise DiagnosisInterviewLlmError(
-                "DIAGNOSIS_INTERVIEW_MODEL não configurado. Defina em .env.",
+                "DIAGNOSIS_INTERVIEW_MODEL is not configured. Set it in .env.",
             ) from exc
 
     async def initialize_belief(
@@ -178,7 +178,7 @@ class OpenAiDiagnosisInterviewLlm:
 
         if not questions and not output.questions:
             raise DiagnosisInterviewLlmError(
-                "A IA não gerou perguntas para continuar. Tente novamente em alguns segundos.",
+                "AI did not generate questions to continue. Try again in a few seconds.",
             )
         if not questions and output.questions:
             logger.warning(
@@ -226,7 +226,7 @@ def get_diagnosis_interview_llm() -> DiagnosisInterviewLlm:
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
     if not api_key:
         raise DiagnosisInterviewLlmError(
-            "OPENAI_API_KEY não configurada. Configure a chave em .env antes de usar o diagnóstico.",
+            "OPENAI_API_KEY is not configured. Set the key in .env before using diagnosis.",
         )
     return OpenAiDiagnosisInterviewLlm(model=settings.diagnosis_interview_model)
 

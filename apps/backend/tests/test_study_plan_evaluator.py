@@ -25,7 +25,7 @@ def test_evaluation_artifact_for_revision() -> None:
     )
 
     assert event["type"] == "artifact_found"
-    assert event["label"] == "Avaliador do plano: revise"
+    assert event["label"] == "Plan evaluator: revise"
     assert "Adicionar fonte oficial" in event["detail"]
 
 

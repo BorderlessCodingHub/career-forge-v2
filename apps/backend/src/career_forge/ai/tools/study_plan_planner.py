@@ -39,7 +39,7 @@ class OpenAiStudyPlanPlanner:
             default_model="gpt-5.4",
             temperature=0.2,
             method=None,
-            key_error="OPENAI_API_KEY não configurada. Configure a chave antes de planejar o forge.",
+            key_error="OPENAI_API_KEY is not configured. Set the key before planning the forge.",
             model=model,
             api_key=api_key,
         )
@@ -83,14 +83,13 @@ class OpenAiStudyPlanPlanner:
         previous_plan: StudyPlan | None,
     ) -> StudyPlan:
         system = (
-            "Você é o planner do Career Forge. Gere um StudyPlan robusto, "
-            "prático, sequenciado e baseado em fontes. Dê liberdade à IA, "
-            "mas mantenha qualidade: pré-requisitos, tarefas, evidência prática "
-            "e aderência ao contexto do aluno. Para cada nó preencha "
-            "`key_concepts`: 3 a 6 conceitos TÉCNICOS atômicos que o capítulo "
-            "ensina (ex: 'list comprehension', 'idempotência de PUT', 'np.reshape'). "
-            "Nunca logística de estudo — esses conceitos viram a base de mock "
-            "interviews e do tutor de Q&A."
+            "You are the Career Forge planner. Generate a robust, practical, sequenced, "
+            "source-based StudyPlan. Give the model room to invent, but keep quality: "
+            "prerequisites, tasks, practical evidence, and fit to the learner context. "
+            "For each node fill `key_concepts`: 3 to 6 atomic TECHNICAL concepts the chapter "
+            "teaches (e.g. 'list comprehension', 'PUT idempotency', 'np.reshape'). "
+            "Never study-logistics language — those concepts become the base for mock "
+            "interviews and the Q&A tutor."
         )
         user = _planner_prompt(
             context=context,
@@ -129,11 +128,11 @@ def _planner_prompt(
                 "## evaluator_feedback",
                 feedback.model_dump_json(indent=2),
                 "",
-                "Revise o plano preservando o que está bom e corrigindo os required_changes.",
+                "Revise the plan, keeping what is good and fixing the required_changes.",
             ],
         )
     else:
-        parts.append("Crie o primeiro StudyPlan.")
+        parts.append("Create the first StudyPlan.")
     return "\n".join(parts)
 
 

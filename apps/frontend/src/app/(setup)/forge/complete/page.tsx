@@ -110,9 +110,9 @@ export default function ForgeCompletePage() {
   if (!graph?.length) {
     return (
       <main className="min-h-screen grid-dots p-8">
-        <p className="text-text-secondary">Nenhum grafo forjado ainda.</p>
+        <p className="text-text-secondary">No forged graph yet.</p>
         <Link href="/forge" className="mt-4 inline-block text-accent">
-          Voltar ao forge
+          Back to forge
         </Link>
       </main>
     );
@@ -127,10 +127,10 @@ export default function ForgeCompletePage() {
     >
       <div className="mx-auto max-w-2xl">
         <h1 className="text-3xl font-semibold text-text-primary">
-          Sua trilha está pronta
+          Your trail is ready
         </h1>
         <p className="mt-2 text-text-secondary">
-          Cada capítulo do seu plano aparece abaixo. Explore a trilha e comece a estudar.
+          Each chapter of your plan appears below. Explore the trail and start studying.
         </p>
 
         <ol className="mt-10 space-y-4">
@@ -154,7 +154,7 @@ export default function ForgeCompletePage() {
           <div className="mt-10 space-y-4">
             <Link href="/roadmap">
               <Button data-testid="forge-to-roadmap">
-                Explorar trilha vertical →
+                Explore vertical trail →
               </Button>
             </Link>
 

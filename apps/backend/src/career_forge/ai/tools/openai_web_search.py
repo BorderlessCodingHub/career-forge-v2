@@ -51,7 +51,7 @@ class OpenAiNativeWebSearchClient:
         ).strip()
         if not resolved_key:
             msg = (
-                "OPENAI_API_KEY não configurada. Configure a chave antes de usar "
+                "OPENAI_API_KEY is not configured. Set the key before using "
                 "web_search no forge."
             )
             raise WebSearchConfigurationError(
@@ -82,11 +82,11 @@ def parse_web_search_message(message: Any) -> WebSearchResult:
     blocks = _content_blocks(message)
     search_calls = extract_search_calls(blocks)
     if not search_calls:
-        raise WebSearchProviderError("OpenAI web_search não foi executado pelo modelo.")
+        raise WebSearchProviderError("OpenAI web_search was not executed by the model.")
 
     sources = extract_search_citations(blocks)
     if not sources:
-        raise WebSearchProviderError("OpenAI web_search não retornou citações utilizáveis.")
+        raise WebSearchProviderError("OpenAI web_search did not return usable citations.")
 
     return WebSearchResult(
         query=search_calls[0].get("query") or "",

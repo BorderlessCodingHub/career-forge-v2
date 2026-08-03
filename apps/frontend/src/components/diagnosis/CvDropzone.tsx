@@ -28,17 +28,17 @@ function readFileAsBase64(file: File): Promise<string> {
     reader.onload = () => {
       const result = reader.result;
       if (typeof result !== "string") {
-        reject(new Error("Falha ao ler arquivo."));
+        reject(new Error("Failed to read file."));
         return;
       }
       const base64 = result.split(",")[1];
       if (!base64) {
-        reject(new Error("Falha ao codificar arquivo."));
+        reject(new Error("Failed to encode file."));
         return;
       }
       resolve(base64);
     };
-    reader.onerror = () => reject(new Error("Falha ao ler arquivo."));
+    reader.onerror = () => reject(new Error("Failed to read file."));
     reader.readAsDataURL(file);
   });
 }
@@ -53,11 +53,11 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
     async (file: File) => {
       setError(null);
       if (!isAcceptedFile(file)) {
-        setError("Formato não suportado. Use PDF.");
+        setError("Unsupported format. Use PDF.");
         return;
       }
       if (file.size > MAX_BYTES) {
-        setError("Arquivo muito grande. Máximo 5 MB.");
+        setError("File too large. Maximum 5 MB.");
         return;
       }
 
@@ -75,7 +75,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
           dataBase64,
         });
       } catch {
-        setError("Não foi possível anexar o currículo.");
+        setError("Could not attach the resume.");
       } finally {
         setBusy(false);
       }
@@ -104,7 +104,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
             {attachment.filename}
           </p>
           <p className="text-xs text-text-muted">
-            {(attachment.size / 1024).toFixed(0)} KB · anexado (não analisado ainda)
+            {(attachment.size / 1024).toFixed(0)} KB · attached (not analyzed yet)
           </p>
         </div>
         <button
@@ -113,7 +113,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
           onClick={onRemove}
           className="ml-3 shrink-0 text-sm text-text-muted hover:text-warning"
         >
-          Remover
+          Remove
         </button>
       </div>
     );
@@ -145,13 +145,13 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
         } ${busy ? "pointer-events-none opacity-60" : ""}`}
       >
         <p className="text-sm font-medium text-text-primary">
-          Arraste seu currículo aqui
+          Drop your resume here
         </p>
         <p className="mt-1 text-xs text-text-muted">
-          ou clique para escolher · PDF · até 5 MB
+          or click to choose · PDF · up to 5 MB
         </p>
         <p className="mt-2 text-[11px] text-text-muted">
-          Opcional — usaremos para personalizar sua trilha em breve
+          Optional — we'll use it to personalize your trail soon
         </p>
       </div>
       <input

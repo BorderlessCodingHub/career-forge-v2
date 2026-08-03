@@ -10,7 +10,7 @@ import { useDiagnosisInterview } from "@/lib/hooks/useDiagnosisInterview";
 import { PillRound } from "./PillRound";
 
 const ROUND_INTRO =
-  "Sem certo ou errado — são 2 etapas fixas. Quanto mais concreto, melhor a IA mapeia seu perfil.";
+  "No right or wrong answers — two fixed rounds. The more concrete, the better AI maps your profile.";
 
 export function DiagnosticPills() {
   const {
@@ -111,21 +111,21 @@ export function DiagnosticPills() {
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                   <div className="text-sm text-text-secondary">
                     <strong className="text-text-primary">Processando respostas…</strong>{" "}
-                    a IA está atualizando seu mapa de competências.
+                    AI is updating your competency map.
                   </div>
                 </div>
               ) : (
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                   <span className="text-sm text-text-muted">
                     {questions.length} pergunta(s) nesta rodada · responda todas
-                    para continuar
+                    to continue
                   </span>
                   <Button
                     data-testid="submit-round"
                     disabled={!roundComplete || questions.length === 0}
                     onClick={() => void submitRound()}
                   >
-                    {roundCount >= maxRounds ? "Gerar diagnóstico" : "Próxima rodada"} →
+                    {roundCount >= maxRounds ? "Generate diagnosis" : "Next round"} →
                   </Button>
                 </div>
               )}

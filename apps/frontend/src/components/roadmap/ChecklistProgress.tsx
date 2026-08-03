@@ -53,13 +53,13 @@ export function ChecklistProgress({ node, variant }: ChecklistProgressProps) {
       <div className="flex items-center justify-between text-xs text-text-muted">
         <span>Progresso de estudo</span>
         <span className="font-mono text-text-primary">
-          {completed}/{total} concluídos
+          {completed}/{total} completed
         </span>
       </div>
       {progressBar}
       <p className="mt-2 text-xs text-text-muted" data-testid="checklist-non-blocking-copy">
-        Marcar leitura e prática ajuda a acompanhar o estudo — é opcional e não substitui a
-        validação por IA. A prova real de mastery continua sendo o mock interview.
+        Checking off reading and practice helps track study — optional and does not replace
+        AI validation. Real mastery proof remains the mock interview.
       </p>
     </div>
   );

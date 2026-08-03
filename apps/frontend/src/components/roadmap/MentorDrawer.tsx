@@ -51,7 +51,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
         { role: "assistant", content: response.mentor.reply },
       ]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao falar com mentor");
+      setError(err instanceof Error ? err.message : "Failed to talk to mentor");
       setMessages((current) => current.slice(0, -1));
     } finally {
       setLoading(false);
@@ -77,9 +77,9 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
           <div className="flex items-center gap-3">
             <MentorAvatar className="h-9 w-9 text-sm" />
             <div>
-              <p className="text-sm font-semibold text-text-primary">Mentor contextual</p>
+              <p className="text-sm font-semibold text-text-primary">Contextual mentor</p>
               <p className="text-xs text-accent-mint">
-                conhece sua trilha · {node?.title ?? "visão geral"}
+                knows your trail · {node?.title ?? "overview"}
               </p>
             </div>
           </div>
@@ -95,12 +95,12 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
         {context && (
           <div className="border-b border-border bg-surface px-6 py-3 text-xs text-text-secondary">
             {context.validation_count > 0 && (
-              <span>{context.validation_count} validações · </span>
+              <span>{context.validation_count} validations · </span>
             )}
             {context.recent_gaps.length > 0 ? (
               <span>Lacuna recente: {context.recent_gaps[0]}</span>
             ) : (
-              <span>Sem lacunas registradas ainda</span>
+              <span>No gaps recorded yet</span>
             )}
           </div>
         )}
@@ -108,8 +108,8 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
         <div className="flex-1 space-y-3 overflow-y-auto px-5 py-5" data-testid="mentor-messages">
           {messages.length === 0 && (
             <p className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary">
-              Pergunte sobre referências, lacunas da validação ou como praticar{" "}
-              {node?.title ?? "sua trilha"}.
+              Ask about references, validation gaps, or how to practice{" "}
+              {node?.title ?? "your trail"}.
             </p>
           )}
           {messages.map((message, index) => (
@@ -125,7 +125,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
             </div>
           ))}
           {loading && (
-            <p className="text-sm text-text-muted animate-pulse">Mentor pensando…</p>
+            <p className="text-sm text-text-muted animate-pulse">Mentor thinking…</p>
           )}
         </div>
 
@@ -141,7 +141,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
               onKeyDown={(event) => {
                 if (event.key === "Enter") void send();
               }}
-              placeholder="Pergunte algo sobre sua trilha..."
+              placeholder="Ask something about your trail..."
               className="flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted"
               data-testid="mentor-input"
             />
@@ -150,7 +150,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
               disabled={!draft.trim() || loading}
               data-testid="mentor-send"
             >
-              Enviar
+              Send
             </Button>
           </div>
         </div>

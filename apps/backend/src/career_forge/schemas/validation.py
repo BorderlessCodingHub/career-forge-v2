@@ -15,7 +15,7 @@ class ValidationQuestion(BaseModel):
 
     id: str
     index: int = Field(ge=1, le=3)
-    label: str = Field(description="Short tag, e.g. conceito + aplicação")
+    label: str = Field(description="Short tag, e.g. concept + application")
     prompt: str
     hint: str | None = None
     rubric_criterion: str
@@ -64,7 +64,7 @@ class ValidationResponse(BaseModel):
     strengths: list[str] = Field(default_factory=list)
     gaps: list[str] = Field(default_factory=list)
     next_action: str = Field(
-        description="Actionable next step for the learner (PT-BR)",
+        description="Actionable next step for the learner (English)",
     )
     mentor_summary: str = Field(
         description="Collapsed accordion copy for Borderless mentors",

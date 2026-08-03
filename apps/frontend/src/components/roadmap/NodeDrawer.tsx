@@ -23,12 +23,12 @@ type NodeDrawerProps = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  bloqueado: "Bloqueado",
-  recomendado: "Recomendado",
-  em_estudo: "Em estudo",
-  validar: "Validar",
-  aprovado: "Aprovado",
-  revisar: "Revisar",
+  bloqueado: "Blocked",
+  recomendado: "Recommended",
+  em_estudo: "In study",
+  validar: "Validate",
+  aprovado: "Passed",
+  revisar: "Review",
 };
 
 type DrawerSectionProps = {
@@ -175,7 +175,7 @@ export function NodeDrawer({
               data-testid="node-knowledge-gaps"
             >
               <p className="text-xs font-semibold uppercase tracking-widest text-warning">
-                Focos da última tentativa
+                Focus from last attempt
               </p>
               <ul className="mt-2 space-y-2">
                 {gaps.map((gap) => (
@@ -214,7 +214,7 @@ export function NodeDrawer({
           )}
 
           {node.tasks.length > 0 && (
-            <DrawerSection title="Tarefas práticas">
+            <DrawerSection title="Practice tasks">
               <ul className="space-y-2">
                 {node.tasks.map((task) => (
                   <li
@@ -234,20 +234,20 @@ export function NodeDrawer({
                       />
                       <span className={task.done ? "opacity-70 line-through" : undefined}>
                         <p className="font-medium text-text-primary">
-                          {task.title ?? "Tarefa prática"}
+                          {task.title ?? "Practice task"}
                           {task.source === "gap" && (
                             <span
                               className="ml-2 rounded bg-warning/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-warning"
                               data-testid="task-remediation-badge"
                             >
-                              Adaptação
+                              Adaptation
                             </span>
                           )}
                         </p>
                         {task.outcome && <p className="mt-1">{task.outcome}</p>}
                         {task.evidence_prompt && (
                           <p className="mt-1 text-xs text-accent-mint">
-                            Evidência: {task.evidence_prompt}
+                            Evidence: {task.evidence_prompt}
                           </p>
                         )}
                       </span>
@@ -259,7 +259,7 @@ export function NodeDrawer({
           )}
 
           {node.references.length > 0 && (
-            <DrawerSection title="Referências">
+            <DrawerSection title="References">
               <div className="space-y-2">
                 {node.references.map((reference) => (
                   <div
@@ -286,11 +286,11 @@ export function NodeDrawer({
                             className="font-medium text-text-primary underline-offset-2 hover:underline"
                             onClick={(event) => event.stopPropagation()}
                           >
-                            {reference.title ?? "Referência"}
+                            {reference.title ?? "Reference"}
                           </a>
                         ) : (
                           <span className="font-medium text-text-primary">
-                            {reference.title ?? "Referência"}
+                            {reference.title ?? "Reference"}
                           </span>
                         )}
                         {reference.url && (
@@ -309,7 +309,7 @@ export function NodeDrawer({
           {onOpenTutor && (
             <div className="flex items-center justify-between gap-3 rounded-md border border-accent/30 bg-surface px-3 py-3">
               <p className="text-sm text-text-secondary">
-                Tutor do capítulo — Q&A técnico ancorado nos conceitos e nas suas lacunas.
+                Chapter tutor — technical Q&A grounded in concepts and your gaps.
               </p>
               <Button
                 variant="ghost"

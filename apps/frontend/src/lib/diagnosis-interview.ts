@@ -13,8 +13,8 @@ export const MIN_ANSWER_LENGTH = 1;
 
 /** Deterministic round titles — mirror backend interview/script.py */
 const INTERVIEW_ROUND_LABELS = [
-  "Prática e rotina",
-  "Contexto e limitações",
+  "Practice and routine",
+  "Context and constraints",
 ] as const;
 
 export function interviewRoundLabel(roundCount: number): string {
@@ -28,7 +28,7 @@ export function interviewRoundLabel(roundCount: number): string {
 export function toInterviewCv(cv: CvAttachment): DiagnosisInterviewCvAttachment {
   if (cv.mimeType !== "application/pdf") {
     throw new Error(
-      "Currículo deve ser PDF. Remova o anexo ou envie um arquivo .pdf.",
+      "Resume must be a PDF. Remove the attachment or upload a .pdf file.",
     );
   }
   return {

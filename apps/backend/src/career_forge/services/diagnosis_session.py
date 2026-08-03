@@ -336,7 +336,7 @@ class DiagnosisSessionService:
         body: InterviewTurnRequest,
     ) -> None:
         if not session.transcript:
-            raise DiagnosisInterviewTurnError("Nenhuma pergunta aberta nesta sessão.")
+            raise DiagnosisInterviewTurnError("No open questions in this session.")
 
         open_turn = session.transcript[-1]
         expected_ids = {question.id for question in open_turn.questions}
@@ -344,12 +344,12 @@ class DiagnosisSessionService:
 
         if not submitted_ids.issubset(expected_ids):
             raise DiagnosisInterviewTurnError(
-                "Respostas não correspondem às perguntas da rodada atual.",
+                "Answers do not match the current round questions.",
             )
 
         if len(body.answers) > MAX_QUESTIONS_PER_TURN:
             raise DiagnosisInterviewTurnError(
-                f"Máximo de {MAX_QUESTIONS_PER_TURN} respostas por rodada.",
+                f"Maximum of {MAX_QUESTIONS_PER_TURN} answers per round.",
             )
 
         if len(body.answers) < len(open_turn.questions):

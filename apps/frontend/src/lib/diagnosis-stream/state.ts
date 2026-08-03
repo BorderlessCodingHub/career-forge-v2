@@ -7,13 +7,13 @@ import type {
 } from "@/types/contracts";
 
 const PHASE_LABELS: Record<DiagnosisInterviewStatusPhase, string> = {
-  analyzing_intake: "Lendo seu objetivo e motivação…",
-  analyzing_cv: "Analisando currículo…",
-  judging: "IA mapeando seu perfil…",
-  loading_questions: "Preparando perguntas…",
-  planning_questions: "Preparando perguntas…",
-  processing_answers: "Processando suas respostas…",
-  finalizing: "Gerando diagnóstico…",
+  analyzing_intake: "Reading your goal and motivation…",
+  analyzing_cv: "Analyzing resume…",
+  judging: "AI mapping your profile…",
+  loading_questions: "Preparing questions…",
+  planning_questions: "Preparing questions…",
+  processing_answers: "Processing your answers…",
+  finalizing: "Generating diagnosis…",
 };
 
 const STATUS_RANK: Record<RubricDimensionStatus, number> = {
@@ -25,7 +25,7 @@ const STATUS_RANK: Record<RubricDimensionStatus, number> = {
 export function diagnosisStreamPhaseLabel(
   phase: DiagnosisInterviewStatusPhase | null,
 ): string {
-  if (!phase) return "Analisando seu perfil…";
+  if (!phase) return "Analyzing your profile…";
   return PHASE_LABELS[phase];
 }
 
