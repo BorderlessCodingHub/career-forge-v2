@@ -23,7 +23,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 | # | App route | Prototype hash (legacy) | `data-screen` | Wow? | Must match | Can evolve |
 |---|-----------|-------------------------|---------------|------|------------|------------|
 | 1 | `/` | `goal` | `goal-picker` / `landing-recovery` | — | Headline PT-BR, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA; if ≥1 artifact → Continue / View all / New forge; if diagnosis → Forge again from last diagnosis | Card hover, validation toast |
-| 1b | `/forges` | — | `forges-list` | — | List artifacts; Open, Rename, Copy share, Revoke share, Copy resume; optional re-forge CTA | Visual polish |
+| 1b | `/forges` | — | `forges-list` | — | Scan & open: Open + Rename visible; share/resume/revoke in ⋯; untitled shows goal_id; optional re-forge CTA | Visual polish |
 | 1c | `/share/[token]` | — | `share-readonly` | — | Read-only roadmap; no session adopt | Visual polish |
 | 1d | `/resume/[token]` | — | `resume-consume` | — | Conflict chooser when local forges ≠ owner; else adopt; fail on reuse/expiry | Copy polish |
 | 2 | `/onboarding` | `diag` | `diagnostic` | — | Chat layout, 4–6 Q thread, recap of goal | Streaming vs batch API |
@@ -54,8 +54,8 @@ Full must-match: [SCREEN-INTENT.md](./SCREEN-INTENT.md)
 Declare dream role + motivation. Prototype: `screens-flow.jsx`  
 **CAR-27/29:** `LandingRecoveryGate` — if ≥1 forge artifact → Continue / View all / New forge (+ optional Forge again); if zero artifacts but saved diagnosis → Welcome back / Forge again / New from scratch; else GoalPicker (`landing-recovery`).
 
-### 1b. Forges list (`/forges`)
-Artifact catalog — Open, Rename, Copy share, Revoke share, Copy resume; optional re-forge from profile.
+### 1b. Forges list (`/forges`) — CAR-31
+Scan & open hierarchy: **Open** + **Rename** visible; Copy share / Copy resume / Revoke share in page-local **⋯**; untitled default titles display `goal_id`; optional re-forge from profile.
 
 ### 1c. Share (`/share/[token]`)
 Read-only shared roadmap. Fetches `GET /public/share/{token}` — no session adopt.
@@ -137,7 +137,7 @@ Playwright Gate B targets:
 
 - `data-testid="goal-picker"`
 - `data-testid="landing-continue"` · `landing-view-all` · `landing-new-forge` · `landing-reforge-profile` · `landing-recovery-fallback`
-- `data-testid="forge-row-{public_id}"` · `forge-open-{id}` · `forge-rename-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile`
+- `data-testid="forge-row-{public_id}"` · `forge-open-{id}` · `forge-rename-{id}` · `forge-overflow-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile`
 - `data-testid="share-node-list"` · `share-error`
 - `data-testid="resume-working"` · `resume-conflict` · `resume-keep-local` · `resume-switch` · `resume-error` · `resume-home`
 - `data-testid="forge-resume-copy"` · `forge-resume-copy-btn`

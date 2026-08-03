@@ -35,12 +35,12 @@
 
 | Constraint | Detail |
 |------------|--------|
-| `/forges` | List title/goal/date/active; actions Open, **Rename**, Copy share, **Revoke share**, Copy resume; optional re-forge from profile when diagnosis exists |
+| `/forges` | Scan & open: primary **Open** + **Rename**; Copy share / Copy resume / Revoke share in page-local **⋯** overflow; untitled default title shows `goal_id` (not `Roadmap · {goal}`); active badge; optional re-forge from profile when diagnosis exists |
 | Share | App route `/share/[token]` (read-only); API `GET /public/share/{token}` — **never** adopts owner session |
 | Resume | App route `/resume/[token]`; API `POST /public/resume/{token}` — if local forges exist for a **different** `external_id` → chooser (**Keep local** / **Switch to resume**) before `adoptSession`; else auto-adopt → roadmap; second use / expiry must fail clearly |
 | Forge complete | Resume link **copy once** after reveal (`forge-resume-copy`); optional email store (`forge-email-store`) — **no SMTP** |
 | Landing / forges | When `GET /me/profile` has diagnosis → **Forge again from last diagnosis** (`landing-reforge-profile` / `forges-reforge-profile`) — hydrate session → `/onboarding/edit` or forge from profile; **New from scratch** still → GoalPicker + interview |
-| Copy | Recovery surfaces may use English until CAR-16 hard cutover |
+| Copy | Recovery surfaces are English (CAR-16) |
 | Forbidden | Silent overwrite of conflicting local sessions; email **send** (CAR-28); mid-flight interview resume |
 
 ---
@@ -180,7 +180,7 @@
 |--------|---------------|
 | Goal picker | `goal-picker` |
 | Landing recovery | `landing-continue` · `landing-view-all` · `landing-new-forge` · `landing-reforge-profile` · `landing-recovery-fallback` |
-| Forges list | `forge-row-{public_id}` · `forge-open-{id}` · `forge-rename-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile` |
+| Forges list | `forge-row-{public_id}` · `forge-open-{id}` · `forge-rename-{id}` · `forge-overflow-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile` |
 | Share read-only | `share-node-list` · `share-error` |
 | Resume consume | `resume-working` · `resume-conflict` · `resume-keep-local` · `resume-switch` · `resume-error` · `resume-home` |
 | Forge complete resume | `forge-resume-copy` · `forge-resume-copy-btn` |
