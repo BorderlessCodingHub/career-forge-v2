@@ -427,7 +427,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
           </h1>
           <p className="mt-3 max-w-3xl text-text-secondary">
             Adjust strengths, gaps, and priorities before forging your trail. This
-            is today's snapshot — it recalibrates after each validation.
+            is the snapshot for today — it recalibrates after each validation.
           </p>
         </div>
 

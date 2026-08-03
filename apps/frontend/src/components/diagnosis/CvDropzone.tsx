@@ -151,7 +151,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
           or click to choose · PDF · up to 5 MB
         </p>
         <p className="mt-2 text-[11px] text-text-muted">
-          Optional — we'll use it to personalize your trail soon
+          Optional — we will use it to personalize your trail soon
         </p>
       </div>
       <input
