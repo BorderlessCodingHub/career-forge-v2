@@ -2,12 +2,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | **Not active in v2 F2.** Historical proposal. v2 keeps CTRR 4 dims + soft gate per [V2-PLAN.md](../V2-PLAN.md). Revisit only via a new ADR. |
-| **Date** | 2026-05-25 · annotated 2026-07-21 |
+| **Status** | **Keys live in production** (`motivation_goal` … `constraints`). Not a full product rewrite — Judge/Interviewer loop stays [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) (CTRR brand). **No new dimension migration** in F2. Soft gate uses `profile_score = mean(5 confidences)` per [V2-PLAN.md](../V2-PLAN.md) F2.8. |
+| **Date** | 2026-05-25 · annotated 2026-07-21 · keys-in-prod note 2026-08-02 (CAR-32) |
 | **Deciders** | Career Forge team (hackathon-era) |
-| **Supersedes (partial, historical)** | [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) — dimension model only; Judge/Interviewer loop remains in ADR-001 |
+| **Supersedes (partial)** | [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) — dimension **keys** only; Judge/Interviewer loop + CTRR brand remain in ADR-001 |
 
-> **v2 agents:** follow ADR-001 + [DIAGNOSIS-INTERVIEW.md](../product/DIAGNOSIS-INTERVIEW.md). Do not implement the 5-dimension universal profile from this ADR unless product explicitly reopens it.
+> **v2 agents:** use the **5 live dims** already in schema/FE. Do **not** migrate to Conceptual / Technical / Readiness / Resourcefulness. Do **not** treat this ADR as a greenfield rewrite — keys are already shipped. Spec: [DIAGNOSIS-INTERVIEW.md](../product/DIAGNOSIS-INTERVIEW.md).
 
 ---
 

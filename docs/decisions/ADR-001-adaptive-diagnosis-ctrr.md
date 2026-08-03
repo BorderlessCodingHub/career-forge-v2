@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | **Binding in v2** for Judge/Interviewer loop + CTRR 4 dims (Conceptual / Technical / Readiness / Resourcefulness). Dimension sprawl notes in ADR-002 are historical; v2 F2 keeps CTRR per [V2-PLAN.md](../V2-PLAN.md). |
-| **Date** | 2026-05-25 · v2 note 2026-07-21 |
+| **Status** | **Binding in v2** for Judge/Interviewer loop. **CTRR** = loop/rubric brand name in prose — not a mandate to use Conceptual / Technical / Readiness / Resourcefulness as schema keys. Production belief keys are the **5 live profile dims** from ADR-002 (`motivation_goal`, `background_transfer`, `learning_velocity`, `hands_on_proof`, `constraints`); `profile_score = mean(5 dim confidences)` (CAR-14). No F2 schema cutover. Soft gate: [V2-PLAN.md](../V2-PLAN.md) F2.8 / CAR-15. |
+| **Date** | 2026-05-25 · v2 note 2026-07-21 · dims reconcile 2026-08-02 (CAR-32) |
 | **Deciders** | Career Forge team |
 | **Linear (v2)** | Prompt recalibration + soft gate in Phase 2 |
 
