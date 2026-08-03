@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { MoreHorizontal } from "lucide-react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui";
 import {
@@ -20,6 +21,147 @@ import { hydrateOnboardingFromProfile } from "@/lib/profile-reuse";
 import { setForgeRunId } from "@/lib/forge-session";
 import type { ForgeArtifactSummary } from "@/types/contracts";
 
+/** Mirrors backend `artifact_title()` — default titles count as untitled. */
+function defaultArtifactTitle(goalId: string | null | undefined): string {
+  return goalId ? `Roadmap · ${goalId}` : "Roadmap";
+}
+
+function isUntitledTitle(
+  title: string,
+  goalId: string | null | undefined,
+): boolean {
+  return title === defaultArtifactTitle(goalId);
+}
+
+function forgeDisplayTitle(item: ForgeArtifactSummary): string {
+  if (isUntitledTitle(item.title, item.goal_id)) {
+    return item.goal_id ?? "Roadmap";
+  }
+  return item.title;
+}
+
+function forgeMetaLine(item: ForgeArtifactSummary): string {
+  const date = new Date(item.created_at).toLocaleString();
+  if (isUntitledTitle(item.title, item.goal_id)) {
+    return date;
+  }
+  return `${item.goal_id ?? "—"} · ${date}`;
+}
+
+type ForgeOverflowMenuProps = {
+  publicId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  busy: boolean;
+  copiedShare: boolean;
+  copiedResume: boolean;
+  onShare: () => void;
+  onResume: () => void;
+  onRevoke: () => void;
+};
+
+function ForgeOverflowMenu({
+  publicId,
+  open,
+  onOpenChange,
+  busy,
+  copiedShare,
+  copiedResume,
+  onShare,
+  onResume,
+  onRevoke,
+}: ForgeOverflowMenuProps) {
+  const menuId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onPointerDown(event: MouseEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        onOpenChange(false);
+      }
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onOpenChange(false);
+      }
+    }
+
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open, onOpenChange]);
+
+  return (
+    <div className="relative" ref={rootRef}>
+      <Button
+        type="button"
+        variant="ghost"
+        className="px-2"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-controls={menuId}
+        aria-label="More forge actions"
+        data-testid={`forge-overflow-${publicId}`}
+        disabled={busy}
+        onClick={() => onOpenChange(!open)}
+      >
+        <MoreHorizontal className="h-4 w-4" aria-hidden />
+      </Button>
+      {open ? (
+        <div
+          id={menuId}
+          role="menu"
+          className="absolute right-0 z-20 mt-1 min-w-[11rem] rounded-md border border-border bg-surface py-1 shadow-lg"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            className="block w-full px-3 py-2 text-left text-sm text-text-secondary hover:bg-bg hover:text-text-primary disabled:opacity-45"
+            data-testid={`forge-share-${publicId}`}
+            disabled={busy}
+            onClick={() => {
+              onShare();
+            }}
+          >
+            {copiedShare ? "Share copied" : "Copy share"}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className="block w-full px-3 py-2 text-left text-sm text-text-secondary hover:bg-bg hover:text-text-primary disabled:opacity-45"
+            data-testid={`forge-resume-${publicId}`}
+            disabled={busy}
+            onClick={() => {
+              onResume();
+            }}
+          >
+            {copiedResume ? "Resume copied" : "Copy resume"}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className="block w-full px-3 py-2 text-left text-sm text-text-secondary hover:bg-bg hover:text-text-primary disabled:opacity-45"
+            data-testid={`forge-revoke-${publicId}`}
+            disabled={busy}
+            onClick={() => {
+              onRevoke();
+              onOpenChange(false);
+            }}
+          >
+            Revoke share
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export default function ForgesListPage() {
   const router = useRouter();
   const [items, setItems] = useState<ForgeArtifactSummary[]>([]);
@@ -30,6 +172,7 @@ export default function ForgesListPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [hasDiagnosis, setHasDiagnosis] = useState(false);
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,6 +202,7 @@ export default function ForgesListPage() {
   async function handleOpen(publicId: string) {
     setBusyId(publicId);
     setError(null);
+    setMenuOpenId(null);
     try {
       await openForge(publicId);
       router.push("/roadmap");
@@ -161,7 +305,8 @@ export default function ForgesListPage() {
               Your forges
             </h1>
             <p className="mt-2 text-text-secondary">
-              Open a saved roadmap, rename it, or manage share / resume links.
+              Scan and open a saved roadmap. Rename anytime; share and resume
+              live in the row menu.
             </p>
           </div>
           <Link href="/" className="text-sm text-accent">
@@ -211,7 +356,7 @@ export default function ForgesListPage() {
               className="rounded-md border border-border bg-surface px-4 py-3"
               data-testid={`forge-row-${item.public_id}`}
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   {editingId === item.public_id ? (
                     <div className="flex flex-wrap items-center gap-2">
@@ -239,20 +384,19 @@ export default function ForgesListPage() {
                     </div>
                   ) : (
                     <p className="font-medium text-text-primary">
-                      {item.title}
+                      <span className="truncate">{forgeDisplayTitle(item)}</span>
                       {item.is_active ? (
-                        <span className="ml-2 text-xs text-accent-mint">
+                        <span className="ml-2 align-middle text-xs font-medium text-accent-mint">
                           active
                         </span>
                       ) : null}
                     </p>
                   )}
                   <p className="mt-0.5 text-sm text-text-secondary">
-                    {item.goal_id ?? "—"} ·{" "}
-                    {new Date(item.created_at).toLocaleString()}
+                    {forgeMetaLine(item)}
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex shrink-0 items-center gap-2">
                   <Button
                     data-testid={`forge-open-${item.public_id}`}
                     disabled={busyId !== null}
@@ -266,6 +410,7 @@ export default function ForgesListPage() {
                       data-testid={`forge-rename-${item.public_id}`}
                       disabled={busyId !== null}
                       onClick={() => {
+                        setMenuOpenId(null);
                         setEditingId(item.public_id);
                         setEditTitle(item.title);
                       }}
@@ -273,34 +418,21 @@ export default function ForgesListPage() {
                       Rename
                     </Button>
                   ) : null}
-                  <Button
-                    variant="ghost"
-                    data-testid={`forge-share-${item.public_id}`}
-                    disabled={busyId !== null}
-                    onClick={() => void copyLink(item.public_id, "share")}
-                  >
-                    {copied === `${item.public_id}-share`
-                      ? "Share copied"
-                      : "Copy share"}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    data-testid={`forge-revoke-${item.public_id}`}
-                    disabled={busyId !== null}
-                    onClick={() => void handleRevoke(item.public_id)}
-                  >
-                    Revoke share
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    data-testid={`forge-resume-${item.public_id}`}
-                    disabled={busyId !== null}
-                    onClick={() => void copyLink(item.public_id, "resume")}
-                  >
-                    {copied === `${item.public_id}-resume`
-                      ? "Resume copied"
-                      : "Copy resume"}
-                  </Button>
+                  {editingId !== item.public_id ? (
+                    <ForgeOverflowMenu
+                      publicId={item.public_id}
+                      open={menuOpenId === item.public_id}
+                      onOpenChange={(open) =>
+                        setMenuOpenId(open ? item.public_id : null)
+                      }
+                      busy={busyId !== null}
+                      copiedShare={copied === `${item.public_id}-share`}
+                      copiedResume={copied === `${item.public_id}-resume`}
+                      onShare={() => void copyLink(item.public_id, "share")}
+                      onResume={() => void copyLink(item.public_id, "resume")}
+                      onRevoke={() => void handleRevoke(item.public_id)}
+                    />
+                  ) : null}
                 </div>
               </div>
             </li>

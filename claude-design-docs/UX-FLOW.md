@@ -55,9 +55,9 @@ The user declares their dream profession + motivation. **CAR-27/29:** returning 
 
 ---
 
-### 1b. Forges list (`/forges`) — CAR-29
+### 1b. Forges list (`/forges`) — CAR-29 / CAR-31
 
-Catalog of historical forge artifacts. Open (freeze-before-promote), **Rename**, copy **share**, **Revoke share**, copy **resume**. Optional **Forge again from last diagnosis** when profile has diagnosis.
+Catalog of historical forge artifacts. Primary job: **scan & open**. Visible: **Open** (freeze-before-promote) + **Rename**. Quiet overflow (**⋯**): copy **share**, copy **resume**, **Revoke share**. Untitled default titles (`Roadmap · {goal}` / `Roadmap`) display as `goal_id` (or `Roadmap`) so goal is not duplicated in meta. Optional **Forge again from last diagnosis** when profile has diagnosis.
 
 | | |
 |---|---|
