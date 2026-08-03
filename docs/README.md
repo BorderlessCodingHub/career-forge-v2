@@ -43,8 +43,8 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | Doc | Purpose |
 |-----|---------|
 | [decisions/README.md](./decisions/README.md) | ADR index |
-| [ADR-001 adaptive diagnosis](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) | CTRR · Interviewer/Judge · CV policy (**binding in v2**) |
-| [ADR-002 universal profile](./decisions/ADR-002-universal-profile-framework.md) | Proposed 5-dim model — **not active in v2 F2** |
+| [ADR-001 adaptive diagnosis](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) | CTRR loop brand · Interviewer/Judge · CV policy (**binding in v2**) |
+| [ADR-002 universal profile](./decisions/ADR-002-universal-profile-framework.md) | 5 profile dims — **keys live in prod**; no F2 schema migration |
 | [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) | Engineering spec · API · sequence |
 
 ## Research
