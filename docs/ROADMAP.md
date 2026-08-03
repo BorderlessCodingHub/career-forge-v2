@@ -61,6 +61,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 | Issue | Title | Class |
 |-------|-------|-------|
 | [CAR-29](https://linear.app/career-forge-v2/issue/CAR-29) | Slice 2: `/forges` UI + optional email + diagnosis profile | [S] ✅ Done |
+| [CAR-31](https://linear.app/career-forge-v2/issue/CAR-31) | Polish `/forges` list UX — scan & open hierarchy | [P] ✅ Done |
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [S] → **F3** (blocked on `borderless-api`; zero prep) |
 
 ---

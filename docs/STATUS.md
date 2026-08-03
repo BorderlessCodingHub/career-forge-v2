@@ -2,7 +2,7 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-03** · Last merge: **CAR-16** · prior **CAR-32** · **CAR-14** · **CAR-30** · Epic **CAR-22** closed (Slice 3 deferred)  
+Last updated: **2026-08-03** · Last merge: **CAR-31** · prior **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 deferred)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
 **Next eng:** F2 **CAR-15** (soft gate). **CAR-28** blocked on `borderless-api` — zero prep.
 
@@ -64,6 +64,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | CAR-25 | List / open + freeze-before-promote | [S] | Done — `GET /me/forges` + `POST …/open` freeze-before-promote |
 | CAR-27 | Share + resume tokens + landing Continue | [S] | Done — share/resume tokens + landing Continue + `/forges` MVP |
 | CAR-29 | Slice 2: rich `/forges` + email store + diagnosis re-forge | [S] | Done — rename/revoke, resume conflict chooser, `PATCH /me/email`, `GET /me/profile` re-forge |
+| CAR-31 | Polish `/forges` list UX — scan & open hierarchy | [P] | Done — Open+Rename visible; share/resume/revoke in ⋯; untitled shows goal_id |
 | CAR-26 | Forge SSE stream ticket | [S] | Done — `POST …/stream-ticket` + `GET …/stream?ticket=` |
 | CAR-28 | Slice 3: Borderless issuer + send resume + merge | [S] | Backlog / F3 — blocked on `borderless-api` |
 
@@ -89,6 +90,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Forge artifacts (historical snapshots) | ✅ Done | CAR-24 persist + CAR-25 list/open freeze-before-promote |
 | Forge recovery (share / resume / Continue) | ✅ Done | CAR-27 — `forge_access_tokens`; landing gate; `/share` + `/resume` deep-links |
 | Forge recovery Slice 2 | ✅ Done | CAR-29 — rich `/forges`, conflict chooser, email store, diagnosis re-forge |
+| `/forges` list UX polish | ✅ Done | CAR-31 — scan & open hierarchy (Open+Rename; ⋯ overflow) |
 | Platform auth (`borderless-api`) | ⬜ F3 | CAR-28 deferred — blocked on issuer access; zero prep (grill 2026-08-01) |
 | Rebrand + landing `/career-forge` | ⬜ F3 | |
 | BASE/PSP pilots | ⬜ F3 | After gate + F2 + auth |
