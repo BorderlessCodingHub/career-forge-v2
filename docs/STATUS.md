@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-03** · Last merge: **CAR-31** · prior **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 deferred)  
+Last updated: **2026-08-03** · Last merge: **CAR-15** · prior **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 deferred)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
-**Next eng:** F2 **CAR-15** (soft gate). **CAR-28** blocked on `borderless-api` — zero prep.
+**Next eng:** F2 **CAR-17** (must-have forge + ≥70% harness; needs CAR-8 freeze/silence). **CAR-28** blocked on `borderless-api` — zero prep.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -40,13 +40,13 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
 | CAR-14 | CTRR prompts + light validation align | [S] | Done — EN prompts + per-goal briefs + `profile_score` + LLM validation keywords |
-| CAR-15 | Soft gate + lean prune + warnings | [S] | Backlog (unblocked — uses `profile_score` mean of 5 dims) |
+| CAR-15 | Soft gate + lean prune + warnings | [S] | Done — `SOFT_GATE_CUTOFF=0.55` provisional; `data/must-haves/` prune; PR #20 → `main` |
 | CAR-32 | Docs: reconcile ADR-001 / V2-PLAN to 5 live dims | [P] | Done — ADR banners + V2-PLAN F2.8 match 5-dim + `profile_score` |
 | CAR-16 | English-first hard cutover | [P] | Done — UI/prompts/catalog/reports EN; PR #18 → `main` |
-| CAR-17 | Must-have forge + ≥70% harness | [S] | Backlog (blocked by CAR-8 sign-off/silence + CAR-15) |
+| CAR-17 | Must-have forge + ≥70% harness | [S] | Backlog (blocked by CAR-8 sign-off/silence; CAR-15 ✅) |
 | CAR-18 | 16 golden cases + Yuri spot-check | [S] | Backlog (blocked by CAR-14…17) |
 
-Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. CAR-14 + CAR-16 + CAR-32 Done; next **CAR-15**. CAR-17/18 need must-have freeze.
+Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. CAR-14 + CAR-15 + CAR-16 + CAR-32 Done; next **CAR-17** (after must-have freeze). CAR-18 last.
 
 ---
 
@@ -83,7 +83,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | F1 synthetic cost gate report | ✅ Done | CAR-7 — 24 forges + samples · GO vs R$500/R$700 |
 | English-first | ✅ Done | CAR-16 — UI + remaining prompts/catalog/reports EN (CAR-14 diagnosis/validation prompts) |
 | Must-have node drafts (4 goals) | ✅ Drafted | CAR-8 — `docs/product/must-haves/`; freeze on Yuri sign-off or silence |
-| Soft gate + lean forge | ⬜ F2 | CAR-15 — `profile_score` bar; must-haves + foundation |
+| Soft gate + lean forge | ✅ Done | CAR-15 — `profile_score` bar (`SOFT_GATE_CUTOFF`); lean prune + warnings; retune cutoff CAR-18 |
 | F2 golden cases | ⬜ F2 | CAR-18 — 16 fixtures + Yuri spot-check 4 |
 | Auth scaffold (anon JWT Bearer) | ✅ Done | CAR-23 — `AuthProvider` + middleware; F3-ready Borderless swap |
 | Forge SSE stream ticket | ✅ Done | CAR-26 — Bearer mint → `?ticket=` on stream; Labs path CAR-21 Done |
