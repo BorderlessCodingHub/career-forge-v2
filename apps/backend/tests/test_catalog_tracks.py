@@ -40,9 +40,11 @@ def test_load_all_catalogs_unique_node_ids() -> None:
     all_ids: list[str] = []
     for catalog in catalogs:
         assert catalog["track"]["id"] in EXPECTED_TRACKS
-        assert 6 <= len(catalog["nodes"]) <= 8
+        # CAR-17: 10 nodes/track (= frozen must-have set + catalog gaps)
+        assert len(catalog["nodes"]) == 10
         all_ids.extend(node["id"] for node in catalog["nodes"])
     assert len(all_ids) == len(set(all_ids))
+    assert len(all_ids) == 40
 
 
 def test_forge_graph_scoped_to_track_only() -> None:
