@@ -43,6 +43,14 @@ class DiagnosisResponse(BaseModel):
         le=1.0,
         description="Mean confidence across the 5 live profile dimensions (CAR-15 soft-gate input).",
     )
+    soft_gated: bool = Field(
+        default=False,
+        description="Runtime soft-gate flag (derived; not persisted on profiles).",
+    )
+    soft_gate_warning: str | None = Field(
+        default=None,
+        description="English warning copy when soft_gated; runtime-only.",
+    )
 
     @field_validator("estimated_mastery")
     @classmethod

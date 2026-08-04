@@ -11,6 +11,7 @@ from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.errors import ConflictError
 from career_forge.schemas.me_profile import MeProfileResponse
 from career_forge.schemas.profile_diagnosis import parse_profile_diagnosis
+from career_forge.services.soft_gate import enrich_diagnosis_soft_gate
 
 _DEMO_EMAIL_SUFFIX = "@demo.careerforge.local"
 
@@ -22,11 +23,14 @@ def get_me_profile(session: Session, external_id: str) -> MeProfileResponse:
 
     profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
     record = parse_profile_diagnosis(profile.diagnosis) if profile else None
+    diagnosis = (
+        enrich_diagnosis_soft_gate(record.diagnosis) if record is not None else None
+    )
     return MeProfileResponse(
         external_id=external_id,
         email=_public_email(user.email),
         has_diagnosis=record is not None,
-        diagnosis=record.diagnosis if record else None,
+        diagnosis=diagnosis,
         intake=record.intake if record else None,
     )
 

@@ -22,6 +22,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui";
+import { SoftGateWarningBanner } from "@/components/diagnosis/SoftGateWarningBanner";
 import { confirmDiagnosis, startForgeRunFromProfile } from "@/lib/api-client";
 import { setForgeRunId } from "@/lib/forge-session";
 import type { DiagnosisResponse } from "@/types/contracts";
@@ -430,6 +431,12 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
             is the snapshot for today — it recalibrates after each validation.
           </p>
         </div>
+
+        {diagnosis.soft_gated && diagnosis.soft_gate_warning ? (
+          <div className="mb-6">
+            <SoftGateWarningBanner warning={diagnosis.soft_gate_warning} />
+          </div>
+        ) : null}
 
         <div className="grid gap-4 lg:grid-cols-3">
           <EditableList

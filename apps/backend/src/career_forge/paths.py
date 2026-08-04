@@ -75,6 +75,22 @@ def catalog_dir() -> Path:
     raise FileNotFoundError("data/catalog/ not found — set CATALOG_DIR or mount ./data")
 
 
+def must_haves_dir() -> Path:
+    """Resolve machine-readable must-have id lists (`data/must-haves/`, CAR-15)."""
+    env_path = os.environ.get("MUST_HAVES_DIR")
+    if env_path:
+        return Path(env_path)
+
+    data_root = _find_data_root()
+    directory = data_root / "must-haves"
+    if directory.is_dir():
+        return directory
+
+    raise FileNotFoundError(
+        "data/must-haves/ not found — set MUST_HAVES_DIR or mount ./data",
+    )
+
+
 def roadmap_json_path(track_id: str | None = None) -> Path:
     """Resolve a single-track catalog JSON.
 

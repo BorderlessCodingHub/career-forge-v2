@@ -67,6 +67,8 @@ async def _finalize_session(
     intake: DiagnosisIntake,
     llm: Any,
 ) -> tuple[DiagnosisSession, DiagnosisResponse]:
+    from career_forge.services.soft_gate import enrich_diagnosis_soft_gate
+
     diagnosis = await llm.finalize_diagnosis(session.belief, intake)
     # LLM sometimes returns bare goal slug (rag-engineer) — coerce to catalog id.
     track_id = normalize_catalog_track_id(diagnosis.profile.track_id)
@@ -76,6 +78,7 @@ async def _finalize_session(
                 "profile": diagnosis.profile.model_copy(update={"track_id": track_id}),
             },
         )
+    diagnosis = enrich_diagnosis_soft_gate(diagnosis)
     updated = session.model_copy(
         update={"status": "complete", "diagnosis": diagnosis},
     )

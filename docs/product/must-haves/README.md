@@ -15,7 +15,7 @@ Lean forge acceptance in F2 measures **≥70% post-forge coverage** of these mus
 
 1. **Draft** (this PR / CAR-8) — Pedro authors from a lean job corpus (~25–40 sources/goal).
 2. **One round** — Yuri reviews; silence = **baseline freeze** for F2 harness (CAR-17 / CAR-18).
-3. **Wiring** — must-haves enter forge prune + coverage harness in **CAR-17** (out of scope here).
+3. **Wiring** — lean prune uses catalog-intersection sidecars in [`data/must-haves/`](../../../data/must-haves/) (**CAR-15**). Full must-have set + ≥70% coverage harness = **CAR-17** (after freeze).
 
 Do **not** edit [`data/catalog/`](../../../data/catalog/) in CAR-8. Catalog seed `id`s are reused when they match; net-new ids are proposed for F2 catalog expansion.
 

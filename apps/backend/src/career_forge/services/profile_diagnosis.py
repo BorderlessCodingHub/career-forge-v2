@@ -13,12 +13,13 @@ from career_forge.errors import ProfileNotFoundError
 from career_forge.paths import normalize_catalog_track_id
 from career_forge.schemas.diagnosis import DiagnosisResponse
 from career_forge.schemas.profile_diagnosis import (
+    PROFILE_DIAGNOSIS_VERSION,
     DiagnosisConfirmRequest,
     DiagnosisConfirmResponse,
     DiagnosisMotorIntake,
-    ProfileDiagnosisRecord,
     parse_profile_diagnosis,
 )
+from career_forge.services.soft_gate import diagnosis_dump_for_persist
 
 
 def _with_normalized_track(diagnosis: DiagnosisResponse) -> DiagnosisResponse:
@@ -71,7 +72,12 @@ def confirm_diagnosis(
         cv_signals=body.cv_signals,
     )
     diagnosis = _with_normalized_track(body.diagnosis)
-    record = ProfileDiagnosisRecord(diagnosis=diagnosis, intake=intake)
+    # Persist core diagnosis only — soft_gated / warning are runtime-derived.
+    envelope = {
+        "version": PROFILE_DIAGNOSIS_VERSION,
+        "diagnosis": diagnosis_dump_for_persist(diagnosis),
+        "intake": intake.model_dump(mode="json"),
+    }
     track_id = diagnosis.profile.track_id
 
     profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
@@ -81,14 +87,14 @@ def confirm_diagnosis(
             track_id=track_id,
             goal=body.goal_id,
             motivation=body.motivation,
-            diagnosis=record.model_dump(mode="json"),
+            diagnosis=envelope,
         )
         session.add(profile)
     else:
         profile.track_id = track_id
         profile.goal = body.goal_id
         profile.motivation = body.motivation
-        profile.diagnosis = record.model_dump(mode="json")
+        profile.diagnosis = envelope
 
     session.commit()
     session.refresh(profile)
@@ -116,7 +122,8 @@ def load_forge_motor_input(session: Session, external_id: str) -> dict[str, Any]
     diagnosis = _with_normalized_track(record.diagnosis)
     intake = record.intake.model_dump(mode="json")
     return {
-        "diagnosis": diagnosis.model_dump(mode="json"),
+        # Preserve explicit vs missing profile_score; soft-gate enrich happens in apply_lean.
+        "diagnosis": diagnosis_dump_for_persist(diagnosis),
         "goal_id": intake["goal_id"],
         "motivation": intake["motivation"],
         "years_xp": intake.get("years_xp"),

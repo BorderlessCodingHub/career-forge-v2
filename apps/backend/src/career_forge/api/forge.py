@@ -26,6 +26,7 @@ from career_forge.schemas.forge import (
 )
 from career_forge.services.cost_guard import get_cost_guard
 from career_forge.services.forge_persistence import extract_goal_id, persist_graph_ready
+from career_forge.services.lean_forge import apply_lean_forge_input
 from career_forge.services.profile_diagnosis import load_forge_motor_input
 
 router = APIRouter()
@@ -37,6 +38,8 @@ def _build_forge_input(
 ) -> dict[str, Any]:
     if body.diagnosis is not None:
         merged = {"diagnosis": body.diagnosis.model_dump(mode="json")}
+        if body.input.get("goal_id"):
+            merged["goal_id"] = body.input["goal_id"]
     elif motor_input is not None:
         merged = dict(motor_input)
     else:
@@ -45,7 +48,7 @@ def _build_forge_input(
             detail="diagnosis is required when no confirmed profile exists for user_id",
         )
     merged.update(body.input)
-    return merged
+    return apply_lean_forge_input(merged)
 
 
 def _require_owned_run(run_id: str, external_id: str) -> GraphRun:

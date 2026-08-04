@@ -1,0 +1,13 @@
+{
+  "goal_id": "agent-engineer",
+  "ids": [
+    "agent-tool-use",
+    "agent-mcp",
+    "agent-planning",
+    "agent-memory",
+    "agent-failure-modes",
+    "agent-observability",
+    "agent-ship"
+  ],
+  "note": "CAR-15: catalog-seed intersection of docs/product/must-haves/agent-engineer.md. Net-new ids deferred to CAR-17."
+}
