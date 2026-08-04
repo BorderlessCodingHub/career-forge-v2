@@ -1,7 +1,7 @@
 # Must-haves — `rag-engineer`
 
 **Goal:** Production RAG & Advanced Retrieval  
-**Status:** draft — awaiting Yuri sign-off (silence = baseline)  
+**Status:** frozen — silence baseline 2026-08-04 (Pedro); Yuri spot-check → CAR-18   
 **Corpus:** 32 sources (target 25–40) · sampled 2026-07
 
 ## Must-have nodes (10)
@@ -64,7 +64,6 @@
 
 ## Notes for F2 (CAR-17)
 
-- **Catalog overlap:** all 7 CAR-5 seed ids (`rag-embeddings` … `rag-production`) kept as must-haves.
-- **Gaps to add later:** `rag-hybrid-search`, `rag-orchestration`, `rag-latency-cost` (not in beginner catalog JSON).
+- **Catalog:** all 10 must-have ids seeded in `data/catalog/rag-engineer-beginner.json` (gaps: `rag-hybrid-search`, `rag-orchestration`, `rag-latency-cost`).
 - Lean prune = these 10 + one foundation layer (prereqs), per V2-PLAN F2.10.
-- No wiring in this PR.
+- Coverage harness: `make must-have-coverage` (pre-inject ≥70% on normal forge).

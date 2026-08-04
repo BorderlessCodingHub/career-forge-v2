@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 def load_must_have_ids(goal_id: str, *, directory: Path | None = None) -> list[str]:
-    """Load machine-readable must-have ids for a goal (catalog intersection)."""
+    """Load machine-readable must-have ids for a goal (frozen set, CAR-17)."""
     root = directory if directory is not None else must_haves_dir()
     path = root / f"{goal_id}.json"
     if not path.is_file():
@@ -63,9 +63,11 @@ def compute_lean_allowlist(
 
 
 def apply_lean_forge_input(forge_input: dict[str, Any]) -> dict[str, Any]:
-    """Attach soft-gate + lean allowlist to forge GraphRun input.
+    """Attach must-have ids + soft-gate lean allowlist to forge GraphRun input.
 
-    Empty allowlist while soft-gated → fail-open (no lean_allowed_node_ids).
+    Always sets ``must_have_node_ids`` (CAR-17 bias). When soft-gated, also sets
+    ``lean_allowed_node_ids``. Empty allowlist while soft-gated → fail-open
+    (no lean_allowed_node_ids).
     """
     from career_forge.schemas.diagnosis import DiagnosisResponse
     from career_forge.services.soft_gate import (
@@ -92,15 +94,21 @@ def apply_lean_forge_input(forge_input: dict[str, Any]) -> dict[str, Any]:
     else:
         merged.pop("soft_gate_warning", None)
 
-    if not decision.soft_gated:
-        merged.pop("lean_allowed_node_ids", None)
-        return merged
-
     goal_id = forge_input.get("goal_id")
     if not goal_id:
         goal_id = _goal_from_track(diagnosis.profile.track_id)
     else:
         goal_id = str(goal_id)
+
+    must_ids = load_must_have_ids(goal_id)
+    if must_ids:
+        merged["must_have_node_ids"] = list(must_ids)
+    else:
+        merged.pop("must_have_node_ids", None)
+
+    if not decision.soft_gated:
+        merged.pop("lean_allowed_node_ids", None)
+        return merged
 
     allowlist = compute_lean_allowlist(goal_id, diagnosis.profile.track_id)
     if not allowlist:

@@ -86,6 +86,8 @@ class OpenAiStudyPlanPlanner:
             "You are the Career Forge planner. Generate a robust, practical, sequenced, "
             "source-based StudyPlan. Give the model room to invent, but keep quality: "
             "prerequisites, tasks, practical evidence, and fit to the learner context. "
+            "When learner_context lists must_have_node_ids, prefer including those catalog "
+            "ids as StudyPlan node_id values (job-market must-haves for this goal). "
             "For each node fill `key_concepts`: 3 to 6 atomic TECHNICAL concepts the chapter "
             "teaches (e.g. 'list comprehension', 'PUT idempotency', 'np.reshape'). "
             "Never study-logistics language — those concepts become the base for mock "

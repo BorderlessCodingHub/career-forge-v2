@@ -1,13 +1,16 @@
 {
   "goal_id": "fine-tuning",
   "ids": [
+    "ft-when-to-tune",
     "ft-data-prep",
     "ft-sft",
     "ft-lora",
-    "ft-eval",
+    "ft-quantization",
     "ft-dpo",
-    "ft-serve",
-    "ft-alignment"
+    "ft-alignment",
+    "ft-eval",
+    "ft-distributed",
+    "ft-serve"
   ],
-  "note": "CAR-15: catalog-seed intersection of docs/product/must-haves/fine-tuning.md. Net-new ids deferred to CAR-17."
+  "note": "CAR-17: frozen silence baseline (Pedro) \u2014 full must-have set from docs/product/must-haves/. Yuri spot-check deferred to CAR-18."
 }

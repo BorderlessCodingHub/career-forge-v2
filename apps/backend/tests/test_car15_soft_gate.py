@@ -80,7 +80,8 @@ class TestLeanPrune:
     def test_must_have_ids_loaded(self) -> None:
         ids = load_must_have_ids("rag-engineer")
         assert "rag-embeddings" in ids
-        assert "rag-hybrid-search" not in ids  # net-new excluded from sidecar
+        assert "rag-hybrid-search" in ids  # CAR-17: full frozen set
+        assert len(ids) == 10
 
     def test_allowlist_includes_one_hop_prereqs(self, tmp_path: Path) -> None:
         catalog = {

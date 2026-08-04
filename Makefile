@@ -1,4 +1,4 @@
-.PHONY: smoke agent-verify up down status test stack-smoke seed cost-gate help
+.PHONY: smoke agent-verify up down status test stack-smoke seed cost-gate must-have-coverage help
 
 COMPOSE ?= docker compose
 
@@ -11,6 +11,7 @@ help:
 	@echo "  make smoke         Full harness + stack health"
 	@echo "  make seed           Seed skill catalog + demo Ana (requires DATABASE_URL)"
 	@echo "  make cost-gate     CAR-7 synthetic cost gate + Yuri report"
+	@echo "  make must-have-coverage  CAR-17 must-have ≥70% smoke harness"
 	@echo "  make stack-smoke   Docker stack health only"
 
 # Full smoke — harness + monorepo + stack health (starts docker if needed)
@@ -57,3 +58,6 @@ seed:
 
 cost-gate:
 	@bash scripts/cost-gate.sh
+
+must-have-coverage:
+	@bash scripts/must-have-coverage.sh

@@ -1,7 +1,12 @@
-# Must-have id lists — machine-readable (CAR-15)
+# Must-have id lists — machine-readable (CAR-15 → CAR-17)
 
-Human drafts remain in [`docs/product/must-haves/`](../docs/product/must-haves/).  
-These JSON files list **catalog-seed intersection** ids used by lean forge prune.
+Human drafts / freeze SoT: [`docs/product/must-haves/`](../docs/product/must-haves/).
+
+These JSON files list **frozen** must-have ids (10/goal) used by:
+
+- Lean forge prune (CAR-15)
+- Forge bias (`must_have_node_ids`) + post-forge inject (CAR-17)
+- Coverage harness (`make must-have-coverage`)
 
 | File | Goal |
 |------|------|
@@ -10,4 +15,4 @@ These JSON files list **catalog-seed intersection** ids used by lean forge prune
 | `llm-evals.json` | `llm-evals` |
 | `fine-tuning.json` | `fine-tuning` |
 
-Net-new must-have ids (not yet in `data/catalog/`) land in **CAR-17** after freeze.
+**Freeze:** silence baseline 2026-08-04 (Pedro). Yuri spot-check on CAR-18.

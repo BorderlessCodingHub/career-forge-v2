@@ -3,11 +3,14 @@
   "ids": [
     "agent-tool-use",
     "agent-mcp",
+    "agent-orchestration",
     "agent-planning",
     "agent-memory",
+    "agent-multi-agent",
     "agent-failure-modes",
     "agent-observability",
+    "agent-guardrails",
     "agent-ship"
   ],
-  "note": "CAR-15: catalog-seed intersection of docs/product/must-haves/agent-engineer.md. Net-new ids deferred to CAR-17."
+  "note": "CAR-17: frozen silence baseline (Pedro) \u2014 full must-have set from docs/product/must-haves/. Yuri spot-check deferred to CAR-18."
 }

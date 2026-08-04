@@ -2,12 +2,21 @@
   "track": {
     "id": "fine-tuning-beginner",
     "title": "Fine-Tuning & Alignment",
-    "description": "Minimal catalog for fine-tuning — data prep, SFT, LoRA, DPO, and serving."
+    "description": "Minimal catalog for fine-tuning \u2014 data prep, SFT, LoRA, DPO, and serving."
   },
   "categories": [
-    { "id": "fundamentos", "label": "Foundations" },
-    { "id": "core", "label": "Training Core" },
-    { "id": "integracao", "label": "Alignment & Serve" }
+    {
+      "id": "fundamentos",
+      "label": "Foundations"
+    },
+    {
+      "id": "core",
+      "label": "Training Core"
+    },
+    {
+      "id": "integracao",
+      "label": "Alignment & Serve"
+    }
   ],
   "nodes": [
     {
@@ -38,7 +47,9 @@
       "icon": "git",
       "side": "right",
       "sort_order": 2,
-      "prerequisites": ["ft-data-prep"],
+      "prerequisites": [
+        "ft-data-prep"
+      ],
       "outcomes": [
         "Run a small SFT job on an open model",
         "Monitor loss and overfitting signals",
@@ -58,7 +69,9 @@
       "icon": "server",
       "side": "left",
       "sort_order": 3,
-      "prerequisites": ["ft-sft"],
+      "prerequisites": [
+        "ft-sft"
+      ],
       "outcomes": [
         "Configure LoRA rank and target modules",
         "Explain PEFT trade-offs vs full fine-tune",
@@ -78,7 +91,9 @@
       "icon": "database",
       "side": "right",
       "sort_order": 4,
-      "prerequisites": ["ft-lora"],
+      "prerequisites": [
+        "ft-lora"
+      ],
       "outcomes": [
         "Eval tuned models on task golden sets",
         "Watch for regression on general capability",
@@ -98,7 +113,9 @@
       "icon": "code",
       "side": "left",
       "sort_order": 5,
-      "prerequisites": ["ft-eval"],
+      "prerequisites": [
+        "ft-eval"
+      ],
       "outcomes": [
         "Build chosen/rejected preference pairs",
         "Explain DPO vs RLHF at a high level",
@@ -118,7 +135,9 @@
       "icon": "key",
       "side": "right",
       "sort_order": 6,
-      "prerequisites": ["ft-dpo"],
+      "prerequisites": [
+        "ft-dpo"
+      ],
       "outcomes": [
         "Serve a fine-tuned or adapter model",
         "Version models and roll back safely",
@@ -138,7 +157,9 @@
       "icon": "boxes",
       "side": "left",
       "sort_order": 7,
-      "prerequisites": ["ft-serve"],
+      "prerequisites": [
+        "ft-serve"
+      ],
       "outcomes": [
         "Run a basic safety / policy eval suite",
         "Document allowed and disallowed behaviors",
@@ -149,6 +170,46 @@
         "States policy boundaries clearly",
         "Describes escalation for risky fails"
       ]
+    },
+    {
+      "id": "ft-when-to-tune",
+      "title": "When to fine-tune vs prompt",
+      "category": "fundamentos",
+      "description": "Decide build-vs-prompt for adaptation",
+      "icon": "code",
+      "side": "right",
+      "sort_order": 8,
+      "prerequisites": [],
+      "outcomes": [],
+      "rubric": []
+    },
+    {
+      "id": "ft-quantization",
+      "title": "QLoRA & quantization",
+      "category": "core",
+      "description": "Memory-efficient training and serve",
+      "icon": "database",
+      "side": "left",
+      "sort_order": 9,
+      "prerequisites": [
+        "ft-lora"
+      ],
+      "outcomes": [],
+      "rubric": []
+    },
+    {
+      "id": "ft-distributed",
+      "title": "Distributed training",
+      "category": "integracao",
+      "description": "FSDP / DeepSpeed / multi-GPU post-training",
+      "icon": "server",
+      "side": "right",
+      "sort_order": 10,
+      "prerequisites": [
+        "ft-sft"
+      ],
+      "outcomes": [],
+      "rubric": []
     }
   ]
 }

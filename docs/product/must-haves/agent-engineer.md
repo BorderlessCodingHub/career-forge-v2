@@ -1,7 +1,7 @@
 # Must-haves — `agent-engineer`
 
 **Goal:** Agent Engineering (MCP, Tool Use, Failure Modes)  
-**Status:** draft — awaiting Yuri sign-off (silence = baseline)  
+**Status:** frozen — silence baseline 2026-08-04 (Pedro); Yuri spot-check → CAR-18  
 **Corpus:** 30 sources (target 25–40) · sampled 2026-07
 
 ## Must-have nodes (10)

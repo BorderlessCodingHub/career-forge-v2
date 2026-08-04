@@ -3,7 +3,7 @@
 > Versão em inglês (fonte canônica): [rag-engineer.md](./rag-engineer.md)
 
 **Goal:** Production RAG & Advanced Retrieval (RAG em produção e retrieval avançado)  
-**Status:** rascunho — aguardando sign-off do Yuri (silêncio = baseline)  
+**Status:** congelado — silence baseline 2026-08-04 (Pedro); spot-check Yuri → CAR-18  
 **Corpus:** 32 fontes (meta 25–40) · amostrado em 2026-07
 
 ## Nós must-have (10)
