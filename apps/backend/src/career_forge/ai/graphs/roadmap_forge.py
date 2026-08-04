@@ -39,6 +39,7 @@ from career_forge.services.forge_context import (
     LearnerForgeContext,
     build_forge_context_from_input,
 )
+from career_forge.services.lean_forge import resolve_lean_allowed_node_ids
 from career_forge.services.roadmap.catalog import load_roadmap_catalog
 
 DEFAULT_STREAM_DELAY_SEC = 1.5
@@ -73,8 +74,16 @@ def _mastery_to_priority(score: int, is_priority: bool) -> Priority:
     return Priority.LOW
 
 
-def build_accumulated_graph(diagnosis: DiagnosisResponse) -> list[UserSkillNode]:
-    """Deterministic graph from catalog + diagnosis mastery scores."""
+def build_accumulated_graph(
+    diagnosis: DiagnosisResponse,
+    *,
+    allowed_node_ids: set[str] | None = None,
+) -> list[UserSkillNode]:
+    """Deterministic graph from catalog + diagnosis mastery scores.
+
+    When ``allowed_node_ids`` is set (lean forge), only those catalog nodes
+    are included.
+    """
     catalog = _load_catalog(diagnosis.profile.track_id)
     mastery = diagnosis.estimated_mastery
     priority_set = set(diagnosis.starting_priorities)
@@ -82,6 +91,8 @@ def build_accumulated_graph(diagnosis: DiagnosisResponse) -> list[UserSkillNode]
 
     for catalog_node in catalog.get("nodes", []):
         node_id = catalog_node["id"]
+        if allowed_node_ids is not None and node_id not in allowed_node_ids:
+            continue
         score = int(mastery.get(node_id, 0))
         status = _mastery_to_status(score)
         if node_id in priority_set and status != SkillStatus.APROVADO:
@@ -108,22 +119,34 @@ def build_forge_timeline(
     diagnosis: DiagnosisResponse,
     *,
     research_artifacts: list[dict[str, Any]] | None = None,
+    allowed_node_ids: set[str] | None = None,
 ) -> list[dict[str, Any]]:
     """Ordered forge SSE payloads for the four pipeline steps."""
     return [
-        *build_forge_intro_events(diagnosis),
+        *build_forge_intro_events(diagnosis, allowed_node_ids=allowed_node_ids),
         *(research_artifacts or []),
-        *build_forge_tail_events(diagnosis),
+        *build_forge_tail_events(
+            diagnosis,
+            graph=build_accumulated_graph(
+                diagnosis,
+                allowed_node_ids=allowed_node_ids,
+            ),
+        ),
     ]
 
 
-def build_forge_intro_events(diagnosis: DiagnosisResponse) -> list[dict[str, Any]]:
+def build_forge_intro_events(
+    diagnosis: DiagnosisResponse,
+    *,
+    allowed_node_ids: set[str] | None = None,
+) -> list[dict[str, Any]]:
     """Events up to the start of research_enrich."""
     persona = diagnosis.profile.persona_slug or "profile"
     track = diagnosis.profile.track_id
     top_strength = diagnosis.strengths[0] if diagnosis.strengths else "clear motivation"
     top_gap = diagnosis.gaps[0] if diagnosis.gaps else "backend gaps"
-    graph = build_accumulated_graph(diagnosis)
+    graph = build_accumulated_graph(diagnosis, allowed_node_ids=allowed_node_ids)
+
 
     events: list[dict[str, Any]] = [
         {
@@ -343,11 +366,15 @@ class RoadmapForgeGraphRunnable:
         raw_diagnosis = input_data.get("diagnosis") or input_data
         diagnosis = DiagnosisResponse.model_validate(raw_diagnosis)
         context = build_forge_context_from_input(user_id="forge-user", input_data=input_data)
+        allowed_node_ids = resolve_lean_allowed_node_ids(input_data)
         run_id = new_run_id()
 
         yield emit_chain_start(self.graph_name, run_id)
 
-        for payload in build_forge_intro_events(diagnosis):
+        for payload in build_forge_intro_events(
+            diagnosis,
+            allowed_node_ids=allowed_node_ids,
+        ):
             await _sleep_between_events()
             yield emit_chain_stream(
                 payload.get("step", "emit_forge_event"),
@@ -368,7 +395,7 @@ class RoadmapForgeGraphRunnable:
 
         planner = self._planner or build_study_plan_planner_from_env()
         evaluator = self._evaluator or build_study_plan_evaluator_from_env()
-        graph = build_accumulated_graph(diagnosis)
+        graph = build_accumulated_graph(diagnosis, allowed_node_ids=allowed_node_ids)
         plan = build_draft_study_plan(
             context=context,
             diagnosis=diagnosis,
@@ -416,6 +443,9 @@ class RoadmapForgeGraphRunnable:
                 )
 
         final_graph = study_plan_to_graph(plan)
+        if allowed_node_ids is not None:
+            filtered = [n for n in final_graph if n.node_id in allowed_node_ids]
+            final_graph = filtered or graph
         tail_events = build_forge_tail_events(diagnosis, graph=final_graph)
         for payload in tail_events:
             await _sleep_between_events()

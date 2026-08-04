@@ -158,7 +158,7 @@ Soft gate: `profile_score = mean(5 dim confidences)` abaixo do cutoff → aviso 
 | F2.5 | Uma barra global de soft gate para os 4 goals |
 | F2.6 | Pedro autor dos 16 casos sintéticos |
 | F2.7 | Soft-gate warning no summary do diagnóstico **e** na entrada do forge |
-| F2.8 | Soft gate quando `profile_score = mean(5 dim confidences) < cutoff` (5 live dims ADR-002; cutoff afinado nos golden cases; CAR-14 contract) |
+| F2.8 | Soft gate quando `profile_score = mean(5 dim confidences) < cutoff` (5 live dims ADR-002; cutoff provisório **0.55** via `SOFT_GATE_CUTOFF`, retune nos golden cases CAR-18; CAR-14 contract) |
 | F2.9 | Fixtures versionadas no repo (`tests/golden/` ou `data/golden_cases/`); LangSmith opcional |
 | F2.10 | Lean prune = must-haves + uma camada de foundation (prereqs) |
 | F2.11 | Validation = alinhamento leve de prompts/catálogo aos LLM goals; sem redesign UX/grafo |

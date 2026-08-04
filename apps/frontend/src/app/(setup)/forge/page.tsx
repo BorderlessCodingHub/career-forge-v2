@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 import { ForgeEventLine, ForgeTimeline } from "@/components/forge";
+import { SoftGateWarningBanner } from "@/components/diagnosis/SoftGateWarningBanner";
 import { Button } from "@/components/ui";
 import { startForgeRunFromProfile, streamForgeRun } from "@/lib/api-client";
 import {
@@ -14,6 +15,7 @@ import {
   setForgeRunId,
   clearForgeSession,
 } from "@/lib/forge-session";
+import { getStoredDiagnosis } from "@/lib/onboarding-session";
 import type { RoadmapForgeEvent } from "@/types/contracts";
 
 export default function ForgePage() {
@@ -24,6 +26,13 @@ export default function ForgePage() {
   );
   const [error, setError] = useState<string | null>(null);
   const [elapsedSec, setElapsedSec] = useState(0);
+  const softGateWarning = (() => {
+    const stored = getStoredDiagnosis();
+    if (stored?.soft_gated && stored.soft_gate_warning) {
+      return stored.soft_gate_warning;
+    }
+    return null;
+  })();
   const startedRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -146,8 +155,16 @@ export default function ForgePage() {
             Forging your personalized trail
           </h1>
           <p className="mt-2 text-sm text-text-secondary">
-            Timeline ao vivo — sem preview de grafo durante o stream.
+            Live timeline — no graph preview during the stream.
           </p>
+          {softGateWarning ? (
+            <div className="mt-4">
+              <SoftGateWarningBanner
+                warning={softGateWarning}
+                testId="soft-gate-warning-forge"
+              />
+            </div>
+          ) : null}
           <div className="mt-4 flex gap-4 text-xs text-text-muted">
             <span>{elapsedSec}s</span>
             <span>{completedSteps} steps completed</span>

@@ -1,0 +1,13 @@
+{
+  "goal_id": "fine-tuning",
+  "ids": [
+    "ft-data-prep",
+    "ft-sft",
+    "ft-lora",
+    "ft-eval",
+    "ft-dpo",
+    "ft-serve",
+    "ft-alignment"
+  ],
+  "note": "CAR-15: catalog-seed intersection of docs/product/must-haves/fine-tuning.md. Net-new ids deferred to CAR-17."
+}
