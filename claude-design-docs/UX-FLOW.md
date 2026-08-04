@@ -99,10 +99,11 @@ Short explicit negative answers (for example, **"Nothing."**) are valid evidence
 |---|---|
 | **Old** | `/onboarding/result` — 3 read-only blocks (strengths / gaps / recommendation), CTA "View my roadmap" |
 | **New** | **View-first** editable lists: edit/delete icons per item, add (+), **drag-and-drop** on priorities (dnd-kit). CTA **"Generate roadmap"** + **"Redo diagnosis"** |
+| **Soft gate (CAR-15)** | When diagnosis `soft_gated` → **Lean roadmap** warning banner above the lists (`data-testid="soft-gate-warning"`). Copy from API `soft_gate_warning`. Does **not** block confirm/forge |
 | **Why** | The confirmation screen was a dead-end — no feedback, no agency |
 | **Route** | `/onboarding/edit` · `data-testid="editable-diagnosis"` |
-| **Shipped** | HAC-53 — view/edit modes per item; strengths/gaps editable; priorities reorderable |
-| **On confirm (target)** | `POST /diagnosis/confirm` persists the profile in Postgres → `POST /forge` (202 + run_id) → SSE. **API:** HAC-52 ✅ · **FE wire:** HAC-57 pending |
+| **Shipped** | HAC-53 — view/edit modes per item; strengths/gaps editable; priorities reorderable · CAR-15 soft-gate banner |
+| **On confirm** | `POST /diagnosis/confirm` persists the profile → `POST /forge/runs` → SSE. Soft-gate prune applied on BE forge input when below bar |
 
 **Sections (editable lists):**
 - Strengths
@@ -119,7 +120,8 @@ Short explicit negative answers (for example, **"Nothing."**) are valid evidence
 |---|---|
 | **Old** | Split view: timeline on the left + skill graph skeleton on the right filling up with `node_updated` |
 | **New** | **Full-width streaming timeline only.** Numbered steps (1, 2, 3, 4…). Types: `reasoning_delta`, `artifact_found`, `decision`. `artifact_found` may show a formatted summary + official sources. **No graph/map during the stream** |
-| **Route** | `/roadmap/forge` · `data-screen="forge-stream"` |
+| **Soft gate (CAR-15)** | At forge entry, if session diagnosis is `soft_gated` → same lean warning (`data-testid="soft-gate-warning-forge"`). Stream UX unchanged |
+| **Route** | `/roadmap/forge` · `data-screen="forge-stream"` (app: `/forge`) |
 
 **During generation:**
 - Header: "Forging your personalized roadmap"
@@ -235,9 +237,10 @@ After the animation → navigates to steady state (`/roadmap`).
 | Editable diagnosis screen | ⬜ Still hash `#result` placeholder |
 | Forge timeline-only (no graph during stream) | ⬜ Prototype keeps split forge layout (user approved layout HAC-25) |
 | Forge recovery (landing / forges / share / resume / email / re-forge) | ⬜ Not in prototype — **code + this doc win** (CAR-27/29 / ADR-003) |
+| Soft gate lean warning (CAR-15) | ⬜ Not in prototype — **code + this doc win** (banner on edit + forge entry) |
 
 Implementation target: this doc + [SCREEN-INTENT.md](./SCREEN-INTENT.md).
 
 ---
 
-*Last updated: 2026-08-01 — CAR-29 ui-product-sync: empty+diagnosis Welcome back gate documented*
+*Last updated: 2026-08-03 — CAR-15 ui-product-sync: soft-gate warning on diagnosis edit + forge entry*

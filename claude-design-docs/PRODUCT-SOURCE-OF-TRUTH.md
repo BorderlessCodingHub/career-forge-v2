@@ -130,8 +130,8 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | `/share/[token]` | Read-only snapshot roadmap; **no** session adopt (API `GET /public/share/{token}`) | Visual polish |
 | `/resume/[token]` | Consume resume; **conflict chooser** when local forges exist for a different `external_id` (keep local vs switch); else adopt → `/roadmap` | Copy polish |
 | `/onboarding` | Chat diagnostic, 4–6 Q feel; short negative answers like "Nothing." are valid evidence | Streaming vs batch API |
-| `/onboarding/edit` | **Editable** strengths/gaps/priorities + **"Generate roadmap"**; also entry after profile hydrate (CAR-29 re-forge) | HAC-53: view-first, pencil/trash, dnd-kit reorder, redo diagnosis |
-| `/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; manual **"View roadmap"** CTA after `graph_ready` | SSE wiring, scroll behavior |
+| `/onboarding/edit` | **Editable** strengths/gaps/priorities + **"Generate roadmap"**; also entry after profile hydrate (CAR-29 re-forge); when `soft_gated` → **Lean roadmap** warning banner (`soft-gate-warning`) — does **not** block forge | HAC-53: view-first, pencil/trash, dnd-kit reorder, redo diagnosis |
+| `/forge` | **Timeline only** — numbered steps, no graph during stream; research rows show formatted summary + official source cards; planner/evaluator artifacts may appear; manual **"View roadmap"** CTA after `graph_ready`; when `soft_gated` → same lean warning at entry (`soft-gate-warning-forge`) | SSE wiring, scroll behavior |
 | `/forge/complete` | Stream items fly into vertical layout; resume link **copy once**; **optional email store** (no send) | Motion implementation |
 | `/roadmap` | **Vertical roadmap** steady state; track name in **artifact topbar** only; right cluster `items-end`; `mentor-report-link` bottom-aligned to track title; page intro (`pt-6`) = subtitle + centered **`trail-progress-ring`** when checklist items exist; spine nodes alternate left/right with solid **`roadmap-connector-{id}`** lines to spine dot; canvas compact study progress; drawer accordions + sticky validate CTA | Node detail panel, full AI sidebar (P2) |
 | `/validate/:topic` | Interview + ScoreRing result | Voice, timer — out of MVP |
@@ -187,6 +187,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Deploy badge (global footer) | Not in prototype | N/A | Fixed bottom strip on all routes — `DeployBadge` in root layout (`z-auto`, not `z-50`) so `NodeDrawer` / `MentorDrawer` (`z-40` backdrop, `z-50` panel) paint above; `local dev` when `NEXT_PUBLIC_BUILD_*` unset; prod `deploy {sha} · {time}`; health dot polls `GET /health` | **Code wins** — operational debug chrome below modals; not pitch UX | 2026-05-28 |
 | Forge recovery (CAR-27 / ADR-003) | Not in prototype | N/A | **`LandingRecoveryGate`** on `/` when `GET /me/forges` ≥1: Continue / View all / New forge (`data-screen="landing-recovery"`); `/forges` list; app deep-links `/share/[token]` + `/resume/[token]`; API under **`/public/share`** + **`/public/resume`**; forge complete resume copy-once. MVP English copy on recovery surfaces (full EN cutover = CAR-16) | **Code wins** — base recovery | 2026-08-01 |
 | Forge recovery Slice 2 (CAR-29) | Not in prototype | N/A | Rich **`/forges`**: Rename (`PATCH /me/forges/{id}`), **Revoke share**, re-forge CTA; **`/resume/[token]`** conflict chooser (`resume-conflict` / keep local / switch) before `adoptSession` when local forges ≠ resume owner; forge complete **optional email** store (`PATCH /me/email`, no SMTP); **`GET /me/profile`** + `hydrateOnboardingFromProfile` → `/onboarding/edit` or `startForgeRunFromProfile`; landing CTA **Forge again from last diagnosis** when profile has diagnosis (also empty-artifact + diagnosis gate → Welcome back / New from scratch) | **Code wins** — Slice 2 recovery polish; Borderless send = CAR-28 | 2026-08-01 |
+| Soft gate warning (CAR-15) | Not in prototype | N/A | **`SoftGateWarningBanner`** — copy + status only (`soft_gated` / `soft_gate_warning` from API); shown on `/onboarding/edit` (`soft-gate-warning`) and `/forge` entry (`soft-gate-warning-forge`); **does not block** Generate roadmap / forge stream; lean prune is BE-only (same GraphExecutor path). No new layout/tokens/routes | **Code wins** — F2 soft gate; cutoff retune CAR-18 | 2026-08-03 |
 
 ---
 
@@ -211,4 +212,4 @@ Rule: [.cursor/rules/ui-product-sync.mdc](../.cursor/rules/ui-product-sync.mdc) 
 
 ---
 
-*Last updated: 2026-08-01 — CAR-29 ui-product-sync: rich /forges, resume conflict, optional email, diagnosis re-forge + empty-diagnosis landing gate*
+*Last updated: 2026-08-03 — CAR-15 ui-product-sync: SoftGateWarningBanner on diagnosis edit + forge entry*

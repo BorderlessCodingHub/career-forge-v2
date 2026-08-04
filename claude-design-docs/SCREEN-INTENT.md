@@ -73,8 +73,9 @@
 | Remove | User can remove items |
 | Profile badge | e.g. "Beginner with a JavaScript foundation" |
 | Evidence callout | Evidence-based assessment — no fake "done" |
+| Soft gate (CAR-15) | When `soft_gated` → **Lean roadmap** status banner (`soft-gate-warning`) with API copy; **does not** replace CTA or block forge |
 | CTA | **"Generate roadmap"** — explicit forge trigger |
-| Forbidden | Read-only confirmation with passive "View my roadmap" dead-end |
+| Forbidden | Read-only confirmation with passive "View my roadmap" dead-end; hard-blocking soft gate on this screen |
 
 **Can evolve:** drag-reorder, autosave, sidebar vs full page
 
@@ -90,6 +91,7 @@
 | Event types | `reasoning_delta`, `artifact_found`, `decision` visual language; `artifact_found` may include formatted summaries, official source cards, planner/evaluator verdicts |
 | Feedback | Sequential timeline items — **no generic spinner as primary UX** |
 | Header | "Forging your personalized roadmap" + elapsed / steps |
+| Soft gate (CAR-15) | Optional lean warning at entry (`soft-gate-warning-forge`) when below bar — status only; timeline stream unchanged |
 | Exit | On `graph_ready` → show manual **"View roadmap"** CTA → animation reveal |
 
 **Can evolve:** SSE reconnect, scroll auto-behavior, skip control
@@ -195,4 +197,4 @@
 
 ---
 
-*Last updated: 2026-08-01 — CAR-29 ui-product-sync pass: empty+diagnosis landing, email on reveal, rename testids*
+*Last updated: 2026-08-03 — CAR-15 ui-product-sync: soft-gate lean warning on edit + forge*
