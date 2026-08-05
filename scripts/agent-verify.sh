@@ -54,6 +54,10 @@ check test -f apps/backend/src/career_forge/auth/stream_tickets.py
 check test -f apps/backend/src/career_forge/api/forge.py
 check grep -q 'stream-ticket' apps/backend/src/career_forge/api/forge.py
 check test ! -f apps/backend/src/career_forge/database.py
+check test -f data/must-haves/rag-engineer.json
+check test -f data/golden_cases/rag-engineer__mid.json
+check test -f docs/product/golden-cases/RUBRIC.md
+check test -f docs/product/golden-cases/PEDRO-RUNBOOK.md
 check test -f apps/frontend/src/app/layout.tsx
 check test -f apps/frontend/src/app/\(setup\)/page.tsx
 check test -f docker-compose.yml

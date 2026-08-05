@@ -1,0 +1,86 @@
+{
+  "case_id": "fine-tuning__soft-gated-weak",
+  "goal_id": "fine-tuning",
+  "persona": "soft-gated-weak",
+  "blurb": "Synthetic BASE/PSP soft-gated-weak persona for fine-tuning. Hand-seeded profile_score=0.42.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to fine-tuning?"
+    },
+    {
+      "role": "learner",
+      "text": "Trained a classic ML model"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.47,
+      "note": "thin evidence — soft gate expected"
+    },
+    "background_transfer": {
+      "confidence": 0.4,
+      "note": "thin evidence — soft gate expected"
+    },
+    "learning_velocity": {
+      "confidence": 0.42,
+      "note": "thin evidence — soft gate expected"
+    },
+    "hands_on_proof": {
+      "confidence": 0.37,
+      "note": "thin evidence — soft gate expected"
+    },
+    "constraints": {
+      "confidence": 0.44,
+      "note": "thin evidence — soft gate expected"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Fine-tuning explorer (low confidence)",
+      "track_id": "fine-tuning-beginner",
+      "persona_slug": "fine-tuning_soft-gated-weak"
+    },
+    "strengths": [
+      "Trained a classic ML model",
+      "Comfortable with data"
+    ],
+    "gaps": [
+      "When-to-tune judgment",
+      "No LoRA practice"
+    ],
+    "starting_priorities": [
+      "ft-when-to-tune",
+      "ft-data-prep",
+      "ft-sft"
+    ],
+    "estimated_mastery": {
+      "ft-when-to-tune": 42,
+      "ft-data-prep": 37,
+      "ft-sft": 32,
+      "ft-lora": 27,
+      "ft-quantization": 22
+    },
+    "profile_score": 0.42
+  },
+  "expectations": {
+    "soft_gated": true,
+    "min_pre_inject_coverage": null
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "ft-when-to-tune",
+      "ft-data-prep",
+      "ft-sft",
+      "ft-lora"
+    ],
+    "pre_inject_coverage": 0.4,
+    "validation_sample": {
+      "node_id": "ft-when-to-tune",
+      "question_preview": "When would fine-tuning be the wrong tool versus prompting?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "case_id": "agent-engineer__soft-gated-weak",
+  "goal_id": "agent-engineer",
+  "persona": "soft-gated-weak",
+  "blurb": "Synthetic BASE/PSP soft-gated-weak persona for agent-engineer. Hand-seeded profile_score=0.42.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to agent-engineer?"
+    },
+    {
+      "role": "learner",
+      "text": "Writes scripts"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.47,
+      "note": "thin evidence — soft gate expected"
+    },
+    "background_transfer": {
+      "confidence": 0.4,
+      "note": "thin evidence — soft gate expected"
+    },
+    "learning_velocity": {
+      "confidence": 0.42,
+      "note": "thin evidence — soft gate expected"
+    },
+    "hands_on_proof": {
+      "confidence": 0.37,
+      "note": "thin evidence — soft gate expected"
+    },
+    "constraints": {
+      "confidence": 0.44,
+      "note": "thin evidence — soft gate expected"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Agent explorer (low confidence)",
+      "track_id": "agent-engineer-beginner",
+      "persona_slug": "agent-engineer_soft-gated-weak"
+    },
+    "strengths": [
+      "Writes scripts",
+      "Heard of tools"
+    ],
+    "gaps": [
+      "No tool orchestration",
+      "No failure handling"
+    ],
+    "starting_priorities": [
+      "agent-tool-use",
+      "agent-mcp",
+      "agent-orchestration"
+    ],
+    "estimated_mastery": {
+      "agent-tool-use": 42,
+      "agent-mcp": 37,
+      "agent-orchestration": 32,
+      "agent-planning": 27,
+      "agent-memory": 22
+    },
+    "profile_score": 0.42
+  },
+  "expectations": {
+    "soft_gated": true,
+    "min_pre_inject_coverage": null
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "agent-tool-use",
+      "agent-mcp",
+      "agent-orchestration",
+      "agent-planning"
+    ],
+    "pre_inject_coverage": 0.4,
+    "validation_sample": {
+      "node_id": "agent-tool-use",
+      "question_preview": "What is a tool call in an agent workflow?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

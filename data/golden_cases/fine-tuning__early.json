@@ -1,0 +1,89 @@
+{
+  "case_id": "fine-tuning__early",
+  "goal_id": "fine-tuning",
+  "persona": "early",
+  "blurb": "Synthetic BASE/PSP early persona for fine-tuning. Hand-seeded profile_score=0.58.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to fine-tuning?"
+    },
+    {
+      "role": "learner",
+      "text": "Tried one LoRA notebook"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.63,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "background_transfer": {
+      "confidence": 0.56,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "learning_velocity": {
+      "confidence": 0.58,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "hands_on_proof": {
+      "confidence": 0.53,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "constraints": {
+      "confidence": 0.6,
+      "note": "early BASE/PSP transfer signals"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Early Fine-tuning learner",
+      "track_id": "fine-tuning-beginner",
+      "persona_slug": "fine-tuning_early"
+    },
+    "strengths": [
+      "Tried one LoRA notebook",
+      "Knows SFT exists"
+    ],
+    "gaps": [
+      "DPO/alignment",
+      "Quantization"
+    ],
+    "starting_priorities": [
+      "ft-when-to-tune",
+      "ft-data-prep",
+      "ft-sft"
+    ],
+    "estimated_mastery": {
+      "ft-when-to-tune": 57,
+      "ft-data-prep": 52,
+      "ft-sft": 47,
+      "ft-lora": 42,
+      "ft-quantization": 37
+    },
+    "profile_score": 0.58
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "ft-when-to-tune",
+      "ft-data-prep",
+      "ft-sft",
+      "ft-lora",
+      "ft-quantization",
+      "ft-dpo",
+      "ft-alignment"
+    ],
+    "pre_inject_coverage": 0.7,
+    "validation_sample": {
+      "node_id": "ft-when-to-tune",
+      "question_preview": "What does LoRA change compared to full fine-tuning?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

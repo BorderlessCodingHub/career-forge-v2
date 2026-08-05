@@ -86,7 +86,7 @@ Must-have nodes (8–12/goal) draftados por Pedro a partir de corpus enxuto (~25
 **CTRR** = brand do loop Judge/Interviewer (prose). Chaves em produção = **5 profile dims** ADR-002 (`motivation_goal`, `background_transfer`, `learning_velocity`, `hands_on_proof`, `constraints`) — já live; **não** migrar schema para Conceptual / Technical / Readiness / Resourcefulness.  
 Prompts/rubrics: de “iniciante em transição” → espectro real (early ↔ staff), com perguntas práticas de aplicação e system AI design.
 
-Soft gate: `profile_score = mean(5 dim confidences)` abaixo do cutoff → aviso + forge lean (não bloqueia no piloto). Ver F2.8 / CAR-15.
+Soft gate: `profile_score = mean(5 dim confidences)` abaixo do cutoff → aviso + forge lean (não bloqueia no piloto). Ver F2.8 / CAR-15 / CAR-18 (cutoff **0.50**).
 
 16 golden cases (4 goals × espectro) = critério de QA da F2.
 
@@ -158,8 +158,8 @@ Soft gate: `profile_score = mean(5 dim confidences)` abaixo do cutoff → aviso 
 | F2.5 | Uma barra global de soft gate para os 4 goals |
 | F2.6 | Pedro autor dos 16 casos sintéticos |
 | F2.7 | Soft-gate warning no summary do diagnóstico **e** na entrada do forge |
-| F2.8 | Soft gate quando `profile_score = mean(5 dim confidences) < cutoff` (5 live dims ADR-002; cutoff provisório **0.55** via `SOFT_GATE_CUTOFF`, retune nos golden cases CAR-18; CAR-14 contract) |
-| F2.9 | Fixtures versionadas no repo (`tests/golden/` ou `data/golden_cases/`); LangSmith opcional |
+| F2.8 | Soft gate quando `profile_score = mean(5 dim confidences) < cutoff` (5 live dims ADR-002; cutoff **0.50** via `SOFT_GATE_CUTOFF` — CAR-18 midpoint retune from golden seeds; CAR-14 contract) |
+| F2.9 | Fixtures versionadas em `data/golden_cases/`; LangSmith opcional |
 | F2.10 | Lean prune = must-haves + uma camada de foundation (prereqs) |
 | F2.11 | Validation = alinhamento leve de prompts/catálogo aos LLM goals; sem redesign UX/grafo |
 | F2.12 | Trabalho interno sem externo começa cedo; harness + aceite golden esperam must-haves frozen |

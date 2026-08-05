@@ -1,0 +1,92 @@
+{
+  "case_id": "agent-engineer__staff",
+  "goal_id": "agent-engineer",
+  "persona": "staff",
+  "blurb": "Synthetic BASE/PSP staff persona for agent-engineer. Hand-seeded profile_score=0.9.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to agent-engineer?"
+    },
+    {
+      "role": "learner",
+      "text": "Shipped multi-step agents"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.95,
+      "note": "staff-level ownership evidence"
+    },
+    "background_transfer": {
+      "confidence": 0.88,
+      "note": "staff-level ownership evidence"
+    },
+    "learning_velocity": {
+      "confidence": 0.9,
+      "note": "staff-level ownership evidence"
+    },
+    "hands_on_proof": {
+      "confidence": 0.93,
+      "note": "staff-level ownership evidence"
+    },
+    "constraints": {
+      "confidence": 0.92,
+      "note": "staff-level ownership evidence"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Staff Agent engineer",
+      "track_id": "agent-engineer-beginner",
+      "persona_slug": "agent-engineer_staff"
+    },
+    "strengths": [
+      "Shipped multi-step agents",
+      "Owns guardrails"
+    ],
+    "gaps": [
+      "MCP fleets",
+      "Policy enforcement"
+    ],
+    "starting_priorities": [
+      "agent-tool-use",
+      "agent-mcp",
+      "agent-orchestration"
+    ],
+    "estimated_mastery": {
+      "agent-tool-use": 90,
+      "agent-mcp": 85,
+      "agent-orchestration": 80,
+      "agent-planning": 75,
+      "agent-memory": 70
+    },
+    "profile_score": 0.9
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "agent-tool-use",
+      "agent-mcp",
+      "agent-orchestration",
+      "agent-planning",
+      "agent-memory",
+      "agent-multi-agent",
+      "agent-failure-modes",
+      "agent-observability",
+      "agent-guardrails",
+      "agent-ship"
+    ],
+    "pre_inject_coverage": 1.0,
+    "validation_sample": {
+      "node_id": "agent-tool-use",
+      "question_preview": "How do you isolate blast radius when one tool misbehaves?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

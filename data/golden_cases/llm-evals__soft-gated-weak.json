@@ -1,0 +1,86 @@
+{
+  "case_id": "llm-evals__soft-gated-weak",
+  "goal_id": "llm-evals",
+  "persona": "soft-gated-weak",
+  "blurb": "Synthetic BASE/PSP soft-gated-weak persona for llm-evals. Hand-seeded profile_score=0.42.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to llm-evals?"
+    },
+    {
+      "role": "learner",
+      "text": "Cares about quality"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.47,
+      "note": "thin evidence — soft gate expected"
+    },
+    "background_transfer": {
+      "confidence": 0.4,
+      "note": "thin evidence — soft gate expected"
+    },
+    "learning_velocity": {
+      "confidence": 0.42,
+      "note": "thin evidence — soft gate expected"
+    },
+    "hands_on_proof": {
+      "confidence": 0.37,
+      "note": "thin evidence — soft gate expected"
+    },
+    "constraints": {
+      "confidence": 0.44,
+      "note": "thin evidence — soft gate expected"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Evals explorer (low confidence)",
+      "track_id": "llm-evals-beginner",
+      "persona_slug": "llm-evals_soft-gated-weak"
+    },
+    "strengths": [
+      "Cares about quality",
+      "Used ChatGPT"
+    ],
+    "gaps": [
+      "No metrics vocabulary",
+      "No datasets"
+    ],
+    "starting_priorities": [
+      "evals-metrics",
+      "evals-llm-judge",
+      "evals-datasets"
+    ],
+    "estimated_mastery": {
+      "evals-metrics": 42,
+      "evals-llm-judge": 37,
+      "evals-datasets": 32,
+      "evals-regression": 27,
+      "evals-tracing": 22
+    },
+    "profile_score": 0.42
+  },
+  "expectations": {
+    "soft_gated": true,
+    "min_pre_inject_coverage": null
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "evals-metrics",
+      "evals-llm-judge",
+      "evals-datasets",
+      "evals-regression"
+    ],
+    "pre_inject_coverage": 0.4,
+    "validation_sample": {
+      "node_id": "evals-metrics",
+      "question_preview": "Name one metric you could use to score model answers."
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

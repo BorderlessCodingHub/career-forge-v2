@@ -1,0 +1,91 @@
+{
+  "case_id": "fine-tuning__mid",
+  "goal_id": "fine-tuning",
+  "persona": "mid",
+  "blurb": "Synthetic BASE/PSP mid persona for fine-tuning. Hand-seeded profile_score=0.75.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to fine-tuning?"
+    },
+    {
+      "role": "learner",
+      "text": "Prepared SFT datasets"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.8,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "background_transfer": {
+      "confidence": 0.73,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "learning_velocity": {
+      "confidence": 0.75,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "hands_on_proof": {
+      "confidence": 0.7,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "constraints": {
+      "confidence": 0.77,
+      "note": "solid mid-spectrum application evidence"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Mid Fine-tuning practitioner",
+      "track_id": "fine-tuning-beginner",
+      "persona_slug": "fine-tuning_mid"
+    },
+    "strengths": [
+      "Prepared SFT datasets",
+      "Compared LoRA vs full FT"
+    ],
+    "gaps": [
+      "Distributed training",
+      "Serving"
+    ],
+    "starting_priorities": [
+      "ft-when-to-tune",
+      "ft-data-prep",
+      "ft-sft"
+    ],
+    "estimated_mastery": {
+      "ft-when-to-tune": 75,
+      "ft-data-prep": 70,
+      "ft-sft": 65,
+      "ft-lora": 60,
+      "ft-quantization": 55
+    },
+    "profile_score": 0.75
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "ft-when-to-tune",
+      "ft-data-prep",
+      "ft-sft",
+      "ft-lora",
+      "ft-quantization",
+      "ft-dpo",
+      "ft-alignment",
+      "ft-eval",
+      "noise-extra"
+    ],
+    "pre_inject_coverage": 0.8,
+    "validation_sample": {
+      "node_id": "ft-when-to-tune",
+      "question_preview": "How do you decide between SFT and preference optimization?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

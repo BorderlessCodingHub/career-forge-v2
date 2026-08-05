@@ -1,0 +1,91 @@
+{
+  "case_id": "rag-engineer__mid",
+  "goal_id": "rag-engineer",
+  "persona": "mid",
+  "blurb": "Synthetic BASE/PSP mid persona for rag-engineer. Hand-seeded profile_score=0.75.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to rag-engineer?"
+    },
+    {
+      "role": "learner",
+      "text": "Shipped retrieval in a side project"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.8,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "background_transfer": {
+      "confidence": 0.73,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "learning_velocity": {
+      "confidence": 0.75,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "hands_on_proof": {
+      "confidence": 0.7,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "constraints": {
+      "confidence": 0.77,
+      "note": "solid mid-spectrum application evidence"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Mid RAG practitioner",
+      "track_id": "rag-engineer-beginner",
+      "persona_slug": "rag-engineer_mid"
+    },
+    "strengths": [
+      "Shipped retrieval in a side project",
+      "Understands chunking tradeoffs"
+    ],
+    "gaps": [
+      "Latency/cost tuning",
+      "Orchestration patterns"
+    ],
+    "starting_priorities": [
+      "rag-embeddings",
+      "rag-chunking",
+      "rag-retrieval"
+    ],
+    "estimated_mastery": {
+      "rag-embeddings": 75,
+      "rag-chunking": 70,
+      "rag-retrieval": 65,
+      "rag-hybrid-search": 60,
+      "rag-rerank": 55
+    },
+    "profile_score": 0.75
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "rag-embeddings",
+      "rag-chunking",
+      "rag-retrieval",
+      "rag-hybrid-search",
+      "rag-rerank",
+      "rag-grounding",
+      "rag-eval",
+      "rag-orchestration",
+      "noise-extra"
+    ],
+    "pre_inject_coverage": 0.8,
+    "validation_sample": {
+      "node_id": "rag-embeddings",
+      "question_preview": "Explain when hybrid search beats dense-only retrieval."
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

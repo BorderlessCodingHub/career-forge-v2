@@ -1,0 +1,92 @@
+{
+  "case_id": "llm-evals__staff",
+  "goal_id": "llm-evals",
+  "persona": "staff",
+  "blurb": "Synthetic BASE/PSP staff persona for llm-evals. Hand-seeded profile_score=0.9.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to llm-evals?"
+    },
+    {
+      "role": "learner",
+      "text": "Owns LLM-as-judge + online monitors"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.95,
+      "note": "staff-level ownership evidence"
+    },
+    "background_transfer": {
+      "confidence": 0.88,
+      "note": "staff-level ownership evidence"
+    },
+    "learning_velocity": {
+      "confidence": 0.9,
+      "note": "staff-level ownership evidence"
+    },
+    "hands_on_proof": {
+      "confidence": 0.93,
+      "note": "staff-level ownership evidence"
+    },
+    "constraints": {
+      "confidence": 0.92,
+      "note": "staff-level ownership evidence"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Staff Evals engineer",
+      "track_id": "llm-evals-beginner",
+      "persona_slug": "llm-evals_staff"
+    },
+    "strengths": [
+      "Owns LLM-as-judge + online monitors",
+      "Cost/latency budgets"
+    ],
+    "gaps": [
+      "Guardrail eval suites",
+      "LLMOps handoff"
+    ],
+    "starting_priorities": [
+      "evals-metrics",
+      "evals-llm-judge",
+      "evals-datasets"
+    ],
+    "estimated_mastery": {
+      "evals-metrics": 90,
+      "evals-llm-judge": 85,
+      "evals-datasets": 80,
+      "evals-regression": 75,
+      "evals-tracing": 70
+    },
+    "profile_score": 0.9
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "evals-metrics",
+      "evals-llm-judge",
+      "evals-datasets",
+      "evals-regression",
+      "evals-tracing",
+      "evals-online",
+      "evals-prompt-versioning",
+      "evals-cost-latency",
+      "evals-guardrails-safety",
+      "evals-llmops"
+    ],
+    "pre_inject_coverage": 1.0,
+    "validation_sample": {
+      "node_id": "evals-metrics",
+      "question_preview": "Design an online eval that catches silent quality drops."
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

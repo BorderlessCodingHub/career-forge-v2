@@ -1,0 +1,92 @@
+{
+  "case_id": "fine-tuning__staff",
+  "goal_id": "fine-tuning",
+  "persona": "staff",
+  "blurb": "Synthetic BASE/PSP staff persona for fine-tuning. Hand-seeded profile_score=0.9.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to fine-tuning?"
+    },
+    {
+      "role": "learner",
+      "text": "Shipped aligned models"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.95,
+      "note": "staff-level ownership evidence"
+    },
+    "background_transfer": {
+      "confidence": 0.88,
+      "note": "staff-level ownership evidence"
+    },
+    "learning_velocity": {
+      "confidence": 0.9,
+      "note": "staff-level ownership evidence"
+    },
+    "hands_on_proof": {
+      "confidence": 0.93,
+      "note": "staff-level ownership evidence"
+    },
+    "constraints": {
+      "confidence": 0.92,
+      "note": "staff-level ownership evidence"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Staff Fine-tuning engineer",
+      "track_id": "fine-tuning-beginner",
+      "persona_slug": "fine-tuning_staff"
+    },
+    "strengths": [
+      "Shipped aligned models",
+      "Owns eval + serve path"
+    ],
+    "gaps": [
+      "Multi-tenant serve SLOs",
+      "Data governance"
+    ],
+    "starting_priorities": [
+      "ft-when-to-tune",
+      "ft-data-prep",
+      "ft-sft"
+    ],
+    "estimated_mastery": {
+      "ft-when-to-tune": 90,
+      "ft-data-prep": 85,
+      "ft-sft": 80,
+      "ft-lora": 75,
+      "ft-quantization": 70
+    },
+    "profile_score": 0.9
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "ft-when-to-tune",
+      "ft-data-prep",
+      "ft-sft",
+      "ft-lora",
+      "ft-quantization",
+      "ft-dpo",
+      "ft-alignment",
+      "ft-eval",
+      "ft-distributed",
+      "ft-serve"
+    ],
+    "pre_inject_coverage": 1.0,
+    "validation_sample": {
+      "node_id": "ft-when-to-tune",
+      "question_preview": "How do you evaluate a tuned model before production serve?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

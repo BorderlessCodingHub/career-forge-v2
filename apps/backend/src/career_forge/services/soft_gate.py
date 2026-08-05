@@ -7,7 +7,8 @@ from dataclasses import dataclass
 
 from career_forge.schemas.diagnosis import DiagnosisResponse
 
-DEFAULT_SOFT_GATE_CUTOFF = 0.55
+# Retuned CAR-18 from golden hand-seeds: midpoint(max weak=0.42, min early=0.58)=0.50
+DEFAULT_SOFT_GATE_CUTOFF = 0.50
 
 SOFT_GATE_WARNING = (
     "Your diagnosis confidence is below our bar — we'll build a leaner roadmap "

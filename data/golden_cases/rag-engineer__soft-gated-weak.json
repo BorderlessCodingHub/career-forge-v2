@@ -1,0 +1,86 @@
+{
+  "case_id": "rag-engineer__soft-gated-weak",
+  "goal_id": "rag-engineer",
+  "persona": "soft-gated-weak",
+  "blurb": "Synthetic BASE/PSP soft-gated-weak persona for rag-engineer. Hand-seeded profile_score=0.42.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to rag-engineer?"
+    },
+    {
+      "role": "learner",
+      "text": "Curious about LLMs"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.47,
+      "note": "thin evidence — soft gate expected"
+    },
+    "background_transfer": {
+      "confidence": 0.4,
+      "note": "thin evidence — soft gate expected"
+    },
+    "learning_velocity": {
+      "confidence": 0.42,
+      "note": "thin evidence — soft gate expected"
+    },
+    "hands_on_proof": {
+      "confidence": 0.37,
+      "note": "thin evidence — soft gate expected"
+    },
+    "constraints": {
+      "confidence": 0.44,
+      "note": "thin evidence — soft gate expected"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "RAG explorer (low confidence)",
+      "track_id": "rag-engineer-beginner",
+      "persona_slug": "rag-engineer_soft-gated-weak"
+    },
+    "strengths": [
+      "Curious about LLMs",
+      "Can read Python"
+    ],
+    "gaps": [
+      "No retrieval practice",
+      "Unclear grounding"
+    ],
+    "starting_priorities": [
+      "rag-embeddings",
+      "rag-chunking",
+      "rag-retrieval"
+    ],
+    "estimated_mastery": {
+      "rag-embeddings": 42,
+      "rag-chunking": 37,
+      "rag-retrieval": 32,
+      "rag-hybrid-search": 27,
+      "rag-rerank": 22
+    },
+    "profile_score": 0.42
+  },
+  "expectations": {
+    "soft_gated": true,
+    "min_pre_inject_coverage": null
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "rag-embeddings",
+      "rag-chunking",
+      "rag-retrieval",
+      "rag-hybrid-search"
+    ],
+    "pre_inject_coverage": 0.4,
+    "validation_sample": {
+      "node_id": "rag-embeddings",
+      "question_preview": "In one paragraph, what does retrieval do in a RAG system?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}
