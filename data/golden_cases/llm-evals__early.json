@@ -1,0 +1,89 @@
+{
+  "case_id": "llm-evals__early",
+  "goal_id": "llm-evals",
+  "persona": "early",
+  "blurb": "Synthetic BASE/PSP early persona for llm-evals. Hand-seeded profile_score=0.58.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to llm-evals?"
+    },
+    {
+      "role": "learner",
+      "text": "Wrote a checklist"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.63,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "background_transfer": {
+      "confidence": 0.56,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "learning_velocity": {
+      "confidence": 0.58,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "hands_on_proof": {
+      "confidence": 0.53,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "constraints": {
+      "confidence": 0.6,
+      "note": "early BASE/PSP transfer signals"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Early Evals learner",
+      "track_id": "llm-evals-beginner",
+      "persona_slug": "llm-evals_early"
+    },
+    "strengths": [
+      "Wrote a checklist",
+      "Ran manual spot-checks"
+    ],
+    "gaps": [
+      "LLM-as-judge bias",
+      "Tracing"
+    ],
+    "starting_priorities": [
+      "evals-metrics",
+      "evals-llm-judge",
+      "evals-datasets"
+    ],
+    "estimated_mastery": {
+      "evals-metrics": 57,
+      "evals-llm-judge": 52,
+      "evals-datasets": 47,
+      "evals-regression": 42,
+      "evals-tracing": 37
+    },
+    "profile_score": 0.58
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "evals-metrics",
+      "evals-llm-judge",
+      "evals-datasets",
+      "evals-regression",
+      "evals-tracing",
+      "evals-online",
+      "evals-prompt-versioning"
+    ],
+    "pre_inject_coverage": 0.7,
+    "validation_sample": {
+      "node_id": "evals-metrics",
+      "question_preview": "How would you build a small golden set for a FAQ bot?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

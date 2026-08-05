@@ -2,7 +2,7 @@
 
 > **Authority:** [ADR-001](../decisions/ADR-001-adaptive-diagnosis-ctrr.md) (business decisions) · this doc (operational spec) · [V2-PLAN.md](../V2-PLAN.md) (v2 soft gate / audience)
 
-**Status:** Implemented in production path. **CAR-14 (2026-08-02):** Interviewer/Judge/Finalize prompts + fallback bank + validation templates recalibrated to **English** for BASE/PSP early↔staff across the 4 LLM goals. Live rubric remains the **5 profile dims** (`motivation_goal` … `constraints`). Finalize emits `profile_score = mean(5 confidences)` for CAR-15 soft gate. **CAR-15:** soft gate + lean forge prune + warnings (`soft_gated` / `soft_gate_warning` derived at runtime; cutoff `SOFT_GATE_CUTOFF` default 0.55). Full golden suite is CAR-18.
+**Status:** Implemented in production path. **CAR-14 (2026-08-02):** Interviewer/Judge/Finalize prompts + fallback bank + validation templates recalibrated to **English** for BASE/PSP early↔staff across the 4 LLM goals. Live rubric remains the **5 profile dims** (`motivation_goal` … `constraints`). Finalize emits `profile_score = mean(5 confidences)` for CAR-15 soft gate. **CAR-15:** soft gate + lean forge prune + warnings (`soft_gated` / `soft_gate_warning` derived at runtime). **CAR-18:** cutoff `SOFT_GATE_CUTOFF` default **0.50** (midpoint retune from golden seeds); suite in `data/golden_cases/`.
 
 ---
 

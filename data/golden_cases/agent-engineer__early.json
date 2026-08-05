@@ -1,0 +1,89 @@
+{
+  "case_id": "agent-engineer__early",
+  "goal_id": "agent-engineer",
+  "persona": "early",
+  "blurb": "Synthetic BASE/PSP early persona for agent-engineer. Hand-seeded profile_score=0.58.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to agent-engineer?"
+    },
+    {
+      "role": "learner",
+      "text": "Called one tool API"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.63,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "background_transfer": {
+      "confidence": 0.56,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "learning_velocity": {
+      "confidence": 0.58,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "hands_on_proof": {
+      "confidence": 0.53,
+      "note": "early BASE/PSP transfer signals"
+    },
+    "constraints": {
+      "confidence": 0.6,
+      "note": "early BASE/PSP transfer signals"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Early Agent learner",
+      "track_id": "agent-engineer-beginner",
+      "persona_slug": "agent-engineer_early"
+    },
+    "strengths": [
+      "Called one tool API",
+      "Understands prompts"
+    ],
+    "gaps": [
+      "Planning loops",
+      "Memory"
+    ],
+    "starting_priorities": [
+      "agent-tool-use",
+      "agent-mcp",
+      "agent-orchestration"
+    ],
+    "estimated_mastery": {
+      "agent-tool-use": 57,
+      "agent-mcp": 52,
+      "agent-orchestration": 47,
+      "agent-planning": 42,
+      "agent-memory": 37
+    },
+    "profile_score": 0.58
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "agent-tool-use",
+      "agent-mcp",
+      "agent-orchestration",
+      "agent-planning",
+      "agent-memory",
+      "agent-multi-agent",
+      "agent-failure-modes"
+    ],
+    "pre_inject_coverage": 0.7,
+    "validation_sample": {
+      "node_id": "agent-tool-use",
+      "question_preview": "How would you retry a failed tool call safely?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

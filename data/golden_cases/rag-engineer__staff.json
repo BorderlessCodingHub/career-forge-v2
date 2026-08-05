@@ -1,0 +1,92 @@
+{
+  "case_id": "rag-engineer__staff",
+  "goal_id": "rag-engineer",
+  "persona": "staff",
+  "blurb": "Synthetic BASE/PSP staff persona for rag-engineer. Hand-seeded profile_score=0.9.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to rag-engineer?"
+    },
+    {
+      "role": "learner",
+      "text": "Owned production RAG evals"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.95,
+      "note": "staff-level ownership evidence"
+    },
+    "background_transfer": {
+      "confidence": 0.88,
+      "note": "staff-level ownership evidence"
+    },
+    "learning_velocity": {
+      "confidence": 0.9,
+      "note": "staff-level ownership evidence"
+    },
+    "hands_on_proof": {
+      "confidence": 0.93,
+      "note": "staff-level ownership evidence"
+    },
+    "constraints": {
+      "confidence": 0.92,
+      "note": "staff-level ownership evidence"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Staff RAG engineer",
+      "track_id": "rag-engineer-beginner",
+      "persona_slug": "rag-engineer_staff"
+    },
+    "strengths": [
+      "Owned production RAG evals",
+      "Debugged retrieval regressions"
+    ],
+    "gaps": [
+      "Multi-index routing",
+      "Online eval loops"
+    ],
+    "starting_priorities": [
+      "rag-embeddings",
+      "rag-chunking",
+      "rag-retrieval"
+    ],
+    "estimated_mastery": {
+      "rag-embeddings": 90,
+      "rag-chunking": 85,
+      "rag-retrieval": 80,
+      "rag-hybrid-search": 75,
+      "rag-rerank": 70
+    },
+    "profile_score": 0.9
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "rag-embeddings",
+      "rag-chunking",
+      "rag-retrieval",
+      "rag-hybrid-search",
+      "rag-rerank",
+      "rag-grounding",
+      "rag-eval",
+      "rag-orchestration",
+      "rag-production",
+      "rag-latency-cost"
+    ],
+    "pre_inject_coverage": 1.0,
+    "validation_sample": {
+      "node_id": "rag-embeddings",
+      "question_preview": "How do you detect and roll back a retrieval quality regression?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}

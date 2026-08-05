@@ -91,6 +91,22 @@ def must_haves_dir() -> Path:
     )
 
 
+def golden_cases_dir() -> Path:
+    """Resolve CAR-18 golden case fixtures (`data/golden_cases/`)."""
+    env_path = os.environ.get("GOLDEN_CASES_DIR")
+    if env_path:
+        return Path(env_path)
+
+    data_root = _find_data_root()
+    directory = data_root / "golden_cases"
+    if directory.is_dir():
+        return directory
+
+    raise FileNotFoundError(
+        "data/golden_cases/ not found — set GOLDEN_CASES_DIR or mount ./data",
+    )
+
+
 def roadmap_json_path(track_id: str | None = None) -> Path:
     """Resolve a single-track catalog JSON.
 

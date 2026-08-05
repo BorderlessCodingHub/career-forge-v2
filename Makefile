@@ -1,4 +1,4 @@
-.PHONY: smoke agent-verify up down status test stack-smoke seed cost-gate must-have-coverage help
+.PHONY: smoke agent-verify up down status test stack-smoke seed cost-gate must-have-coverage golden-check golden-run help
 
 COMPOSE ?= docker compose
 
@@ -12,6 +12,8 @@ help:
 	@echo "  make seed           Seed skill catalog + demo Ana (requires DATABASE_URL)"
 	@echo "  make cost-gate     CAR-7 synthetic cost gate + Yuri report"
 	@echo "  make must-have-coverage  CAR-17 must-have ≥70% smoke harness"
+	@echo "  make golden-check  CAR-18 deterministic golden suite"
+	@echo "  make golden-run    CAR-18 Pedro helper (CASE=… / ALL=1 / LIVE=1)"
 	@echo "  make stack-smoke   Docker stack health only"
 
 # Full smoke — harness + monorepo + stack health (starts docker if needed)
@@ -61,3 +63,17 @@ cost-gate:
 
 must-have-coverage:
 	@bash scripts/must-have-coverage.sh
+
+golden-check:
+	@bash scripts/golden-check.sh
+
+# Examples:
+#   make golden-run CASE=rag-engineer__mid
+#   make golden-run ALL=1
+#   make golden-run ALL=1 LIVE=1
+golden-run:
+	@args=""; \
+	if [ -n "$${CASE:-}" ]; then args="$$args --case $${CASE}"; fi; \
+	if [ "$${ALL:-}" = "1" ]; then args="$$args --all"; fi; \
+	if [ "$${LIVE:-}" = "1" ]; then args="$$args --live"; fi; \
+	bash scripts/golden-run.sh $$args

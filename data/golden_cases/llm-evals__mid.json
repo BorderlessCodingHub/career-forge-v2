@@ -1,0 +1,91 @@
+{
+  "case_id": "llm-evals__mid",
+  "goal_id": "llm-evals",
+  "persona": "mid",
+  "blurb": "Synthetic BASE/PSP mid persona for llm-evals. Hand-seeded profile_score=0.75.",
+  "transcript_context": [
+    {
+      "role": "interviewer",
+      "text": "What have you built related to llm-evals?"
+    },
+    {
+      "role": "learner",
+      "text": "Built offline eval sets"
+    }
+  ],
+  "belief_notes": {
+    "motivation_goal": {
+      "confidence": 0.8,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "background_transfer": {
+      "confidence": 0.73,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "learning_velocity": {
+      "confidence": 0.75,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "hands_on_proof": {
+      "confidence": 0.7,
+      "note": "solid mid-spectrum application evidence"
+    },
+    "constraints": {
+      "confidence": 0.77,
+      "note": "solid mid-spectrum application evidence"
+    }
+  },
+  "diagnosis": {
+    "profile": {
+      "label": "Mid Evals practitioner",
+      "track_id": "llm-evals-beginner",
+      "persona_slug": "llm-evals_mid"
+    },
+    "strengths": [
+      "Built offline eval sets",
+      "Tracked regressions"
+    ],
+    "gaps": [
+      "Online evals",
+      "Prompt versioning"
+    ],
+    "starting_priorities": [
+      "evals-metrics",
+      "evals-llm-judge",
+      "evals-datasets"
+    ],
+    "estimated_mastery": {
+      "evals-metrics": 75,
+      "evals-llm-judge": 70,
+      "evals-datasets": 65,
+      "evals-regression": 60,
+      "evals-tracing": 55
+    },
+    "profile_score": 0.75
+  },
+  "expectations": {
+    "soft_gated": false,
+    "min_pre_inject_coverage": 0.7
+  },
+  "snapshot": {
+    "source": "provisional-harness",
+    "forged_node_ids": [
+      "evals-metrics",
+      "evals-llm-judge",
+      "evals-datasets",
+      "evals-regression",
+      "evals-tracing",
+      "evals-online",
+      "evals-prompt-versioning",
+      "evals-cost-latency",
+      "noise-extra"
+    ],
+    "pre_inject_coverage": 0.8,
+    "validation_sample": {
+      "node_id": "evals-metrics",
+      "question_preview": "When is LLM-as-judge risky, and how do you calibrate it?"
+    },
+    "scored_at": null,
+    "scorecard": null
+  }
+}
