@@ -2,12 +2,21 @@
   "track": {
     "id": "agent-engineer-beginner",
     "title": "Agent Engineering",
-    "description": "Minimal catalog for agent systems — tools, MCP, planning, and failure modes."
+    "description": "Minimal catalog for agent systems \u2014 tools, MCP, planning, and failure modes."
   },
   "categories": [
-    { "id": "fundamentos", "label": "Foundations" },
-    { "id": "core", "label": "Agent Core" },
-    { "id": "integracao", "label": "Production" }
+    {
+      "id": "fundamentos",
+      "label": "Foundations"
+    },
+    {
+      "id": "core",
+      "label": "Agent Core"
+    },
+    {
+      "id": "integracao",
+      "label": "Production"
+    }
   ],
   "nodes": [
     {
@@ -26,7 +35,7 @@
       ],
       "rubric": [
         "Writes a clear tool JSON schema",
-        "Explains tool-call → result → next turn",
+        "Explains tool-call \u2192 result \u2192 next turn",
         "Names a validation rule for tool args"
       ]
     },
@@ -38,7 +47,9 @@
       "icon": "git",
       "side": "right",
       "sort_order": 2,
-      "prerequisites": ["agent-tool-use"],
+      "prerequisites": [
+        "agent-tool-use"
+      ],
       "outcomes": [
         "Explain MCP client/server roles",
         "Expose a simple MCP tool or resource",
@@ -58,14 +69,16 @@
       "icon": "server",
       "side": "left",
       "sort_order": 3,
-      "prerequisites": ["agent-mcp"],
+      "prerequisites": [
+        "agent-mcp"
+      ],
       "outcomes": [
         "Implement a plan-act-observe loop",
         "Break a goal into tool-sized steps",
         "Stop when success criteria are met"
       ],
       "rubric": [
-        "Outlines plan → act → observe",
+        "Outlines plan \u2192 act \u2192 observe",
         "Gives an example multi-step plan",
         "Defines a clear stop condition"
       ]
@@ -78,7 +91,9 @@
       "icon": "database",
       "side": "right",
       "sort_order": 4,
-      "prerequisites": ["agent-planning"],
+      "prerequisites": [
+        "agent-planning"
+      ],
       "outcomes": [
         "Distinguish working memory vs durable store",
         "Persist useful facts across sessions",
@@ -98,7 +113,9 @@
       "icon": "code",
       "side": "left",
       "sort_order": 5,
-      "prerequisites": ["agent-memory"],
+      "prerequisites": [
+        "agent-memory"
+      ],
       "outcomes": [
         "Detect and break infinite tool loops",
         "Add guardrails for destructive tools",
@@ -118,7 +135,9 @@
       "icon": "key",
       "side": "right",
       "sort_order": 6,
-      "prerequisites": ["agent-failure-modes"],
+      "prerequisites": [
+        "agent-failure-modes"
+      ],
       "outcomes": [
         "Trace each tool call and model turn",
         "Log decisions that led to a bad outcome",
@@ -138,7 +157,9 @@
       "icon": "boxes",
       "side": "left",
       "sort_order": 7,
-      "prerequisites": ["agent-observability"],
+      "prerequisites": [
+        "agent-observability"
+      ],
       "outcomes": [
         "Ship a single-purpose agent with tool allowlist",
         "Document runbook for operators",
@@ -149,6 +170,48 @@
         "Lists operator-facing failure playbooks",
         "States cost/latency limits"
       ]
+    },
+    {
+      "id": "agent-orchestration",
+      "title": "Stateful orchestration (LangGraph)",
+      "category": "core",
+      "description": "Graph runtimes and durable agent state",
+      "icon": "server",
+      "side": "left",
+      "sort_order": 8,
+      "prerequisites": [
+        "agent-mcp"
+      ],
+      "outcomes": [],
+      "rubric": []
+    },
+    {
+      "id": "agent-multi-agent",
+      "title": "Multi-agent coordination",
+      "category": "core",
+      "description": "Crews, handoffs, and shared tools",
+      "icon": "git",
+      "side": "right",
+      "sort_order": 9,
+      "prerequisites": [
+        "agent-planning"
+      ],
+      "outcomes": [],
+      "rubric": []
+    },
+    {
+      "id": "agent-guardrails",
+      "title": "Guardrails & permissions",
+      "category": "integracao",
+      "description": "Auth, rate limits, tool permission, safety",
+      "icon": "key",
+      "side": "left",
+      "sort_order": 10,
+      "prerequisites": [
+        "agent-failure-modes"
+      ],
+      "outcomes": [],
+      "rubric": []
     }
   ]
 }

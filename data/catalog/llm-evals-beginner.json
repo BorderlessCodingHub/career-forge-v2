@@ -2,12 +2,21 @@
   "track": {
     "id": "llm-evals-beginner",
     "title": "LLM Evaluation & Observability",
-    "description": "Minimal catalog for LLMOps — metrics, judges, regression, and online evals."
+    "description": "Minimal catalog for LLMOps \u2014 metrics, judges, regression, and online evals."
   },
   "categories": [
-    { "id": "fundamentos", "label": "Foundations" },
-    { "id": "core", "label": "Eval Core" },
-    { "id": "integracao", "label": "LLMOps" }
+    {
+      "id": "fundamentos",
+      "label": "Foundations"
+    },
+    {
+      "id": "core",
+      "label": "Eval Core"
+    },
+    {
+      "id": "integracao",
+      "label": "LLMOps"
+    }
   ],
   "nodes": [
     {
@@ -38,7 +47,9 @@
       "icon": "git",
       "side": "right",
       "sort_order": 2,
-      "prerequisites": ["evals-metrics"],
+      "prerequisites": [
+        "evals-metrics"
+      ],
       "outcomes": [
         "Write a judge rubric with clear criteria",
         "Calibrate judge scores against human labels",
@@ -58,7 +69,9 @@
       "icon": "server",
       "side": "left",
       "sort_order": 3,
-      "prerequisites": ["evals-llm-judge"],
+      "prerequisites": [
+        "evals-llm-judge"
+      ],
       "outcomes": [
         "Build a versioned golden dataset",
         "Cover edge cases and safety slices",
@@ -78,7 +91,9 @@
       "icon": "database",
       "side": "right",
       "sort_order": 4,
-      "prerequisites": ["evals-datasets"],
+      "prerequisites": [
+        "evals-datasets"
+      ],
       "outcomes": [
         "Run offline evals in CI on every change",
         "Set pass/fail thresholds with owners",
@@ -98,7 +113,9 @@
       "icon": "code",
       "side": "left",
       "sort_order": 5,
-      "prerequisites": ["evals-regression"],
+      "prerequisites": [
+        "evals-regression"
+      ],
       "outcomes": [
         "Instrument LLM calls with traces",
         "Attach inputs/outputs for debugging",
@@ -118,7 +135,9 @@
       "icon": "key",
       "side": "right",
       "sort_order": 6,
-      "prerequisites": ["evals-tracing"],
+      "prerequisites": [
+        "evals-tracing"
+      ],
       "outcomes": [
         "Sample live traffic for offline review",
         "Collect user feedback signals safely",
@@ -138,7 +157,9 @@
       "icon": "boxes",
       "side": "left",
       "sort_order": 7,
-      "prerequisites": ["evals-online"],
+      "prerequisites": [
+        "evals-online"
+      ],
       "outcomes": [
         "Turn eval failures into backlog items",
         "Schedule model/prompt refresh cadences",
@@ -149,6 +170,48 @@
         "Proposes a refresh cadence",
         "Sketches a stakeholder eval report"
       ]
+    },
+    {
+      "id": "evals-prompt-versioning",
+      "title": "Prompt & model versioning",
+      "category": "core",
+      "description": "Prompt libraries, experiment compare, rollback",
+      "icon": "git",
+      "side": "left",
+      "sort_order": 8,
+      "prerequisites": [
+        "evals-datasets"
+      ],
+      "outcomes": [],
+      "rubric": []
+    },
+    {
+      "id": "evals-cost-latency",
+      "title": "Cost & latency observability",
+      "category": "integracao",
+      "description": "Token economics, p95 latency, cost attribution",
+      "icon": "key",
+      "side": "right",
+      "sort_order": 9,
+      "prerequisites": [
+        "evals-tracing"
+      ],
+      "outcomes": [],
+      "rubric": []
+    },
+    {
+      "id": "evals-guardrails-safety",
+      "title": "Safety & guardrail scoring",
+      "category": "integracao",
+      "description": "PII, toxicity, refusal, moderation checks",
+      "icon": "boxes",
+      "side": "left",
+      "sort_order": 10,
+      "prerequisites": [
+        "evals-online"
+      ],
+      "outcomes": [],
+      "rubric": []
     }
   ]
 }

@@ -13,11 +13,14 @@ A aceitação do lean forge na F2 mede **≥70% de cobertura pós-forge** desses
 
 ## Protocolo de sign-off
 
-1. **Rascunho** (este PR / CAR-8) — Pedro redige a partir de um corpus enxuto de vagas (~25–40 fontes/goal).
+1. **Rascunho** (CAR-8) — Pedro redige a partir de um corpus enxuto de vagas (~25–40 fontes/goal).
 2. **Uma rodada** — Yuri revisa; silêncio = **congelamento do baseline** para o harness da F2 (CAR-17 / CAR-18).
-3. **Wiring** — os must-haves entram no prune do forge + harness de cobertura em **CAR-17** (fora de escopo aqui).
+3. **Wiring** — prune + bias/inject + harness de cobertura em **CAR-17**. Aceite formal golden = **CAR-18**.
 
-**Não** edite [`data/catalog/`](../../../data/catalog/) na CAR-8. Os `id`s de seed do catálogo são reutilizados quando batem; ids novos são propostos para a expansão do catálogo na F2.
+## Freeze (CAR-17)
+
+**Silence baseline — congelado 2026-08-04 por Pedro.** Spot-check do Yuri → CAR-18. SoT máquina: `data/must-haves/*.json`.
+
 
 ## Notas de amostragem
 

@@ -22,11 +22,13 @@ class LearnerForgeContext(BaseModel):
     diagnosis: DiagnosisResponse
     interview_answers: dict[str, str] = Field(default_factory=dict)
     cv_summary: str | None = None
+    must_have_node_ids: list[str] = Field(default_factory=list)
 
     def compact_summary(self) -> str:
         answers = "; ".join(
             f"{key}: {value}" for key, value in self.interview_answers.items() if value
         )
+        must = ", ".join(self.must_have_node_ids)
         return "\n".join(
             part
             for part in [
@@ -37,6 +39,7 @@ class LearnerForgeContext(BaseModel):
                 f"strengths: {'; '.join(self.diagnosis.strengths)}",
                 f"gaps: {'; '.join(self.diagnosis.gaps)}",
                 f"priorities: {'; '.join(self.diagnosis.starting_priorities)}",
+                f"must_have_node_ids: {must}" if must else "",
                 f"cv: {self.cv_summary}" if self.cv_summary else "",
                 f"interview_answers: {answers}" if answers else "",
             ]
@@ -53,6 +56,12 @@ def build_forge_context_from_input(
     diagnosis = DiagnosisResponse.model_validate(input_data.get("diagnosis") or input_data)
     profile_record = _profile_record_from_input(input_data, diagnosis)
     intake = profile_record.intake
+    raw_must = input_data.get("must_have_node_ids") or []
+    must_ids = [
+        str(node_id)
+        for node_id in raw_must
+        if isinstance(node_id, str) and node_id.strip()
+    ]
     return LearnerForgeContext(
         user_id=user_id,
         goal_id=str(input_data.get("goal_id") or intake.goal_id),
@@ -61,6 +70,7 @@ def build_forge_context_from_input(
         diagnosis=profile_record.diagnosis,
         interview_answers=_answers_from_input(input_data, intake),
         cv_summary=_cv_summary(intake),
+        must_have_node_ids=must_ids,
     )
 
 

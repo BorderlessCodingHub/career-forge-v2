@@ -1,7 +1,7 @@
 # Must-haves — `llm-evals`
 
 **Goal:** LLM Evaluation & Observability (LLMOps)  
-**Status:** draft — awaiting Yuri sign-off (silence = baseline)  
+**Status:** frozen — silence baseline 2026-08-04 (Pedro); Yuri spot-check → CAR-18  
 **Corpus:** 28 sources (target 25–40) · sampled 2026-07
 
 ## Must-have nodes (10)

@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-03** · Last merge: **CAR-15** · prior **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 deferred)  
+Last updated: **2026-08-04** · Last merge: **CAR-15** · prior **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 deferred)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
-**Next eng:** F2 **CAR-17** (must-have forge + ≥70% harness; needs CAR-8 freeze/silence). **CAR-28** blocked on `borderless-api` — zero prep.
+**Next eng:** F2 **CAR-17** In Progress (must-have forge + ≥70% harness; silence baseline frozen 2026-08-04). **CAR-28** blocked on `borderless-api` — zero prep.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -23,7 +23,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | A | CAR-5 Goals + seeds (LLM tracks) | Done |
 | A | CAR-6 Cost instrumentation | Done |
 | A | CAR-7 Synthetic cost gate + Yuri report | Done — report `docs/reports/2026-07-24-cost-gate.md` · **GO** (R$72.53 projected ≪ R$500) · awaiting Yuri sign-off |
-| A | CAR-8 Must-have node drafts | Done — `docs/product/must-haves/` ×4 · Linear comment for Yuri · **awaiting sign-off or silence baseline** |
+| A | CAR-8 Must-have node drafts | Done — `docs/product/must-haves/` ×4 · **silence baseline frozen 2026-08-04** (Pedro; Yuri spot-check → CAR-18) |
 | B | CAR-9 Labs path `/career-forge` | Done — reverse proxy (not host nginx) |
 | B | CAR-21 Labs forge SSE stream | Done — Labs live timeline stream verified |
 | — | CAR-13 Re-enable auto-deploy on push to `main` | Done — `push: branches: [main]` restored in deploy.yml |
@@ -43,10 +43,10 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | CAR-15 | Soft gate + lean prune + warnings | [S] | Done — `SOFT_GATE_CUTOFF=0.55` provisional; `data/must-haves/` prune; PR #20 → `main` |
 | CAR-32 | Docs: reconcile ADR-001 / V2-PLAN to 5 live dims | [P] | Done — ADR banners + V2-PLAN F2.8 match 5-dim + `profile_score` |
 | CAR-16 | English-first hard cutover | [P] | Done — UI/prompts/catalog/reports EN; PR #18 → `main` |
-| CAR-17 | Must-have forge + ≥70% harness | [S] | Backlog (blocked by CAR-8 sign-off/silence; CAR-15 ✅) |
+| CAR-17 | Must-have forge + ≥70% harness | [S] | In Progress — silence baseline ✅; CAR-15 ✅ |
 | CAR-18 | 16 golden cases + Yuri spot-check | [S] | Backlog (blocked by CAR-14…17) |
 
-Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. CAR-14 + CAR-15 + CAR-16 + CAR-32 Done; next **CAR-17** (after must-have freeze). CAR-18 last.
+Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. CAR-14 + CAR-15 + CAR-16 + CAR-32 Done; **CAR-17 In Progress** (must-have freeze = silence baseline 2026-08-04). CAR-18 last.
 
 ---
 

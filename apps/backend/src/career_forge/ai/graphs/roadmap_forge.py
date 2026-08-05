@@ -39,7 +39,11 @@ from career_forge.services.forge_context import (
     LearnerForgeContext,
     build_forge_context_from_input,
 )
-from career_forge.services.lean_forge import resolve_lean_allowed_node_ids
+from career_forge.services.lean_forge import (
+    load_must_have_ids,
+    resolve_lean_allowed_node_ids,
+)
+from career_forge.services.must_have_coverage import apply_must_have_inject
 from career_forge.services.roadmap.catalog import load_roadmap_catalog
 
 DEFAULT_STREAM_DELAY_SEC = 1.5
@@ -446,6 +450,20 @@ class RoadmapForgeGraphRunnable:
         if allowed_node_ids is not None:
             filtered = [n for n in final_graph if n.node_id in allowed_node_ids]
             final_graph = filtered or graph
+
+        # CAR-17: measure pre-inject coverage, then inject missing must-haves (both paths).
+        raw_must = input_data.get("must_have_node_ids")
+        if isinstance(raw_must, list) and raw_must:
+            must_ids = [str(node_id) for node_id in raw_must if node_id]
+        else:
+            must_ids = load_must_have_ids(context.goal_id)
+        final_graph, _pre_coverage = apply_must_have_inject(
+            final_graph,
+            goal_id=context.goal_id,
+            track_id=diagnosis.profile.track_id,
+            must_have_ids=must_ids,
+        )
+
         tail_events = build_forge_tail_events(diagnosis, graph=final_graph)
         for payload in tail_events:
             await _sleep_between_events()

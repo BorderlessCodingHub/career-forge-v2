@@ -1,0 +1,17 @@
+{
+  "goal_id": "fine-tuning",
+  "forged_node_ids": [
+    "ft-when-to-tune",
+    "ft-data-prep",
+    "ft-sft",
+    "ft-lora",
+    "ft-quantization",
+    "ft-dpo",
+    "ft-alignment",
+    "noise-a",
+    "noise-b"
+  ],
+  "expected_coverage": 0.7,
+  "expect_pass": true,
+  "note": "CAR-17 smoke \u2014 7/10 must-haves present (pre-inject bar)."
+}

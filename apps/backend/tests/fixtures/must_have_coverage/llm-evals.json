@@ -1,0 +1,17 @@
+{
+  "goal_id": "llm-evals",
+  "forged_node_ids": [
+    "evals-metrics",
+    "evals-llm-judge",
+    "evals-datasets",
+    "evals-regression",
+    "evals-tracing",
+    "evals-online",
+    "evals-prompt-versioning",
+    "noise-a",
+    "noise-b"
+  ],
+  "expected_coverage": 0.7,
+  "expect_pass": true,
+  "note": "CAR-17 smoke \u2014 7/10 must-haves present (pre-inject bar)."
+}

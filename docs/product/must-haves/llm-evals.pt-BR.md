@@ -3,7 +3,7 @@
 > Versão em inglês (fonte canônica): [llm-evals.md](./llm-evals.md)
 
 **Goal:** LLM Evaluation & Observability (LLMOps) (avaliação e observabilidade de LLM)  
-**Status:** rascunho — aguardando sign-off do Yuri (silêncio = baseline)  
+**Status:** congelado — silence baseline 2026-08-04 (Pedro); spot-check Yuri → CAR-18  
 **Corpus:** 28 fontes (meta 25–40) · amostrado em 2026-07
 
 ## Nós must-have (10)
