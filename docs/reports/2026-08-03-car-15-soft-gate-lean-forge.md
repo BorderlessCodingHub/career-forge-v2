@@ -234,7 +234,7 @@ Cutoff remains **provisional** until CAR-18 golden retune.
 
 - Linear: [CAR-15](https://linear.app/career-forge-v2/issue/CAR-15)
 - Upstream: [CAR-14 CTRR recalibration](https://linear.app/career-forge-v2/issue/CAR-14) · [report](./2026-08-02-car-14-ctrr-recalibration.md)
-- Downstream: [CAR-17 must-have harness](https://linear.app/career-forge-v2/issue/CAR-17) · [CAR-18 golden cases](https://linear.app/career-forge-v2/issue/CAR-18)
+- Downstream: [CAR-17 must-have harness](https://linear.app/career-forge-v2/issue/CAR-17) · [report](./2026-08-04-car-17-must-have-forge-coverage.md) · [CAR-18 golden cases](https://linear.app/career-forge-v2/issue/CAR-18)
 - Plan: [V2-PLAN.md](../V2-PLAN.md) § F2.5–F2.10 / F2.8
 - Spec: [DIAGNOSIS-INTERVIEW.md](../product/DIAGNOSIS-INTERVIEW.md)
 - Must-haves: [`data/must-haves/`](../../data/must-haves/) · [`docs/product/must-haves/`](../product/must-haves/)
