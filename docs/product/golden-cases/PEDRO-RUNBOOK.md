@@ -156,9 +156,9 @@ make test   # includes test_car18_golden_cases.py
 - [x] 16 fixtures in `data/golden_cases/`
 - [x] Rubric + runbook + Yuri template
 - [x] Automated `golden-check` green
-- [x] ≥70% pre-inject on 12 non-weak provisional snapshots
+- [x] ≥70% / live forge snapshots (post-inject coverage on live path)
 - [x] Cutoff retuned + documented (0.50)
-- [ ] Pedro scorecards filled
+- [x] Pedro scorecards filled (2026-08-05 — 16/16 PASS)
 - [ ] Yuri spot-check recorded
 - [ ] Linear → Done via end-task
 

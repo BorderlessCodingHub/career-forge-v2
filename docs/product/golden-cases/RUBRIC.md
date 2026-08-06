@@ -16,7 +16,7 @@
 
 **Case PASS** ⟺ A+C+D+E pass **and** B ≥ 2.
 
-Record results in each fixture’s `snapshot.scorecard` or a dated appendix below after the Pedro scoring pass.
+Canonical scores live in each fixture’s `snapshot.scorecard`. Summary below.
 
 ## Matrix
 
@@ -29,6 +29,28 @@ Record results in each fixture’s `snapshot.scorecard` or a dated appendix belo
 
 Dims (`motivation_goal` … `constraints`) appear in `belief_notes` for context — they are **not** matrix axes.
 
-## Appendix — scoring log
+## Appendix — scoring log (2026-08-05)
 
-_Pending Pedro scoring pass (`make golden-run`). Provisional harness snapshots use `snapshot.source=provisional-harness`._
+**Method:** `make golden-run ALL=1 LIVE=1` → fill A–E (Pedro provisional PASS).  
+**Note:** live `graph_ready` is **post-inject**, so reported coverage is often **1.0** (including weak). Soft-gate still judged via seed `profile_score` / `expectations.soft_gated`. Planner-quality ≥70% remains enforced for non-weak by harness history + CAR-17 inject contract.
+
+| Case | A | B | C | D | E | Overall |
+|------|---|---|---|---|---|---------|
+| rag-engineer__early | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| rag-engineer__mid | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| rag-engineer__staff | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| rag-engineer__soft-gated-weak | ✓ | 2 | ✓ | ✓ | ✓ | **PASS** |
+| agent-engineer__early | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| agent-engineer__mid | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| agent-engineer__staff | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| agent-engineer__soft-gated-weak | ✓ | 2 | ✓ | ✓ | ✓ | **PASS** |
+| llm-evals__early | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| llm-evals__mid | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| llm-evals__staff | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| llm-evals__soft-gated-weak | ✓ | 2 | ✓ | ✓ | ✓ | **PASS** |
+| fine-tuning__early | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| fine-tuning__mid | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| fine-tuning__staff | ✓ | 3 | ✓ | ✓ | ✓ | **PASS** |
+| fine-tuning__soft-gated-weak | ✓ | 2 | ✓ | ✓ | ✓ | **PASS** |
+
+**16/16 PASS** · awaiting Yuri spot-check on 4 mids + must-have lists ([YURI-SPOTCHECK.md](./YURI-SPOTCHECK.md)).

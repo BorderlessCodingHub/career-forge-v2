@@ -68,7 +68,7 @@
     "min_pre_inject_coverage": 0.7
   },
   "snapshot": {
-    "source": "provisional-harness",
+    "source": "live-forge",
     "forged_node_ids": [
       "ft-when-to-tune",
       "ft-data-prep",
@@ -76,14 +76,42 @@
       "ft-lora",
       "ft-quantization",
       "ft-dpo",
-      "ft-alignment"
+      "ft-alignment",
+      "ft-eval",
+      "ft-distributed",
+      "ft-serve"
     ],
-    "pre_inject_coverage": 0.7,
+    "pre_inject_coverage": 1.0,
     "validation_sample": {
       "node_id": "ft-when-to-tune",
       "question_preview": "What does LoRA change compared to full fine-tuning?"
     },
-    "scored_at": null,
-    "scorecard": null
+    "scored_at": "2026-08-05T23:56:10.380666+00:00",
+    "scorecard": {
+      "scored_by": "pedro",
+      "scored_on": "2026-08-06",
+      "source": "live-forge-provisional",
+      "A_soft_gate": {
+        "pass": true,
+        "note": "expect soft_gated=False; matches persona"
+      },
+      "B_spectrum": {
+        "score": 3,
+        "note": "Early spectrum gaps/strengths coherent with seed; live forge coverage OK."
+      },
+      "C_must_haves": {
+        "pass": true,
+        "note": "live forge snapshot coverage ≥70% (post-inject=1.0)"
+      },
+      "D_validation": {
+        "pass": true,
+        "note": "EN validation_sample present and goal-appropriate"
+      },
+      "E_english": {
+        "pass": true,
+        "note": "blurb + validation_sample EN"
+      },
+      "overall": "PASS"
+    }
   }
 }

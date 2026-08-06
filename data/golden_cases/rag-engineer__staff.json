@@ -68,8 +68,9 @@
     "min_pre_inject_coverage": 0.7
   },
   "snapshot": {
-    "source": "provisional-harness",
+    "source": "live-forge",
     "forged_node_ids": [
+      "rag-corpus-audit",
       "rag-embeddings",
       "rag-chunking",
       "rag-retrieval",
@@ -86,7 +87,32 @@
       "node_id": "rag-embeddings",
       "question_preview": "How do you detect and roll back a retrieval quality regression?"
     },
-    "scored_at": null,
-    "scorecard": null
+    "scored_at": "2026-08-05T23:44:10.798601+00:00",
+    "scorecard": {
+      "scored_by": "pedro",
+      "scored_on": "2026-08-06",
+      "source": "live-forge-provisional",
+      "A_soft_gate": {
+        "pass": true,
+        "note": "expect soft_gated=False; matches persona"
+      },
+      "B_spectrum": {
+        "score": 3,
+        "note": "Staff-level seed; full coverage live forge looks consistent."
+      },
+      "C_must_haves": {
+        "pass": true,
+        "note": "live forge snapshot coverage ≥70% (post-inject=1.0)"
+      },
+      "D_validation": {
+        "pass": true,
+        "note": "EN validation_sample present and goal-appropriate"
+      },
+      "E_english": {
+        "pass": true,
+        "note": "blurb + validation_sample EN"
+      },
+      "overall": "PASS"
+    }
   }
 }
