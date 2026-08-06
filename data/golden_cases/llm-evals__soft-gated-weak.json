@@ -68,19 +68,50 @@
     "min_pre_inject_coverage": null
   },
   "snapshot": {
-    "source": "provisional-harness",
+    "source": "live-forge",
     "forged_node_ids": [
+      "evals-datasets",
       "evals-metrics",
       "evals-llm-judge",
-      "evals-datasets",
-      "evals-regression"
+      "evals-regression",
+      "evals-tracing",
+      "evals-online",
+      "evals-prompt-versioning",
+      "evals-cost-latency",
+      "evals-guardrails-safety",
+      "evals-llmops"
     ],
-    "pre_inject_coverage": 0.4,
+    "pre_inject_coverage": 1.0,
     "validation_sample": {
       "node_id": "evals-metrics",
       "question_preview": "Name one metric you could use to score model answers."
     },
-    "scored_at": null,
-    "scorecard": null
+    "scored_at": "2026-08-05T23:55:10.509693+00:00",
+    "scorecard": {
+      "scored_by": "pedro",
+      "scored_on": "2026-08-06",
+      "source": "live-forge-provisional",
+      "A_soft_gate": {
+        "pass": true,
+        "note": "expect soft_gated=True; matches persona"
+      },
+      "B_spectrum": {
+        "score": 2,
+        "note": "Low confidence seed; soft gate on. Live forge post-inject full must-haves — lean intent still via soft_gated flag."
+      },
+      "C_must_haves": {
+        "pass": true,
+        "note": "lean/soft-gate path; coverage metric post-inject on live snapshot"
+      },
+      "D_validation": {
+        "pass": true,
+        "note": "EN validation_sample present and goal-appropriate"
+      },
+      "E_english": {
+        "pass": true,
+        "note": "blurb + validation_sample EN"
+      },
+      "overall": "PASS"
+    }
   }
 }

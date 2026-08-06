@@ -81,9 +81,9 @@ Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 | [CAR-16](https://linear.app/career-forge-v2/issue/CAR-16) | English-first hard cutover (UI + prompts + reports) | [P] ✅ Done | — (∥ CAR-32) |
 | [CAR-32](https://linear.app/career-forge-v2/issue/CAR-32) | Docs: reconcile ADR-001 / V2-PLAN to 5 live profile dims | [P] ✅ Done | — |
 | [CAR-17](https://linear.app/career-forge-v2/issue/CAR-17) | Must-have enforcement in forge + ≥70% coverage harness | [S] ✅ Done | CAR-8 silence baseline ✅, CAR-15 ✅ |
-| [CAR-18](https://linear.app/career-forge-v2/issue/CAR-18) | 16 golden cases + rubric + Yuri spot-check (F2 QA) | [S] | CAR-14…17 ✅ |
+| [CAR-18](https://linear.app/career-forge-v2/issue/CAR-18) | 16 golden cases + rubric + Yuri spot-check (F2 QA) | [S] harness ✅ · Pedro PASS · Yuri ⏳ | CAR-14…17 ✅ |
 
-**Start order:** CAR-14 ✅ → CAR-15 ✅; CAR-16 ✅ ∥ CAR-32 ✅ → CAR-17 ✅ → **CAR-18** last.
+**Start order:** CAR-14 ✅ → CAR-15 ✅; CAR-16 ✅ ∥ CAR-32 ✅ → CAR-17 ✅ → **CAR-18** (Yuri spot-check left).
 
 ---
 
