@@ -4,7 +4,7 @@
 
 Last updated: **2026-08-05** · Last merge: **CAR-18** (PR #22) · prior **CAR-17** · **CAR-15** · **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 deferred)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
-**Next eng:** F2 **CAR-18** — harness + Pedro 16/16 PASS done; **awaiting Yuri spot-check** ([YURI-SPOTCHECK.md](./product/golden-cases/YURI-SPOTCHECK.md)). Then F3. **CAR-28** blocked on `borderless-api` — zero prep.
+**Next eng:** F2 **CAR-18** — harness + Pedro 16/16 PASS done; **Yuri pack** = cost F1 ack + spot-check + F2 re-cost ([handoff](./reports/2026-08-05-handoff-f2-yuri.md) · [YURI-SPOTCHECK.md](./product/golden-cases/YURI-SPOTCHECK.md)). Prep F3 in parallel; **CAR-28** blocked on `borderless-api` — zero code until issuer.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -22,7 +22,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 |-------|------|--------|
 | A | CAR-5 Goals + seeds (LLM tracks) | Done |
 | A | CAR-6 Cost instrumentation | Done |
-| A | CAR-7 Synthetic cost gate + Yuri report | Done — report `docs/reports/2026-07-24-cost-gate.md` · **GO** (R$72.53 projected ≪ R$500) · awaiting Yuri sign-off |
+| A | CAR-7 Synthetic cost gate + Yuri report | Done — F1 report Notion · **GO** (R$72.53) · F2 re-cost [2026-08-06](./reports/2026-08-06-cost-gate.md) **GO** (R$90.15) · awaiting Yuri sign-off |
 | A | CAR-8 Must-have node drafts | Done — `docs/product/must-haves/` ×4 · **silence baseline frozen 2026-08-04** (Pedro; Yuri spot-check → CAR-18) |
 | B | CAR-9 Labs path `/career-forge` | Done — reverse proxy (not host nginx) |
 | B | CAR-21 Labs forge SSE stream | Done — Labs live timeline stream verified |
@@ -31,7 +31,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | — | CAR-20 `POST /forge/runs` (avoid `/forge` page 405) | Done — Labs verified (API JSON, not Next 405) |
 | — | CAR-30 `GET /roadmap/current` (avoid `/roadmap` page HTML) | Done — same-origin trail JSON, not Next DOCTYPE |
 
-**Cost gate:** run 2026-07-24 · Forge P95 **R$1.10** · Hard stop R$500/mo · Approval ceiling R$700 · **No students until Yuri approves**
+**Cost gate:** F1 2026-07-24 · Forge P95 **R$1.10** · F2 re-cost 2026-08-06 · Forge P95 **R$1.36** · proj. **R$90.15** · Hard stop R$500/mo · Approval ceiling R$700 · **No students until Yuri approves** (acks F1 + spot-check + F2 re-cost)
 
 ---
 

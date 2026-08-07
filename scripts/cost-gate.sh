@@ -20,6 +20,6 @@ if [[ ! -x "$PY" ]]; then
   PY="${PYTHON:-python3}"
 fi
 
-echo "== CAR-7 cost gate =="
+echo "== F2 cost gate (lean + must-haves + soft-gate) =="
 cd "${ROOT}/apps/backend"
 exec "$PY" -m scripts.cost_gate "$@"

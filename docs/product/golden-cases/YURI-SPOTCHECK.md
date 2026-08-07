@@ -1,22 +1,17 @@
-# Yuri spot-check (CAR-18)
+# Yuri review — must-haves (CAR-18 / handoff)
 
-**Scope (grill lock):** 4 × `*__mid` golden cases (one per goal) **+** must-have lists. No mandatory UI pass.
+**Scope (atualizado 2026-08-06):** Yuri revisa **somente** as listas must-have.  
+Goldens mid / scorecards A–E = **decisão Pedro** (16/16 PASS) — sem spot-check obrigatório.
 
-**Pedro scoring:** 2026-08-05 — all 16 **PASS** (live forge + scorecards). See [RUBRIC.md](./RUBRIC.md) appendix.
+**Handoff:** [docs/reports/2026-08-05-handoff-f2-yuri.md](../../reports/2026-08-05-handoff-f2-yuri.md)  
+Aprovações Yuri: (1) cost gate F1 · (2) must-haves · (3) F2 re-cost.
 
-## Cases to review
+**Pedro scoring:** 2026-08-05 — all 16 **PASS**. See [RUBRIC.md](./RUBRIC.md) appendix.
 
-| Goal | Fixture | Pedro PASS? | Yuri ack |
-|------|---------|-------------|---------|
-| rag-engineer | `data/golden_cases/rag-engineer__mid.json` | **PASS** (2026-08-05) | _pending_ |
-| agent-engineer | `data/golden_cases/agent-engineer__mid.json` | **PASS** (2026-08-05) | _pending_ |
-| llm-evals | `data/golden_cases/llm-evals__mid.json` | **PASS** (2026-08-05) | _pending_ |
-| fine-tuning | `data/golden_cases/fine-tuning__mid.json` | **PASS** (2026-08-05) | _pending_ |
+## Must-have lists (Yuri)
 
-## Must-have lists
-
-| Goal | Doc | JSON | Yuri ack |
-|------|-----|------|----------|
+| Goal | Doc | JSON | Yuri |
+|------|-----|------|------|
 | rag-engineer | [must-haves/rag-engineer.md](../must-haves/rag-engineer.md) | `data/must-haves/rag-engineer.json` | _pending_ |
 | agent-engineer | [must-haves/agent-engineer.md](../must-haves/agent-engineer.md) | `data/must-haves/agent-engineer.json` | _pending_ |
 | llm-evals | [must-haves/llm-evals.md](../must-haves/llm-evals.md) | `data/must-haves/llm-evals.json` | _pending_ |
@@ -24,13 +19,16 @@
 
 ## Checklist for Yuri
 
-1. Pedro scorecard A–E looks fair for each mid case (`snapshot.scorecard` in the JSON).
-2. Must-have ids still match the job-signal intent (silence baseline 2026-08-04).
-3. Reply here or on Linear CAR-18 with date + ack (or requested edits).
+1. Must-have ids still match the job-signal intent (silence baseline 2026-08-04).
+2. Reply on handoff Notion / Linear CAR-18 with date + OK or requested edits.
 
 ## Record
 
 | Date | Reviewer | Outcome | Notes |
 |------|----------|---------|-------|
-| 2026-08-05 | Pedro | Scorecards filled 16/16 PASS | Live forge snapshots; awaiting Yuri |
-| | Yuri | | |
+| 2026-08-05 | Pedro | Scorecards 16/16 PASS | Goldens closed by Pedro |
+| 2026-08-06 | Pedro | Scope change | Yuri = must-haves only (no mid spot-check) |
+| 2026-08-06 | Pedro | F2 re-cost eng GO | P95 R$1.36 · [report](../../reports/2026-08-06-cost-gate.md) |
+| | Yuri | #2 must-haves | |
+| | Yuri | #1 cost F1 | |
+| | Yuri | #3 re-cost F2 | |
