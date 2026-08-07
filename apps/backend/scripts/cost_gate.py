@@ -1,7 +1,10 @@
-"""CAR-7 synthetic cost gate runner.
+"""Synthetic cost gate runner (CAR-7 baseline · F2 re-cost).
 
 Runs 20–30 roadmap_forge GraphRuns (+ diagnosis / validation / mentor samples)
 with ``_cost.synthetic_gate=true``, measures token→USD→BRL, writes Yuri report.
+
+F2 path: forge inputs go through ``apply_lean_forge_input`` (must-have bias +
+soft-gate lean allowlist) with a spectrum of ``profile_score`` personas.
 
 Usage (from repo root)::
 
@@ -57,6 +60,7 @@ from career_forge.services.cost_gate_report import (
     to_brl,
 )
 from career_forge.services.cost_guard import CostGuard, InMemoryUsageStore
+from career_forge.services.lean_forge import apply_lean_forge_input
 
 GOALS: dict[str, dict[str, Any]] = {
     "rag-engineer": {
@@ -128,6 +132,15 @@ GOALS: dict[str, dict[str, Any]] = {
 GATE_USER = "gate-runner"
 COST_META = {"_cost": {"synthetic_gate": True}}
 
+# Golden-aligned spectrum (CAR-18 seeds) — drives soft-gate lean vs full forge.
+PERSONA_SCORES: dict[str, float] = {
+    "mid": 0.75,
+    "early": 0.58,
+    "staff": 0.90,
+    "soft-gated-weak": 0.42,
+}
+PERSONA_ORDER = ("mid", "early", "staff", "soft-gated-weak")
+
 
 def _load_dotenv(repo_root: Path) -> None:
     env_path = repo_root / ".env"
@@ -141,18 +154,20 @@ def _load_dotenv(repo_root: Path) -> None:
         os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
-def _diagnosis_for_goal(goal_id: str) -> DiagnosisResponse:
+def _diagnosis_for_goal(goal_id: str, *, persona: str = "mid") -> DiagnosisResponse:
     spec = GOALS[goal_id]
+    score = PERSONA_SCORES.get(persona, PERSONA_SCORES["mid"])
     return DiagnosisResponse(
         profile=DiagnosisProfile(
             label=spec["label"],
             track_id=spec["track_id"],
-            persona_slug=f"{goal_id}_gate",
+            persona_slug=f"{goal_id}_{persona}",
         ),
         strengths=list(spec["strengths"]),
         gaps=list(spec["gaps"]),
         starting_priorities=list(spec["priorities"]),
         estimated_mastery=dict(spec["mastery"]),
+        profile_score=score,
     )
 
 
@@ -168,7 +183,13 @@ async def _execute_measured(
     run_input: dict[str, Any],
     fx: float,
 ) -> RunCostRecord:
-    payload = {**run_input, **COST_META}
+    payload = {**COST_META, **run_input}
+    # Preserve richer `_cost` labels from forge inputs; always keep synthetic_gate.
+    cost_meta = dict(COST_META["_cost"])
+    if isinstance(run_input.get("_cost"), dict):
+        cost_meta.update(run_input["_cost"])
+    cost_meta["synthetic_gate"] = True
+    payload["_cost"] = cost_meta
     run = GraphRun(graph_name=graph_name, user_id=GATE_USER, input=payload)
     started = time.perf_counter()
     error: str | None = None
@@ -204,14 +225,20 @@ async def _execute_measured(
     )
 
 
-def _forge_input(goal_id: str, index: int) -> dict[str, Any]:
-    diagnosis = _diagnosis_for_goal(goal_id)
-    return {
+def _forge_input(goal_id: str, index: int, *, persona: str) -> dict[str, Any]:
+    diagnosis = _diagnosis_for_goal(goal_id, persona=persona)
+    raw = {
         "diagnosis": diagnosis.model_dump(mode="json"),
         "goal_id": goal_id,
-        "motivation": f"CAR-7 synthetic forge #{index} for {goal_id}",
+        "motivation": f"F2 cost-gate forge #{index} {goal_id}__{persona}",
         "years_xp": "1-3",
+        "_cost": {
+            "synthetic_gate": True,
+            "label": f"cost-gate:{goal_id}__{persona}",
+            "persona": persona,
+        },
     }
+    return apply_lean_forge_input(raw)
 
 
 def _diagnosis_start_input(goal_id: str) -> dict[str, Any]:
@@ -275,7 +302,9 @@ def _plan_jobs(forges: int, diagnosis: int, validation: int, mentor: int) -> lis
     jobs: list[tuple[str, str | None, dict[str, Any]]] = []
     for i in range(forges):
         goal = goals[i % len(goals)]
-        jobs.append(("roadmap_forge", goal, _forge_input(goal, i + 1)))
+        # Round-robin personas across goals so each track sees lean + full forge.
+        persona = PERSONA_ORDER[(i // len(goals)) % len(PERSONA_ORDER)]
+        jobs.append(("roadmap_forge", goal, _forge_input(goal, i + 1, persona=persona)))
     for i in range(diagnosis):
         goal = goals[i % len(goals)]
         jobs.append(("diagnosis_interview", goal, _diagnosis_start_input(goal)))
@@ -318,7 +347,15 @@ async def run_gate(args: argparse.Namespace) -> int:
     executor = GraphExecutor(store=store, cost_guard=guard)
 
     jobs = _plan_jobs(args.forges, args.diagnosis, args.validation, args.mentor)
-    print(f"CAR-7 cost gate batch={batch_id} jobs={len(jobs)} fx={fx} → {report_path}")
+    soft_gated_forges = sum(
+        1
+        for name, _, payload in jobs
+        if name == "roadmap_forge" and payload.get("soft_gated")
+    )
+    print(
+        f"F2 cost gate batch={batch_id} jobs={len(jobs)} "
+        f"soft_gated_forges={soft_gated_forges} fx={fx} → {report_path}",
+    )
 
     records: list[RunCostRecord] = []
     with jsonl_path.open("w", encoding="utf-8") as ledger:
@@ -364,6 +401,9 @@ async def run_gate(args: argparse.Namespace) -> int:
         "diagnosis_runs_per_user_month": args.diagnosis_per_user,
         "other_billable_runs_per_user_month": args.other_per_user,
         "gate_forges_executed": args.forges,
+        "gate_soft_gated_forges": soft_gated_forges,
+        "gate_personas": ",".join(PERSONA_ORDER),
+        "gate_f2_path": "apply_lean_forge_input + must_have_node_ids + soft_gate",
         "gate_diagnosis_samples": args.diagnosis,
         "gate_validation_samples": args.validation,
         "gate_mentor_samples": args.mentor,
@@ -381,6 +421,15 @@ async def run_gate(args: argparse.Namespace) -> int:
             "gpt-4.1-nano $0.10/$0.40 per 1M tokens; cached input at 10% of input)."
         ),
         batch_id=batch_id,
+        report_title="Career Forge — F2 re-cost gate (stack pós CAR-14…18)",
+        method_extra=(
+            "F2 path: each forge runs through `apply_lean_forge_input` (must-have bias; "
+            "lean allowlist when `profile_score` < SOFT_GATE_CUTOFF). Personas cycle "
+            f"{list(PERSONA_ORDER)} with golden seed scores "
+            f"(weak={PERSONA_SCORES['soft-gated-weak']}, early={PERSONA_SCORES['early']}, "
+            f"mid={PERSONA_SCORES['mid']}, staff={PERSONA_SCORES['staff']}). "
+            "Compares to F1 baseline (2026-07-24, same 4 LLM goals, pre soft-gate/inject)."
+        ),
     )
     report_path.write_text(report, encoding="utf-8")
     (runtime_dir / f"cost-gate-{batch_id}-summary.json").write_text(

@@ -162,6 +162,8 @@ def render_report(
     pricing_note: str,
     batch_id: str,
     generated_at: datetime | None = None,
+    report_title: str = "Career Forge — F1 cost gate report (CAR-7)",
+    method_extra: str | None = None,
 ) -> str:
     stamp = (generated_at or datetime.now(UTC)).strftime("%Y-%m-%d %H:%M UTC")
     forge = summary["forge"]
@@ -174,7 +176,7 @@ def render_report(
         verdict = "NO-GO — projected P95 spend > approval ceiling R$700"
 
     lines: list[str] = [
-        "# Career Forge — F1 cost gate report (CAR-7)",
+        f"# {report_title}",
         "",
         f"> Generated: **{stamp}** · batch `{batch_id}`",
         f"> FX: **1 USD = {fx:.2f} BRL** (fixed for this report)",
@@ -197,10 +199,16 @@ def render_report(
         "- `validation` / `mentor` graphs are currently deterministic (near-zero LLM cost).",
         f"- {pricing_note}",
         f"- Buffer on projection: **{projection['buffer']:.0%}** (matches `COST_BUFFER_FACTOR`).",
-        "",
-        "## Assumptions (pilot projection)",
-        "",
     ]
+    if method_extra:
+        lines.append(f"- {method_extra}")
+    lines.extend(
+        [
+            "",
+            "## Assumptions (pilot projection)",
+            "",
+        ]
+    )
     for key, value in assumptions.items():
         lines.append(f"- `{key}`: {value}")
 
