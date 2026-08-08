@@ -3,7 +3,7 @@
 > Borderless · labs.borderlesscoding.com/career-forge  
 > Executor: Pedro Alano  
 > Prazo estimado: 4–5 semanas ·  
-> **Atualizado:** 2026-07-30 — ADR-003 forge recovery + auth scaffold (grill); prior 2026-07-25 F2 grill; 2026-07-20 Yuri
+> **Atualizado:** 2026-08-08 — F3 grill (F3a/F3b); prior 2026-07-30 ADR-003; 2026-07-25 F2 grill; 2026-07-20 Yuri
 
 ---
 
@@ -21,21 +21,21 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 
 | # | Decisão |
 |---|--------|
-| 1 | Auth **issuer** via `borderless-api` (platform) — F3 com o 1º humano. **Amend 2026-07-30:** scaffold F3-ready (`AuthProvider` + Bearer JWT anon) ships **before** F3 per [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md). Magic link local: fora. |
+| 1 | Auth **issuer** via `borderless-api` (platform) — **F3b** ([CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)). **Amend 2026-07-30:** scaffold F3-ready (`AuthProvider` + Bearer JWT anon) ships **before** F3 per [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md). **Amend 2026-08-08:** pilots (F3a) do **not** require platform login. Magic link local: fora. |
 | 2 | Hard stop API: **R$500/mês** (pool global). **R$700** = teto de *aprovação* do gate F1 (não o kill-switch). |
-| 3 | Throttle: **pool global R$500** + **cap por usuário** (1–2 forges/mês; número fino pós-gate). |
+| 3 | Throttle: **pool global R$500** + **cap por usuário** — F3.2 lock: **`FORGE_CAP_PER_USER_MONTH=2`**; kill-switch P95 **`COST_P95_BRL_PER_RUN=1.3639`** (F2 re-cost). |
 | 4 | Funil único (4 goals); barra de passagem por **evidência CTRR**, não por anos de XP. |
 | 5 | “Não passa” no diagnóstico = **soft gate** no piloto (forge lean + aviso). Hard block = v2.1 após calibrar nota. |
 | 6 | Output bom = LEAN com fit ≥70% dos **must-have nodes** derivados de corpus de vagas. **QA humano**, não RAG de jobs no produto v2. |
 | 7 | Kill-switch runtime = **GraphRuns × P95 BRL** medido no gate F1 (+ buffer ~10%). LangSmith audita. |
 | 8 | Pool conta **toda GraphRun billable** (diagnosis, forge, validation, mentor). Demo-ana + sintéticos do gate: fora do pool de aluno, dentro do relatório F1. |
-| 9 | Primeiro humano BASE/PSP: **somente na F3** (após gate + golden cases + auth platform + caps). F2 100% interno/sintético. |
-| 10 | URL: **path** — `labs.borderlesscoding.com/career-forge` (landing) + `/career-forge/app` (produto). Frame depois, mesmo path. |
+| 9 | Primeiro humano BASE/PSP: **somente na F3** (após gate + golden cases). **Amend 2026-08-08:** humans need **hard caps + rebrand/landing** (F3a) — **not** Borderless login. F2 100% interno/sintético. |
+| 10 | URL: **path** — `labs.borderlesscoding.com/career-forge`. **Amend 2026-08-08:** thin **marketing** on `/career-forge`; product stays at current routes (no `/career-forge/app` migration). Frame depois, mesmo path. |
 | 11 | Must-haves: draft Pedro (1 pág/goal) → 1 rodada sign-off Yuri; silêncio = baseline. |
 | 12 | F1 em Track A (desbloqueado) / Track B (nginx path — aguarda Brunno/domínio). Restante de org/deploy Track B já OK. |
 | 13 | **Forge recovery (ADR-003):** lista histórica via `forge_artifacts`; deep-links `share` (read-only) + `resume` (single-use/~7d); open = promote snapshot; freeze-before-promote. |
 | 14 | **Auth wire:** `Authorization: Bearer`; SSE via **stream ticket**. Paralelo a F2; CAR-21 só bloqueia path Labs do stream. |
-| 15 | Email opcional (Slice 2) — store only; send resume = F3. Diagnosis mid-flight fora; diagnosis **result** reutilizável = Slice 2. |
+| 15 | Email opcional (Slice 2) — store only; send resume = **F3b** (CAR-28). Diagnosis mid-flight fora; diagnosis **result** reutilizável = Slice 2. |
 
 ---
 
@@ -53,14 +53,15 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 ### Controle de custo
 
 - Cap global R$500 (env: `MONTHLY_API_BUDGET_BRL=500`)
-- Cap por usuário (env: `FORGE_CAP_PER_USER_MONTH`, default pós-gate 1–2)
+- Cap por usuário (env: `FORGE_CAP_PER_USER_MONTH=2` — F3.2)
 - Contadores no banco por usuário + agregado mensal de GraphRuns billable
 - Monitoramento contínuo via LangSmith
 
 ### Autenticação
 
-- **F1/F2 (amend 2026-07-30):** scaffold `AuthProvider` + JWT anon Bearer ([ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md)) — uso interno / recovery; **não** é auth de piloto BASE/PSP
-- **F3:** issuer `borderless-api` no mesmo middleware — validar token → `user_id` estável; desbloqueia cap hard e piloto
+- **F1/F2 (amend 2026-07-30):** scaffold `AuthProvider` + JWT anon Bearer ([ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md)) — uso interno / recovery / **F3a pilots**
+- **F3a:** funnel = marketing CTA → product (anon); entry-gate login deferred
+- **F3b:** issuer `borderless-api` no mesmo middleware — validar token → `user_id` estável; last eng slice when issuer ready ([CAR-28](https://linear.app/career-forge-v2/issue/CAR-28))
 - SSO/magic link local: fora de escopo v2 (platform é a regra do ecossistema)
 
 ### Demo user
@@ -93,20 +94,21 @@ Soft gate: `profile_score = mean(5 dim confidences)` abaixo do cutoff → aviso 
 ### English-first
 
 - UI, prompts, catálogo e relatórios em inglês desde a F2
-- pt-BR como locale secundária (F3)
+- **F3a (F3.4):** pt-BR = marketing + chrome only; diagnosis/forge/validation AI + prompts stay EN
+- Full dual-locale / AI pt-BR: later
 - Público PSP/BASE compatível
 
 ### Landing page
 
-- **v2:** Next.js no path Labs (`/career-forge` marketing, `/career-forge/app` produto)
+- **v2 (amend 2026-08-08 / F3.3):** Next.js at Labs `basePath=/career-forge` — thin **marketing** layer on `/`; product routes unchanged (no `/app` prefix)
 - Frame: só quando houver comercialização/growth para fora (fora do horizonte atual)
 - Demo do forge streaming reutiliza componentes existentes
 
 ### Rebrand
 
 - Identidade: #121212 / #5316CC / #44D5AD + brand kit Borderless (aprovado)
-- Escopo: tokens Tailwind, logo SVG, favicon — sem redesign estrutural
-- Entrega: F3
+- Escopo F3a (F3.5): tokens Tailwind, logo SVG, favicon **+** marketing landing composition — sem redesign estrutural do produto
+- Entrega: F3a
 
 ### Infra
 
@@ -168,17 +170,41 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 
 ---
 
-### Fase 3 — Rebrand + auth platform + landing + pilotos
+### Fase 3 — Rebrand + landing + pilotos (F3a) · platform auth (F3b)
 
-**Entrega:** 2 alunos BASE/PSP completam 1 trilha end-to-end sem intervenção + landing no ar  
-**Inclui:**
+**Split (F3.8):** **F3a** closeable without login; **F3b** = [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) when `borderless-api` issuer exists.
 
-- Auth mínima via `borderless-api` (platform)
-- Caps hard ligados (pool R$500 + per-user)
-- Rebrand Borderless + i18n pt-BR
-- Landing Next.js em `/career-forge`
+**F3a entrega:** hard-cap P95 bump + rebrand + thin marketing landing (pt-BR chrome) + 2 BASE/PSP humans complete core E2E + short note to Yuri  
+**F3b entrega:** Borderless issuer + send resume + account merge (zero code until issuer contract)
 
-**Critério de aceite:** sign-off Yuri  
+**F3a inclui:**
+
+- Kill-switch `COST_P95_BRL_PER_RUN=1.3639`; pool R$500; forge cap/user = 2 (no ops UI)
+- Rebrand tokens + logo/favicon + marketing landing composition
+- pt-BR marketing + chrome only
+- 2 pilots on anon scaffold (login not required)
+
+**Critério de aceite F3a (F3.12):** checklist above + short note to Yuri — **no** formal GO ritual.  
+**Pilot E2E (F3.9):** goal → diagnosis → forge SSE → roadmap → ≥1 validation → roadmap reacts (mentor/report out of acceptance).
+
+#### Decisões travadas (grill 2026-08-08)
+
+| # | Decisão |
+|---|--------|
+| F3.1 | While issuer blocked: ship rebrand + landing + i18n chrome + hard-cap polish; no invite-anon-as-platform-auth workaround |
+| F3.2 | Hard caps = config: `COST_P95_BRL_PER_RUN=1.3639`, pool R$500, `FORGE_CAP_PER_USER_MONTH=2`; no ops UI |
+| F3.3 | Amend Decision #10: thin marketing on `/career-forge`; product stays at current routes (no `/app` migration) |
+| F3.4 | pt-BR = marketing + chrome only; diagnosis/forge/validation AI + prompts stay EN |
+| F3.5 | Rebrand = tokens + logo/favicon **and** marketing landing composition; no product redesign |
+| F3.6 | Full Borderless login = last eng slice when issuer ready; funnel stays CTA → product; entry gate later |
+| F3.7 | 2 pilots do **not** depend on login — E2E valid on anon scaffold |
+| F3.8 | Split: F3a closeable without login; F3b = CAR-28 |
+| F3.9 | Pilot E2E = goal → diagnosis → forge SSE → roadmap → ≥1 validation → roadmap reacts |
+| F3.10 | Pilot who/goals unconstrained |
+| F3.11 | Feedback-driven facilitation; no rigid “sem intervenção” gate |
+| F3.12 | F3a Done = P95 bump + rebrand + landing/pt-BR chrome + 2 E2E humans + short note to Yuri |
+
+Linear: [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · CAR-33…36 · F3b [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)
 
 ---
 
@@ -189,7 +215,7 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 | VPS Labs / Brunno | Deploy OK; **nginx path + domínio** pendente |
 | Org `borderlesscodinghub` | Acesso em andamento / parcial OK |
 | Budget API | Hard R$500 · gate approval R$700 |
-| Landing Frame vs Next | **Next na v2**; Frame depois |
+| Landing Frame vs Next | **Next na v2**; thin marketing on `/career-forge` (F3.3); Frame depois |
 | Brand kit | **Aprovado** |
 
 ---

@@ -65,6 +65,8 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 
 **Amend 2026-08-01 (grill):** Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) closed after MVP + Slice 2. Slice 3 ([CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)) stays F3 — blocked on `borderless-api` access; **zero implementation** until issuer contract is usable. Next eng: CAR-21 → F2.
 
+**Amend 2026-08-08 (F3 grill):** Slice 3 = **F3b** only. [F3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) (rebrand + landing + 2 pilots) is closeable **without** Borderless login — pilots E2E on anon scaffold are valid (V2-PLAN F3.7/F3.8). Full login remains last eng slice when issuer is ready; entry-gate auth deferred.
+
 ### 6. Priority vs F2
 
 - Track runs **in parallel** with F2 (CAR-14…18).
