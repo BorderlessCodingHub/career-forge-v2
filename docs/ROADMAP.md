@@ -10,7 +10,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 ## Current focus — Phase 1 (Infra + cost gate)
 
-**Gate:** cost report + budget (hard R$500 / approval ≤ R$700) approved by Yuri → **no students before that**.
+**Gate:** cost report + budget (hard R$500 / approval ≤ R$700) — **Yuri GO 2026-08-08**. No students until F3 (platform auth + hard caps + rebrand).
 
 ### Track A — unblocked now **[P]**
 
@@ -24,7 +24,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
-| [CAR-7](https://linear.app/career-forge-v2/issue/CAR-7) | Synthetic cost gate run + Yuri report | [S] ✅ Done | Report delivered — Yuri go/no-go pending |
+| [CAR-7](https://linear.app/career-forge-v2/issue/CAR-7) | Synthetic cost gate run + Yuri report | [S] ✅ Done | Report delivered — **Yuri GO 2026-08-08** |
 | [CAR-13](https://linear.app/career-forge-v2/issue/CAR-13) | Re-enable auto-deploy on push to `main` | [S] ✅ Done | Paused in CAR-7; restored `push: branches: [main]` |
 
 ### Track B — Labs path / streaming **[B]**
@@ -66,11 +66,11 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 ---
 
-## Phase 2 — Goals LLM + prompts + english-first
+## Phase 2 — Goals LLM + prompts + english-first — ✅ Completed
 
-**Project:** [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
+**Project:** [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed**  
 **Prerequisite:** F1 cost GO (Yuri); must-haves frozen for harness/golden acceptance (CAR-8 sign-off or silence baseline).  
-**No real students.** Mentor out of scope. Acceptance: golden cases + ≥70% **post-forge** must-have coverage.
+**No real students.** Mentor out of scope. Acceptance: golden cases + ≥70% **post-forge** must-have coverage — **met 2026-08-08**.
 
 Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 
@@ -81,15 +81,15 @@ Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 | [CAR-16](https://linear.app/career-forge-v2/issue/CAR-16) | English-first hard cutover (UI + prompts + reports) | [P] ✅ Done | — (∥ CAR-32) |
 | [CAR-32](https://linear.app/career-forge-v2/issue/CAR-32) | Docs: reconcile ADR-001 / V2-PLAN to 5 live profile dims | [P] ✅ Done | — |
 | [CAR-17](https://linear.app/career-forge-v2/issue/CAR-17) | Must-have enforcement in forge + ≥70% coverage harness | [S] ✅ Done | CAR-8 silence baseline ✅, CAR-15 ✅ |
-| [CAR-18](https://linear.app/career-forge-v2/issue/CAR-18) | 16 golden cases + rubric + Yuri spot-check (F2 QA) | [S] harness ✅ · Pedro PASS · Yuri ⏳ | CAR-14…17 ✅ |
+| [CAR-18](https://linear.app/career-forge-v2/issue/CAR-18) | 16 golden cases + rubric + Yuri spot-check (F2 QA) | [S] ✅ Done | CAR-14…17 ✅ · Yuri #1+#2+#3 GO 2026-08-08 |
 
-**Start order:** CAR-14 ✅ → CAR-15 ✅; CAR-16 ✅ ∥ CAR-32 ✅ → CAR-17 ✅ → **CAR-18** (Yuri spot-check left).
+**Start order:** CAR-14 ✅ → CAR-15 ✅; CAR-16 ✅ ∥ CAR-32 ✅ → CAR-17 ✅ → CAR-18 ✅.
 
 ---
 
 ## Phase 3 — Rebrand + auth platform + landing + pilots (placeholders)
 
-**Prerequisite:** F2 golden cases OK.  
+**Prerequisite:** F2 golden cases OK — **met**.  
 **First humans BASE/PSP only after:** platform auth + hard caps + rebrand/landing.
 
 - [ ] Auth via `borderless-api` (platform) — [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) Slice 3 (deferred from CAR-22; blocked until issuer access)

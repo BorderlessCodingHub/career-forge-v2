@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-05** · Last merge: **CAR-18** (PR #22) · prior **CAR-17** · **CAR-15** · **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 deferred)  
-Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3)  
-**Next eng:** F2 **CAR-18** — harness + Pedro 16/16 PASS done; **Yuri pack** = cost F1 ack + spot-check + F2 re-cost ([handoff](./reports/2026-08-05-handoff-f2-yuri.md) · [YURI-SPOTCHECK.md](./product/golden-cases/YURI-SPOTCHECK.md)). Prep F3 in parallel; **CAR-28** blocked on `borderless-api` — zero code until issuer.
+Last updated: **2026-08-08** · Last merge: **CAR-18** (PR #22) · Linear **CAR-18 Done** (Yuri approvals) · prior **CAR-17** · **CAR-15** · **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 deferred)  
+Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed**  
+**Next eng:** F2 closed. Prep **F3** (grill) · **CAR-28** blocked on `borderless-api` — zero code until issuer. No real students until platform auth + hard caps + rebrand.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -22,8 +22,8 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 |-------|------|--------|
 | A | CAR-5 Goals + seeds (LLM tracks) | Done |
 | A | CAR-6 Cost instrumentation | Done |
-| A | CAR-7 Synthetic cost gate + Yuri report | Done — F1 report Notion · **GO** (R$72.53) · F2 re-cost [2026-08-06](./reports/2026-08-06-cost-gate.md) **GO** (R$90.15) · awaiting Yuri sign-off |
-| A | CAR-8 Must-have node drafts | Done — `docs/product/must-haves/` ×4 · **silence baseline frozen 2026-08-04** (Pedro; Yuri spot-check → CAR-18) |
+| A | CAR-7 Synthetic cost gate + Yuri report | Done — F1 Notion **GO** (R$72.53) · F2 re-cost [2026-08-06](./reports/2026-08-06-cost-gate.md) **GO** (R$90.15) · **Yuri ack 2026-08-08** |
+| A | CAR-8 Must-have node drafts | Done — `docs/product/must-haves/` ×4 · silence baseline 2026-08-04 · **Yuri OK 2026-08-08** |
 | B | CAR-9 Labs path `/career-forge` | Done — reverse proxy (not host nginx) |
 | B | CAR-21 Labs forge SSE stream | Done — Labs live timeline stream verified |
 | — | CAR-13 Re-enable auto-deploy on push to `main` | Done — `push: branches: [main]` restored in deploy.yml |
@@ -31,7 +31,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | — | CAR-20 `POST /forge/runs` (avoid `/forge` page 405) | Done — Labs verified (API JSON, not Next 405) |
 | — | CAR-30 `GET /roadmap/current` (avoid `/roadmap` page HTML) | Done — same-origin trail JSON, not Next DOCTYPE |
 
-**Cost gate:** F1 2026-07-24 · Forge P95 **R$1.10** · F2 re-cost 2026-08-06 · Forge P95 **R$1.36** · proj. **R$90.15** · Hard stop R$500/mo · Approval ceiling R$700 · **No students until Yuri approves** (acks F1 + spot-check + F2 re-cost)
+**Cost gate:** F1 2026-07-24 · Forge P95 **R$1.10** · F2 re-cost 2026-08-06 · Forge P95 **R$1.36** · proj. **R$90.15** · Hard stop R$500/mo · Approval ceiling R$700 · **Yuri GO on #1+#2+#3 (2026-08-08)** · No students until F3 platform auth + hard caps + rebrand
 
 ---
 
@@ -44,7 +44,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 | CAR-32 | Docs: reconcile ADR-001 / V2-PLAN to 5 live dims | [P] | Done — ADR banners + V2-PLAN F2.8 match 5-dim + `profile_score` |
 | CAR-16 | English-first hard cutover | [P] | Done — UI/prompts/catalog/reports EN; PR #18 → `main` |
 | CAR-17 | Must-have forge + ≥70% harness | [S] | Done — silence baseline; bias+inject; `make must-have-coverage`; PR #21 → `main` |
-| CAR-18 | 16 golden cases + Yuri spot-check | [S] | In Progress — harness PR #22 → `main`; Pedro 16/16 PASS 2026-08-05; **Yuri spot-check pending** |
+| CAR-18 | 16 golden cases + Yuri spot-check | [S] | **Done** — harness PR #22; Pedro 16/16 PASS; Yuri approvals 2026-08-08 (#1 cost F1 · #2 must-haves · #3 re-cost F2) |
 
 Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 2. Golden docs: [PEDRO-RUNBOOK](./product/golden-cases/PEDRO-RUNBOOK.md) · [RUBRIC](./product/golden-cases/RUBRIC.md).
 
@@ -82,10 +82,10 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Cost pool + per-user cap | ✅ Done | CAR-6 — CostGuard + usage_monthly + 429 kill-switch |
 | F1 synthetic cost gate report | ✅ Done | CAR-7 — 24 forges + samples · GO vs R$500/R$700 |
 | English-first | ✅ Done | CAR-16 — UI + remaining prompts/catalog/reports EN (CAR-14 diagnosis/validation prompts) |
-| Must-have node drafts (4 goals) | ✅ Frozen | CAR-8 drafts + silence baseline 2026-08-04; Yuri spot-check → CAR-18 |
+| Must-have node drafts (4 goals) | ✅ Done | CAR-8 + Yuri OK 2026-08-08 |
 | Soft gate + lean forge | ✅ Done | CAR-15 + CAR-18 — `SOFT_GATE_CUTOFF=0.50` (midpoint retune) |
 | Must-have forge + ≥70% harness | ✅ Done | CAR-17 — bias+inject; `make must-have-coverage` |
-| F2 golden cases | 🟡 Pedro done | CAR-18 — 16/16 PASS live+scorecards; **Yuri spot-check pending** |
+| F2 golden cases | ✅ Done | CAR-18 — 16/16 PASS + Yuri approvals 2026-08-08 · Phase 2 closed |
 | Auth scaffold (anon JWT Bearer) | ✅ Done | CAR-23 — `AuthProvider` + middleware; F3-ready Borderless swap |
 | Forge SSE stream ticket | ✅ Done | CAR-26 — Bearer mint → `?ticket=` on stream; Labs path CAR-21 Done |
 | Forge artifacts (historical snapshots) | ✅ Done | CAR-24 persist + CAR-25 list/open freeze-before-promote |

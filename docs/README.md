@@ -45,6 +45,8 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | [decisions/README.md](./decisions/README.md) | ADR index |
 | [ADR-001 adaptive diagnosis](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) | CTRR loop brand · Interviewer/Judge · CV policy (**binding in v2**) |
 | [ADR-002 universal profile](./decisions/ADR-002-universal-profile-framework.md) | 5 profile dims — **keys live in prod**; no F2 schema migration |
+| [ADR-003 forge recovery](./decisions/ADR-003-forge-recovery-auth-scaffold.md) | Auth scaffold + forge artifacts (pre-Borderless) |
+| [ADR-004 canonical skill content](./decisions/ADR-004-canonical-skill-content.md) | Canônico por skill; forge só referencia (N:1) |
 | [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) | Engineering spec · API · sequence |
 
 ## Research
