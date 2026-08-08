@@ -7,6 +7,7 @@ Immutable **business + architecture decisions** for Career Forge. Agents must re
 | [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) | **Accepted · binding in v2** | Adaptive diagnosis (CTRR loop brand + Interviewer/Judge) |
 | [ADR-002](./ADR-002-universal-profile-framework.md) | **Keys live in prod** | 5 profile dims (`motivation_goal` … `constraints`); no F2 schema migration |
 | [ADR-003](./ADR-003-forge-recovery-auth-scaffold.md) | **Accepted** | Forge recovery + auth scaffold (pre-Borderless) |
+| [ADR-004](./ADR-004-canonical-skill-content.md) | **Accepted** | Canonical skill content — forge refs N:1, not per-run posts |
 
 v2 execution decisions (cost pool, auth platform, goals): [V2-PLAN.md](../V2-PLAN.md) decision log.
 

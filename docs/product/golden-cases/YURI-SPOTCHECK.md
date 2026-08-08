@@ -12,10 +12,10 @@ Aprovações Yuri: (1) cost gate F1 · (2) must-haves · (3) F2 re-cost.
 
 | Goal | Doc | JSON | Yuri |
 |------|-----|------|------|
-| rag-engineer | [must-haves/rag-engineer.md](../must-haves/rag-engineer.md) | `data/must-haves/rag-engineer.json` | _pending_ |
-| agent-engineer | [must-haves/agent-engineer.md](../must-haves/agent-engineer.md) | `data/must-haves/agent-engineer.json` | _pending_ |
-| llm-evals | [must-haves/llm-evals.md](../must-haves/llm-evals.md) | `data/must-haves/llm-evals.json` | _pending_ |
-| fine-tuning | [must-haves/fine-tuning.md](../must-haves/fine-tuning.md) | `data/must-haves/fine-tuning.json` | _pending_ |
+| rag-engineer | [must-haves/rag-engineer.md](../must-haves/rag-engineer.md) | `data/must-haves/rag-engineer.json` | **OK** 2026-08-08 |
+| agent-engineer | [must-haves/agent-engineer.md](../must-haves/agent-engineer.md) | `data/must-haves/agent-engineer.json` | **OK** 2026-08-08 |
+| llm-evals | [must-haves/llm-evals.md](../must-haves/llm-evals.md) | `data/must-haves/llm-evals.json` | **OK** 2026-08-08 |
+| fine-tuning | [must-haves/fine-tuning.md](../must-haves/fine-tuning.md) | `data/must-haves/fine-tuning.json` | **OK** 2026-08-08 |
 
 ## Checklist for Yuri
 
@@ -29,6 +29,6 @@ Aprovações Yuri: (1) cost gate F1 · (2) must-haves · (3) F2 re-cost.
 | 2026-08-05 | Pedro | Scorecards 16/16 PASS | Goldens closed by Pedro |
 | 2026-08-06 | Pedro | Scope change | Yuri = must-haves only (no mid spot-check) |
 | 2026-08-06 | Pedro | F2 re-cost eng GO | P95 R$1.36 · [report](../../reports/2026-08-06-cost-gate.md) |
-| | Yuri | #2 must-haves | |
-| | Yuri | #1 cost F1 | |
-| | Yuri | #3 re-cost F2 | |
+| 2026-08-08 | Yuri | #2 must-haves | **OK** — closes CAR-18 |
+| 2026-08-08 | Yuri | #1 cost F1 | **GO** vs R$500 |
+| 2026-08-08 | Yuri | #3 re-cost F2 | **GO** · P95 R$1.36 · proj. ~R$90 |
