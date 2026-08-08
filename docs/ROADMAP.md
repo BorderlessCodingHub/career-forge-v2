@@ -8,9 +8,43 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 ---
 
-## Current focus — Phase 1 (Infra + cost gate)
+## Current focus — Phase 3a (Rebrand + landing + pilots)
 
-**Gate:** cost report + budget (hard R$500 / approval ≤ R$700) — **Yuri GO 2026-08-08**. No students until F3 (platform auth + hard caps + rebrand).
+**Prerequisite:** F2 golden cases + Yuri GO (#1/#2/#3) — **met 2026-08-08**.  
+**F3a humans after:** hard caps (P95 bump) + rebrand + thin marketing landing — **not** platform login (grill F3.7/F3.8).  
+**F3b:** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) Borderless issuer — blocked on `borderless-api`.
+
+Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12).
+
+**Project:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)
+
+### F3a — parallel now **[P]**
+
+| Issue | Title | Class |
+|-------|-------|-------|
+| [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 (env + Labs) | [P] |
+| [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo SVG + favicon | [P] |
+
+### F3a — sequential
+
+| Issue | Title | Class | Blocked by |
+|-------|-------|-------|------------|
+| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | CAR-33, CAR-34 |
+| [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 |
+
+**Start order:** CAR-33 ∥ CAR-34 → CAR-35 → CAR-36.
+
+### F3b — platform auth **[B]** (external)
+
+| Issue | Title | Class |
+|-------|-------|-------|
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [B] blocked on issuer |
+
+---
+
+## Phase 1 (Infra + cost gate) — ✅ Completed
+
+**Gate:** cost report + budget (hard R$500 / approval ≤ R$700) — **Yuri GO 2026-08-08**.
 
 ### Track A — unblocked now **[P]**
 
@@ -62,7 +96,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 |-------|-------|-------|
 | [CAR-29](https://linear.app/career-forge-v2/issue/CAR-29) | Slice 2: `/forges` UI + optional email + diagnosis profile | [S] ✅ Done |
 | [CAR-31](https://linear.app/career-forge-v2/issue/CAR-31) | Polish `/forges` list UX — scan & open hierarchy | [P] ✅ Done |
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [S] → **F3** (blocked on `borderless-api`; zero prep) |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [S] → **F3b** (blocked on `borderless-api`; zero prep) |
 
 ---
 
@@ -87,16 +121,9 @@ Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 
 ---
 
-## Phase 3 — Rebrand + auth platform + landing + pilots (placeholders)
+## Phase 3 — see Current focus (F3a / F3b)
 
-**Prerequisite:** F2 golden cases OK — **met**.  
-**First humans BASE/PSP only after:** platform auth + hard caps + rebrand/landing.
-
-- [ ] Auth via `borderless-api` (platform) — [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) Slice 3 (deferred from CAR-22; blocked until issuer access)
-- [ ] Hard caps (pool R$500 + per-user)
-- [ ] Rebrand Borderless + i18n pt-BR
-- [ ] Landing Next.js at `/career-forge`
-- [ ] 2 BASE/PSP pilots end-to-end
+Placeholders replaced 2026-08-08 (grill freeze). Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · CAR-33…36 · F3b CAR-28.
 
 ---
 
