@@ -346,6 +346,7 @@ docker compose -f docker-compose.prod.yml up -d --no-build
 | `502 Bad Gateway` on `/career-forge/api/` | Backend not healthy yet | Wait for healthcheck: `docker compose -f docker-compose.prod.yml logs -f backend` |
 | Frontend loads but API calls fail (`failed to fetch`) | `CORS_ORIGINS` missing / wrong | Ensure `CORS_ORIGINS` includes browser Origin (`https://labs.borderlesscoding.com` and/or `https://labs-gateway.yuri-491.workers.dev`); restart backend |
 | Assets 404 (`/_next/static/...`) | Next.js built without `basePath` | Ensure image includes `basePath: '/career-forge'` and rebuild |
+| `public/` assets 404 (`/career-forge/brand/...`) | Standalone image missing `public/` | Frontend Dockerfile must `COPY --from=builder /app/public ./public` after standalone; rebuild frontend image |
 | API 404 on `/career-forge/diagnosis/…` with empty `NEXT_PUBLIC_*` | Missing Next rewrite / `API_INTERNAL_URL` | Confirm frontend container has `API_INTERNAL_URL=http://backend:8000` and current `next.config.mjs` (includes `knowledge-gaps`, `tutor`, `/health`) |
 | `/career-forge/health` returns Next.js 404 HTML; badge **API unreachable**; `:18000/health` OK | Rewrites baked at **build** without `API_INTERNAL_URL` | Rebuild frontend with `API_INTERNAL_URL=http://backend:8000` build-arg (CAR-19); runtime-only env is too late |
 | `POST /career-forge/forge` → **405**; badge API ok | App Router page `/forge` wins over afterFiles rewrite | FE uses `POST /forge/runs` (CAR-20); keep exact+nested rewrites for other roots |

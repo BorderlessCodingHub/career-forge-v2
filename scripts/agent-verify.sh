@@ -64,6 +64,7 @@ check test -f apps/frontend/public/brand/borderless-logo.svg
 check test -f apps/frontend/public/brand/favicon.ico
 check test -f apps/frontend/src/components/ui/BrandMark.tsx
 check test -f apps/frontend/src/lib/brand-assets.ts
+check grep -q 'COPY --from=builder /app/public ./public' apps/frontend/Dockerfile
 check grep -q '#5316cc\|#5316CC' apps/frontend/src/app/globals.css
 check grep -q '#2debb1\|#2DEBB1' apps/frontend/src/app/globals.css
 check test -f docker-compose.yml

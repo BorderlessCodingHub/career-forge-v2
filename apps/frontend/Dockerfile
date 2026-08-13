@@ -41,8 +41,10 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
 # Next standalone server output.
+# standalone omits `public/` and `.next/static` — copy both or /brand/* 404s (CAR-34 Labs).
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 CMD ["node", "server.js"]
