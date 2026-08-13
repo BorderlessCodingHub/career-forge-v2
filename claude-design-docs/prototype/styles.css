@@ -1,30 +1,30 @@
 /* ===== Career Forge — Design tokens ===== */
 :root {
-  /* Borderless palette (HAC-23) — see BORDERLESS-THEMING.md */
-  --bg: #0D0B14;
-  --bg-sidebar: #0A0812;
-  --surface: #15121F;
-  --surface-2: #1C1828;
-  --surface-3: #252033;
-  --surface-node: #6B4CE6;
-  --border: #2A2540;
-  --border-soft: #1F1A30;
+  /* Borderless palette (CAR-34) — see BORDERLESS-THEMING.md */
+  --bg: #121212;
+  --bg-sidebar: #0A0A0A;
+  --surface: #1A1A1A;
+  --surface-2: #222222;
+  --surface-3: #2A2A2A;
+  --surface-node: #5316CC;
+  --border: #2E2E2E;
+  --border-soft: #1F1F1F;
   --text: #FFFFFF;
   --text-2: #9CA3AF;
   --text-3: #6B7280;
   --muted: #4B5563;
-  --accent: #7C3AED;
-  --accent-2: #8B5CF6;
-  --accent-mint: #2DD4BF;
-  --accent-mint-bright: #00E5C0;
-  --accent-glow: rgba(124, 58, 237, 0.22);
-  --mint-glow: rgba(45, 212, 191, 0.18);
+  --accent: #5316CC;
+  --accent-2: #6B3FE0;
+  --accent-mint: #2DEBB1;
+  --accent-mint-bright: #5AF5C8;
+  --accent-glow: rgba(83, 22, 204, 0.22);
+  --mint-glow: rgba(45, 235, 177, 0.18);
   --success: #22C55E;
   --success-soft: rgba(34, 197, 94, 0.12);
   --warning: #F59E0B;
   --warning-soft: rgba(245, 158, 11, 0.12);
-  --evidence: #2DD4BF;
-  --evidence-soft: rgba(45, 212, 191, 0.12);
+  --evidence: #2DEBB1;
+  --evidence-soft: rgba(45, 235, 177, 0.12);
   --locked: #4B5563;
 
   --r-sm: 6px;
@@ -53,8 +53,8 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(900px 500px at 10% -10%, rgba(124,58,237,0.10), transparent 60%),
-    radial-gradient(700px 400px at 90% 110%, rgba(45,212,191,0.06), transparent 60%);
+    radial-gradient(900px 500px at 10% -10%, rgba(83,22,204,0.10), transparent 60%),
+    radial-gradient(700px 400px at 90% 110%, rgba(45,235,177,0.06), transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -66,7 +66,7 @@ body::before {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 32px;
   border-bottom: 1px solid var(--border-soft);
-  background: rgba(13,11,20,0.75);
+  background: rgba(18,18,18,0.75);
   backdrop-filter: blur(12px);
   position: sticky; top: 0; z-index: 50;
 }

@@ -1,30 +1,39 @@
 # Design tokens — Career Forge (Borderless)
 
-> **Canonical palette:** [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · CSS: [`prototype/styles.css`](./prototype/styles.css)
+> **Canonical palette:** [BORDERLESS-THEMING.md](./BORDERLESS-THEMING.md) · CSS: [`prototype/styles.css`](./prototype/styles.css) · App: `apps/frontend/src/app/globals.css`
 
-Extracted from Borderless Community reference (Code Breakers dashboard + logo). Replaces legacy indigo/navy Career Forge tokens (HAC-23).
+Brand kit (CAR-34 grill 2026-08-12): `#121212` / `#5316CC` / `#2DEBB1` from official [borderlesscoding.com](https://borderlesscoding.com) logo SVG. **Retired:** `#44D5AD`, legacy `#0D0B14` / `#7C3AED` / `#2DD4BF`.
 
 ## Colors
 
 | Token | Hex | Usage |
 |-------|-----|-----|
-| `bg` | `#0D0B14` | Main background, canvas base |
-| `bg-sidebar` | `#0A0812` | Fixed sidebar |
-| `surface` | `#15121F` | Cards, inputs, top bar |
-| `surface-elevated` | `#1C1828` | Modals, drawers |
-| `surface-node` | `#6B4CE6` | Roadmap nodes (vibrant purple) |
-| `border` | `#2A2540` | Borders, dashed lines |
-| `border-soft` | `#1F1A30` | Subtle dividers |
+| `bg` | `#121212` | Main background, canvas base |
+| `bg-sidebar` | `#0A0A0A` | Fixed sidebar / artifact topbar |
+| `surface` | `#1A1A1A` | Cards, inputs, top bar |
+| `surface-elevated` | `#222222` | Modals, drawers |
+| `surface-node` | `#5316CC` | Roadmap nodes (brand purple) |
+| `border` | `#2E2E2E` | Borders, dashed lines |
+| `border-soft` | `#1F1F1F` | Subtle dividers |
 | `text-primary` | `#FFFFFF` | Headings, body |
 | `text-secondary` | `#9CA3AF` | Labels, hints |
 | `text-muted` | `#6B7280` | Meta, timestamps |
-| `accent` | `#7C3AED` | CTA, active nav, logo purple |
-| `accent-mint` | `#2DD4BF` | Progress, evidence, logo mint |
-| `accent-mint-bright` | `#00E5C0` | Progress bar peak |
+| `accent` | `#5316CC` | CTA, active nav, logo purple |
+| `accent-mint` | `#2DEBB1` | Progress, evidence, logo mint |
+| `accent-mint-bright` | `#5AF5C8` | Progress bar peak |
 | `success` | `#22C55E` | Mastery / approved |
 | `warning` | `#F59E0B` | Review / attention |
 | `locked` | `#4B5563` | Locked node |
-| `evidence` | `#2DD4BF` | Evidence, artifacts (mint) |
+| `evidence` | `#2DEBB1` | Evidence, artifacts (mint) |
+
+### Brand assets (Next.js)
+
+| Asset | Path | Use |
+|-------|------|-----|
+| Logo SVG | `public/brand/borderless-logo.svg` | `BrandMark` — artifact topbar |
+| Favicon | `public/brand/favicon.ico` | `metadata.icons` in root layout |
+
+Paths respect `NEXT_PUBLIC_BASE_PATH` via `brandAssetPath()` (`src/lib/brand-assets.ts`).
 
 ### Dismiss / destructive icon (implemented — dark UI)
 
@@ -52,6 +61,7 @@ Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; r
 |------|---------|-----|
 | Control shell | `h-9`, `topbarActionClass` | `mentor-report-link` in artifact topbar |
 | Leading slot | `h-7 w-7` | Icon box with centered `FileText` (`h-4 w-4`) |
+| Brand mark | `BrandMark` size 36 | Replaces Lucide `Axe` placeholder |
 
 ### Spine branch connectors (artifact canvas — Next.js)
 
@@ -67,18 +77,18 @@ Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; r
 |------|---------|-----|
 | Progress ring | ~44px SVG, `stroke-accent-mint`, center `%` label `text-[10px]` | `trail-progress-ring` in **page intro** (below subtitle) — `getTrailChecklistProgressPct`: same per-topic checklist math as canvas, item-pooled across topics (not mastery %, not topic-average) |
 
-### CSS variables (`prototype/styles.css`)
+### CSS variables (`prototype/styles.css` + `globals.css`)
 
 ```css
---bg: #0D0B14;
---bg-sidebar: #0A0812;
---surface: #15121F;
---surface-2: #1C1828;
---surface-node: #6B4CE6;
---border: #2A2540;
---accent: #7C3AED;
---accent-mint: #2DD4BF;
---accent-mint-bright: #00E5C0;
+--bg: #121212;
+--bg-sidebar: #0A0A0A;
+--surface: #1A1A1A;
+--surface-2: #222222;
+--surface-node: #5316CC;
+--border: #2E2E2E;
+--accent: #5316CC;
+--accent-mint: #2DEBB1;
+--accent-mint-bright: #5AF5C8;
 ```
 
 ## Typography
@@ -127,4 +137,4 @@ Defined in `prototype/components.jsx`:
 
 ---
 
-*HAC-23 — Borderless tokens · 2026-05-25*
+*HAC-23 — Borderless tokens · 2026-05-25 · CAR-34 rebrand 2026-08-12*

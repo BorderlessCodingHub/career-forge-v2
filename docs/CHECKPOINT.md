@@ -173,7 +173,7 @@ Canonical UX: [claude-design-docs/UX-FLOW.md](../claude-design-docs/UX-FLOW.md) 
 
 Claude Design prototype: [claude-design-docs/prototype/](../claude-design-docs/prototype/) — tokens/components; rebrand tokens in F3.
 
-**Visual identity:** Borderless Community theming — [BORDERLESS-THEMING.md](../claude-design-docs/BORDERLESS-THEMING.md). Brand kit colors for v2: `#121212` / `#5316CC` / `#44D5AD`.
+**Visual identity:** Borderless Community theming — [BORDERLESS-THEMING.md](../claude-design-docs/BORDERLESS-THEMING.md). Brand kit colors for v2: `#121212` / `#5316CC` / `#2DEBB1` (official logo; `#44D5AD` retired).
 
 ---
 

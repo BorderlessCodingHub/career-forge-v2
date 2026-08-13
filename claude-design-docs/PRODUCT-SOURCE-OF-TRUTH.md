@@ -109,7 +109,7 @@ Prototype plan: [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) · Feedback: 
 Full spec: [UI-PRINCIPLES](./UI-PRINCIPLES.md) · Theming: [BORDERLESS-THEMING](./BORDERLESS-THEMING.md)
 
 - **Borderless shell** + **canvas roadmap** (Code Breakers reference) + adaptive skill graph (status, mastery %)
-- Dark purple-black aesthetic — tokens in [design-tokens.md](./design-tokens.md)
+- Flat dark aesthetic (`#121212`) — tokens in [design-tokens.md](./design-tokens.md)
 - Portuguese (Brazil) for all user-facing copy
 - Premium dev-tool feel — no LMS chrome, no confetti/gamification
 - Hero moments: **Forge timeline stream**, **Animation reveal**, **Validation interview + score**
@@ -188,6 +188,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Forge recovery (CAR-27 / ADR-003) | Not in prototype | N/A | **`LandingRecoveryGate`** on `/` when `GET /me/forges` ≥1: Continue / View all / New forge (`data-screen="landing-recovery"`); `/forges` list; app deep-links `/share/[token]` + `/resume/[token]`; API under **`/public/share`** + **`/public/resume`**; forge complete resume copy-once. MVP English copy on recovery surfaces (full EN cutover = CAR-16) | **Code wins** — base recovery | 2026-08-01 |
 | Forge recovery Slice 2 (CAR-29) | Not in prototype | N/A | Rich **`/forges`**: Rename (`PATCH /me/forges/{id}`), **Revoke share**, re-forge CTA; **`/resume/[token]`** conflict chooser (`resume-conflict` / keep local / switch) before `adoptSession` when local forges ≠ resume owner; forge complete **optional email** store (`PATCH /me/email`, no SMTP); **`GET /me/profile`** + `hydrateOnboardingFromProfile` → `/onboarding/edit` or `startForgeRunFromProfile`; landing CTA **Forge again from last diagnosis** when profile has diagnosis (also empty-artifact + diagnosis gate → Welcome back / New from scratch) | **Code wins** — Slice 2 recovery polish; Borderless send = CAR-28 | 2026-08-01 |
 | Soft gate warning (CAR-15) | Not in prototype | N/A | **`SoftGateWarningBanner`** — copy + status only (`soft_gated` / `soft_gate_warning` from API); shown on `/onboarding/edit` (`soft-gate-warning`) and `/forge` entry (`soft-gate-warning-forge`); **does not block** Generate roadmap / forge stream; lean prune is BE-only (same GraphExecutor path). No new layout/tokens/routes | **Code wins** — F2 soft gate; cutoff retune CAR-18 | 2026-08-03 |
+| Rebrand tokens + logo (CAR-34) | Lucide `Axe` + purple-black `#0D0B14` / `#7C3AED` / `#2DD4BF` | N/A | Global tokens `#121212` / `#5316CC` / `#2DEBB1` (official site logo mint; `#44D5AD` retired); `public/brand/` + **`BrandMark`** on artifact topbar; favicon via `metadata.icons`; no layout rewrite; marketing chrome = CAR-35 | **Code + brand kit win** | 2026-08-12 |
 
 ---
 

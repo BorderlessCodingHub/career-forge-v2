@@ -2,26 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CAR-34 — Borderless brand kit (grill 2026-08-12). Canonical: #121212 / #5316CC / #2DEBB1 */
 :root {
-  --bg: #0d0b14;
-  --bg-sidebar: #0a0812;
-  --surface: #15121f;
-  --surface-elevated: #1c1828;
-  --surface-node: #6b4ce6;
-  --border: #352f4c;
-  --border-soft: #1f1a30;
+  --bg: #121212;
+  --bg-sidebar: #0a0a0a;
+  --surface: #1a1a1a;
+  --surface-elevated: #222222;
+  --surface-node: #5316cc;
+  --border: #2e2e2e;
+  --border-soft: #1f1f1f;
   --text: #ffffff;
   --text-2: #9ca3af;
   --text-3: #6b7280;
-  --accent: #7c3aed;
-  --accent-mint: #2dd4bf;
-  --accent-mint-bright: #00e5c0;
+  --accent: #5316cc;
+  --accent-mint: #2debb1;
+  --accent-mint-bright: #5af5c8;
   --success: #22c55e;
   --warning: #f59e0b;
   --locked: #4b5563;
-  --evidence: #2dd4bf;
-  --accent-glow: rgba(124, 58, 237, 0.22);
-  --mint-glow: rgba(45, 212, 191, 0.18);
+  --evidence: #2debb1;
+  --accent-glow: rgba(83, 22, 204, 0.22);
+  --mint-glow: rgba(45, 235, 177, 0.18);
 }
 
 body {

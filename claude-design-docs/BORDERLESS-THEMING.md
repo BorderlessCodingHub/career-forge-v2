@@ -26,31 +26,33 @@ Career Forge shares Borderless Community’s dark, premium dev-tool aesthetic. S
 
 | Token | Hex | CSS variable | Usage |
 |-------|-----|--------------|-------|
-| `bg` | `#0D0B14` | `--bg` | App background, canvas base |
-| `bg-sidebar` | `#0A0812` | `--bg-sidebar` | Fixed left sidebar panel |
-| `surface` | `#15121F` | `--surface` | Cards, inputs, top bar |
-| `surface-elevated` | `#1C1828` | `--surface-elevated` | Modals, drawers, hover panels |
-| `surface-node` | `#6B4CE6` | `--surface-node` | Roadmap topic nodes (vibrant purple) |
-| `border` | `#2A2540` | `--border` | Borders, dashed connection lines |
-| `border-soft` | `#1F1A30` | `--border-soft` | Subtle dividers |
+| `bg` | `#121212` | `--bg` | App background, canvas base |
+| `bg-sidebar` | `#0A0A0A` | `--bg-sidebar` | Fixed left sidebar / artifact topbar |
+| `surface` | `#1A1A1A` | `--surface` | Cards, inputs, top bar |
+| `surface-elevated` | `#222222` | `--surface-elevated` | Modals, drawers, hover panels |
+| `surface-node` | `#5316CC` | `--surface-node` | Roadmap topic nodes (brand purple) |
+| `border` | `#2E2E2E` | `--border` | Borders, dashed connection lines |
+| `border-soft` | `#1F1F1F` | `--border-soft` | Subtle dividers |
 | `text-primary` | `#FFFFFF` | `--text` | Headings, node titles |
 | `text-secondary` | `#9CA3AF` | `--text-2` | Labels, nav inactive, hints |
 | `text-muted` | `#6B7280` | `--text-3` | Meta, timestamps |
-| `accent` | `#7C3AED` | `--accent` | CTAs, active nav pill, logo purple |
-| `accent-mint` | `#2DD4BF` | `--accent-mint` | Progress fill, logo mint, highlights |
-| `accent-mint-bright` | `#00E5C0` | `--accent-mint-bright` | Progress bar peak, glow accents |
-| `accent-glow` | `rgba(124, 58, 237, 0.22)` | `--accent-glow` | Focus rings, node selection |
-| `mint-glow` | `rgba(45, 212, 191, 0.18)` | `--mint-glow` | Progress bar track glow |
+| `accent` | `#5316CC` | `--accent` | CTAs, active nav pill, logo purple |
+| `accent-mint` | `#2DEBB1` | `--accent-mint` | Progress fill, logo mint, highlights |
+| `accent-mint-bright` | `#5AF5C8` | `--accent-mint-bright` | Progress bar peak, glow accents |
+| `accent-glow` | `rgba(83, 22, 204, 0.22)` | `--accent-glow` | Focus rings, node selection |
+| `mint-glow` | `rgba(45, 235, 177, 0.18)` | `--mint-glow` | Progress bar track glow |
 | `success` | `#22C55E` | `--success` | Mastery / approved (semantic) |
 | `warning` | `#F59E0B` | `--warning` | Review / attention |
 | `locked` | `#4B5563` | `--locked` | Locked node |
-| `evidence` | `#2DD4BF` | `--evidence` | Evidence (align with mint accent) |
+| `evidence` | `#2DEBB1` | `--evidence` | Evidence (align with mint accent) |
 | `grid-dot` | `rgba(255,255,255,0.04)` | — | Canvas dot grid (24px spacing) |
+
+**Canonical anchors (CAR-34):** `#121212` / `#5316CC` / `#2DEBB1` from official site logo. Retired: `#44D5AD`, `#0D0B14` / `#7C3AED` / `#2DD4BF`.
 
 ### Gradients (logo-derived)
 
-- **Brand ribbon:** `linear-gradient(135deg, #2DD4BF 0%, #7C3AED 100%)` — logo mark, hero accents
-- **Node progress:** `linear-gradient(90deg, #00E5C0, #2DD4BF)` — fill inside node progress bars
+- **Brand ribbon:** `linear-gradient(135deg, #2DEBB1 0%, #5316CC 100%)` — logo mark, hero accents
+- **Node progress:** `linear-gradient(90deg, #5AF5C8, #2DEBB1)` — fill inside node progress bars
 - **Ambient mesh:** subtle purple + mint radial at canvas edges (low opacity)
 
 ---
@@ -89,9 +91,9 @@ Reference: [borderless-code-breakers-dashboard.png](./references/borderless-code
 | Property | Value |
 |----------|-------|
 | Shape | Rounded rectangle, ~12–16px radius |
-| Background | `--surface-node` (`#6B4CE6`) |
+| Background | `--surface-node` (`#5316CC`) |
 | Title | White, 14–15px semibold |
-| Progress bar | Track: dark purple inset; fill: `--accent-mint` → `--accent-mint-bright` |
+| Progress bar | Track: dark inset; fill: `--accent-mint` → `--accent-mint-bright` |
 | Border | None or 1px `rgba(255,255,255,0.08)` |
 | Selected | `--accent-glow` outer glow + `--accent` border |
 
@@ -161,8 +163,8 @@ See [design-tokens.md](./design-tokens.md) · Implementation notes in [PRODUCT-S
 
 ### Do
 
-- Use deep purple-black backgrounds (`#0D0B14` family)
-- Use vibrant purple nodes and cyan/mint progress fills
+- Use flat dark backgrounds (`#121212` family)
+- Use brand purple nodes (`#5316CC`) and mint progress fills (`#2DEBB1`)
 - Implement fixed sidebar + top search bar for steady state
 - Use dot grid on roadmap canvas
 - Keep Portuguese (Brazil) copy and HAC-21 wow moments
