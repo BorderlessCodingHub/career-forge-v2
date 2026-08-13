@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-08** · Last merge: **CAR-18** (PR #22) · Linear **CAR-18 Done** (Yuri approvals) · prior **CAR-17** · **CAR-15** · **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 → F3b)  
+Last updated: **2026-08-12** · Last merge: **CAR-34** (PR #28) · Linear **CAR-34 Done** · prior **CAR-18** · **CAR-17** · **CAR-15** · **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 → F3b)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)  
-**Next eng:** **F3a** (grill frozen 2026-08-08 — V2-PLAN F3.1–F3.12). Start: [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) ∥ [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) → [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) → [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36). **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`. Humans need caps + rebrand/landing — **not** platform login.
+**Next eng:** **F3a** — remaining [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) **[P]** → then [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) → [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36). **CAR-34 Done.** **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -77,12 +77,12 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
 | [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 | [P] | Backlog |
-| [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo + favicon | [P] | In Progress |
+| [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo + favicon | [P] | **Done** — PR #28 · `#121212` / `#5316CC` / `#2DEBB1` + BrandMark |
 | [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | Backlog — after CAR-33/34 |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | Backlog — after CAR-35 |
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Borderless issuer + send resume + merge | [B] | **F3b** — blocked on issuer |
 
-**Start order:** CAR-33 ∥ CAR-34 → CAR-35 → CAR-36.
+**Start order:** CAR-33 (remaining [P]) → CAR-35 → CAR-36. **CAR-34 Done.**
 
 ---
 
@@ -110,7 +110,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Forge recovery Slice 2 | ✅ Done | CAR-29 — rich `/forges`, conflict chooser, email store, diagnosis re-forge |
 | `/forges` list UX polish | ✅ Done | CAR-31 — scan & open hierarchy (Open+Rename; ⋯ overflow) |
 | Platform auth (`borderless-api`) | ⬜ F3b | CAR-28 — blocked on issuer; pilots ≠ login (grill 2026-08-08) |
-| Rebrand tokens + logo/favicon | ⬜ F3a | Brand kit #121212 / #5316CC / #2DEBB1 |
+| Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon |
 | Marketing landing + pt-BR chrome | ⬜ F3a | Thin layer on `/`; no `/app` move (F3.3/F3.4) |
 | BASE/PSP pilots (×2 E2E) | ⬜ F3a | After caps + landing; anon OK (F3.7/F3.9) |
 

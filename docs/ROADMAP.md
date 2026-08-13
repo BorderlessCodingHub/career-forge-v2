@@ -18,21 +18,21 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12).
 
 **Project:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)
 
-### F3a — parallel now **[P]**
+### F3a — parallel **[P]**
 
-| Issue | Title | Class |
-|-------|-------|-------|
-| [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 (env + Labs) | [P] |
-| [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo SVG + favicon | [P] |
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
+| [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 (env + Labs) | [P] | Open |
+| [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo SVG + favicon | [P] | **Done** — PR #28 |
 
 ### F3a — sequential
 
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
-| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | CAR-33, CAR-34 |
+| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | CAR-33 (CAR-34 Done) |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 |
 
-**Start order:** CAR-33 ∥ CAR-34 → CAR-35 → CAR-36.
+**Start order:** CAR-33 → CAR-35 → CAR-36 (**CAR-34 Done**).
 
 ### F3b — platform auth **[B]** (external)
 
