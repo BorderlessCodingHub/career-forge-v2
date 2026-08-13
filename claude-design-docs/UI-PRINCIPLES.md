@@ -120,6 +120,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ChatBubble` | Onboarding + mentor |
 | `PrimaryButton` / `GhostButton` | Actions |
 | `LandingRecoveryGate` | CAR-27/29 — `/` return-visit gate; Continue / View all / New forge; **Forge again from last diagnosis** when `GET /me/profile` has diagnosis; empty+diagnosis gate; falls open to `GoalPicker` when empty or API error |
+| `WelcomeLanding` | CAR-35 — `/welcome` marketing (EN); BrandMark + Start→`/`; no pricing/email; pt-BR CAR-37; motion CAR-38 |
 | `profile-reuse.ts` | CAR-29 — `hydrateOnboardingFromProfile` writes diagnosis + intake into sessionStorage for `/onboarding/edit` |
 | `DeployBadge` | Global fixed footer (`z-auto`) — deploy SHA/time + API health dot; stays **below** drawers (`z-40`/`z-50`); `local dev` when build env unset |
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); stats from `checklist-progress-stats.ts` |

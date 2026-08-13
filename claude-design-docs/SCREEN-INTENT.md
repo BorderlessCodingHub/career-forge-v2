@@ -7,10 +7,26 @@
 
 ## Global rules
 
-- All user-facing copy: **Portuguese (Brazil)** — exception: CAR-27/29 recovery surfaces may stay English until CAR-16 hard cutover
+- Product UI copy: **English** (CAR-16). Marketing `/welcome` ships EN in CAR-35; **pt-BR marketing + chrome** = CAR-37
 - Status enum: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar` — never rename without CHECKPOINT + API
 - No gamification (confetti, XP, streaks)
 - P0 wow moments must survive: **Forge stream**, **Animation reveal**, **Validation**, **Adaptive roadmap**
+
+---
+
+## 0. Marketing welcome (`/welcome`) — MUST match (CAR-35)
+
+| Constraint | Detail |
+|------------|--------|
+| Route | `/welcome` under `basePath=/career-forge` — **not** a thin layer replacing `/` |
+| Language | EN in CAR-35; pt-BR → CAR-37 |
+| Nav | Sticky: BrandMark + single **Start** CTA → `/` |
+| Sections | Hero · honest Borderless/BASE/PSP line · features · showcase (diagnose→forge→validate) · benefits · FAQ ×3 (What / Who / How) · final CTA · footer |
+| Out | Pricing · email capture · checkout · fake testimonials · motion binge (CAR-38) · next-intl |
+| Product `/` | Unchanged — `LandingRecoveryGate` / GoalPicker |
+| Hook | `data-screen="marketing-welcome"` · `data-testid="welcome-cta-start"` |
+
+**Can evolve:** motion (CAR-38), pt-BR (CAR-37)
 
 ---
 

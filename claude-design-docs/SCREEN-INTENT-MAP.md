@@ -22,7 +22,8 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 
 | # | App route | Prototype hash (legacy) | `data-screen` | Wow? | Must match | Can evolve |
 |---|-----------|-------------------------|---------------|------|------------|------------|
-| 1 | `/` | `goal` | `goal-picker` / `landing-recovery` | — | Headline PT-BR, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA; if ≥1 artifact → Continue / View all / New forge; if diagnosis → Forge again from last diagnosis | Card hover, validation toast |
+| 0 | `/welcome` | `marketing` | `marketing-welcome` | — | EN marketing: BrandMark + Start→`/`; hero diagnose/forge/validate; FAQ ×3; no pricing/email | Motion CAR-38 · pt-BR CAR-37 |
+| 1 | `/` | `goal` | `goal-picker` / `landing-recovery` | — | Headline EN, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA; if ≥1 artifact → Continue / View all / New forge; if diagnosis → Forge again from last diagnosis | Card hover, validation toast |
 | 1b | `/forges` | — | `forges-list` | — | Scan & open: Open + Rename visible; share/resume/revoke in ⋯; untitled shows goal_id; optional re-forge CTA | Visual polish |
 | 1c | `/share/[token]` | — | `share-readonly` | — | Read-only roadmap; no session adopt | Visual polish |
 | 1d | `/resume/[token]` | — | `resume-consume` | — | Conflict chooser when local forges ≠ owner; else adopt; fail on reuse/expiry | Copy polish |
