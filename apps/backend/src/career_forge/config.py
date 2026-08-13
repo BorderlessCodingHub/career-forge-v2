@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     # Cost instrumentation (CAR-6) — hard stop pool + per-user forge cap
     monthly_api_budget_brl: float = 500.0
     forge_cap_per_user_month: int = 2
-    cost_p95_brl_per_run: float = 1.10  # CAR-7 gate P95 (rounded; see docs/reports/*-cost-gate.md)
+    cost_p95_brl_per_run: float = 1.3639  # F2 re-cost forge P95 (CAR-33; docs/reports/2026-08-06-cost-gate.md)
     cost_buffer_factor: float = 1.10
 
     # Auth scaffold (CAR-23 / ADR-003) — anon JWT; Borderless issuer in F3

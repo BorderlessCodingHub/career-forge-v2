@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-12** · Last merge: **CAR-34 hotfix** (PR #29 — `COPY public/` standalone) · prior **CAR-34** (PR #28) · Linear **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
+Last updated: **2026-08-13** · Last: **CAR-33** kill-switch P95 → 1.3639 (Labs already live; repo `.env.example` + config default synced) · prior **CAR-34 hotfix** (PR #29) · Linear **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)  
-**Next eng:** **F3a** — remaining [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) **[P]** → then [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) → [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36). **CAR-34 Done.** **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
+**Next eng:** **F3a** — [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) → [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36). **CAR-33 Done** · **CAR-34 Done.** **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -76,13 +76,13 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
-| [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 | [P] | Backlog |
+| [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 | [P] | **Done** — Labs `1.3639`; repo `.env.example` + `config.py` default synced |
 | [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo + favicon | [P] | **Done** — PR #28 · `#121212` / `#5316CC` / `#2DEBB1` + BrandMark |
-| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | Backlog — after CAR-33/34 |
+| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | Backlog — after CAR-34 (CAR-33 Done) |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | Backlog — after CAR-35 |
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Borderless issuer + send resume + merge | [B] | **F3b** — blocked on issuer |
 
-**Start order:** CAR-33 (remaining [P]) → CAR-35 → CAR-36. **CAR-34 Done.**
+**Start order:** CAR-35 → CAR-36. **CAR-33 Done** · **CAR-34 Done.**
 
 ---
 
@@ -96,7 +96,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Labs deploy path | ✅ Path + trail + SSE | Auto-deploy on `main` (CAR-13); same-origin rewrite (CAR-19/20/30); path OK (CAR-9); forge SSE OK (CAR-21) |
 | 4 LLM goals + catalog seeds | ✅ Done | CAR-5 — `data/catalog/` ×4 tracks |
 | Cost pool + per-user cap | ✅ Done | CAR-6 — CostGuard + usage_monthly + 429 kill-switch; F3a bump P95 → 1.3639 |
-| Kill-switch P95 = F2 re-cost | ⬜ F3a | Default/env still 1.10 — bump to **1.3639** |
+| Kill-switch P95 = F2 re-cost | ✅ Done | CAR-33 — Labs + `.env.example` + config default **1.3639**; pool R$500; forge cap/user **2** |
 | F1 synthetic cost gate report | ✅ Done | CAR-7 — 24 forges + samples · GO vs R$500/R$700 |
 | English-first | ✅ Done | CAR-16 — UI + remaining prompts/catalog/reports EN (CAR-14 diagnosis/validation prompts) |
 | Must-have node drafts (4 goals) | ✅ Done | CAR-8 + Yuri OK 2026-08-08 |
