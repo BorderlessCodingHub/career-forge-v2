@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-13** · Last merge: **CAR-33** (PR #30 — kill-switch P95 → 1.3639; Labs already live) · prior **CAR-34 hotfix** (PR #29) · Linear **CAR-33 Done** · **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b) · **CAR-35 In Progress** (`/welcome` EN; grill 2026-08-13)  
+Last updated: **2026-08-13** · Last merge: **CAR-35** (PR #31 — `/welcome` marketing EN) · prior **CAR-33** (PR #30) · Linear **CAR-35 Done** · **CAR-33 Done** · **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)  
-**Next eng:** **F3a** — [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) `/welcome` → [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) motion · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots. **CAR-33 Done** · **CAR-34 Done.** **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
+**Next eng:** **F3a** — [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR ∥ [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) motion · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots. **CAR-35 Done.** **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -78,13 +78,13 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 |-------|-------|-------|--------|
 | [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 | [P] | **Done** — Labs `1.3639`; repo `.env.example` + `config.py` default synced |
 | [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo + favicon | [P] | **Done** — PR #28 · `#121212` / `#5316CC` / `#2DEBB1` + BrandMark |
-| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing `/welcome` (EN) | [S] | **In Progress** — grill 2026-08-13; pt-BR → CAR-37; motion → CAR-38 |
+| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing `/welcome` (EN) | [S] | **Done** — PR #31 · CTA → `/`; pt-BR → CAR-37; motion → CAR-38 |
 | [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) | pt-BR marketing + chrome | [S] | Backlog — after CAR-35 |
 | [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) | `/welcome` motion polish | [S] | Backlog — after CAR-35 |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | Backlog — after CAR-35 |
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Borderless issuer + send resume + merge | [B] | **F3b** — blocked on issuer |
 
-**Start order:** CAR-35 → CAR-37/38 → CAR-36. **CAR-33 Done** · **CAR-34 Done.**
+**Start order:** CAR-37 ∥ CAR-38 → CAR-36. **CAR-33–35 Done** · **CAR-34 Done.**
 
 ---
 
@@ -113,7 +113,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | `/forges` list UX polish | ✅ Done | CAR-31 — scan & open hierarchy (Open+Rename; ⋯ overflow) |
 | Platform auth (`borderless-api`) | ⬜ F3b | CAR-28 — blocked on issuer; pilots ≠ login (grill 2026-08-08) |
 | Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon; PR #29 copies `public/` into standalone (Labs `/brand/*`) |
-| Marketing landing `/welcome` | 🔄 CAR-35 | EN page; CTA → `/`; no pricing/email; pt-BR → CAR-37; motion → CAR-38 |
+| Marketing landing `/welcome` | ✅ Done | CAR-35 — EN `/welcome`; CTA → `/`; no pricing/email; pt-BR → CAR-37; motion → CAR-38 |
 | BASE/PSP pilots (×2 E2E) | ⬜ F3a | After caps + landing; anon OK (F3.7/F3.9) |
 
 ---

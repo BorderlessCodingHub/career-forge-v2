@@ -29,12 +29,12 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12). Amend 2026
 
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
-| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing `/welcome` (EN) | [S] | CAR-34 Done (CAR-33 Done) |
-| [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) | pt-BR marketing + chrome | [S] | CAR-35 |
-| [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) | `/welcome` motion polish | [S] | CAR-35 |
-| [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 |
+| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing `/welcome` (EN) | [S] | **Done** — PR #31 |
+| [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) | pt-BR marketing + chrome | [S] | CAR-35 Done |
+| [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) | `/welcome` motion polish | [S] | CAR-35 Done |
+| [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 Done |
 
-**Start order:** CAR-35 → (CAR-37 ∥ CAR-38 after) → CAR-36. **CAR-33 Done** · **CAR-34 Done**.
+**Start order:** CAR-37 ∥ CAR-38 → CAR-36. **CAR-33–35 Done** · **CAR-34 Done**.
 
 ### F3b — platform auth **[B]** (external)
 
