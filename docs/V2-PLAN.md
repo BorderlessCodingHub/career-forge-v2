@@ -3,7 +3,7 @@
 > Borderless · labs.borderlesscoding.com/career-forge  
 > Executor: Pedro Alano  
 > Prazo estimado: 4–5 semanas ·  
-> **Atualizado:** 2026-08-08 — F3 grill (F3a/F3b); prior 2026-07-30 ADR-003; 2026-07-25 F2 grill; 2026-07-20 Yuri
+> **Atualizado:** 2026-08-13 — CAR-35 grill (`/welcome` EN; pt-BR → CAR-37; motion → CAR-38); prior 2026-08-08 F3a/F3b; 2026-07-30 ADR-003
 
 ---
 
@@ -30,7 +30,7 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 | 7 | Kill-switch runtime = **GraphRuns × P95 BRL** medido no gate F1 (+ buffer ~10%). LangSmith audita. |
 | 8 | Pool conta **toda GraphRun billable** (diagnosis, forge, validation, mentor). Demo-ana + sintéticos do gate: fora do pool de aluno, dentro do relatório F1. |
 | 9 | Primeiro humano BASE/PSP: **somente na F3** (após gate + golden cases). **Amend 2026-08-08:** humans need **hard caps + rebrand/landing** (F3a) — **not** Borderless login. F2 100% interno/sintético. |
-| 10 | URL: **path** — `labs.borderlesscoding.com/career-forge`. **Amend 2026-08-08:** thin **marketing** on `/career-forge`; product stays at current routes (no `/career-forge/app` migration). Frame depois, mesmo path. |
+| 10 | URL: **path** — `labs.borderlesscoding.com/career-forge`. **Amend 2026-08-08:** marketing + product under path (no `/career-forge/app` migration). **Amend 2026-08-13:** marketing route **`/welcome`**; product stays at `/` (GoalPicker/recovery); entry = link/docs to `/welcome` (no auto-redirect from `/`). Frame depois, mesmo path. |
 | 11 | Must-haves: draft Pedro (1 pág/goal) → 1 rodada sign-off Yuri; silêncio = baseline. |
 | 12 | F1 em Track A (desbloqueado) / Track B (nginx path — aguarda Brunno/domínio). Restante de org/deploy Track B já OK. |
 | 13 | **Forge recovery (ADR-003):** lista histórica via `forge_artifacts`; deep-links `share` (read-only) + `resume` (single-use/~7d); open = promote snapshot; freeze-before-promote. |
@@ -94,20 +94,22 @@ Soft gate: `profile_score = mean(5 dim confidences)` abaixo do cutoff → aviso 
 ### English-first
 
 - UI, prompts, catálogo e relatórios em inglês desde a F2
-- **F3a (F3.4):** pt-BR = marketing + chrome only; diagnosis/forge/validation AI + prompts stay EN
+- **F3a (F3.4 amend 2026-08-13):** `/welcome` ships **EN** in [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35); **pt-BR marketing + chrome** deferred to [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37). Diagnosis/forge/validation AI + prompts stay EN
 - Full dual-locale / AI pt-BR: later
 - Público PSP/BASE compatível
 
 ### Landing page
 
-- **v2 (amend 2026-08-08 / F3.3):** Next.js at Labs `basePath=/career-forge` — thin **marketing** layer on `/`; product routes unchanged (no `/app` prefix)
+- **v2 (amend 2026-08-13 / F3.3):** Next.js at Labs `basePath=/career-forge` — marketing on **`/welcome`** (rich page, no pricing/email/checkout); product `/` unchanged (no `/app` prefix); CTA → `/` anon
+- Waitlist + checkout intent only: [docs/product/waitlist-checkout-intent.md](./product/waitlist-checkout-intent.md) (v3+)
+- Motion polish: [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38)
 - Frame: só quando houver comercialização/growth para fora (fora do horizonte atual)
 - Demo do forge streaming reutiliza componentes existentes
 
 ### Rebrand
 
 - Identidade: #121212 / #5316CC / #2DEBB1 + brand kit Borderless (logo oficial do site; mint `#44D5AD` retired — grill 2026-08-12)
-- Escopo F3a (F3.5): tokens Tailwind, logo SVG, favicon **+** marketing landing composition — sem redesign estrutural do produto
+- Escopo F3a (F3.5): tokens Tailwind, logo SVG, favicon **+** marketing landing composition on `/welcome` — sem redesign estrutural do produto
 - Entrega: F3a
 
 ### Infra
@@ -174,14 +176,14 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 
 **Split (F3.8):** **F3a** closeable without login; **F3b** = [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) when `borderless-api` issuer exists.
 
-**F3a entrega:** hard-cap P95 bump + rebrand + thin marketing landing (pt-BR chrome) + 2 BASE/PSP humans complete core E2E + short note to Yuri  
+**F3a entrega:** hard-cap P95 bump + rebrand + marketing `/welcome` (EN; pt-BR → CAR-37) + 2 BASE/PSP humans complete core E2E + short note to Yuri  
 **F3b entrega:** Borderless issuer + send resume + account merge (zero code until issuer contract)
 
 **F3a inclui:**
 
 - Kill-switch `COST_P95_BRL_PER_RUN=1.3639`; pool R$500; forge cap/user = 2 (no ops UI)
-- Rebrand tokens + logo/favicon + marketing landing composition
-- pt-BR marketing + chrome only
+- Rebrand tokens + logo/favicon + marketing landing composition (`/welcome`)
+- pt-BR marketing + chrome ([CAR-37](https://linear.app/career-forge-v2/issue/CAR-37)) — deferred from CAR-35
 - 2 pilots on anon scaffold (login not required)
 
 **Critério de aceite F3a (F3.12):** checklist above + short note to Yuri — **no** formal GO ritual.  
@@ -193,18 +195,18 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 |---|--------|
 | F3.1 | While issuer blocked: ship rebrand + landing + i18n chrome + hard-cap polish; no invite-anon-as-platform-auth workaround |
 | F3.2 | Hard caps = config: `COST_P95_BRL_PER_RUN=1.3639`, pool R$500, `FORGE_CAP_PER_USER_MONTH=2`; no ops UI |
-| F3.3 | Amend Decision #10: thin marketing on `/career-forge`; product stays at current routes (no `/app` migration) |
-| F3.4 | pt-BR = marketing + chrome only; diagnosis/forge/validation AI + prompts stay EN |
-| F3.5 | Rebrand = tokens + logo/favicon **and** marketing landing composition; no product redesign |
+| F3.3 | **Amend 2026-08-13:** marketing on `/welcome`; product stays at `/` (no `/app` migration); no auto-redirect from `/` |
+| F3.4 | **Amend 2026-08-13:** CAR-35 `/welcome` = EN; pt-BR marketing + chrome = [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37); AI/prompts stay EN |
+| F3.5 | Rebrand = tokens + logo/favicon **and** marketing landing composition on `/welcome`; no product redesign |
 | F3.6 | Full Borderless login = last eng slice when issuer ready; funnel stays CTA → product; entry gate later |
 | F3.7 | 2 pilots do **not** depend on login — E2E valid on anon scaffold |
 | F3.8 | Split: F3a closeable without login; F3b = CAR-28 |
 | F3.9 | Pilot E2E = goal → diagnosis → forge SSE → roadmap → ≥1 validation → roadmap reacts |
 | F3.10 | Pilot who/goals unconstrained |
 | F3.11 | Feedback-driven facilitation; no rigid “sem intervenção” gate |
-| F3.12 | F3a Done = P95 bump + rebrand + landing/pt-BR chrome + 2 E2E humans + short note to Yuri |
+| F3.12 | F3a Done = P95 bump + rebrand + `/welcome` landing (+ CAR-37 pt-BR when scoped) + 2 E2E humans + short note to Yuri |
 
-Linear: [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · CAR-33…36 · F3b [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)
+Linear: [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · CAR-33…38 · F3b [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)
 
 ---
 
@@ -215,14 +217,14 @@ Linear: [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forg
 | VPS Labs / Brunno | Deploy OK; **nginx path + domínio** pendente |
 | Org `borderlesscodinghub` | Acesso em andamento / parcial OK |
 | Budget API | Hard R$500 · gate approval R$700 |
-| Landing Frame vs Next | **Next na v2**; thin marketing on `/career-forge` (F3.3); Frame depois |
+| Landing Frame vs Next | **Next na v2**; marketing `/welcome` (F3.3 amend 2026-08-13); Frame depois |
 | Brand kit | **Aprovado** |
 
 ---
 
 ## Fora de escopo (v3+)
 
-SSO além da platform · NocoDB/Discord · dashboard OPS · certificação/Gate-as-a-Service · monetização Stripe · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone
+SSO além da platform · NocoDB/Discord · dashboard OPS · certificação/Gate-as-a-Service · monetização Stripe · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout runtime ([intent doc](./product/waitlist-checkout-intent.md))
 
 ---
 

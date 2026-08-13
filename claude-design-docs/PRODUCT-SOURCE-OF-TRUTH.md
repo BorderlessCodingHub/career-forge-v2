@@ -125,6 +125,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
+| `/welcome` Marketing (CAR-35) | BrandMark + Start→`/`; EN hero diagnose/forge/validate; features · showcase · benefits · FAQ ×3; honest BASE/PSP line; no pricing/email | Motion CAR-38 · pt-BR CAR-37 |
 | `/` Goal picker / recovery | Hero + **4** LLM track cards + motivation; if ≥1 forge artifact → **Continue** / **View all** / **New forge**; if saved diagnosis → **Forge again from last diagnosis** (`landing-recovery`) | Animation library, form validation UX |
 | `/forges` | Artifact list — Open, Rename, Copy share, **Revoke share**, Copy resume; optional re-forge from profile CTA | Visual polish |
 | `/share/[token]` | Read-only snapshot roadmap; **no** session adopt (API `GET /public/share/{token}`) | Visual polish |
@@ -189,6 +190,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Forge recovery Slice 2 (CAR-29) | Not in prototype | N/A | Rich **`/forges`**: Rename (`PATCH /me/forges/{id}`), **Revoke share**, re-forge CTA; **`/resume/[token]`** conflict chooser (`resume-conflict` / keep local / switch) before `adoptSession` when local forges ≠ resume owner; forge complete **optional email** store (`PATCH /me/email`, no SMTP); **`GET /me/profile`** + `hydrateOnboardingFromProfile` → `/onboarding/edit` or `startForgeRunFromProfile`; landing CTA **Forge again from last diagnosis** when profile has diagnosis (also empty-artifact + diagnosis gate → Welcome back / New from scratch) | **Code wins** — Slice 2 recovery polish; Borderless send = CAR-28 | 2026-08-01 |
 | Soft gate warning (CAR-15) | Not in prototype | N/A | **`SoftGateWarningBanner`** — copy + status only (`soft_gated` / `soft_gate_warning` from API); shown on `/onboarding/edit` (`soft-gate-warning`) and `/forge` entry (`soft-gate-warning-forge`); **does not block** Generate roadmap / forge stream; lean prune is BE-only (same GraphExecutor path). No new layout/tokens/routes | **Code wins** — F2 soft gate; cutoff retune CAR-18 | 2026-08-03 |
 | Rebrand tokens + logo (CAR-34) | Lucide `Axe` + purple-black `#0D0B14` / `#7C3AED` / `#2DD4BF` | N/A | Global tokens `#121212` / `#5316CC` / `#2DEBB1` (official site logo mint; `#44D5AD` retired); `public/brand/` + **`BrandMark`** on artifact topbar; favicon via `metadata.icons`; no layout rewrite; marketing chrome = CAR-35 | **Code + brand kit win** | 2026-08-12 |
+| Marketing `/welcome` (CAR-35) | Not in prototype | N/A | Route **`/welcome`**: EN marketing page (`WelcomeLanding`); sticky BrandMark + Start→`/`; hero diagnose/forge/validate; features · showcase · benefits · FAQ ×3; honest BASE/PSP line; **no** pricing/email/checkout; product `/` unchanged; pt-BR → CAR-37; motion → CAR-38; intent [waitlist-checkout-intent.md](../docs/product/waitlist-checkout-intent.md) | **Grill + code win** | 2026-08-13 |
 
 ---
 
