@@ -2,7 +2,7 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-12** · Last merge: **CAR-34** (PR #28) · Linear **CAR-34 Done** · prior **CAR-18** · **CAR-17** · **CAR-15** · **CAR-31** · **CAR-16** · **CAR-32** · **CAR-14** · Epic **CAR-22** closed (Slice 3 → F3b)  
+Last updated: **2026-08-12** · Last merge: **CAR-34 hotfix** (PR #29 — `COPY public/` standalone) · prior **CAR-34** (PR #28) · Linear **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)  
 **Next eng:** **F3a** — remaining [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) **[P]** → then [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) → [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36). **CAR-34 Done.** **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
 
@@ -110,7 +110,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Forge recovery Slice 2 | ✅ Done | CAR-29 — rich `/forges`, conflict chooser, email store, diagnosis re-forge |
 | `/forges` list UX polish | ✅ Done | CAR-31 — scan & open hierarchy (Open+Rename; ⋯ overflow) |
 | Platform auth (`borderless-api`) | ⬜ F3b | CAR-28 — blocked on issuer; pilots ≠ login (grill 2026-08-08) |
-| Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon |
+| Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon; PR #29 copies `public/` into standalone (Labs `/brand/*`) |
 | Marketing landing + pt-BR chrome | ⬜ F3a | Thin layer on `/`; no `/app` move (F3.3/F3.4) |
 | BASE/PSP pilots (×2 E2E) | ⬜ F3a | After caps + landing; anon OK (F3.7/F3.9) |
 
