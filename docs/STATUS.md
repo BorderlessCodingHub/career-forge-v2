@@ -77,7 +77,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
 | [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 | [P] | Backlog |
-| [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo + favicon | [P] | Backlog |
+| [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo + favicon | [P] | In Progress |
 | [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | Backlog — after CAR-33/34 |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | Backlog — after CAR-35 |
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Borderless issuer + send resume + merge | [B] | **F3b** — blocked on issuer |
@@ -110,7 +110,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Forge recovery Slice 2 | ✅ Done | CAR-29 — rich `/forges`, conflict chooser, email store, diagnosis re-forge |
 | `/forges` list UX polish | ✅ Done | CAR-31 — scan & open hierarchy (Open+Rename; ⋯ overflow) |
 | Platform auth (`borderless-api`) | ⬜ F3b | CAR-28 — blocked on issuer; pilots ≠ login (grill 2026-08-08) |
-| Rebrand tokens + logo/favicon | ⬜ F3a | Brand kit #121212 / #5316CC / #44D5AD |
+| Rebrand tokens + logo/favicon | ⬜ F3a | Brand kit #121212 / #5316CC / #2DEBB1 |
 | Marketing landing + pt-BR chrome | ⬜ F3a | Thin layer on `/`; no `/app` move (F3.3/F3.4) |
 | BASE/PSP pilots (×2 E2E) | ⬜ F3a | After caps + landing; anon OK (F3.7/F3.9) |
 

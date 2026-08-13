@@ -106,7 +106,7 @@ Soft gate: `profile_score = mean(5 dim confidences)` abaixo do cutoff → aviso 
 
 ### Rebrand
 
-- Identidade: #121212 / #5316CC / #44D5AD + brand kit Borderless (aprovado)
+- Identidade: #121212 / #5316CC / #2DEBB1 + brand kit Borderless (logo oficial do site; mint `#44D5AD` retired — grill 2026-08-12)
 - Escopo F3a (F3.5): tokens Tailwind, logo SVG, favicon **+** marketing landing composition — sem redesign estrutural do produto
 - Entrega: F3a
 

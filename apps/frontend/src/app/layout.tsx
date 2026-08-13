@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: "Career Forge",
   description:
     "Adaptive skill graph — diagnose, forge a live trail, and validate mastery.",
+  icons: {
+    icon: [{ url: "/brand/favicon.ico", sizes: "32x32", type: "image/x-icon" }],
+  },
 };
 
 export default function RootLayout({

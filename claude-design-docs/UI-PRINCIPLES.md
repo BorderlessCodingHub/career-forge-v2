@@ -12,9 +12,9 @@ Career Forge lives inside the **Borderless** ecosystem. Steady-state UI should m
 
 | Element | Rule |
 |---------|------|
-| Background | `#0D0B14` deep purple-black — not navy `#0B0F19` |
-| Nodes | Vibrant purple cards `#6B4CE6` with cyan/mint progress `#2DD4BF` |
-| Accent | Logo purple `#7C3AED` — CTAs, active nav pill |
+| Background | `#121212` flat dark — not navy `#0B0F19` |
+| Nodes | Brand purple cards `#5316CC` with mint progress `#2DEBB1` |
+| Accent | Logo purple `#5316CC` — CTAs, active nav pill |
 | Connections | Code Breakers graph ref: dashed grey lines with arrowheads; **artifact vertical spine (shipped):** solid 2px status-colored card↔dot connectors (`roadmap-connector-{id}`) |
 | Canvas | Dot grid; zoom controls bottom-left; minimap bottom-right |
 
@@ -69,9 +69,9 @@ References: [borderless-code-breakers-dashboard.png](./references/borderless-cod
 
 | Element | Rule |
 |---------|------|
-| Background | Deep purple-black `#0D0B14` — textured dark, not pure black |
+| Background | Flat dark `#121212` — Borderless marketing base |
 | Surfaces | Layered: surface → surface-elevated; nodes use `surface-node` purple |
-| Accent | Purple `#7C3AED` — CTAs, active nav; mint `#2DD4BF` — progress, evidence |
+| Accent | Purple `#5316CC` — CTAs, active nav; mint `#2DEBB1` — progress, evidence |
 | Semantic | Green mastery, amber review, mint evidence, slate locked |
 | Typography | Inter/Geist sans; JetBrains Mono for timeline/scores/code |
 | Motion | Subtle — fade-in timeline items, canvas reveal; no bounce/confetti |
