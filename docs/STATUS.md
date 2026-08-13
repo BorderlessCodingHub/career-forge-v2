@@ -2,7 +2,7 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-13** · Last: **CAR-33** kill-switch P95 → 1.3639 (Labs already live; repo `.env.example` + config default synced) · prior **CAR-34 hotfix** (PR #29) · Linear **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
+Last updated: **2026-08-13** · Last merge: **CAR-33** (PR #30 — kill-switch P95 → 1.3639; Labs already live) · prior **CAR-34 hotfix** (PR #29) · Linear **CAR-33 Done** · **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)  
 **Next eng:** **F3a** — [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) → [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36). **CAR-33 Done** · **CAR-34 Done.** **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
 
