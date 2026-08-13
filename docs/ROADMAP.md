@@ -22,17 +22,17 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12).
 
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
-| [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 (env + Labs) | [P] | Open |
+| [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 (env + Labs) | [P] | **Done** — Labs live; repo default synced |
 | [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo SVG + favicon | [P] | **Done** — PR #28 |
 
 ### F3a — sequential
 
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
-| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | CAR-33 (CAR-34 Done) |
+| [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing landing + pt-BR chrome | [S] | CAR-34 Done (CAR-33 Done) |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 |
 
-**Start order:** CAR-33 → CAR-35 → CAR-36 (**CAR-34 Done**).
+**Start order:** CAR-35 → CAR-36 (**CAR-33 Done** · **CAR-34 Done**).
 
 ### F3b — platform auth **[B]** (external)
 
