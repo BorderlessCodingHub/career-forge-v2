@@ -1,6 +1,14 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { BrandMark } from "@/components/ui/BrandMark";
+
+import { ScrollReveal } from "./ScrollReveal";
+import {
+  WELCOME_DURATION_MS,
+  WELCOME_TRANSLATE_PX,
+  heroItemStyle,
+} from "./welcome-motion";
 
 const FEATURES = [
   {
@@ -57,7 +65,7 @@ function StartCta({ className = "" }: { className?: string }) {
   return (
     <Link
       href="/"
-      className={`inline-flex items-center justify-center rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 ${className}`}
+      className={`welcome-cta inline-flex items-center justify-center rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white ${className}`}
       data-testid="welcome-cta-start"
     >
       Start
@@ -70,7 +78,17 @@ export function WelcomeLanding() {
     <div
       className="min-h-screen bg-bg text-text-primary"
       data-screen="marketing-welcome"
+      style={
+        {
+          "--welcome-duration": `${WELCOME_DURATION_MS}ms`,
+          "--welcome-translate": `${WELCOME_TRANSLATE_PX}px`,
+        } as CSSProperties
+      }
     >
+      <noscript>
+        <style>{`.welcome-reveal{opacity:1!important;transform:none!important}`}</style>
+      </noscript>
+
       <header className="sticky top-0 z-40 border-b border-border-soft/80 bg-bg/90 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
           <Link
@@ -88,7 +106,7 @@ export function WelcomeLanding() {
       </header>
 
       <main>
-        {/* Hero */}
+        {/* Hero — CSS load stagger only; h1 in SSR HTML */}
         <section className="relative overflow-hidden border-b border-border-soft">
           <div
             className="pointer-events-none absolute inset-0 bg-dot-grid bg-dots opacity-60"
@@ -99,18 +117,30 @@ export function WelcomeLanding() {
             aria-hidden
           />
           <div className="relative mx-auto max-w-3xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pb-20 sm:pt-20">
-            <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-accent-mint">
+            <p
+              className="welcome-hero-item mb-4 text-xs font-medium uppercase tracking-[0.2em] text-accent-mint"
+              style={heroItemStyle(0)}
+            >
               Borderless Labs
             </p>
-            <h1 className="text-balance text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl md:text-[2.75rem] md:leading-tight">
+            <h1
+              className="welcome-hero-item text-balance text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl md:text-[2.75rem] md:leading-tight"
+              style={heroItemStyle(1)}
+            >
               Diagnose. Forge live. Validate mastery.
             </h1>
-            <p className="mx-auto mt-5 max-w-xl text-pretty text-base text-text-secondary sm:text-lg">
+            <p
+              className="welcome-hero-item mx-auto mt-5 max-w-xl text-pretty text-base text-text-secondary sm:text-lg"
+              style={heroItemStyle(2)}
+            >
               Career Forge builds an adaptive skill path for BASE and PSP
               learners — from interview to live trail to evidence that moves the
               roadmap.
             </p>
-            <div className="mt-8 flex justify-center">
+            <div
+              className="welcome-hero-item mt-8 flex justify-center"
+              style={heroItemStyle(3)}
+            >
               <StartCta className="px-6 py-3 text-base" />
             </div>
           </div>
@@ -142,18 +172,17 @@ export function WelcomeLanding() {
               One continuous loop — not a course catalog.
             </p>
             <ul className="mt-10 grid gap-6 sm:grid-cols-3">
-              {FEATURES.map((f) => (
-                <li
-                  key={f.title}
-                  className="rounded-card border border-border bg-surface p-5"
-                >
-                  <h3 className="text-base font-medium text-text-primary">
-                    {f.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                    {f.body}
-                  </p>
-                </li>
+              {FEATURES.map((f, i) => (
+                <ScrollReveal key={f.title} as="li" delayIndex={i}>
+                  <div className="welcome-card rounded-card border border-border bg-surface p-5">
+                    <h3 className="text-base font-medium text-text-primary">
+                      {f.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                      {f.body}
+                    </p>
+                  </div>
+                </ScrollReveal>
               ))}
             </ul>
           </div>
@@ -172,22 +201,21 @@ export function WelcomeLanding() {
               <div className="h-1 w-full bg-brand-ribbon" aria-hidden />
               <ol className="divide-y divide-border">
                 {SHOWCASE_STEPS.map((step, i) => (
-                  <li
-                    key={step.label}
-                    className="flex items-start gap-4 px-5 py-4 sm:px-6"
-                  >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/25 text-xs font-semibold text-accent-mint">
-                      {i + 1}
-                    </span>
-                    <div>
-                      <p className="font-medium text-text-primary">
-                        {step.label}
-                      </p>
-                      <p className="mt-0.5 text-sm text-text-secondary">
-                        {step.detail}
-                      </p>
+                  <ScrollReveal key={step.label} as="li" delayIndex={i}>
+                    <div className="flex items-start gap-4 px-5 py-4 sm:px-6">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/25 text-xs font-semibold text-accent-mint">
+                        {i + 1}
+                      </span>
+                      <div>
+                        <p className="font-medium text-text-primary">
+                          {step.label}
+                        </p>
+                        <p className="mt-0.5 text-sm text-text-secondary">
+                          {step.detail}
+                        </p>
+                      </div>
                     </div>
-                  </li>
+                  </ScrollReveal>
                 ))}
               </ol>
             </div>
@@ -201,15 +229,15 @@ export function WelcomeLanding() {
               Why it fits
             </h2>
             <ul className="mt-10 grid gap-6 sm:grid-cols-3">
-              {BENEFITS.map((b) => (
-                <li key={b.title}>
+              {BENEFITS.map((b, i) => (
+                <ScrollReveal key={b.title} as="li" delayIndex={i}>
                   <h3 className="text-base font-medium text-text-primary">
                     {b.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-text-secondary">
                     {b.body}
                   </p>
-                </li>
+                </ScrollReveal>
               ))}
             </ul>
           </div>
@@ -222,21 +250,21 @@ export function WelcomeLanding() {
               FAQ
             </h2>
             <dl className="mt-10 space-y-6">
-              {FAQ.map((item) => (
-                <div key={item.q}>
+              {FAQ.map((item, i) => (
+                <ScrollReveal key={item.q} delayIndex={i}>
                   <dt className="text-base font-medium text-text-primary">
                     {item.q}
                   </dt>
                   <dd className="mt-2 text-sm leading-relaxed text-text-secondary">
                     {item.a}
                   </dd>
-                </div>
+                </ScrollReveal>
               ))}
             </dl>
           </div>
         </section>
 
-        {/* Final CTA */}
+        {/* Final CTA — static (grill Q6) */}
         <section className="py-16 sm:py-20">
           <div className="mx-auto max-w-xl px-4 text-center sm:px-6">
             <h2 className="text-2xl font-semibold tracking-tight">

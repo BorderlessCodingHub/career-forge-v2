@@ -124,6 +124,7 @@ apps/frontend/
     │   ├── globals.css
     │   ├── (setup)/
     │   │   ├── page.tsx
+    │   │   ├── welcome/         # CAR-35/38 marketing
     │   │   ├── onboarding/
     │   │   │   └── edit/
     │   │   └── forge/
@@ -135,6 +136,7 @@ apps/frontend/
     ├── components/
     │   ├── ui/
     │   ├── layout/
+    │   ├── marketing/           # CAR-35/38 — WelcomeLanding + scroll reveal
     │   ├── roadmap/
     │   ├── forge/
     │   ├── diagnosis/
