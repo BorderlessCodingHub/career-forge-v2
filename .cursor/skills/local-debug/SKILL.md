@@ -151,5 +151,6 @@ docker compose exec backend pytest
 | Frontend can't reach API | Wrong `NEXT_PUBLIC_BACKEND_URL` | Must be host URL, not Docker service name |
 | `make test` fails with `connection refused` on `localhost:5432` | Postgres was not started before pytest | Run `make test` from repo root (boots `postgres`, waits readiness, runs `alembic upgrade head`, then pytest) |
 | Forge page `network error`, 0 steps | Diagnosis `track_id` saved as goal slug (`rag-engineer`) but catalog is `rag-engineer-beginner.json`; SSE yields FileNotFoundError then connection abort masks as network error | Fixed via `normalize_catalog_track_id` in `paths.py` + persist/load forge input; click **Tentar novamente** after backend reload |
+| `make smoke` hangs / CI fails frontend probe | Wrong probe URL (`:3000` default, or ignored CI `:13000`) | Source `.env`; `WEB_URL` override → else `http://localhost:${WEB_HOST_PORT:-3300}/career-forge`; CI sets `WEB_URL` + `WEB_HOST_PORT=13000` |
 
 **When you find a new local-only trick, append it to section 8 of this skill.**

@@ -22,11 +22,13 @@
 | Language | EN in CAR-35; pt-BR → CAR-37 |
 | Nav | Sticky: BrandMark + single **Start** CTA → `/` |
 | Sections | Hero · honest Borderless/BASE/PSP line · features · showcase (diagnose→forge→validate) · benefits · FAQ ×3 (What / Who / How) · final CTA · footer |
-| Out | Pricing · email capture · checkout · fake testimonials · motion binge (CAR-38) · next-intl |
+| Out | Pricing · email capture · checkout · fake testimonials · motion binge · next-intl |
+| Motion (CAR-38) | Lean CSS: hero load stagger; features/benefits/showcase/FAQ one-shot scroll-in (IO); sticky header + final CTA static; orb static; fade + ≤8px / 300–400ms / 40–80ms stagger; **no** Framer |
+| Reduced motion | `prefers-reduced-motion: reduce` → still page (no anim/transform); hover ≤150ms OK |
 | Product `/` | Unchanged — `LandingRecoveryGate` / GoalPicker |
 | Hook | `data-screen="marketing-welcome"` · `data-testid="welcome-cta-start"` |
 
-**Can evolve:** motion (CAR-38), pt-BR (CAR-37)
+**Can evolve:** pt-BR (CAR-37); stagger timing within grill bands
 
 ---
 

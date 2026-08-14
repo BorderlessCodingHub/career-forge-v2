@@ -38,3 +38,69 @@ body {
   );
   background-size: 24px 24px;
 }
+
+/* CAR-38 — /welcome motion (lean; prefers-reduced-motion → still).
+   Duration/translate vars set on [data-screen=marketing-welcome] from welcome-motion.ts */
+@keyframes welcome-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--welcome-translate, 8px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-hero-item {
+  animation: welcome-fade-up var(--welcome-duration, 360ms) ease-out both;
+}
+
+.welcome-reveal {
+  opacity: 0;
+  transform: translateY(var(--welcome-translate, 8px));
+  transition:
+    opacity var(--welcome-duration, 360ms) ease-out,
+    transform var(--welcome-duration, 360ms) ease-out;
+}
+
+.welcome-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.welcome-cta {
+  transition: opacity 150ms ease-out;
+}
+
+.welcome-cta:hover {
+  opacity: 0.9;
+}
+
+.welcome-card {
+  transition: border-color 150ms ease-out;
+}
+
+.welcome-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-hero-item {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .welcome-reveal,
+  .welcome-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .welcome-cta,
+  .welcome-card {
+    transition-duration: 150ms;
+  }
+}
