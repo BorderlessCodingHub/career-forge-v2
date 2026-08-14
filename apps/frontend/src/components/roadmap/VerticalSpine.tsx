@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { forwardRef, useEffect, useRef, type ReactNode } from "react";
 
 import type { RoadmapCategory, RoadmapNode } from "@/types/contracts";
 
@@ -96,10 +96,12 @@ type SpineRowProps = {
   node: RoadmapNode;
   selected: boolean;
   onSelect?: (nodeId: string) => void;
-  ref?: (element: HTMLLIElement | null) => void;
 };
 
-function SpineRow({ node, selected, onSelect, ref }: SpineRowProps) {
+const SpineRow = forwardRef<HTMLLIElement, SpineRowProps>(function SpineRow(
+  { node, selected, onSelect },
+  ref,
+) {
   const isLeft = node.side === "left";
 
   return (
@@ -130,7 +132,7 @@ function SpineRow({ node, selected, onSelect, ref }: SpineRowProps) {
       </div>
     </li>
   );
-}
+});
 
 export function VerticalSpineShell({ children }: { children: ReactNode }) {
   return <div className="grid-dots min-h-full">{children}</div>;

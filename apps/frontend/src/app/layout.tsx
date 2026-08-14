@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 
 import { DeployBadge } from "@/components/layout";
+import { brandAssetPath, BRAND_FAVICON } from "@/lib/brand-assets";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -15,7 +16,13 @@ export const metadata: Metadata = {
   description:
     "Adaptive skill graph — diagnose, forge a live trail, and validate mastery.",
   icons: {
-    icon: [{ url: "/brand/favicon.ico", sizes: "32x32", type: "image/x-icon" }],
+    icon: [
+      {
+        url: brandAssetPath(BRAND_FAVICON),
+        sizes: "32x32",
+        type: "image/x-icon",
+      },
+    ],
   },
 };
 
