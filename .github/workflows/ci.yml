@@ -57,8 +57,12 @@ jobs:
       CORS_ORIGINS: http://localhost:13000
       NEXT_PUBLIC_BACKEND_URL: http://localhost:18000
       NEXT_PUBLIC_API_URL: http://localhost:18000
+      FRONTEND_HOST_PORT: "13000"
+      BACKEND_HOST_PORT: "18000"
+      WEB_HOST_PORT: "13000"
       FRONTEND_URL: http://localhost:13000/career-forge
       BACKEND_URL: http://localhost:18000
+      WEB_URL: http://localhost:13000/career-forge
     steps:
       - uses: actions/checkout@v4
 

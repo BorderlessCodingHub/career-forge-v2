@@ -15,8 +15,11 @@ fi
 
 WEB_HOST_PORT="${WEB_HOST_PORT:-3300}"
 API_URL="${BACKEND_URL:-${API_URL:-http://localhost:8000}}"
-# Derive from WEB_HOST_PORT (not FRONTEND_URL — .env often omits /career-forge basePath).
+# Prefer explicit WEB_URL (CI). Else derive from WEB_HOST_PORT — do not use FRONTEND_URL
+# (local .env often has a stale port without /career-forge).
 WEB_URL="${WEB_URL:-http://localhost:${WEB_HOST_PORT}/career-forge}"
+
+echo "smoke-stack: frontend probe → ${WEB_URL}"
 
 wait_for_url() {
   local url="$1"
