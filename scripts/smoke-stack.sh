@@ -5,8 +5,18 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+# Match compose / local-debug: load .env so WEB_HOST_PORT is not the stale 3000 default.
+if [[ -f .env ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source .env
+  set +a
+fi
+
+WEB_HOST_PORT="${WEB_HOST_PORT:-3300}"
 API_URL="${BACKEND_URL:-${API_URL:-http://localhost:8000}}"
-WEB_URL="${FRONTEND_URL:-${WEB_URL:-http://localhost:${WEB_HOST_PORT:-3000}/career-forge}}"
+# Derive from WEB_HOST_PORT (not FRONTEND_URL — .env often omits /career-forge basePath).
+WEB_URL="${WEB_URL:-http://localhost:${WEB_HOST_PORT}/career-forge}"
 
 wait_for_url() {
   local url="$1"
@@ -30,8 +40,8 @@ docker compose config -q
 
 if ! curl -sf "${API_URL}/health" >/dev/null 2>&1; then
   echo "smoke-stack: starting docker compose (--wait)"
-  export WEB_HOST_PORT="${WEB_HOST_PORT:-3300}"
-  export WEB_URL="http://localhost:${WEB_HOST_PORT}/career-forge"
+  export WEB_HOST_PORT
+  export WEB_URL
   docker compose up -d --build --wait
 fi
 

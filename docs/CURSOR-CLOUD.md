@@ -29,7 +29,7 @@ Copy from `.env.example`. Do **not** commit `.env` or secrets.
 |----------|---------|-----------------|
 | `DATABASE_URL` | Postgres connection | `postgresql+psycopg://careerforge:careerforge@localhost:5432/careerforge` |
 | `BACKEND_URL` | API base | `http://localhost:8000` |
-| `FRONTEND_URL` | Web base | `http://localhost:3000` |
+| `FRONTEND_URL` | Web base | `http://localhost:3300/career-forge` |
 | `OPENAI_API_KEY` | LangGraph / OpenAI | — |
 | `LANGSMITH_API_KEY` | LangSmith tracing | — |
 

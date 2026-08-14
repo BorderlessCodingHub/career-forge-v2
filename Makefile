@@ -47,7 +47,7 @@ down:
 status:
 	@$(COMPOSE) ps
 	@echo ""
-	@echo "Frontend: http://localhost:$${WEB_HOST_PORT:-3000}"
+	@echo "Frontend: http://localhost:$${WEB_HOST_PORT:-3300}/career-forge"
 	@echo "Backend:  http://localhost:8000/docs"
 	@echo "Health:   http://localhost:8000/health"
 
