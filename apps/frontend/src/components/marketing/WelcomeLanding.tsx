@@ -13,28 +13,28 @@ import {
 const FEATURES = [
   {
     title: "Adaptive diagnosis",
-    body: "A short multi-turn interview maps where you are — skills, constraints, and proof — before any roadmap is forged.",
+    body: "Short interview maps skills, constraints, and proof — before any roadmap exists.",
   },
   {
     title: "Live Roadmap Forge",
-    body: "Watch your trail take shape in real time: streaming steps, not a static PDF syllabus.",
+    body: "Watch your roadmap take shape in real time — streaming steps, not a static syllabus.",
   },
   {
     title: "Validate mastery",
-    body: "AI-backed checks confirm what you can actually do. The roadmap reacts when evidence lands.",
+    body: "Checks confirm what you can do. The roadmap reacts when evidence lands.",
   },
 ] as const;
 
 const SHOWCASE_STEPS = [
-  { label: "Diagnose", detail: "CTRR-style interview → profile" },
-  { label: "Forge", detail: "Live SSE trail for your goal" },
-  { label: "Validate", detail: "Mastery loops → roadmap updates" },
+  { label: "Diagnose", detail: "Interview → profile" },
+  { label: "Forge", detail: "Live roadmap for your goal" },
+  { label: "Validate", detail: "Mastery checks → roadmap updates" },
 ] as const;
 
 const BENEFITS = [
   {
     title: "Built for BASE & PSP",
-    body: "Calibrated for Borderless learners — from early LLM track switchers to deep practitioners.",
+    body: "Borderless programs for learners across the experience spectrum — from early LLM track switchers to deep practitioners.",
   },
   {
     title: "Four LLM goals",
@@ -49,7 +49,7 @@ const BENEFITS = [
 const FAQ = [
   {
     q: "What is Career Forge?",
-    a: "An adaptive learning system: diagnose your starting point, forge a live skill trail, and validate mastery so the roadmap stays honest.",
+    a: "An adaptive learning system: diagnosis, a live roadmap forge, and mastery validation so the roadmap stays honest.",
   },
   {
     q: "Who is it for?",
@@ -57,7 +57,7 @@ const FAQ = [
   },
   {
     q: "How do I start?",
-    a: "Click Start. You enter the product as a guest, pick a goal, and begin the diagnosis. No platform login required for this pilot phase.",
+    a: "Click Start diagnosis. You enter the product as a guest, pick a goal, and begin. No platform login required for this pilot phase.",
   },
 ] as const;
 
@@ -68,7 +68,7 @@ function StartCta({ className = "" }: { className?: string }) {
       className={`welcome-cta inline-flex items-center justify-center rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-white ${className}`}
       data-testid="welcome-cta-start"
     >
-      Start
+      Start diagnosis
     </Link>
   );
 }
@@ -127,15 +127,15 @@ export function WelcomeLanding() {
               className="welcome-hero-item text-balance text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl md:text-[2.75rem] md:leading-tight"
               style={heroItemStyle(1)}
             >
-              Diagnose. Forge live. Validate mastery.
+              A roadmap that only moves when you prove it.
             </h1>
             <p
               className="welcome-hero-item mx-auto mt-5 max-w-xl text-pretty text-base text-text-secondary sm:text-lg"
               style={heroItemStyle(2)}
             >
-              Career Forge builds an adaptive skill path for BASE and PSP
-              learners — from interview to live trail to evidence that moves the
-              roadmap.
+              For Borderless BASE & PSP: an adaptive roadmap for RAG, agents,
+              evals, and fine-tuning — forged live, gated by what you can
+              actually do.
             </p>
             <div
               className="welcome-hero-item mt-8 flex justify-center"
@@ -264,14 +264,14 @@ export function WelcomeLanding() {
           </div>
         </section>
 
-        {/* Final CTA — static (grill Q6) */}
+        {/* Final CTA — static */}
         <section className="py-16 sm:py-20">
           <div className="mx-auto max-w-xl px-4 text-center sm:px-6">
             <h2 className="text-2xl font-semibold tracking-tight">
-              Ready when you are
+              Start with diagnosis
             </h2>
             <p className="mt-3 text-sm text-text-secondary">
-              Enter the product, pick a goal, and start your diagnosis.
+              Pick an LLM goal next. No login for this pilot.
             </p>
             <div className="mt-8 flex justify-center">
               <StartCta className="px-6 py-3 text-base" />

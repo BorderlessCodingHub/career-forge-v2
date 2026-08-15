@@ -125,7 +125,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
-| `/welcome` Marketing (CAR-35/38) | BrandMark + Start→`/`; EN hero; features · showcase · benefits · FAQ ×3; honest BASE/PSP line; lean CSS motion + reduced-motion still page; no pricing/email | pt-BR CAR-37 |
+| `/welcome` Marketing (CAR-35/38) | BrandMark + Start diagnosis→`/`; EN hero (outcome H1 + roadmap-canonical copy); features · showcase · benefits · FAQ ×3; honest BASE/PSP line; lean CSS motion + reduced-motion still page; no pricing/email | pt-BR CAR-37 |
 | `/` Goal picker / recovery | Hero + **4** LLM track cards + motivation; if ≥1 forge artifact → **Continue** / **View all** / **New forge**; if saved diagnosis → **Forge again from last diagnosis** (`landing-recovery`) | Animation library, form validation UX |
 | `/forges` | Artifact list — Open, Rename, Copy share, **Revoke share**, Copy resume; optional re-forge from profile CTA | Visual polish |
 | `/share/[token]` | Read-only snapshot roadmap; **no** session adopt (API `GET /public/share/{token}`) | Visual polish |
