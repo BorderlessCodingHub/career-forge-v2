@@ -14,7 +14,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 **F3a humans after:** hard caps (P95 bump) + rebrand + marketing `/welcome` — **not** platform login (grill F3.7/F3.8).  
 **F3b:** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) Borderless issuer — blocked on `borderless-api`.
 
-Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12). Amend 2026-08-13: `/welcome` EN · pt-BR → CAR-37 · motion → CAR-38.
+Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12). Amend 2026-08-13: `/welcome` EN · pt-BR → CAR-37 · motion → CAR-38. Amend 2026-08-14: `/welcome` copy → CAR-39.
 
 **Project:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)
 
@@ -32,9 +32,10 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12). Amend 2026
 | [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing `/welcome` (EN) | [S] | **Done** — PR #31 |
 | [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) | pt-BR marketing + chrome | [S] | CAR-35 Done |
 | [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) | `/welcome` motion polish | [S] | **Done** — PR #32 |
+| [CAR-39](https://linear.app/career-forge-v2/issue/CAR-39) | `/welcome` marketing copy (outcome hero) | [P] | **Done** — PR #34 |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 Done |
 
-**Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-34 Done**.
+**Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-34 Done**.
 
 ### F3b — platform auth **[B]** (external)
 
