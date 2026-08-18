@@ -1,6 +1,5 @@
 import { ForgeProductMock } from "./ForgeProductMock";
 import { PlgStackScroll } from "./PlgStackScroll";
-import { ScrollReveal } from "./ScrollReveal";
 import { StartDiagnosisCta } from "./StartDiagnosisCta";
 import { TrailProductMock } from "./TrailProductMock";
 import { WelcomeVariantShell } from "./WelcomeVariantShell";
@@ -51,50 +50,54 @@ export function PlgLanding() {
       ctaTestId="welcome-plg-cta-start"
     >
       <main>
-        <section className="border-b border-border-soft px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
-            <div>
-              <p
-                className="welcome-hero-item mb-4 text-xs font-medium uppercase tracking-[0.2em] text-accent-mint"
-                style={heroItemStyle(0)}
-              >
-                Borderless Labs
-              </p>
-              <h1
-                className="welcome-hero-item text-balance text-4xl font-semibold tracking-tight text-text-primary sm:text-5xl"
-                style={heroItemStyle(1)}
-              >
-                The adaptive roadmap for BASE &amp; PSP
-              </h1>
-              <p
-                className="welcome-hero-item mt-5 max-w-md text-pretty text-base text-text-secondary sm:text-lg"
-                style={heroItemStyle(2)}
-              >
-                Diagnosis, a live forge, mastery checks. Without a static
-                syllabus.
-              </p>
-              <div className="welcome-hero-item mt-8" style={heroItemStyle(3)}>
-                <StartDiagnosisCta
-                  className="px-6 py-3 text-base"
-                  testId="welcome-plg-cta-hero"
-                />
-              </div>
-            </div>
-            <div className="welcome-hero-item" style={heroItemStyle(6)}>
-              <ForgeProductMock />
-            </div>
-          </div>
-        </section>
-
         <PlgStackScroll
           labels={PLG_PLAQUE_LABELS}
           sectionIds={PLG_PLAQUE_SECTION_IDS}
+          hero={
+            <section className="flex h-full flex-col justify-center px-4 py-6 sm:px-6 sm:py-8">
+              <div className="mx-auto grid h-full min-h-0 max-w-6xl items-center gap-8 lg:grid-cols-2 lg:gap-12">
+                <div className="min-h-0">
+                  <p
+                    className="welcome-hero-item mb-3 text-xs font-medium uppercase tracking-[0.2em] text-accent-mint"
+                    style={heroItemStyle(0)}
+                  >
+                    Borderless Labs
+                  </p>
+                  <h1
+                    className="welcome-hero-item text-balance text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl lg:text-5xl"
+                    style={heroItemStyle(1)}
+                  >
+                    The adaptive roadmap for BASE &amp; PSP
+                  </h1>
+                  <p
+                    className="welcome-hero-item mt-4 max-w-md text-pretty text-base text-text-secondary sm:text-lg"
+                    style={heroItemStyle(2)}
+                  >
+                    Diagnosis, a live forge, mastery checks. Without a static
+                    syllabus.
+                  </p>
+                  <div className="welcome-hero-item mt-6" style={heroItemStyle(3)}>
+                    <StartDiagnosisCta
+                      className="px-6 py-3 text-base"
+                      testId="welcome-plg-cta-hero"
+                    />
+                  </div>
+                </div>
+                <div
+                  className="welcome-hero-item hidden min-h-0 lg:block"
+                  style={heroItemStyle(6)}
+                >
+                  <ForgeProductMock />
+                </div>
+              </div>
+            </section>
+          }
         >
           <section
             id={PLG_PLAQUE_SECTION_IDS[0]}
             className="border-b border-border-soft px-4 sm:px-6"
           >
-            <div className="mx-auto flex h-full max-w-3xl flex-col justify-center py-8">
+            <div className="mx-auto flex h-full max-w-3xl flex-col justify-center py-3">
               <h2 className="sr-only">{PLG_PLAQUE_LABELS[0]}</h2>
               <TrailProductMock />
             </div>
@@ -104,11 +107,11 @@ export function PlgLanding() {
             id={PLG_PLAQUE_SECTION_IDS[1]}
             className="border-b border-border-soft px-4 sm:px-6"
           >
-            <div className="mx-auto flex h-full max-w-6xl flex-col justify-center py-8">
+            <div className="mx-auto flex h-full max-w-6xl flex-col justify-center py-3">
               <h2 className="sr-only">{PLG_PLAQUE_LABELS[1]}</h2>
-              <ul className="grid gap-8 md:grid-cols-3">
-                {PHASES.map((phase, i) => (
-                  <ScrollReveal key={phase.when} as="li" delayIndex={i}>
+              <ul className="grid gap-6 md:grid-cols-3">
+                {PHASES.map((phase) => (
+                  <li key={phase.when}>
                     <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent-mint">
                       {phase.when}
                     </p>
@@ -118,7 +121,7 @@ export function PlgLanding() {
                     <p className="mt-2 text-sm leading-relaxed text-text-secondary">
                       {phase.body}
                     </p>
-                  </ScrollReveal>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -128,11 +131,11 @@ export function PlgLanding() {
             id={PLG_PLAQUE_SECTION_IDS[2]}
             className="border-b border-border-soft px-4 sm:px-6"
           >
-            <div className="mx-auto flex h-full max-w-6xl flex-col justify-center py-8">
+            <div className="mx-auto flex h-full max-w-6xl flex-col justify-center py-3">
               <h2 className="sr-only">{PLG_PLAQUE_LABELS[2]}</h2>
-              <ul className="grid gap-6 sm:grid-cols-3">
-                {FEATURES.map((f, i) => (
-                  <ScrollReveal key={f.title} as="li" delayIndex={i}>
+              <ul className="grid gap-5 sm:grid-cols-3">
+                {FEATURES.map((f) => (
+                  <li key={f.title}>
                     <div className="welcome-card h-full rounded-card border border-border bg-surface p-5">
                       <h3 className="text-base font-medium text-text-primary">
                         {f.title}
@@ -141,14 +144,17 @@ export function PlgLanding() {
                         {f.body}
                       </p>
                     </div>
-                  </ScrollReveal>
+                  </li>
                 ))}
               </ul>
             </div>
           </section>
         </PlgStackScroll>
 
-        <section className="flex min-h-[100svh] flex-col justify-center px-4 py-16 sm:px-6 sm:py-20">
+        <section
+          className="plg-cta-band border-t border-border px-4 py-14 sm:px-6 sm:py-16"
+          data-testid="plg-final-cta"
+        >
           <div className="mx-auto max-w-xl text-center">
             <h2 className="text-2xl font-semibold tracking-tight">
               Start diagnosis — free for this pilot

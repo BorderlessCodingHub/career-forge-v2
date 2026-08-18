@@ -122,9 +122,10 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `LandingRecoveryGate` | CAR-27/29 — `/` return-visit gate; Continue / View all / New forge; **Forge again from last diagnosis** when `GET /me/profile` has diagnosis; empty+diagnosis gate; falls open to `GoalPicker` when empty or API error |
 | `WelcomeLanding` | CAR-35/38 — `/welcome` marketing (EN); BrandMark + Start→`/`; lean CSS motion; no pricing/email; pt-BR CAR-37 |
 | `PlgLanding` | Exploration at `/welcome/plg` — EN product-led; CTA→`/`; not linked from default `/welcome` |
+| `PlgStackScroll` | PLG first fold stays in view; trail / phases / features slide into the remaining viewport on wheel/touch |
 | `TrailProductMock` | PLG audience section — static HTML/CSS vertical spine before phases; not `/roadmap` |
 | `ForgeProductMock` | PLG hero — static HTML/CSS forge timeline + spine; not a live run |
-| `PlgScrollPlaque` | PLG mid-page sticky split-flap title (`rotateX`); visual only (`aria-hidden`); sections keep `sr-only` H2s |
+| `PlgScrollPlaque` | PLG split-flap title (`rotateX`) on the first fold; visual only (`aria-hidden`); sections keep `sr-only` H2s |
 | `WelcomeVariantShell` / `StartDiagnosisCta` | Shared chrome for the three variant routes |
 | `ScrollReveal` | CAR-38 — marketing `/welcome` surfaces; one-shot IO scroll fade; not a product-wide motion system |
 | `welcome-motion.ts` | CAR-38 — stagger/duration/translate constants + hero delay styles (grill bands) |

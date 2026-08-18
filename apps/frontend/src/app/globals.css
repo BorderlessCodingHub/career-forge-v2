@@ -210,25 +210,30 @@ body {
   }
 }
 
-/* PLG wheel stack — sections swap in place; page scroll locks while pinned. */
+/* PLG first fold stays put; later sections slide into the remaining viewport. */
 .plg-stack-scroll {
   height: calc(100svh - 3.5rem);
   position: relative;
 }
 
 .plg-stack-pin {
-  position: sticky;
-  top: 3.5rem;
   z-index: 20;
   display: flex;
-  height: calc(100svh - 3.5rem);
+  height: 100%;
   flex-direction: column;
   background: var(--bg);
 }
 
+.plg-hero-fold {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .plg-stack-viewport {
   position: relative;
-  flex: 1;
+  flex: 0 0 auto;
+  height: clamp(16.5rem, 38vh, 22rem);
   overflow: hidden;
 }
 
@@ -237,31 +242,36 @@ body {
   inset: 0;
   overflow-y: auto;
   background: var(--bg);
-  transition:
-    transform 480ms ease-in-out,
-    opacity 320ms ease-in-out;
+  transition: transform 480ms ease-in-out;
   will-change: transform;
 }
 
 .plg-stack-panel[data-plg-state="active"] {
   z-index: 12;
-  opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
 }
 
 .plg-stack-panel[data-plg-state="before"] {
   z-index: 10;
-  opacity: 0;
   pointer-events: none;
-  transform: translateY(-12%);
+  transform: translateY(0);
 }
 
 .plg-stack-panel[data-plg-state="after"] {
   z-index: 11;
-  opacity: 0;
   pointer-events: none;
   transform: translateY(100%);
+}
+
+.plg-cta-band {
+  background:
+    radial-gradient(
+      ellipse 90% 120% at 50% 0%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 62%
+    ),
+    var(--surface);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -316,9 +326,7 @@ body {
     transition: none;
   }
 
-  .plg-stack-panel[data-plg-state="before"],
   .plg-stack-panel[data-plg-state="after"] {
-    opacity: 0;
-    transform: none;
+    transform: translateY(100%);
   }
 }

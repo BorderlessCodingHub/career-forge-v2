@@ -1,6 +1,7 @@
 /** Wheel-driven section swap on `/welcome/plg` — landpage only. */
 
 export const PLG_STACK_HEADER_OFFSET_PX = 56;
+export const PLG_STACK_PIN_SLACK_PX = 32;
 export const PLG_STACK_WHEEL_COOLDOWN_MS = 520;
 export const PLG_STACK_TRANSITION_MS = 480;
 
@@ -12,14 +13,20 @@ export type PlgStackWheelAction =
   | "lock"
   | "ignore";
 
+/**
+ * The first fold is docked under the sticky header. Once the stage has
+ * scrolled away (CTA), it is not pinned — incoming panels must not recapture
+ * wheel input mid-page.
+ */
 export function plgStackIsPinned(
   stackTop: number,
-  stackBottom: number,
+  _stackBottom?: number,
   headerOffsetPx = PLG_STACK_HEADER_OFFSET_PX,
+  slackPx = PLG_STACK_PIN_SLACK_PX,
 ): boolean {
   return (
-    stackTop <= headerOffsetPx &&
-    stackBottom > headerOffsetPx + 80
+    stackTop <= headerOffsetPx + slackPx &&
+    stackTop >= headerOffsetPx - slackPx
   );
 }
 

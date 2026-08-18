@@ -93,14 +93,14 @@ export function PlgScrollPlaque({ labels, activeIndex }: PlgScrollPlaqueProps) {
 
   return (
     <div
-      className="plg-stack-plaque border-b border-border-soft bg-bg/95 py-3 backdrop-blur-md"
+      className="plg-stack-plaque shrink-0 border-t border-border-soft bg-bg/95 py-2 backdrop-blur-md"
       aria-hidden
       data-testid="plg-scroll-plaque"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="plg-plaque-board overflow-hidden rounded-card border border-border bg-surface px-4 py-3 shadow-[0_12px_40px_rgba(0,0,0,0.28)] sm:px-6">
+        <div className="plg-plaque-board overflow-hidden rounded-card border border-border bg-surface px-4 py-2.5 shadow-[0_12px_40px_rgba(0,0,0,0.28)] sm:px-6">
           <p
-            className={`plg-plaque-face flex min-h-[3.25rem] items-center justify-center text-center text-pretty text-lg font-semibold tracking-tight text-text-primary sm:min-h-[4rem] sm:text-2xl ${flapClass}`}
+            className={`plg-plaque-face flex min-h-[2.25rem] items-center justify-center text-center text-pretty text-base font-semibold tracking-tight text-text-primary sm:min-h-[2.75rem] sm:text-xl ${flapClass}`}
             data-testid="plg-scroll-plaque-text"
           >
             {text}

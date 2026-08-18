@@ -14,7 +14,7 @@ function TrailMockCard({
 }) {
   return (
     <div
-      className={`w-full max-w-[260px] rounded-node border px-4 py-3 ${
+      className={`w-full max-w-[260px] rounded-node border px-4 py-2.5 ${
         selected
           ? "border-accent bg-surface-node/90 shadow-[0_0_24px_var(--accent-glow)]"
           : "border-accent/35 bg-surface-node/70"
@@ -37,7 +37,7 @@ export function TrailProductMock() {
         className="absolute bottom-2 left-1/2 top-2 w-px -translate-x-1/2 bg-border"
         aria-hidden
       />
-      <ol className="space-y-8">
+      <ol className="space-y-4">
         {TRAIL_MOCK_NODES.map((node, index) => {
           const selected = index === FORGE_MOCK_FOCUS_NODE_INDEX;
           const isLeft = node.side === "left";

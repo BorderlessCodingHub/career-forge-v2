@@ -23,6 +23,7 @@ import {
 type PlgStackScrollProps = {
   labels: readonly string[];
   sectionIds: readonly string[];
+  hero: ReactNode;
   children: ReactNode;
 };
 
@@ -36,6 +37,7 @@ type PanelProps = {
 export function PlgStackScroll({
   labels,
   sectionIds,
+  hero,
   children,
 }: PlgStackScrollProps) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -77,12 +79,14 @@ export function PlgStackScroll({
         lockYRef.current = window.scrollY;
       }
       lockedRef.current = true;
+      document.documentElement.style.overflow = "hidden";
       applyScrollLock();
     };
 
     const releaseLock = () => {
       lockedRef.current = false;
       lockYRef.current = null;
+      document.documentElement.style.overflow = "";
     };
 
     const runWheelAction = (deltaY: number) => {
@@ -102,7 +106,8 @@ export function PlgStackScroll({
 
       if (action === "release-up" || action === "release-down") {
         releaseLock();
-        return false;
+        window.scrollBy(0, deltaY);
+        return true;
       }
 
       if (cooldownRef.current) {
@@ -176,12 +181,18 @@ export function PlgStackScroll({
       }
     };
 
+    const { top, bottom } = readGeometry();
+    if (plgStackIsPinned(top, bottom)) {
+      engageLock();
+    }
+
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
 
     return () => {
+      document.documentElement.style.overflow = "";
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("touchstart", onTouchStart);
@@ -199,6 +210,10 @@ export function PlgStackScroll({
       data-testid="plg-stack-scroll"
     >
       <div className="plg-stack-pin">
+        <div className="plg-hero-fold" data-testid="plg-hero-fold">
+          {hero}
+        </div>
+
         <PlgScrollPlaque labels={labels} activeIndex={activeIndex} />
 
         <div className="plg-stack-viewport" data-testid="plg-stack-viewport">

@@ -7,18 +7,23 @@ import {
 } from "./plg-stack-wheel";
 
 describe("plgStackIsPinned", () => {
-  it("is pinned when the stack top has reached the header offset", () => {
+  it("is pinned when the first fold is docked under the header", () => {
     expect(plgStackIsPinned(56, 900)).toBe(true);
-    expect(plgStackIsPinned(20, 900)).toBe(true);
+    expect(plgStackIsPinned(40, 900)).toBe(true);
   });
 
-  it("is not pinned before the stack reaches the header", () => {
+  it("is not pinned before the stage reaches the header", () => {
     expect(plgStackIsPinned(120, 900)).toBe(false);
+  });
+
+  it("is not pinned after the first fold has scrolled away", () => {
+    expect(plgStackIsPinned(-80, 751)).toBe(false);
+    expect(plgStackIsPinned(-318, 500)).toBe(false);
   });
 });
 
 describe("plgStackWheelAction", () => {
-  const pinnedTop = 40;
+  const pinnedTop = 56;
   const pinnedBottom = 900;
 
   it("advances and retreats inside the stack without releasing scroll", () => {
@@ -39,8 +44,9 @@ describe("plgStackWheelAction", () => {
     ).toBe("release-down");
   });
 
-  it("ignores wheel input outside the pinned zone", () => {
+  it("ignores wheel input when the first fold is not docked", () => {
     expect(plgStackWheelAction(100, 1, 3, 200, 900)).toBe("ignore");
+    expect(plgStackWheelAction(100, 1, 3, -200, 631)).toBe("ignore");
   });
 });
 

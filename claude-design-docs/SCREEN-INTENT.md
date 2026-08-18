@@ -40,7 +40,7 @@ Direct URL only. **Do not** replace `/welcome` or add a chooser there.
 |------------|--------|
 | Route | `/welcome/plg` · `data-screen="marketing-welcome-plg"` |
 | Genre | Product-led (Granola rhythm) |
-| Must | Split hero + HTML/CSS forge mock; trail mock before phases (`Built for Borderless · BASE & PSP learners`); sticky split-flap plaque (audience → phases → features); before/during/after; dark tokens; EN; Start diagnosis → `/` |
+| Must | Split hero + HTML/CSS forge mock **stays on the first fold**; trail / phases / features slide into the remaining viewport; split-flap plaque (audience → phases → features); before/during/after; dark tokens; EN; Start diagnosis → `/` |
 | Out | Pricing · email · checkout · fake testimonials · fake logo wall · editorial/offer variants |
 
 ---
