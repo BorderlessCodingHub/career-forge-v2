@@ -16,3 +16,27 @@ export const FORGE_MOCK_NODES = [
 
 /** Marketing “you are here” focus — not a user picker. */
 export const FORGE_MOCK_FOCUS_NODE_INDEX = 1;
+
+/** Static trail illustration for the PLG audience section — not `/roadmap`. */
+export const TRAIL_MOCK_NODES = [
+  {
+    title: "RAG retrieval",
+    body: "Ground answers in the corpus — citations before generation.",
+    side: "left" as const,
+  },
+  {
+    title: "Agent tools",
+    body: "Wire tools the model can call, with evidence at each step.",
+    side: "right" as const,
+  },
+  {
+    title: "Evals harness",
+    body: "Measure the path. The map moves when a check fails.",
+    side: "left" as const,
+  },
+  {
+    title: "Fine tuning",
+    body: "Locked until the prior node is proven.",
+    side: "right" as const,
+  },
+] as const;

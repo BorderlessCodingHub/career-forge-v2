@@ -2,6 +2,7 @@ import { ForgeProductMock } from "./ForgeProductMock";
 import { PlgScrollPlaque } from "./PlgScrollPlaque";
 import { ScrollReveal } from "./ScrollReveal";
 import { StartDiagnosisCta } from "./StartDiagnosisCta";
+import { TrailProductMock } from "./TrailProductMock";
 import { WelcomeVariantShell } from "./WelcomeVariantShell";
 import {
   PLG_PLAQUE_LABELS,
@@ -90,6 +91,14 @@ export function PlgLanding() {
             labels={PLG_PLAQUE_LABELS}
             sectionIds={PLG_PLAQUE_SECTION_IDS}
           />
+
+          <section className="border-b border-border-soft px-4 py-16 sm:px-6 sm:py-20">
+            <div className="mx-auto max-w-3xl">
+              <div className="mt-12">
+                <TrailProductMock />
+              </div>
+            </div>
+          </section>
 
           <section
             id={PLG_PLAQUE_SECTION_IDS[0]}

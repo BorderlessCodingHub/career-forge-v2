@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { FORGE_MOCK_FOCUS_NODE_INDEX, FORGE_MOCK_NODES, FORGE_MOCK_STEPS } from "./forge-product-mock-data";
+import { FORGE_MOCK_FOCUS_NODE_INDEX, FORGE_MOCK_NODES, FORGE_MOCK_STEPS, TRAIL_MOCK_NODES } from "./forge-product-mock-data";
 
 describe("forge product mock (PLG /welcome/plg)", () => {
   it("illustrates the diagnose → forge → validate loop without live data", () => {
@@ -24,5 +24,12 @@ describe("forge product mock (PLG /welcome/plg)", () => {
     expect(FORGE_MOCK_NODES[FORGE_MOCK_FOCUS_NODE_INDEX]?.status).toBe(
       "validar",
     );
+  });
+
+  it("illustrates the artifact trail spine for the audience section", () => {
+    expect(TRAIL_MOCK_NODES.map((n) => n.title)).toEqual(
+      FORGE_MOCK_NODES.map((n) => n.title),
+    );
+    expect(TRAIL_MOCK_NODES[FORGE_MOCK_FOCUS_NODE_INDEX]?.side).toBe("right");
   });
 });

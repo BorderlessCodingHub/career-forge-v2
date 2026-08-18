@@ -126,7 +126,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
 | `/welcome` Marketing (CAR-35/38) | BrandMark + Start diagnosis→`/`; EN hero (outcome H1 + roadmap-canonical copy); features · showcase · benefits · FAQ ×3; honest BASE/PSP line; lean CSS motion + reduced-motion still page; no pricing/email | pt-BR CAR-37 |
-| `/welcome/plg` | Product-led (EN); forge HTML mock in hero; sticky split-flap plaque as section titles; before/during/after; dark tokens; not linked from `/welcome` | Visual polish |
+| `/welcome/plg` | Product-led (EN); trail HTML mock before phases; forge HTML mock in hero; sticky split-flap plaque as section titles; before/during/after; dark tokens; not linked from `/welcome` | Visual polish |
 | `/` Goal picker / recovery | Hero + **4** LLM track cards + motivation; if ≥1 forge artifact → **Continue** / **View all** / **New forge**; if saved diagnosis → **Forge again from last diagnosis** (`landing-recovery`) | Animation library, form validation UX |
 | `/forges` | Artifact list — Open, Rename, Copy share, **Revoke share**, Copy resume; optional re-forge from profile CTA | Visual polish |
 | `/share/[token]` | Read-only snapshot roadmap; **no** session adopt (API `GET /public/share/{token}`) | Visual polish |
@@ -193,7 +193,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Rebrand tokens + logo (CAR-34) | Lucide `Axe` + purple-black `#0D0B14` / `#7C3AED` / `#2DD4BF` | N/A | Global tokens `#121212` / `#5316CC` / `#2DEBB1` (official site logo mint; `#44D5AD` retired); `public/brand/` + **`BrandMark`** on artifact topbar; favicon via `metadata.icons`; no layout rewrite; marketing chrome = CAR-35 | **Code + brand kit win** | 2026-08-12 |
 | Marketing `/welcome` (CAR-35) | Not in prototype | N/A | Route **`/welcome`**: EN marketing page (`WelcomeLanding`); sticky BrandMark + Start→`/`; hero diagnose/forge/validate; features · showcase · benefits · FAQ ×3; honest BASE/PSP line; **no** pricing/email/checkout; product `/` unchanged; pt-BR → CAR-37; intent [waitlist-checkout-intent.md](../docs/product/waitlist-checkout-intent.md) | **Grill + code win** | 2026-08-13 |
 | `/welcome` motion (CAR-38) | Not in prototype | N/A | Lean CSS only (no Framer): hero load stagger; features/benefits/showcase/FAQ one-shot `ScrollReveal` (IO); sticky header + final CTA + hero orb **static**; fade + ≤8px / 300–400ms / 40–80ms; `prefers-reduced-motion` → still page; marketing-scoped (`components/marketing/`) — not product motion system | **Grill + code win** | 2026-08-14 |
-| `/welcome/plg` | Not in prototype | N/A | EN product-led exploration; default `/welcome` unchanged and unlinked; same CTA → `/`; no price/email/fake proof; HTML/CSS forge mock (`ForgeProductMock`); sticky split-flap plaque (`PlgScrollPlaque`) replaces mid-page H2s (audience → phases → features), unpins before final CTA. Editorial + offer explorations discarded. | **Grill + code win** | 2026-08-17 |
+| `/welcome/plg` | Not in prototype | N/A | EN product-led exploration; default `/welcome` unchanged and unlinked; same CTA → `/`; no price/email/fake proof; hero HTML/CSS forge mock (`ForgeProductMock`); trail mock (`TrailProductMock`) before phases with audience title; sticky split-flap plaque (`PlgScrollPlaque`) replaces mid-page H2s (audience → phases → features), unpins before final CTA. Editorial + offer explorations discarded. | **Grill + code win** | 2026-08-17 |
 
 ---
 
