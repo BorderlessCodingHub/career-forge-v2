@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-14** · Last merge: **CAR-39** (PR #34 — `/welcome` marketing copy) · prior **CAR-38** (PR #32) · Linear **CAR-39 Done** · **CAR-38 Done** · **CAR-35 Done** · **CAR-33 Done** · **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
+Last updated: **2026-08-18** · Last merge: **CAR-40** (PR #35 — `/welcome/plg` product-led) · prior **CAR-39** (PR #34) · Linear **CAR-40 Done** · **CAR-39 Done** · **CAR-38 Done** · **CAR-35 Done** · **CAR-33 Done** · **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)  
-**Next eng:** **F3a** — [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots. **CAR-39 Done** · **CAR-38 Done** (neither gates pilots). **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
+**Next eng:** **F3a** — [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots. **CAR-40 Done** · **CAR-39 Done** · **CAR-38 Done** (none gate pilots). **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -82,10 +82,11 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) | pt-BR marketing + chrome | [S] | Backlog — after CAR-35 |
 | [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) | `/welcome` motion polish | [S] | **Done** — PR #32 · lean CSS + reduced-motion; does not gate CAR-36 |
 | [CAR-39](https://linear.app/career-forge-v2/issue/CAR-39) | `/welcome` marketing copy (outcome hero) | [P] | **Done** — PR #34 · outcome H1 + `Start diagnosis` + `CONTEXT.md`; does not gate CAR-36 |
+| [CAR-40](https://linear.app/career-forge-v2/issue/CAR-40) | Marketing `/welcome/plg` (product-led) | [P] | **Done** — PR #35 · first fold pinned; trail/phases/features slide in; not linked from `/welcome`; does not gate CAR-36 |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | Backlog — after CAR-35 |
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Borderless issuer + send resume + merge | [B] | **F3b** — blocked on issuer |
 
-**Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-34 Done.**
+**Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-34 Done.**
 
 ---
 
@@ -117,6 +118,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | Marketing landing `/welcome` | ✅ Done | CAR-35 — EN `/welcome`; CTA → `/`; no pricing/email; pt-BR → CAR-37 |
 | `/welcome` motion polish | ✅ Done | CAR-38 — lean CSS hero stagger + scroll reveal; reduced-motion still; PR #32 |
 | `/welcome` marketing copy | ✅ Done | CAR-39 — outcome hero + `Start diagnosis` + roadmap glossary (`CONTEXT.md`); PR #34 |
+| Marketing `/welcome/plg` | ✅ Done | CAR-40 — EN product-led exploration; first fold pinned; CTA → `/`; not linked from `/welcome`; PR #35 |
 | BASE/PSP pilots (×2 E2E) | ⬜ F3a | After caps + landing; anon OK (F3.7/F3.9) |
 
 ---
