@@ -121,7 +121,10 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `PrimaryButton` / `GhostButton` | Actions |
 | `LandingRecoveryGate` | CAR-27/29 — `/` return-visit gate; Continue / View all / New forge; **Forge again from last diagnosis** when `GET /me/profile` has diagnosis; empty+diagnosis gate; falls open to `GoalPicker` when empty or API error |
 | `WelcomeLanding` | CAR-35/38 — `/welcome` marketing (EN); BrandMark + Start→`/`; lean CSS motion; no pricing/email; pt-BR CAR-37 |
-| `ScrollReveal` | CAR-38 — `/welcome` only; one-shot IO scroll fade; not a product-wide motion system |
+| `PlgLanding` | Exploration at `/welcome/plg` — EN product-led; CTA→`/`; not linked from default `/welcome` |
+| `ForgeProductMock` | PLG hero — static HTML/CSS forge timeline + spine; not a live run |
+| `WelcomeVariantShell` / `StartDiagnosisCta` | Shared chrome for the three variant routes |
+| `ScrollReveal` | CAR-38 — marketing `/welcome` surfaces; one-shot IO scroll fade; not a product-wide motion system |
 | `welcome-motion.ts` | CAR-38 — stagger/duration/translate constants + hero delay styles (grill bands) |
 | `profile-reuse.ts` | CAR-29 — `hydrateOnboardingFromProfile` writes diagnosis + intake into sessionStorage for `/onboarding/edit` |
 | `DeployBadge` | Global fixed footer (`z-auto`) — deploy SHA/time + API health dot; stays **below** drawers (`z-40`/`z-50`); `local dev` when build env unset |

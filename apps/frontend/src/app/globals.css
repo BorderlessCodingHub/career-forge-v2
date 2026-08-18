@@ -85,6 +85,69 @@ body {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
 }
 
+/* PLG variant — live-dot on forge mock (marketing only) */
+.plg-live-dot {
+  animation: plg-pulse 2s ease-in-out infinite;
+}
+
+@keyframes plg-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* PLG forge mock — choreographed landpage illustration (not live /forge). */
+@keyframes plg-forge-mock-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--forge-mock-translate, 6px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.plg-forge-mock-fade-item {
+  opacity: 0;
+  animation: plg-forge-mock-fade-up var(--forge-mock-duration, 880ms) ease-in-out
+    both;
+}
+
+.plg-forge-mock-node-dim {
+  animation: plg-forge-mock-dim var(--forge-mock-focus-duration, 640ms)
+    cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+@keyframes plg-forge-mock-dim {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.72;
+  }
+}
+
+.plg-forge-mock-node-focus-pill {
+  animation: plg-forge-mock-focus-ring var(--forge-mock-focus-duration, 640ms)
+    cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+@keyframes plg-forge-mock-focus-ring {
+  from {
+    border-color: var(--border);
+    box-shadow: none;
+  }
+  to {
+    border-color: var(--accent-mint);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-mint) 28%, transparent);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .welcome-hero-item {
     animation: none;
@@ -102,5 +165,26 @@ body {
   .welcome-cta,
   .welcome-card {
     transition-duration: 150ms;
+  }
+
+  .plg-live-dot {
+    animation: none;
+  }
+
+  .plg-forge-mock-fade-item,
+  .plg-forge-mock-node-dim {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .plg-forge-mock-node-dim {
+    opacity: 0.72;
+  }
+
+  .plg-forge-mock-node-focus-pill {
+    animation: none;
+    border-color: var(--accent-mint);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-mint) 28%, transparent);
   }
 }

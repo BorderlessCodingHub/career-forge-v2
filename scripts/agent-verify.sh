@@ -60,6 +60,8 @@ check test -f docs/product/golden-cases/RUBRIC.md
 check test -f docs/product/golden-cases/PEDRO-RUNBOOK.md
 check test -f apps/frontend/src/app/layout.tsx
 check test -f apps/frontend/src/app/\(setup\)/page.tsx
+check test -f apps/frontend/src/app/\(setup\)/welcome/page.tsx
+check test -f apps/frontend/src/app/\(setup\)/welcome/plg/page.tsx
 check test -f apps/frontend/public/brand/borderless-logo.svg
 check test -f apps/frontend/public/brand/favicon.ico
 check test -f apps/frontend/src/components/ui/BrandMark.tsx
