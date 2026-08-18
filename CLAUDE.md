@@ -220,6 +220,8 @@ At the start of a session involving implementation work, read in order:
 
 | Route | Purpose |
 |-------|---------|
+| `(setup)/welcome` | Marketing landpage (EN) |
+| `(setup)/welcome/plg` | Product-led exploration (Granola rhythm) |
 | `(setup)/` | Goal entry |
 | `(setup)/onboarding` | Adaptive diagnosis interview |
 | `(setup)/onboarding/edit` | Editable diagnosis |

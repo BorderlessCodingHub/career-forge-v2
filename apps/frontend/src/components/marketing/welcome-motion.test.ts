@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  FORGE_MOCK_ITEM_DURATION_MS,
+  FORGE_MOCK_ITEM_STAGGER_MS,
   WELCOME_DURATION_MS,
   WELCOME_STAGGER_MS,
   WELCOME_TRANSLATE_PX,
+  forgeMockCardReadyMs,
+  forgeMockFocusDelayMs,
+  forgeMockNodeDelayMs,
+  forgeMockStepDelayMs,
+  forgeMockStepsPhaseStartMs,
   heroItemStyle,
   scrollRevealClassName,
   shouldSkipMotion,
@@ -47,5 +54,26 @@ describe("shouldSkipMotion", () => {
   it("skips all motion when prefers-reduced-motion is on", () => {
     expect(shouldSkipMotion(true)).toBe(true);
     expect(shouldSkipMotion(false)).toBe(false);
+  });
+});
+
+describe("forge mock choreography (PLG landpage only)", () => {
+  it("starts after hero card fade completes", () => {
+    expect(forgeMockCardReadyMs()).toBe(
+      staggerDelayMs(6) + WELCOME_DURATION_MS,
+    );
+    expect(forgeMockNodeDelayMs(0)).toBe(forgeMockCardReadyMs());
+  });
+
+  it("uses slower sequential timing than hero copy stagger", () => {
+    expect(FORGE_MOCK_ITEM_STAGGER_MS).toBeGreaterThan(WELCOME_STAGGER_MS);
+    expect(FORGE_MOCK_ITEM_DURATION_MS).toBeGreaterThan(WELCOME_DURATION_MS);
+  });
+
+  it("runs nodes → focus → steps in order", () => {
+    expect(forgeMockNodeDelayMs(3)).toBeLessThan(forgeMockFocusDelayMs());
+    expect(forgeMockFocusDelayMs()).toBeLessThan(forgeMockStepsPhaseStartMs());
+    expect(forgeMockStepDelayMs(0)).toBe(forgeMockStepsPhaseStartMs());
+    expect(forgeMockStepDelayMs(3)).toBeGreaterThan(forgeMockStepDelayMs(0));
   });
 });

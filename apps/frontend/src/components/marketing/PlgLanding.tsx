@@ -1,0 +1,176 @@
+import { ForgeProductMock } from "./ForgeProductMock";
+import { PlgStackScroll } from "./PlgStackScroll";
+import { StartDiagnosisCta } from "./StartDiagnosisCta";
+import { TrailProductMock } from "./TrailProductMock";
+import { WelcomeVariantShell } from "./WelcomeVariantShell";
+import {
+  PLG_PLAQUE_LABELS,
+  PLG_PLAQUE_SECTION_IDS,
+} from "./plg-plaque-spy";
+import { heroItemStyle } from "./welcome-motion";
+
+const PHASES = [
+  {
+    when: "Before",
+    title: "Start diagnosis prepared",
+    body: "A short interview maps skills, constraints, and proof — who’s in the room is you. No roadmap until this is honest.",
+  },
+  {
+    when: "During",
+    title: "Give the forge your attention",
+    body: "Don’t choose between waiting and guessing. The Live Roadmap Forge streams the path in real time, personal to your goal.",
+  },
+  {
+    when: "After",
+    title: "The map stays honest",
+    body: "Mastery checks and the next node are ready when evidence lands, so you move on proof — not a static syllabus.",
+  },
+] as const;
+
+const FEATURES = [
+  {
+    title: "Humans in the loop, not a catalog",
+    body: "Career Forge doesn’t drop a course list. It diagnoses, then forges a roadmap you can watch.",
+  },
+  {
+    title: "Works for four LLM goals",
+    body: "RAG engineer, agent engineer, LLM evals, fine-tuning — one funnel, four destinations.",
+  },
+  {
+    title: "Evidence by default",
+    body: "Passage is demonstrated fit. Years of XP are not the gate.",
+  },
+] as const;
+
+export function PlgLanding() {
+  return (
+    <WelcomeVariantShell
+      dataScreen="marketing-welcome-plg"
+      homeHref="/welcome/plg"
+      ctaTestId="welcome-plg-cta-start"
+    >
+      <main>
+        <PlgStackScroll
+          labels={PLG_PLAQUE_LABELS}
+          sectionIds={PLG_PLAQUE_SECTION_IDS}
+          hero={
+            <section className="flex h-full flex-col justify-center px-4 py-6 sm:px-6 sm:py-8">
+              <div className="mx-auto grid h-full min-h-0 max-w-6xl items-center gap-8 lg:grid-cols-2 lg:gap-12">
+                <div className="min-h-0">
+                  <p
+                    className="welcome-hero-item mb-3 text-xs font-medium uppercase tracking-[0.2em] text-accent-mint"
+                    style={heroItemStyle(0)}
+                  >
+                    Borderless Labs
+                  </p>
+                  <h1
+                    className="welcome-hero-item text-balance text-3xl font-semibold tracking-tight text-text-primary sm:text-4xl lg:text-5xl"
+                    style={heroItemStyle(1)}
+                  >
+                    The adaptive roadmap for BASE &amp; PSP
+                  </h1>
+                  <p
+                    className="welcome-hero-item mt-4 max-w-md text-pretty text-base text-text-secondary sm:text-lg"
+                    style={heroItemStyle(2)}
+                  >
+                    Diagnosis, a live forge, mastery checks. Without a static
+                    syllabus.
+                  </p>
+                  <div className="welcome-hero-item mt-6" style={heroItemStyle(3)}>
+                    <StartDiagnosisCta
+                      className="px-6 py-3 text-base"
+                      testId="welcome-plg-cta-hero"
+                    />
+                  </div>
+                </div>
+                <div
+                  className="welcome-hero-item hidden min-h-0 lg:block"
+                  style={heroItemStyle(6)}
+                >
+                  <ForgeProductMock />
+                </div>
+              </div>
+            </section>
+          }
+        >
+          <section
+            id={PLG_PLAQUE_SECTION_IDS[0]}
+            className="border-b border-border-soft px-4 sm:px-6"
+          >
+            <div className="mx-auto flex h-full max-w-3xl flex-col justify-center py-3">
+              <h2 className="sr-only">{PLG_PLAQUE_LABELS[0]}</h2>
+              <TrailProductMock />
+            </div>
+          </section>
+
+          <section
+            id={PLG_PLAQUE_SECTION_IDS[1]}
+            className="border-b border-border-soft px-4 sm:px-6"
+          >
+            <div className="mx-auto flex h-full max-w-6xl flex-col justify-center py-3">
+              <h2 className="sr-only">{PLG_PLAQUE_LABELS[1]}</h2>
+              <ul className="grid gap-6 md:grid-cols-3">
+                {PHASES.map((phase) => (
+                  <li key={phase.when}>
+                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent-mint">
+                      {phase.when}
+                    </p>
+                    <h3 className="mt-3 text-base font-medium text-text-primary">
+                      {phase.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                      {phase.body}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+
+          <section
+            id={PLG_PLAQUE_SECTION_IDS[2]}
+            className="border-b border-border-soft px-4 sm:px-6"
+          >
+            <div className="mx-auto flex h-full max-w-6xl flex-col justify-center py-3">
+              <h2 className="sr-only">{PLG_PLAQUE_LABELS[2]}</h2>
+              <ul className="grid gap-5 sm:grid-cols-3">
+                {FEATURES.map((f) => (
+                  <li key={f.title}>
+                    <div className="welcome-card h-full rounded-card border border-border bg-surface p-5">
+                      <h3 className="text-base font-medium text-text-primary">
+                        {f.title}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                        {f.body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        </PlgStackScroll>
+
+        <section
+          className="plg-cta-band border-t border-border px-4 py-14 sm:px-6 sm:py-16"
+          data-testid="plg-final-cta"
+        >
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Start diagnosis — free for this pilot
+            </h2>
+            <p className="mt-3 text-sm text-text-secondary">
+              Guest access. No checkout. Pick a goal on the next screen.
+            </p>
+            <div className="mt-8 flex justify-center">
+              <StartDiagnosisCta
+                className="px-6 py-3 text-base"
+                testId="welcome-plg-cta-final"
+              />
+            </div>
+          </div>
+        </section>
+      </main>
+    </WelcomeVariantShell>
+  );
+}

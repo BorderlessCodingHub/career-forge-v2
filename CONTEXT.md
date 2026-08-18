@@ -45,3 +45,6 @@ _Avoid_: quiz for grades, certificate exam, job guarantee
 **Welcome** (`/welcome`):
 EN marketing landpage: convert with Start diagnosis; educate as means; no pricing, waitlist, or email capture in pilot.
 _Avoid_: product entry (`/` — GoalPicker / recovery, not marketing)
+
+**Welcome PLG** (`/welcome/plg`):
+EN product-led exploration (Granola rhythm). Same CTA and constraints as Welcome. Direct URL only — do not replace `/welcome`.

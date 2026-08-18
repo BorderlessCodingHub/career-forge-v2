@@ -85,6 +85,195 @@ body {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
 }
 
+/* PLG variant — live-dot on forge mock (marketing only) */
+.plg-live-dot {
+  animation: plg-pulse 2s ease-in-out infinite;
+}
+
+@keyframes plg-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* PLG forge mock — choreographed landpage illustration (not live /forge). */
+@keyframes plg-forge-mock-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--forge-mock-translate, 6px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.plg-forge-mock-fade-item {
+  opacity: 0;
+  animation: plg-forge-mock-fade-up var(--forge-mock-duration, 880ms) ease-in-out
+    both;
+}
+
+.plg-forge-mock-node-dim {
+  animation: plg-forge-mock-dim var(--forge-mock-focus-duration, 640ms)
+    cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+@keyframes plg-forge-mock-dim {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.72;
+  }
+}
+
+.plg-forge-mock-node-focus-pill {
+  animation: plg-forge-mock-focus-ring var(--forge-mock-focus-duration, 640ms)
+    cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+@keyframes plg-forge-mock-focus-ring {
+  from {
+    border-color: var(--border);
+    box-shadow: none;
+  }
+  to {
+    border-color: var(--accent-mint);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-mint) 28%, transparent);
+  }
+}
+
+/* PLG sticky split-flap plaque — landpage only. */
+.plg-plaque-board {
+  perspective: 900px;
+}
+
+.plg-plaque-face {
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+}
+
+.plg-plaque-face.is-out {
+  animation: plg-plaque-flap-out 260ms ease-in forwards;
+}
+
+.plg-plaque-face.is-in {
+  animation: plg-plaque-flap-in 260ms ease-out forwards;
+}
+
+.plg-plaque-face.is-out-rev {
+  animation: plg-plaque-flap-out-rev 260ms ease-in forwards;
+}
+
+.plg-plaque-face.is-in-rev {
+  animation: plg-plaque-flap-in-rev 260ms ease-out forwards;
+}
+
+@keyframes plg-plaque-flap-out {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes plg-plaque-flap-in {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes plg-plaque-flap-out-rev {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(90deg);
+  }
+}
+
+@keyframes plg-plaque-flap-in-rev {
+  from {
+    transform: rotateX(-90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+/* PLG first fold stays put; later sections slide into the remaining viewport. */
+.plg-stack-scroll {
+  height: calc(100svh - 3.5rem);
+  position: relative;
+}
+
+.plg-stack-pin {
+  z-index: 20;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.plg-hero-fold {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.plg-stack-viewport {
+  position: relative;
+  flex: 0 0 auto;
+  height: clamp(16.5rem, 38vh, 22rem);
+  overflow: hidden;
+}
+
+.plg-stack-panel {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  background: var(--bg);
+  transition: transform 480ms ease-in-out;
+  will-change: transform;
+}
+
+.plg-stack-panel[data-plg-state="active"] {
+  z-index: 12;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.plg-stack-panel[data-plg-state="before"] {
+  z-index: 10;
+  pointer-events: none;
+  transform: translateY(0);
+}
+
+.plg-stack-panel[data-plg-state="after"] {
+  z-index: 11;
+  pointer-events: none;
+  transform: translateY(100%);
+}
+
+.plg-cta-band {
+  background:
+    radial-gradient(
+      ellipse 90% 120% at 50% 0%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 62%
+    ),
+    var(--surface);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .welcome-hero-item {
     animation: none;
@@ -102,5 +291,42 @@ body {
   .welcome-cta,
   .welcome-card {
     transition-duration: 150ms;
+  }
+
+  .plg-live-dot {
+    animation: none;
+  }
+
+  .plg-forge-mock-fade-item,
+  .plg-forge-mock-node-dim {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .plg-forge-mock-node-dim {
+    opacity: 0.72;
+  }
+
+  .plg-forge-mock-node-focus-pill {
+    animation: none;
+    border-color: var(--accent-mint);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent-mint) 28%, transparent);
+  }
+
+  .plg-plaque-face.is-out,
+  .plg-plaque-face.is-in,
+  .plg-plaque-face.is-out-rev,
+  .plg-plaque-face.is-in-rev {
+    animation: none;
+    transform: none;
+  }
+
+  .plg-stack-panel {
+    transition: none;
+  }
+
+  .plg-stack-panel[data-plg-state="after"] {
+    transform: translateY(100%);
   }
 }

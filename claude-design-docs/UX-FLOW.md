@@ -12,7 +12,7 @@
 
 Return visit (CAR-27/29): if ≥1 forge artifact → Continue last / View all (/forges) / New forge; if saved diagnosis → Forge again from last diagnosis
 Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner)
-Marketing: /welcome (CAR-35 EN) — CTA Start → `/` product; no auto-redirect from `/`
+Marketing: /welcome (CAR-35 EN) — CTA Start → `/` product; no auto-redirect from `/`. Exploration (direct URL only, `/welcome` unchanged): `/welcome/plg`
 ```
 
 **Mental breadcrumb:** (Welcome) → Goal → Diagnosis → Review diagnosis → Forge roadmap → Explore roadmap · Recovery: Continue / forges / share / resume / re-forge from profile

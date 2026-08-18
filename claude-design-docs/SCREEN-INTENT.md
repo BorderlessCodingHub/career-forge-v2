@@ -32,6 +32,19 @@
 
 ---
 
+## 0b. Marketing welcome PLG (`/welcome/plg`) — MUST match (exploration)
+
+Direct URL only. **Do not** replace `/welcome` or add a chooser there.
+
+| Constraint | Detail |
+|------------|--------|
+| Route | `/welcome/plg` · `data-screen="marketing-welcome-plg"` |
+| Genre | Product-led (Granola rhythm) |
+| Must | Split hero + HTML/CSS forge mock **stays on the first fold**; trail / phases / features slide into the remaining viewport; split-flap plaque (audience → phases → features); before/during/after; dark tokens; EN; Start diagnosis → `/` |
+| Out | Pricing · email · checkout · fake testimonials · fake logo wall · editorial/offer variants |
+
+---
+
 ## 1. Goal Picker — MUST match
 
 | Constraint | Detail |

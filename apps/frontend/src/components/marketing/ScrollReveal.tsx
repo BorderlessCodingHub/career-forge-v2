@@ -23,7 +23,7 @@ type ScrollRevealProps = {
 };
 
 /**
- * One-shot scroll fade-in for `/welcome` only (CAR-38).
+ * One-shot scroll fade-in for marketing `/welcome` surfaces (CAR-38).
  * Reduced-motion: visible immediately, no transform animation.
  */
 export function ScrollReveal({
