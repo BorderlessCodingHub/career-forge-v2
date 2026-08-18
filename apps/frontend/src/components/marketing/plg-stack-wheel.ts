@@ -49,10 +49,12 @@ export function plgStackWheelAction(
   return "lock";
 }
 
+export type PlgStackPanelState = "before" | "active" | "after";
+
 export function plgStackPanelState(
   panelIndex: number,
   activeIndex: number,
-): "before" | "active" | "after" {
+): PlgStackPanelState {
   if (panelIndex === activeIndex) return "active";
   if (panelIndex < activeIndex) return "before";
   return "after";

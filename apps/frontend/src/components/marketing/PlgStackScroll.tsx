@@ -18,6 +18,7 @@ import {
   plgStackIsPinned,
   plgStackPanelState,
   plgStackWheelAction,
+  type PlgStackPanelState,
 } from "./plg-stack-wheel";
 
 type PlgStackScrollProps = {
@@ -29,9 +30,11 @@ type PlgStackScrollProps = {
 
 type PanelProps = {
   id?: string;
-  "data-plg-step"?: number;
   className?: string;
   children?: ReactNode;
+  "data-plg-step"?: number;
+  "data-plg-state"?: PlgStackPanelState;
+  "aria-hidden"?: boolean;
 };
 
 export function PlgStackScroll({
