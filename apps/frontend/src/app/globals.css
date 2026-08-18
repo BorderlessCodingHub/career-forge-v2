@@ -210,6 +210,60 @@ body {
   }
 }
 
+/* PLG wheel stack — sections swap in place; page scroll locks while pinned. */
+.plg-stack-scroll {
+  height: calc(100svh - 3.5rem);
+  position: relative;
+}
+
+.plg-stack-pin {
+  position: sticky;
+  top: 3.5rem;
+  z-index: 20;
+  display: flex;
+  height: calc(100svh - 3.5rem);
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.plg-stack-viewport {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.plg-stack-panel {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  background: var(--bg);
+  transition:
+    transform 480ms ease-in-out,
+    opacity 320ms ease-in-out;
+  will-change: transform;
+}
+
+.plg-stack-panel[data-plg-state="active"] {
+  z-index: 12;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.plg-stack-panel[data-plg-state="before"] {
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-12%);
+}
+
+.plg-stack-panel[data-plg-state="after"] {
+  z-index: 11;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .welcome-hero-item {
     animation: none;
@@ -255,6 +309,16 @@ body {
   .plg-plaque-face.is-out-rev,
   .plg-plaque-face.is-in-rev {
     animation: none;
+    transform: none;
+  }
+
+  .plg-stack-panel {
+    transition: none;
+  }
+
+  .plg-stack-panel[data-plg-state="before"],
+  .plg-stack-panel[data-plg-state="after"] {
+    opacity: 0;
     transform: none;
   }
 }

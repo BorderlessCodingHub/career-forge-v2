@@ -1,5 +1,5 @@
 import { ForgeProductMock } from "./ForgeProductMock";
-import { PlgScrollPlaque } from "./PlgScrollPlaque";
+import { PlgStackScroll } from "./PlgStackScroll";
 import { ScrollReveal } from "./ScrollReveal";
 import { StartDiagnosisCta } from "./StartDiagnosisCta";
 import { TrailProductMock } from "./TrailProductMock";
@@ -86,25 +86,25 @@ export function PlgLanding() {
           </div>
         </section>
 
-        <div>
-          <PlgScrollPlaque
-            labels={PLG_PLAQUE_LABELS}
-            sectionIds={PLG_PLAQUE_SECTION_IDS}
-          />
-
-          <section className="border-b border-border-soft px-4 py-16 sm:px-6 sm:py-20">
-            <div className="mx-auto max-w-3xl">
-              <div className="mt-12">
-                <TrailProductMock />
-              </div>
+        <PlgStackScroll
+          labels={PLG_PLAQUE_LABELS}
+          sectionIds={PLG_PLAQUE_SECTION_IDS}
+        >
+          <section
+            id={PLG_PLAQUE_SECTION_IDS[0]}
+            className="border-b border-border-soft px-4 sm:px-6"
+          >
+            <div className="mx-auto flex h-full max-w-3xl flex-col justify-center py-8">
+              <h2 className="sr-only">{PLG_PLAQUE_LABELS[0]}</h2>
+              <TrailProductMock />
             </div>
           </section>
 
           <section
-            id={PLG_PLAQUE_SECTION_IDS[0]}
-            className="border-b border-border-soft px-4 py-16 sm:px-6 sm:py-20 min-h-[calc(100svh-10rem)]"
+            id={PLG_PLAQUE_SECTION_IDS[1]}
+            className="border-b border-border-soft px-4 sm:px-6"
           >
-            <div className="mx-auto max-w-6xl">
+            <div className="mx-auto flex h-full max-w-6xl flex-col justify-center py-8">
               <h2 className="sr-only">{PLG_PLAQUE_LABELS[1]}</h2>
               <ul className="grid gap-8 md:grid-cols-3">
                 {PHASES.map((phase, i) => (
@@ -125,10 +125,10 @@ export function PlgLanding() {
           </section>
 
           <section
-            id={PLG_PLAQUE_SECTION_IDS[1]}
-            className="border-b border-border-soft px-4 py-16 sm:px-6 sm:py-20 min-h-[calc(100svh-10rem)]"
+            id={PLG_PLAQUE_SECTION_IDS[2]}
+            className="border-b border-border-soft px-4 sm:px-6"
           >
-            <div className="mx-auto max-w-6xl">
+            <div className="mx-auto flex h-full max-w-6xl flex-col justify-center py-8">
               <h2 className="sr-only">{PLG_PLAQUE_LABELS[2]}</h2>
               <ul className="grid gap-6 sm:grid-cols-3">
                 {FEATURES.map((f, i) => (
@@ -146,7 +146,7 @@ export function PlgLanding() {
               </ul>
             </div>
           </section>
-        </div>
+        </PlgStackScroll>
 
         <section className="flex min-h-[100svh] flex-col justify-center px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-xl text-center">
