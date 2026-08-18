@@ -123,6 +123,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `WelcomeLanding` | CAR-35/38 — `/welcome` marketing (EN); BrandMark + Start→`/`; lean CSS motion; no pricing/email; pt-BR CAR-37 |
 | `PlgLanding` | Exploration at `/welcome/plg` — EN product-led; CTA→`/`; not linked from default `/welcome` |
 | `ForgeProductMock` | PLG hero — static HTML/CSS forge timeline + spine; not a live run |
+| `PlgScrollPlaque` | PLG mid-page sticky split-flap title (`rotateX`); visual only (`aria-hidden`); sections keep `sr-only` H2s |
 | `WelcomeVariantShell` / `StartDiagnosisCta` | Shared chrome for the three variant routes |
 | `ScrollReveal` | CAR-38 — marketing `/welcome` surfaces; one-shot IO scroll fade; not a product-wide motion system |
 | `welcome-motion.ts` | CAR-38 — stagger/duration/translate constants + hero delay styles (grill bands) |

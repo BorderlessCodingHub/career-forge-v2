@@ -1,7 +1,12 @@
 import { ForgeProductMock } from "./ForgeProductMock";
+import { PlgScrollPlaque } from "./PlgScrollPlaque";
 import { ScrollReveal } from "./ScrollReveal";
 import { StartDiagnosisCta } from "./StartDiagnosisCta";
 import { WelcomeVariantShell } from "./WelcomeVariantShell";
+import {
+  PLG_PLAQUE_LABELS,
+  PLG_PLAQUE_SECTION_IDS,
+} from "./plg-plaque-spy";
 import { heroItemStyle } from "./welcome-motion";
 
 const PHASES = [
@@ -80,67 +85,61 @@ export function PlgLanding() {
           </div>
         </section>
 
-        <section
-          className="border-b border-border-soft bg-surface/40 py-6"
-          aria-label="Audience"
-        >
-          <p className="mx-auto max-w-6xl px-4 text-center text-sm text-text-secondary sm:px-6">
-            Built for{" "}
-            <span className="text-text-primary">Borderless</span>
-            {" · "}
-            <span className="text-text-primary">BASE</span>
-            {" & "}
-            <span className="text-text-primary">PSP</span>
-            {" "}learners
-          </p>
-        </section>
+        <div>
+          <PlgScrollPlaque
+            labels={PLG_PLAQUE_LABELS}
+            sectionIds={PLG_PLAQUE_SECTION_IDS}
+          />
 
-        <section className="border-b border-border-soft px-4 py-16 sm:px-6 sm:py-20">
-          <div className="mx-auto max-w-6xl">
-            <h2 className="max-w-xl text-2xl font-semibold tracking-tight sm:text-3xl">
-              Career Forge helps you before, during, and after the forge.
-            </h2>
-            <ul className="mt-12 grid gap-8 md:grid-cols-3">
-              {PHASES.map((phase, i) => (
-                <ScrollReveal key={phase.when} as="li" delayIndex={i}>
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent-mint">
-                    {phase.when}
-                  </p>
-                  <h3 className="mt-3 text-base font-medium text-text-primary">
-                    {phase.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                    {phase.body}
-                  </p>
-                </ScrollReveal>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <section className="border-b border-border-soft px-4 py-16 sm:px-6 sm:py-20">
-          <div className="mx-auto max-w-6xl">
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Works the way the product works
-            </h2>
-            <ul className="mt-10 grid gap-6 sm:grid-cols-3">
-              {FEATURES.map((f, i) => (
-                <ScrollReveal key={f.title} as="li" delayIndex={i}>
-                  <div className="welcome-card h-full rounded-card border border-border bg-surface p-5">
-                    <h3 className="text-base font-medium text-text-primary">
-                      {f.title}
+          <section
+            id={PLG_PLAQUE_SECTION_IDS[0]}
+            className="border-b border-border-soft px-4 py-16 sm:px-6 sm:py-20 min-h-[calc(100svh-10rem)]"
+          >
+            <div className="mx-auto max-w-6xl">
+              <h2 className="sr-only">{PLG_PLAQUE_LABELS[1]}</h2>
+              <ul className="grid gap-8 md:grid-cols-3">
+                {PHASES.map((phase, i) => (
+                  <ScrollReveal key={phase.when} as="li" delayIndex={i}>
+                    <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent-mint">
+                      {phase.when}
+                    </p>
+                    <h3 className="mt-3 text-base font-medium text-text-primary">
+                      {phase.title}
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                      {f.body}
+                      {phase.body}
                     </p>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </ul>
-          </div>
-        </section>
+                  </ScrollReveal>
+                ))}
+              </ul>
+            </div>
+          </section>
 
-        <section className="px-4 py-16 sm:px-6 sm:py-20">
+          <section
+            id={PLG_PLAQUE_SECTION_IDS[1]}
+            className="border-b border-border-soft px-4 py-16 sm:px-6 sm:py-20 min-h-[calc(100svh-10rem)]"
+          >
+            <div className="mx-auto max-w-6xl">
+              <h2 className="sr-only">{PLG_PLAQUE_LABELS[2]}</h2>
+              <ul className="grid gap-6 sm:grid-cols-3">
+                {FEATURES.map((f, i) => (
+                  <ScrollReveal key={f.title} as="li" delayIndex={i}>
+                    <div className="welcome-card h-full rounded-card border border-border bg-surface p-5">
+                      <h3 className="text-base font-medium text-text-primary">
+                        {f.title}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                        {f.body}
+                      </p>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <section className="flex min-h-[100svh] flex-col justify-center px-4 py-16 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-xl text-center">
             <h2 className="text-2xl font-semibold tracking-tight">
               Start diagnosis — free for this pilot
