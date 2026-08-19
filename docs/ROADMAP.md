@@ -34,10 +34,10 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12). Amend 2026
 | [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) | `/welcome` motion polish | [S] | **Done** — PR #32 |
 | [CAR-39](https://linear.app/career-forge-v2/issue/CAR-39) | `/welcome` marketing copy (outcome hero) | [P] | **Done** — PR #34 |
 | [CAR-40](https://linear.app/career-forge-v2/issue/CAR-40) | Marketing `/welcome/plg` (product-led) | [P] | **Done** — PR #35 |
-| [CAR-41](https://linear.app/career-forge-v2/issue/CAR-41) | Preview premium landings A/B (static HTML, unlinked) | [P] | In Progress — does not gate CAR-37/36 |
+| [CAR-41](https://linear.app/career-forge-v2/issue/CAR-41) | Preview premium landings A/B (static HTML, unlinked) | [P] | **Done** — PR #36 |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 Done |
 
-**Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-34 Done**. CAR-41 is parallel preview (not the funnel).
+**Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done**.
 
 ### F3b — platform auth **[B]** (external)
 
