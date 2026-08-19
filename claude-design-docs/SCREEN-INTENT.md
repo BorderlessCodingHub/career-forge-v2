@@ -9,7 +9,7 @@
 
 - Product UI copy: **English** (CAR-16). Marketing `/welcome` ships EN in CAR-35; **pt-BR marketing + chrome** = CAR-37
 - Status enum: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar` — never rename without CHECKPOINT + API
-- No gamification (confetti, XP, streaks)
+- No gamification (confetti, XP, streaks) on **product** UI. CAR-41 `/welcome/premium-*` clones are exempt (preview theater only).
 - P0 wow moments must survive: **Forge stream**, **Animation reveal**, **Validation**, **Adaptive roadmap**
 
 ---
@@ -42,6 +42,22 @@ Direct URL only. **Do not** replace `/welcome` or add a chooser there.
 | Genre | Product-led (Granola rhythm) |
 | Must | Split hero + HTML/CSS forge mock **stays on the first fold**; trail / phases / features slide into the remaining viewport; split-flap plaque (audience → phases → features); before/during/after; dark tokens; EN; Start diagnosis → `/` |
 | Out | Pricing · email · checkout · fake testimonials · fake logo wall · editorial/offer variants |
+
+---
+
+## 0c. Premium landing previews (`/welcome/premium-a` · `/welcome/premium-b`) — bake-off only (CAR-41)
+
+Direct URL only. **Do not** replace `/welcome` / `/welcome/plg` or add links there. **Do not** restyle to Borderless tokens or port into Next/Tailwind 3.
+
+| Constraint | Detail |
+|------------|--------|
+| Routes | `/welcome/premium-a` · `/welcome/premium-b` under `basePath=/career-forge` |
+| Serve | Next rewrite → committed Vite single-file HTML (`public/premium-landings/{a,b}.html`) |
+| Fidelity | Pixel clone of `claude-design-docs/premium-landings/{a,b}/` including pricing and fake apply/strategy UI |
+| Out of funnel | CTAs do **not** go to `/`; Apply/Strategy stay client-only theater; `noindex,nofollow`; title `· preview` |
+| Source | [premium-landings/README.md](./premium-landings/README.md) · regenerate with `make premium-landings` |
+
+**Can evolve:** pick a winner later; until then both stay unlinked previews
 
 ---
 

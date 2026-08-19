@@ -1,4 +1,4 @@
-.PHONY: smoke agent-verify up down status test stack-smoke seed cost-gate must-have-coverage golden-check golden-run help
+.PHONY: smoke agent-verify up down status test stack-smoke seed cost-gate must-have-coverage golden-check golden-run premium-landings help
 
 COMPOSE ?= docker compose
 
@@ -15,6 +15,7 @@ help:
 	@echo "  make golden-check  CAR-18 deterministic golden suite"
 	@echo "  make golden-run    CAR-18 Pedro helper (CASE=… / ALL=1 / LIVE=1)"
 	@echo "  make stack-smoke   Docker stack health only"
+	@echo "  make premium-landings  Rebuild /welcome/premium-a and /welcome/premium-b HTML"
 
 # Full smoke — harness + monorepo + stack health (starts docker if needed)
 smoke:
@@ -37,6 +38,9 @@ agent-verify:
 
 stack-smoke:
 	@bash scripts/smoke-stack.sh
+
+premium-landings:
+	@bash scripts/build-premium-landings.sh
 
 up:
 	$(COMPOSE) up -d --build

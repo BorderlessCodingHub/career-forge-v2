@@ -17,7 +17,8 @@ Last updated: **2026-07-21** (Career Forge v2 docs sync).
 ├── claude-design-docs/
 ├── scripts/
 │   ├── agent-verify.sh
-│   └── smoke-stack.sh
+│   ├── smoke-stack.sh
+│   └── build-premium-landings.sh
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
 ├── deploy/
@@ -118,6 +119,9 @@ apps/frontend/
 ├── Dockerfile
 ├── next.config.mjs
 ├── tailwind.config.ts
+├── public/
+│   ├── brand/
+│   └── premium-landings/    # CAR-41 Vite clones; rewrite /welcome/premium-{a,b}
 └── src/
     ├── app/                     # Next App Router
     │   ├── layout.tsx

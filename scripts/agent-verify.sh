@@ -16,6 +16,11 @@ check() {
   fi
 }
 
+# Succeeds when regex is absent from file (check cannot take a leading `!`).
+file_lacks() {
+  ! grep -qE "$1" "$2"
+}
+
 echo "agent-verify: Career Forge harness"
 
 check test -f AGENTS.md
@@ -62,6 +67,18 @@ check test -f apps/frontend/src/app/layout.tsx
 check test -f apps/frontend/src/app/\(setup\)/page.tsx
 check test -f apps/frontend/src/app/\(setup\)/welcome/page.tsx
 check test -f apps/frontend/src/app/\(setup\)/welcome/plg/page.tsx
+check test -f apps/frontend/public/premium-landings/a.html
+check test -f apps/frontend/public/premium-landings/b.html
+check grep -q 'noindex,nofollow' apps/frontend/public/premium-landings/a.html
+check grep -q 'noindex,nofollow' apps/frontend/public/premium-landings/b.html
+check grep -q 'preview</title>' apps/frontend/public/premium-landings/a.html
+check grep -q 'preview</title>' apps/frontend/public/premium-landings/b.html
+check grep -q '/welcome/premium-a' apps/frontend/next.config.mjs
+check grep -q '/welcome/premium-b' apps/frontend/next.config.mjs
+check test -f claude-design-docs/premium-landings/a/package.json
+check test -f claude-design-docs/premium-landings/b/package.json
+check file_lacks 'premium-a|premium-b' apps/frontend/src/components/marketing/WelcomeLanding.tsx
+check file_lacks 'premium-a|premium-b' apps/frontend/src/components/marketing/PlgLanding.tsx
 check test -f apps/frontend/public/brand/borderless-logo.svg
 check test -f apps/frontend/public/brand/favicon.ico
 check test -f apps/frontend/src/components/ui/BrandMark.tsx
