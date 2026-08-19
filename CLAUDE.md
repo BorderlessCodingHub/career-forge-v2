@@ -222,6 +222,7 @@ At the start of a session involving implementation work, read in order:
 |-------|---------|
 | `(setup)/welcome` | Marketing landpage (EN) |
 | `(setup)/welcome/plg` | Product-led exploration (Granola rhythm) |
+| `/welcome/premium-a` · `/welcome/premium-b` | CAR-41 bake-off clones (static HTML rewrite, unlinked, `noindex`) |
 | `(setup)/` | Goal entry |
 | `(setup)/onboarding` | Adaptive diagnosis interview |
 | `(setup)/onboarding/edit` | Editable diagnosis |

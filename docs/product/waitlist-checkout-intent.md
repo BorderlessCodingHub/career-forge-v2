@@ -7,6 +7,8 @@
 
 Marketing CTA on `/welcome` → product `/` as **anon** (no signup, no email capture, no checkout).
 
+[CAR-41](https://linear.app/career-forge-v2/issue/CAR-41) `/welcome/premium-a` and `/welcome/premium-b` are **unlinked visual clones** with fake pricing/apply theater. They are **not** waitlist or checkout runtime and must not replace `/welcome`.
+
 ## Future intent (document only)
 
 When growth / commercialisation is in scope (after Frame / platform auth as needed):

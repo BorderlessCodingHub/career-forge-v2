@@ -24,6 +24,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 |---|-----------|-------------------------|---------------|------|------------|------------|
 | 0 | `/welcome` | `marketing` | `marketing-welcome` | — | EN marketing: BrandMark + Start→`/`; hero diagnose/forge/validate; FAQ ×3; lean motion (CAR-38); no pricing/email | pt-BR CAR-37 |
 | 0p | `/welcome/plg` | — | `marketing-welcome-plg` | — | EN product-led; first fold stays put; trail/phases/features slide in; forge mock in hero; split-flap plaque; not linked from `/welcome` | Visual polish |
+| 0q | `/welcome/premium-a` · `/welcome/premium-b` | — | — (static HTML) | — | CAR-41 bake-off clones; rewrite to `public/premium-landings/{a,b}.html`; `noindex`; not linked; **not** the funnel | Pick a winner later |
 | 1 | `/` | `goal` | `goal-picker` / `landing-recovery` | — | Headline EN, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA; if ≥1 artifact → Continue / View all / New forge; if diagnosis → Forge again from last diagnosis | Card hover, validation toast |
 | 1b | `/forges` | — | `forges-list` | — | Scan & open: Open + Rename visible; share/resume/revoke in ⋯; untitled shows goal_id; optional re-forge CTA | Visual polish |
 | 1c | `/share/[token]` | — | `share-readonly` | — | Read-only roadmap; no session adopt | Visual polish |
