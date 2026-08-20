@@ -12,9 +12,9 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Prerequisite:** F2 golden cases + Yuri GO (#1/#2/#3) — **met 2026-08-08**.  
 **F3a humans after:** hard caps (P95 bump) + rebrand + marketing `/welcome` — **not** platform login (grill F3.7/F3.8).  
-**F3b:** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) Borderless issuer — blocked on `borderless-api`.
+**F3b:** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) epic — email OTP IdP + Borderless membership (grill 2026-08-20; **not** issuer JWT).
 
-Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12). Amend 2026-08-13: `/welcome` EN · pt-BR → CAR-37 · motion → CAR-38. Amend 2026-08-14: `/welcome` copy → CAR-39.
+Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026-08-13: `/welcome` EN · pt-BR → CAR-37 · motion → CAR-38. Amend 2026-08-14: `/welcome` copy → CAR-39. Amend 2026-08-20: F3b OTP pivot.
 
 **Project:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)
 
@@ -39,11 +39,19 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12). Amend 2026
 
 **Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done**.
 
-### F3b — platform auth **[B]** (external)
+### F3b — email OTP auth + membership **[S]**
 
-| Issue | Title | Class |
-|-------|-------|-------|
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [B] blocked on issuer |
+**Project:** [F3b — Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) · ADR-003 amend 2026-08-20 · does **not** block F3a pilots
+
+| Issue | Title | Class | Blocked by |
+|-------|-------|-------|------------|
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP auth + Borderless membership | — | — |
+| [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade (promote / chooser) | [S] | — **start here** |
+| [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) | Membership soft label (stub + Borderless members client) | [S] | CAR-44 |
+| [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume link by email | [S] | CAR-44 |
+| [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Entitlement paywall (1 free forge → Stripe for external) | [S] | CAR-44 + CAR-45 · later |
+
+**Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
 
 ---
 
@@ -114,7 +122,7 @@ Grill 2026-08-19 — hybrid Postgres gate + LangSmith analytics. CAR-7 `cost_gat
 |-------|-------|-------|
 | [CAR-29](https://linear.app/career-forge-v2/issue/CAR-29) | Slice 2: `/forges` UI + optional email + diagnosis profile | [S] ✅ Done |
 | [CAR-31](https://linear.app/career-forge-v2/issue/CAR-31) | Polish `/forges` list UX — scan & open hierarchy | [P] ✅ Done |
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Slice 3: Borderless issuer + send resume + merge | [S] → **F3b** (blocked on `borderless-api`; zero prep) |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic F3b: Email OTP + membership (was issuer Slice 3) | [S] → **F3b** — children CAR-44…47 |
 
 ---
 

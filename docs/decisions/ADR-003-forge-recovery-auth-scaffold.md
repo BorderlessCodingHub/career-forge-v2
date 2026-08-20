@@ -2,11 +2,11 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | **Accepted** — grill 2026-07-30 (Founder Engineer) |
+| **Status** | **Accepted** — grill 2026-07-30 (Founder Engineer) · **Amend 2026-08-20** (email OTP IdP) |
 | **Date** | 2026-07-30 |
 | **Deciders** | Pedro Alano |
-| **Linear (v2)** | Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) · project Forge recovery + auth scaffold · parallel to F2 |
-| **Supersedes (partial)** | V2-PLAN Decision #1 timing — auth *scaffold* ships before F3; Borderless issuer still F3 |
+| **Linear (v2)** | Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) · project Forge recovery + auth scaffold · parallel to F2 · F3b epic [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) |
+| **Supersedes (partial)** | V2-PLAN Decision #1 timing — auth *scaffold* ships before F3. **Amend 2026-08-20:** Borderless JWT **issuer** abandoned; Career Forge owns passwordless email OTP; Borderless = membership check only |
 
 ---
 
@@ -38,9 +38,10 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 
 | Concern | Decision |
 |---------|----------|
-| Provider | `AuthProvider`: `AnonymousLocal` now → `BorderlessToken` in F3 |
+| Provider | `AuthProvider`: `AnonymousLocal` now → **email OTP** in F3b (`provider=email`); Borderless JWT issuer **out** (amend 2026-08-20) |
 | HTTP | `Authorization: Bearer <JWT>` for all authenticated REST |
 | Anon JWT | App-signed; `sub` = `users.external_id`; claim `provider=anonymous` |
+| Email JWT | App-signed after OTP verify; same `sub` contract; claim `provider=email` |
 | SSE | Browser `EventSource` cannot set Bearer → **stream ticket**: `POST …/stream-ticket` (Bearer) → `GET …/stream?ticket=` (short TTL) |
 | Spoofing | Stop trusting raw `user_id` body/query as sole identity once middleware ships |
 
@@ -52,8 +53,8 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 ### 4. Email (Slice 2, designed now)
 
 - Post-forge: always show **resume link (copy)**.
-- **Optional email** stored for future delivery; **no SMTP/magic-link now**.
-- F3: Borderless verified email + “send resume”.
+- **Optional email** stored for future delivery; **no SMTP/magic-link now** (Slice 2).
+- **Amend 2026-08-20:** F3b verifies email via **OTP** (Career Forge IdP). Send resume = later child issue. Optional CAR-29 store is not proof of ownership.
 
 ### 5. Delivery slices
 
@@ -61,11 +62,13 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 |-------|--------|
 | **MVP** | AuthProvider + JWT · `forge_artifacts` + create on forge complete · `GET /me/forges` · open/promote + freeze · landing Continue · stream ticket · share/resume tokens |
 | **Slice 2** | Rich `/forges` UI · email capture · conflict chooser polish · reusable diagnosis profile |
-| **Slice 3** | Borderless issuer · email send · account merge |
+| **Slice 3 / F3b** | **Amend 2026-08-20:** Email OTP IdP + membership soft label + (later) send resume + paywall — **not** Borderless issuer |
 
-**Amend 2026-08-01 (grill):** Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) closed after MVP + Slice 2. Slice 3 ([CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)) stays F3 — blocked on `borderless-api` access; **zero implementation** until issuer contract is usable. Next eng: CAR-21 → F2.
+**Amend 2026-08-01 (grill):** Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) closed after MVP + Slice 2. Slice 3 ([CAR-28](https://linear.app/career-forge-v2/issue/CAR-28)) stays F3.
 
-**Amend 2026-08-08 (F3 grill):** Slice 3 = **F3b** only. [F3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) (rebrand + landing + 2 pilots) is closeable **without** Borderless login — pilots E2E on anon scaffold are valid (V2-PLAN F3.7/F3.8). Full login remains last eng slice when issuer is ready; entry-gate auth deferred.
+**Amend 2026-08-08 (F3 grill):** Slice 3 = **F3b** only. [F3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) closeable **without** login — pilots E2E on anon scaffold are valid (V2-PLAN F3.7/F3.8).
+
+**Amend 2026-08-20 (auth pivot grill):** F3b abandons Borderless JWT issuer. Career Forge owns passwordless **email OTP** (6-digit). After OTP, call Borderless **membership** API (stub/allowlist until ready) → soft label `base|psp|external`. Anon until 1st forge → mandatory OTP upgrade (promote new email / chooser if exists). No paywall in first slices; target = 1 free forge then Stripe for `external`; BASE/PSP active = entitled. Project: [F3b — Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf). Children: [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) OTP · [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) membership · [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) send resume · [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) paywall.
 
 ### 6. Priority vs F2
 
@@ -92,8 +95,10 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 
 - Mid-flight diagnosis interview resume
 - Timeline SSE replay as product feature
-- Magic-link / local IdP
+- Magic-link (click) IdP — **OTP codes are in scope for F3b** (amend 2026-08-20); magic **links** remain out
+- Borderless JWT issuer / SSO as Career Forge IdP (superseded 2026-08-20)
 - Multi-active roadmaps
+- Stripe checkout (tracked as CAR-46; design-only until scheduled)
 
 ---
 
@@ -102,4 +107,5 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 - [V2-PLAN.md](../V2-PLAN.md) — decision log #1 amended; #13+
 - [CHECKPOINT.md](../CHECKPOINT.md)
 - [EXECUTION-FLOW.md](../engineering/EXECUTION-FLOW.md)
-- Grill session 2026-07-30
+- Grill session 2026-07-30 · auth pivot grill 2026-08-20
+- [2026-08-20-auth-otp-pivot.md](../reports/2026-08-20-auth-otp-pivot.md)
