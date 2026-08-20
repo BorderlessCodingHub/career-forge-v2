@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
+from career_forge.ai.tracing import LlmTraceContext
 from career_forge.ai.tools.tutor_llm import generate_tutor_reply
 from career_forge.schemas.tutor import (
     TutorContext,
@@ -46,12 +47,18 @@ def load_tutor_context(
     )
 
 
-def build_tutor_response(payload: TutorRequest, context: TutorContext) -> TutorResponse:
+def build_tutor_response(
+    payload: TutorRequest,
+    context: TutorContext,
+    *,
+    trace: LlmTraceContext | None = None,
+) -> TutorResponse:
     """Grounded chapter reply (LLM when configured, deterministic fallback otherwise)."""
     draft = generate_tutor_reply(
         message=payload.message,
         history=payload.history,
         context=context,
+        trace=trace,
     )
     references = [ref.title for ref in context.references][:3]
     return TutorResponse(

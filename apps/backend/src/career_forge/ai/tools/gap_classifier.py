@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 
 from career_forge.ai.llm.client import StructuredToolClient
+from career_forge.ai.tracing import LlmTraceContext
 from career_forge.schemas.knowledge_gap import (
     KnowledgeGapClassification,
     KnowledgeGapDraft,
@@ -64,6 +65,7 @@ class OpenAiGapClassifier:
         node_title: str,
         learner_summary: str | None,
         wrong_items: list[WrongAnswerItem],
+        trace: LlmTraceContext | None = None,
     ) -> KnowledgeGapClassification:
         system = (
             "You classify a learner's knowledge gaps from wrong answers in a multiple-choice "
@@ -82,6 +84,8 @@ class OpenAiGapClassifier:
             system=system,
             user=user,
             schema=KnowledgeGapClassification,
+            trace=trace,
+            operation="gap_classify",
         )
 
     async def classify(
@@ -90,12 +94,14 @@ class OpenAiGapClassifier:
         node_title: str,
         learner_summary: str | None,
         wrong_items: list[WrongAnswerItem],
+        trace: LlmTraceContext | None = None,
     ) -> KnowledgeGapClassification:
         return await asyncio.to_thread(
             self._invoke,
             node_title=node_title,
             learner_summary=learner_summary,
             wrong_items=wrong_items,
+            trace=trace,
         )
 
 
@@ -104,6 +110,7 @@ def classify_gaps(
     node_title: str,
     learner_summary: str | None,
     wrong_items: list[WrongAnswerItem],
+    trace: LlmTraceContext | None = None,
 ) -> KnowledgeGapClassification:
     """Synchronous classify with LLM when configured, else deterministic fallback.
 
@@ -121,6 +128,7 @@ def classify_gaps(
             node_title=node_title,
             learner_summary=learner_summary,
             wrong_items=wrong_items,
+            trace=trace,
         )
     except Exception:
         return _fallback_classification(wrong_items)

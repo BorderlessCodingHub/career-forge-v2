@@ -8,6 +8,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 from career_forge.ai.llm.client import StructuredToolClient
+from career_forge.ai.tracing import LlmTraceContext, llm_trace_context
 from career_forge.schemas.mock_interview import (
     MockInterviewOption,
     MockInterviewQuestion,
@@ -163,14 +164,21 @@ class OpenAiMockInterviewMcqGenerator:
         *,
         study_block: dict,
         learner: LearnerForgeContext | None,
+        trace: LlmTraceContext | None = None,
     ) -> MockInterviewMcqDraft:
-        return await asyncio.to_thread(self._invoke, study_block=study_block, learner=learner)
+        return await asyncio.to_thread(
+            self._invoke,
+            study_block=study_block,
+            learner=learner,
+            trace=trace,
+        )
 
     def _invoke(
         self,
         *,
         study_block: dict,
         learner: LearnerForgeContext | None,
+        trace: LlmTraceContext | None = None,
     ) -> MockInterviewMcqDraft:
         context = format_context_for_prompt(study_block, learner)
         system = (
@@ -194,7 +202,13 @@ class OpenAiMockInterviewMcqGenerator:
             f"{context}\n\n"
             "Determine the technical subject (ignoring title logistics) and generate the MCQ questionnaire now."
         )
-        return self._client.invoke(system=system, user=user, schema=MockInterviewMcqDraft)
+        return self._client.invoke(
+            system=system,
+            user=user,
+            schema=MockInterviewMcqDraft,
+            trace=trace,
+            operation="mcq_generate",
+        )
 
 
 async def generate_mcq_mock_interview(
@@ -208,9 +222,14 @@ async def generate_mcq_mock_interview(
 ) -> MockInterviewQuestionsResponse:
     """Generate MCQ session; uses LLM when configured, else deterministic fallback."""
     node_title = str(study_block.get("title") or node_id)
+    trace = llm_trace_context(
+        user_id=user_id,
+        graph_name="mock_interview",
+        run_input={"node_id": node_id, "node_title": node_title},
+    )
     try:
         generator = OpenAiMockInterviewMcqGenerator()
-        draft = await generator.generate(study_block=study_block, learner=learner)
+        draft = await generator.generate(study_block=study_block, learner=learner, trace=trace)
         public, answer_key, rubric = _draft_to_public(node_id, node_title, node_icon, draft)
     except RuntimeError:
         public = _fallback_mcq_from_templates(node_id, session_db)

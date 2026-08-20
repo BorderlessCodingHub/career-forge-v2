@@ -17,6 +17,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from career_forge.ai.tools.gap_classifier import classify_gaps
+from career_forge.ai.tracing import llm_trace_context
 from career_forge.db.models.knowledge_gap import KnowledgeGap
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.repositories.user import get_by_external_id
@@ -279,10 +280,16 @@ def classify_and_store_gaps(
 
             if items:
                 learner_summary = _best_effort_learner_summary(session, user_id, node_id)
+                trace = llm_trace_context(
+                    user_id=user_id,
+                    graph_name="gap_classifier",
+                    run_input={"node_id": node_id, "node_title": node_title},
+                )
                 classification = classify_gaps(
                     node_title=node_title,
                     learner_summary=learner_summary,
                     wrong_items=items,
+                    trace=trace,
                 )
                 for draft in classification.gaps:
                     upsert_knowledge_gap(

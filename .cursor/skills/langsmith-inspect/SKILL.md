@@ -45,7 +45,16 @@ Recent traces (human-readable):
 Full trace hierarchy (GraphExecutor / nested runs):
 
 ```bash
-./scripts/langsmith-env.sh trace get <trace-id> --project "$LANGSMITH_PROJECT" --full --show-hierarchy --format pretty
+./scripts/langsmith-env.sh trace list --project "$LANGSMITH_PROJECT" --last-n-minutes 60 --show-hierarchy --format pretty
+./scripts/langsmith-env.sh trace get <trace-id> --project "$LANGSMITH_PROJECT" --full --format pretty
+```
+
+Filter by student or graph (CAR-42 metadata):
+
+```bash
+./scripts/langsmith-env.sh trace list --metadata user_id=demo-ana --last-n-minutes 1440
+./scripts/langsmith-env.sh trace list --tags graph:tutor --last-n-minutes 1440
+./scripts/langsmith-env.sh trace list --filter 'search("virtual machine")' --last-n-minutes 1440
 ```
 
 Recent LLM runs with metadata:
@@ -81,14 +90,17 @@ Filters:
 
 Search traces/runs by `--name` or tags when debugging:
 
-| Graph / flow | Typical `--name` |
+| Graph / flow | Typical `--name` or tag |
 |--------------|------------------|
 | Adaptive diagnosis | `diagnosis_interview` |
-| Live Roadmap Forge | `forge`, `roadmap_forge` |
+| Live Roadmap Forge | `roadmap_forge` · tag `graph:roadmap_forge` |
+| Chapter tutor | `tutor` · tag `graph:tutor` |
+| Mock interview MCQ | `mock_interview` · tag `graph:mock_interview` |
+| Gap classifier | `gap_classifier` · tag `graph:gap_classifier` |
 | Mentor chat | `mentor` |
 | Mastery validation | `validation` |
 
-Prefer **`trace get … --show-hierarchy`** for GraphExecutor flows — nested LLM/tool nodes appear as a tree.
+Prefer **`trace list --show-hierarchy`** or **`trace get … --full`** for GraphExecutor flows — nested LLM/tool nodes appear in the run tree.
 
 ---
 
@@ -97,8 +109,8 @@ Prefer **`trace get … --show-hierarchy`** for GraphExecutor flows — nested L
 1. Reproduce the bug locally (`make up`, hit the API route or UI flow).
 2. `./scripts/langsmith-env.sh` — confirm project + API key status.
 3. List recent traces (`--last-n-minutes 60`); add `--error` or `--min-latency 5` if needed.
-4. Drill into trace/run IDs; compare inputs, outputs, and token usage.
-5. Cross-reference backend `GraphRun` / `run_id` with LangSmith trace ID when available.
+4. Drill into trace/run IDs; compare inputs, outputs, and token usage. Filter by `user_id` / `graph_name` metadata (CAR-42).
+5. Cross-reference backend `GraphRun` / `run_id` with LangSmith trace ID — planned in CAR-43 (`langsmith_trace_id` column + cost-report).
 
 ---
 

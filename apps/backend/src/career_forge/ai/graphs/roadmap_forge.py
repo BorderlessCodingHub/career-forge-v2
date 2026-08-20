@@ -20,6 +20,7 @@ from career_forge.ai.tools.openai_web_search import (
     WebSearchResult,
     build_openai_web_search_client_from_env,
 )
+from career_forge.ai.tracing import require_trace_from_input
 from career_forge.ai.tools.study_plan_evaluator import (
     StudyPlanEvaluator,
     build_study_plan_evaluator_from_env,
@@ -399,6 +400,7 @@ class RoadmapForgeGraphRunnable:
 
         planner = self._planner or build_study_plan_planner_from_env()
         evaluator = self._evaluator or build_study_plan_evaluator_from_env()
+        trace = require_trace_from_input(input_data, graph_name=self.graph_name)
         graph = build_accumulated_graph(diagnosis, allowed_node_ids=allowed_node_ids)
         plan = build_draft_study_plan(
             context=context,
@@ -412,6 +414,7 @@ class RoadmapForgeGraphRunnable:
                 plan = await planner.create_plan(
                     context=context,
                     research_events=research_events,
+                    trace=trace,
                 )
             yield emit_chain_stream(
                 "plan_study_graph",
@@ -419,7 +422,7 @@ class RoadmapForgeGraphRunnable:
                 {"forge_event": _planner_artifact(iteration)},
             )
 
-            evaluation = await evaluator.evaluate(plan)
+            evaluation = await evaluator.evaluate(plan, trace=trace)
             yield emit_chain_stream(
                 "evaluate_plan",
                 run_id,
@@ -444,6 +447,7 @@ class RoadmapForgeGraphRunnable:
                     research_events=research_events,
                     plan=plan,
                     evaluation=evaluation,
+                    trace=trace,
                 )
 
         final_graph = study_plan_to_graph(plan)

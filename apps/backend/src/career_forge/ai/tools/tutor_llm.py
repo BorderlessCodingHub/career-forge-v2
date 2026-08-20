@@ -9,6 +9,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from career_forge.ai.llm.client import StructuredToolClient
+from career_forge.ai.tracing import LlmTraceContext
 from career_forge.schemas.tutor import TutorContext, TutorMessage
 
 
@@ -69,6 +70,7 @@ class OpenAiTutor:
         message: str,
         history: list[TutorMessage],
         context: TutorContext,
+        trace: LlmTraceContext | None = None,
     ) -> TutorReplyDraft:
         system = (
             "You are a Career Forge technical tutor focused on ONE study chapter. "
@@ -82,7 +84,12 @@ class OpenAiTutor:
             f"{_format_context(context)}{_format_history(history)}\n\n"
             f"## Learner question\n{message}\n\nAnswer now."
         )
-        return self._client.invoke(system=system, user=user, schema=TutorReplyDraft)
+        return self._client.invoke(
+            system=system,
+            user=user,
+            schema=TutorReplyDraft,
+            trace=trace,
+        )
 
 
 def generate_tutor_reply(
@@ -90,6 +97,7 @@ def generate_tutor_reply(
     message: str,
     history: list[TutorMessage],
     context: TutorContext,
+    trace: LlmTraceContext | None = None,
 ) -> TutorReplyDraft:
     """Synchronous tutor reply — LLM when configured, else deterministic fallback."""
     try:
@@ -97,6 +105,11 @@ def generate_tutor_reply(
     except RuntimeError:
         return _fallback_reply(message, context)
     try:
-        return tutor._invoke(message=message, history=history, context=context)
+        return tutor._invoke(
+            message=message,
+            history=history,
+            context=context,
+            trace=trace,
+        )
     except Exception:
         return _fallback_reply(message, context)

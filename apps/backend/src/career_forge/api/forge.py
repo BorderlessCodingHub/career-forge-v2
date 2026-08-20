@@ -10,6 +10,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
+from career_forge.ai.tracing import with_trace_input
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
 from career_forge.ai.streaming.sse import format_sse, sse_connected_body, sse_response
 from career_forge.api.deps import ExternalId
@@ -98,10 +99,12 @@ async def forge_run(
         motor_input = load_forge_motor_input(db, external_id)
 
     store = get_graph_run_store()
-    run = GraphRun(
-        graph_name="roadmap_forge",
-        user_id=external_id,
-        input=_build_forge_input(body, motor_input),
+    run = with_trace_input(
+        GraphRun(
+            graph_name="roadmap_forge",
+            user_id=external_id,
+            input=_build_forge_input(body, motor_input),
+        )
     )
     # Fail fast before enqueue (same gate as GraphExecutor).
     get_cost_guard().check(run)

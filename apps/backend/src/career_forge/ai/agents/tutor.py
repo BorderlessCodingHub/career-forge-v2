@@ -13,6 +13,7 @@ from career_forge.ai.streaming.langchain_events import (
     emit_chain_stream,
     new_run_id,
 )
+from career_forge.ai.tracing import require_trace_from_input
 from career_forge.schemas.tutor import TutorContext, TutorRequest
 from career_forge.services.tutor import build_tutor_response
 
@@ -44,7 +45,12 @@ class TutorAgentRunnable:
             },
         )
 
-        result = await asyncio.to_thread(build_tutor_response, payload, context)
+        result = await asyncio.to_thread(
+            build_tutor_response,
+            payload,
+            context,
+            trace=require_trace_from_input(input_data, graph_name=self.graph_name),
+        )
 
         yield emit_chain_end(
             self.graph_name,

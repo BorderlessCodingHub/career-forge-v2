@@ -90,7 +90,7 @@ class FakeSearchClient:
 
 
 class FakeEvaluator:
-    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+    async def evaluate(self, plan: StudyPlan, trace=None) -> StudyPlanEvaluation:
         return StudyPlanEvaluation(
             verdict="ship",
             strengths=["sequência inicial clara"],
@@ -103,6 +103,7 @@ class FakePlanner:
         *,
         context,
         research_events: list[dict],
+        trace=None,
     ) -> StudyPlan:
         return _fake_plan()
 
@@ -113,6 +114,7 @@ class FakePlanner:
         research_events: list[dict],
         plan: StudyPlan,
         evaluation: StudyPlanEvaluation,
+        trace=None,
     ) -> StudyPlan:
         return _fake_plan(strategy="Plano revisado")
 
@@ -238,6 +240,7 @@ class CountingPlanner(FakePlanner):
         research_events: list[dict],
         plan: StudyPlan,
         evaluation: StudyPlanEvaluation,
+        trace=None,
     ) -> StudyPlan:
         self.revision_count += 1
         return _fake_plan(strategy="Plano revisado")
@@ -247,7 +250,7 @@ class RevisingEvaluator:
     def __init__(self) -> None:
         self.calls = 0
 
-    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+    async def evaluate(self, plan: StudyPlan, trace=None) -> StudyPlanEvaluation:
         self.calls += 1
         if self.calls == 1:
             return StudyPlanEvaluation(

@@ -60,7 +60,7 @@ class FakeSearchClient:
 
 
 class FakeEvaluator:
-    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+    async def evaluate(self, plan: StudyPlan, trace=None) -> StudyPlanEvaluation:
         return StudyPlanEvaluation(
             verdict="ship",
             strengths=["plano testável"],
@@ -73,6 +73,7 @@ class FakePlanner:
         *,
         context,
         research_events: list[dict],
+        trace=None,
     ) -> StudyPlan:
         return _fake_plan()
 
@@ -83,6 +84,7 @@ class FakePlanner:
         research_events: list[dict],
         plan: StudyPlan,
         evaluation: StudyPlanEvaluation,
+        trace=None,
     ) -> StudyPlan:
         return _fake_plan(strategy="Plano revisado")
 
