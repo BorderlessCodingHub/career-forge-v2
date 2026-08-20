@@ -1,24 +1,24 @@
-# Career Forge
+# Career Forge v2
 
 **Learn with hands-on validation** — an adaptive skill graph that diagnoses, forges your roadmap live, validates mastery, and generates evidence for mentors.
 
-Hackathon Borderless BASE 01/2026 · repository `HB01-2026_soft-push` (Soft Push)
-
-**Live app:** [forge.pedroalano.com.br](https://forge.pedroalano.com.br/) · [Watch the full E2E demo (video)](https://drive.google.com/file/d/1bG_mgxk-PK4AKG9ZkfWniBKNzLkh8PSK/view?usp=sharing)
+Borderless Labs · [labs.borderlesscoding.com/career-forge](https://labs.borderlesscoding.com/career-forge)
 
 | Layer | Technology |
 |--------|------------|
-| Frontend | Next.js + TypeScript + Tailwind |
+| Frontend | Next.js + TypeScript + Tailwind (App Router) |
 | Backend | FastAPI + Pydantic + SQLAlchemy |
 | Database | PostgreSQL |
 | AI | LangGraph + LangChain + LangSmith |
-| Deploy (production) | GHCR + VPS (nginx + Docker Compose) |
+| Deploy | GHCR + VPS (Docker Compose + reverse proxy) |
+
+**Audience (v2):** BASE and PSP learners — spectrum from ~6 months XP to decades. Goals target **LLM engineer** tracks (RAG, Agents, Evals, Fine-tuning).
 
 ---
 
 ## What it is
 
-Career Forge is an **AI-native** learning system for people transitioning into a tech career (often starting from scratch). Without AI, the core flow stops.
+Career Forge is an **AI-native** learning system. Without AI, the core flow stops.
 
 **Problem:** generic roadmaps don't know where you're starting from and don't validate whether you actually learned anything.
 
@@ -30,13 +30,25 @@ Full product and architecture overview: [docs/CHECKPOINT.md](./docs/CHECKPOINT.m
 
 ## Main features
 
-- **Adaptive diagnosis (CTRR)** — a multi-turn AI interview that maps where you actually start (≤2 questions per round, adaptive rubric).
+- **Adaptive diagnosis (CTRR)** — multi-turn AI interview that maps where you actually start (≤2 questions per round, adaptive rubric).
 - **Live Roadmap Forge** — the AI builds your personalized roadmap with visible reasoning, streamed live over SSE.
 - **AI mastery validation** — interview-based validation; the roadmap reacts (unlocks/blocks nodes) to your result.
-- **Adaptive memory (knowledge gaps)** — wrong answers become structured gaps that feed future mock interviews, the mentor, and remediation tasks.
+- **Adaptive memory (knowledge gaps)** — wrong answers become structured gaps that feed mock interviews, the mentor, and remediation tasks.
 - **MCQ mock interview** — agent-generated questions with deterministic, server-side scoring.
-- **Chapter Q&A tutor** — a grounded tutor per roadmap node (key concepts + official references).
+- **Chapter Q&A tutor** — grounded tutor per roadmap node (key concepts + official references).
 - **Contextual mentor + evidence report** — chat with full progress context and a mentor-facing evidence report.
+- **Forge recovery + auth scaffold** — anonymous JWT, saved forges, share/resume tokens, and `/forges` list (pre-Borderless login).
+
+---
+
+## v2 goals (LLM tracks)
+
+| Goal id | Track |
+|---------|-------|
+| `rag-engineer` | Production RAG & Advanced Retrieval |
+| `agent-engineer` | Agent Engineering (MCP, Tool Use, Failure Modes) |
+| `llm-evals` | LLM Evaluation & Observability (LLMOps) |
+| `fine-tuning` | Fine-Tuning & Alignment (LoRA, DPO, Custom Models) |
 
 ---
 
@@ -44,7 +56,7 @@ Full product and architecture overview: [docs/CHECKPOINT.md](./docs/CHECKPOINT.m
 
 1. **Goal** — choose a target and motivation (+ optional PDF CV).
 2. **Diagnosis interview (CTRR)** — the AI asks up to 2 questions per round, with an adaptive rubric.
-3. **Editable diagnosis** — you adjust gaps and strengths before generating the roadmap.
+3. **Editable diagnosis** — adjust gaps and strengths before generating the roadmap.
 4. **Live Roadmap Forge** — streaming in **timeline only** mode (no graph preview during generation).
 5. **Vertical roadmap (artifact mode)** — post-forge steady state, vertical roadmap style.
 6. **Validate with AI** — mastery interview; the roadmap reacts to the result.
@@ -55,15 +67,15 @@ Full product and architecture overview: [docs/CHECKPOINT.md](./docs/CHECKPOINT.m
 ## Architecture (summary)
 
 ```
-apps/frontend/     Next.js (App Router: setup + artifact)
+apps/frontend/     Next.js (App Router: setup + artifact) · basePath /career-forge
 apps/backend/      FastAPI (career_forge)
 data/roadmap.json  Static skill catalog
-PostgreSQL         Profiles, roadmap, diagnosis sessions, graph_runs
+PostgreSQL         Profiles, roadmap, diagnosis sessions, graph_runs, forge_artifacts
 ```
 
 Detailed structure: [docs/engineering/REPO-STRUCTURE.md](./docs/engineering/REPO-STRUCTURE.md).
 
-**Diagrams (module dependencies + per-feature sequence, rendered on GitHub):** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+**Diagrams (module dependencies + per-feature sequence):** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
 ---
 
@@ -77,8 +89,8 @@ Detailed structure: [docs/engineering/REPO-STRUCTURE.md](./docs/engineering/REPO
 ### Start the stack
 
 ```bash
-git clone https://github.com/ProgramadoresSemPatria/HB01-2026_soft-push.git
-cd HB01-2026_soft-push
+git clone git@github.com:BorderlessCodingHub/career-forge-v2.git
+cd career-forge-v2
 
 cp .env.example .env
 # Edit .env and set OPENAI_API_KEY=sk-...
@@ -89,14 +101,14 @@ make smoke    # validates harness + health checks
 ```
 
 | Service | Typical URL |
-|---------|------------|
-| Frontend | `http://localhost:<WEB_HOST_PORT>` (default in `.env.example`: **3300**) |
+|---------|-------------|
+| Frontend | `http://localhost:<WEB_HOST_PORT>/career-forge` (default **3300**) |
 | Backend (OpenAPI) | http://localhost:8000/docs |
 | Health | http://localhost:8000/health |
 
 Stop everything: `make down`
 
-> **Frontend port:** the value comes from `WEB_HOST_PORT` in your `.env`. `make status` prints the correct URL. If 3300 is already in use, pick another port (e.g. `WEB_HOST_PORT=3000`) and add the origin to `CORS_ORIGINS`.
+> **Frontend basePath:** the app is served under `/career-forge`. Use `make status` for the full URL. If 3300 is already in use, pick another port (e.g. `WEB_HOST_PORT=3000`) and add the origin to `CORS_ORIGINS`.
 
 > **Conflict on 5432:** if another Postgres is already using port 5432 on the host, stop the other service or adjust the mapping in `docker-compose.yml` before `make up`.
 
@@ -107,17 +119,19 @@ Stop everything: `make down`
 Copy [.env.example](./.env.example) to `.env` and fill in at least:
 
 | Variable | Required | Use |
-|----------|-------------|-----|
+|----------|----------|-----|
 | `OPENAI_API_KEY` | **Yes** (AI) | Diagnosis, forge, validation, mock interview |
 | `DATABASE_URL` | Yes (Docker fills it in) | Postgres |
 | `CORS_ORIGINS` | Yes | Must include the frontend URL (`http://localhost:3300`, etc.) |
 | `NEXT_PUBLIC_BACKEND_URL` | Yes | Frontend → API |
 | `NEXT_PUBLIC_API_URL` | Yes | Same |
 | `WEB_HOST_PORT` | Yes (local) | Published Next.js port on the host |
+| `FRONTEND_URL` | Yes (local) | e.g. `http://localhost:3300/career-forge` |
+| `JWT_SECRET` | Yes (shared deploy) | Anonymous auth scaffold (change in production) |
 | `LANGSMITH_API_KEY` | No | LLM trace observability |
 | `LANGSMITH_PROJECT` | No | LangSmith project (e.g. `career-forge`) |
 
-VPS production: [.env.production.example](./.env.production.example) and [docs/engineering/DEPLOY-VPS.md](./docs/engineering/DEPLOY-VPS.md).
+Labs production: [docs/DEPLOY-LABS-MANUAL.md](./docs/DEPLOY-LABS-MANUAL.md).
 
 ---
 
@@ -125,7 +139,7 @@ VPS production: [.env.production.example](./.env.production.example) and [docs/e
 
 With the stack running (`make up`):
 
-1. Open the frontend (`make status` → URL).
+1. Open the frontend (`make status` → URL with `/career-forge`).
 2. Set your goal and motivation; optionally attach a CV.
 3. Complete the diagnosis interview (pills/text from the API).
 4. In **editable diagnosis**, adjust gaps and click **Generate roadmap**.
@@ -140,7 +154,7 @@ Script aligned with [docs/CHECKPOINT.md](./docs/CHECKPOINT.md) § Demo script.
 ## Useful commands
 
 | Command | Description |
-|---------|-----------|
+|---------|-------------|
 | `make up` | Starts postgres + backend + frontend (builds if needed) |
 | `make down` | Stops the stack |
 | `make status` | Compose status + URLs |
@@ -148,6 +162,9 @@ Script aligned with [docs/CHECKPOINT.md](./docs/CHECKPOINT.md) § Demo script.
 | `make test` | Bootstrap Postgres + Alembic upgrade + backend pytest |
 | `make seed` | Seed the catalog + demo user Ana |
 | `make agent-verify` | Structure Gate C + optional `/health` |
+| `make golden-check` | Deterministic golden case suite (CAR-18) |
+| `make must-have-coverage` | Must-have node coverage harness (CAR-17) |
+| `make cost-gate` | Synthetic cost gate + Yuri report (CAR-7) |
 
 ---
 
@@ -172,18 +189,19 @@ cd apps/frontend
 pnpm install && pnpm dev
 ```
 
-Make sure `CORS_ORIGINS` and `NEXT_PUBLIC_*` in the root `.env` point to the port where Next starts.
+Make sure `CORS_ORIGINS`, `FRONTEND_URL`, and `NEXT_PUBLIC_*` in the root `.env` point to the port where Next starts.
 
 ---
 
 ## Deploy (production)
 
 | Environment | How |
-|----------|------|
-| **Current production** | **Live at [forge.pedroalano.com.br](https://forge.pedroalano.com.br/)** · Images at `ghcr.io/pedroalano/career-forge-{backend,frontend}` · VPS + nginx + `docker-compose.prod.yml` |
-| CI/CD | [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) (build/push + SSH deploy) |
+|-------------|-----|
+| **Labs (primary)** | [labs.borderlesscoding.com/career-forge](https://labs.borderlesscoding.com/career-forge) · path `/career-forge` · auto-deploy on push to `main` |
+| Images | `ghcr.io/pedroalano/career-forge-{backend,frontend}` |
+| CI/CD | [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) |
 
-Full runbook: [docs/engineering/DEPLOY-VPS.md](./docs/engineering/DEPLOY-VPS.md).
+Full runbook: [docs/DEPLOY-LABS-MANUAL.md](./docs/DEPLOY-LABS-MANUAL.md).
 
 ---
 
@@ -192,9 +210,11 @@ Full runbook: [docs/engineering/DEPLOY-VPS.md](./docs/engineering/DEPLOY-VPS.md)
 | For whom | Where to start |
 |-----------|----------------|
 | **New to the project** | [docs/CHECKPOINT.md](./docs/CHECKPOINT.md) — complete overview |
-| **Architecture (diagrams)** | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) — dependencies + per-feature sequence (Mermaid) |
+| **v2 plan & decisions** | [docs/V2-PLAN.md](./docs/V2-PLAN.md) |
+| **Current work** | [docs/ROADMAP.md](./docs/ROADMAP.md) · [docs/STATUS.md](./docs/STATUS.md) |
+| **Architecture (diagrams)** | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) |
 | **Docs index** | [docs/README.md](./docs/README.md) |
-| **Agents / contributing** | [AGENTS.md](./AGENTS.md) · [docs/ROADMAP.md](./docs/ROADMAP.md) · [docs/STATUS.md](./docs/STATUS.md) |
+| **Agents / contributing** | [AGENTS.md](./AGENTS.md) · [docs/AGENT-DELIVERY.md](./docs/AGENT-DELIVERY.md) |
 | **AI / LangGraph** | [docs/engineering/EXECUTION-FLOW.md](./docs/engineering/EXECUTION-FLOW.md) |
 | **CTRR diagnosis** | [docs/product/DIAGNOSIS-INTERVIEW.md](./docs/product/DIAGNOSIS-INTERVIEW.md) |
 | **Design / UI** | [claude-design-docs/](./claude-design-docs/) (prototype + tokens) |
@@ -214,12 +234,13 @@ python3 -m http.server 8765
 ## Common problems
 
 | Symptom | Likely cause | What to do |
-|---------|----------------|-------------|
+|---------|--------------|------------|
 | `failed to fetch` in the browser | CORS or backend down | Check that `CORS_ORIGINS` includes the frontend URL; `docker compose logs backend` |
 | Diagnosis/forge not responding | `OPENAI_API_KEY` empty | Fill it in `.env` and `make down && make up` |
 | Postgres won't start | Port 5432 in use | Free the port or adjust `docker-compose.yml` |
 | Frontend on the wrong port | `WEB_HOST_PORT` | Use `make status` and open the displayed URL |
-| Backend tests fail with `connection refused` on `localhost:5432` | Postgres wasn't running before pytest | Use `make test` (now starts `postgres`, waits for readiness, and runs `alembic upgrade head`) |
+| 404 on `/health` locally | Missing basePath | App lives at `/career-forge`; API health is at `:8000/health` |
+| Backend tests fail with `connection refused` on `localhost:5432` | Postgres wasn't running before pytest | Use `make test` (starts postgres, waits for readiness, runs `alembic upgrade head`) |
 
 More recipes: [.cursor/skills/local-debug/SKILL.md](./.cursor/skills/local-debug/SKILL.md).
 
@@ -227,12 +248,17 @@ More recipes: [.cursor/skills/local-debug/SKILL.md](./.cursor/skills/local-debug
 
 ## Team
 
-**Programadores Sem Pátria** — Hackathon BASE 2026
+**Borderless Labs** · [Borderless Coding Hub](https://github.com/BorderlessCodingHub)
 
-- [Matheus Oliveira](https://github.com/MatheusOliveiraSilva) — **AI / LangGraph**: the AI engine across diagnosis (CTRR), live forge, validation, mentor & tutor, and adaptive knowledge-gap memory.
-- [Pedro Alano](https://github.com/pedroalano) — **Infrastructure & deploy + fullstack**: Docker/Compose, GHCR + VPS pipeline (CI/CD), and across-the-stack work.
-- [Arthur Araujo](https://github.com/Tute24) — **Frontend**: Next.js UI, the live forge stream UX, and roadmap/validation screens.
+Career Forge v2 is maintained as part of the Borderless learning platform for BASE and PSP learners.
 
-## Credits
+| Area | Lead |
+|------|------|
+| v2 product & engineering | [Pedro Alano](https://github.com/pedroalano) |
+| AI / LangGraph motor | [Matheus Oliveira](https://github.com/MatheusOliveiraSilva) |
+| Frontend (original app) | [Arthur Araujo](https://github.com/Tute24) |
 
-Project developed during **HB01-2026** (BASE Mentorship).
+## Origins
+
+The AI-native motor (diagnosis → forge → validation) was first built by **Programadores Sem Pátria** during **HB01-2026** (BASE Mentorship): [`HB01-2026_soft-push`](https://github.com/ProgramadoresSemPatria/HB01-2026_soft-push).  
+This repository is the v2 continuation: [`BorderlessCodingHub/career-forge-v2`](https://github.com/BorderlessCodingHub/career-forge-v2).
