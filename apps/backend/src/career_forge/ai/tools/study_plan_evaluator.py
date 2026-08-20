@@ -6,11 +6,16 @@ import asyncio
 from typing import Protocol
 
 from career_forge.ai.llm.client import StructuredToolClient
+from career_forge.ai.tracing import LlmTraceContext
 from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
 
 
 class StudyPlanEvaluator(Protocol):
-    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
+    async def evaluate(
+        self,
+        plan: StudyPlan,
+        trace: LlmTraceContext | None = None,
+    ) -> StudyPlanEvaluation:
         """Return a quality verdict for a draft study plan."""
 
 
@@ -28,10 +33,18 @@ class OpenAiStudyPlanEvaluator:
             api_key=api_key,
         )
 
-    async def evaluate(self, plan: StudyPlan) -> StudyPlanEvaluation:
-        return await asyncio.to_thread(self._evaluate_sync, plan)
+    async def evaluate(
+        self,
+        plan: StudyPlan,
+        trace: LlmTraceContext | None = None,
+    ) -> StudyPlanEvaluation:
+        return await asyncio.to_thread(self._evaluate_sync, plan, trace)
 
-    def _evaluate_sync(self, plan: StudyPlan) -> StudyPlanEvaluation:
+    def _evaluate_sync(
+        self,
+        plan: StudyPlan,
+        trace: LlmTraceContext | None = None,
+    ) -> StudyPlanEvaluation:
         system = (
             "You are the Career Forge quality evaluator. "
             "Critique study plans for tech career transitions. "
@@ -41,7 +54,13 @@ class OpenAiStudyPlanEvaluator:
             "Evaluate this StudyPlan and return structured JSON:\n"
             f"{plan.model_dump_json(indent=2)}"
         )
-        return self._client.invoke(system=system, user=user, schema=StudyPlanEvaluation)
+        return self._client.invoke(
+            system=system,
+            user=user,
+            schema=StudyPlanEvaluation,
+            trace=trace,
+            operation="evaluator",
+        )
 
 
 def build_study_plan_evaluator_from_env() -> StudyPlanEvaluator:

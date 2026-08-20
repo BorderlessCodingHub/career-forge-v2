@@ -7,10 +7,12 @@ import os
 from typing import Literal, TypeVar
 
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, ValidationError
 
 from career_forge.ai.llm.errors import LlmError, RETRY_MESSAGE
+from career_forge.ai.tracing import LlmTraceContext, trace_config_for_invoke
 
 logger = logging.getLogger(__name__)
 
@@ -104,11 +106,21 @@ class StructuredToolClient:
     def model(self) -> str:
         return self._model
 
-    def invoke(self, *, system: str, user: str, schema: type[TSchema]) -> TSchema:
+    def invoke(
+        self,
+        *,
+        system: str,
+        user: str,
+        schema: type[TSchema],
+        config: RunnableConfig | None = None,
+        trace: LlmTraceContext | None = None,
+        operation: str | None = None,
+    ) -> TSchema:
         """Run a single sync structured-output call and validate into ``schema``."""
+        resolved = config or trace_config_for_invoke(trace, operation=operation)
         if self._method is None:
             structured = self._chat.with_structured_output(schema)
         else:
             structured = self._chat.with_structured_output(schema, method=self._method)
-        result = structured.invoke([("system", system), ("human", user)])
+        result = structured.invoke([("system", system), ("human", user)], config=resolved)
         return schema.model_validate(result)

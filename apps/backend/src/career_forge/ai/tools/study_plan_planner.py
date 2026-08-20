@@ -6,6 +6,7 @@ import asyncio
 from typing import Any, Protocol
 
 from career_forge.ai.llm.client import StructuredToolClient
+from career_forge.ai.tracing import LlmTraceContext
 from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
 from career_forge.services.forge_context import LearnerForgeContext
 
@@ -16,6 +17,7 @@ class StudyPlanPlanner(Protocol):
         *,
         context: LearnerForgeContext,
         research_events: list[dict[str, Any]],
+        trace: LlmTraceContext | None = None,
     ) -> StudyPlan:
         """Create an initial study plan from learner context + research."""
 
@@ -26,6 +28,7 @@ class StudyPlanPlanner(Protocol):
         research_events: list[dict[str, Any]],
         plan: StudyPlan,
         evaluation: StudyPlanEvaluation,
+        trace: LlmTraceContext | None = None,
     ) -> StudyPlan:
         """Revise a study plan using evaluator feedback."""
 
@@ -49,6 +52,7 @@ class OpenAiStudyPlanPlanner:
         *,
         context: LearnerForgeContext,
         research_events: list[dict[str, Any]],
+        trace: LlmTraceContext | None = None,
     ) -> StudyPlan:
         return await asyncio.to_thread(
             self._invoke_plan,
@@ -56,6 +60,7 @@ class OpenAiStudyPlanPlanner:
             research_events=research_events,
             feedback=None,
             previous_plan=None,
+            trace=trace,
         )
 
     async def revise_plan(
@@ -65,6 +70,7 @@ class OpenAiStudyPlanPlanner:
         research_events: list[dict[str, Any]],
         plan: StudyPlan,
         evaluation: StudyPlanEvaluation,
+        trace: LlmTraceContext | None = None,
     ) -> StudyPlan:
         return await asyncio.to_thread(
             self._invoke_plan,
@@ -72,6 +78,7 @@ class OpenAiStudyPlanPlanner:
             research_events=research_events,
             feedback=evaluation,
             previous_plan=plan,
+            trace=trace,
         )
 
     def _invoke_plan(
@@ -81,6 +88,7 @@ class OpenAiStudyPlanPlanner:
         research_events: list[dict[str, Any]],
         feedback: StudyPlanEvaluation | None,
         previous_plan: StudyPlan | None,
+        trace: LlmTraceContext | None = None,
     ) -> StudyPlan:
         system = (
             "You are the Career Forge planner. Generate a robust, practical, sequenced, "
@@ -99,7 +107,13 @@ class OpenAiStudyPlanPlanner:
             feedback=feedback,
             previous_plan=previous_plan,
         )
-        return self._client.invoke(system=system, user=user, schema=StudyPlan)
+        return self._client.invoke(
+            system=system,
+            user=user,
+            schema=StudyPlan,
+            trace=trace,
+            operation="planner",
+        )
 
 
 def build_study_plan_planner_from_env() -> StudyPlanPlanner:

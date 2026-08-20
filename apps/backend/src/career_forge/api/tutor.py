@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from career_forge.ai.executor import get_graph_executor
+from career_forge.ai.tracing import with_trace_input
 from career_forge.ai.run import (
     GraphRun,
     GraphRunResult,
@@ -49,10 +50,12 @@ async def chat_with_tutor(
     )
 
     store = get_graph_run_store()
-    run = GraphRun(
-        graph_name="tutor",
-        user_id=external_id,
-        input={**payload.model_dump(), "context_snapshot": context.model_dump()},
+    run = with_trace_input(
+        GraphRun(
+            graph_name="tutor",
+            user_id=external_id,
+            input={**payload.model_dump(), "context_snapshot": context.model_dump()},
+        )
     )
     store.save(run)
 
