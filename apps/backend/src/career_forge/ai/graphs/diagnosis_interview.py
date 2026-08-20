@@ -323,8 +323,9 @@ class DiagnosisInterviewGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        del version
+        del version, config
         run_id = new_run_id()
         phase: GraphPhase = input_data.get("phase", "start")
         session = DiagnosisSession.model_validate(input_data["session"])

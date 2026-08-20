@@ -25,6 +25,7 @@ class GraphRunnable(Protocol):
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]: ...
 
 
@@ -49,8 +50,9 @@ class MockGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        del version
+        del version, config
         run_id = new_run_id()
         yield emit_chain_start(self.graph_name, run_id)
         yield emit_chain_stream(

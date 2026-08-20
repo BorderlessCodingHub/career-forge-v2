@@ -7,6 +7,13 @@ from typing import Any
 
 from career_forge.ai.factory import AgentFactory, get_agent_factory
 from career_forge.ai.graphs.base import GraphRunnable
+from career_forge.ai.langsmith_capture import (
+    UsageCaptureBag,
+    apply_langsmith_capture,
+    attach_usage_callback,
+    langsmith_parent_trace,
+    usage_capture_context,
+)
 from career_forge.ai.recording import (
     finalize_run,
     record_normalized_event,
@@ -15,6 +22,7 @@ from career_forge.ai.recording import (
 from career_forge.ai.run import GraphRun, GraphRunResult, GraphRunStore, get_graph_run_store
 from career_forge.ai.streaming.langchain_events import LangChainStreamEvent, parse_langchain_event
 from career_forge.ai.streaming.normalize import normalize_langchain_event
+from career_forge.ai.tracing import build_trace_config
 from career_forge.schemas.forge import ForgeErrorEvent
 from career_forge.schemas.stream_events import dump_stream_event
 from career_forge.services.cost_guard import CostGuard, get_cost_guard
@@ -53,11 +61,8 @@ class GraphExecutor:
         self._store.save(run)
 
         try:
-            async for lc_event in self._astream_events_v2(runnable, run.input):
-                record_raw_event(run, lc_event)
-                payload = self._normalize_to_payload(lc_event, run.graph_name)
-                if payload is not None:
-                    record_normalized_event(run, payload)
+            async for _ in self._iter_normalized_events(run, runnable):
+                pass
             finalize_run(run)
             self._cost_guard().record(run)
         except Exception as exc:  # noqa: BLE001 — record run failure centrally
@@ -75,12 +80,8 @@ class GraphExecutor:
 
         async def _generator() -> AsyncIterator[dict[str, Any]]:
             try:
-                async for lc_event in self._astream_events_v2(runnable, run.input):
-                    record_raw_event(run, lc_event)
-                    payload = self._normalize_to_payload(lc_event, run.graph_name)
-                    if payload is not None:
-                        record_normalized_event(run, payload)
-                        yield payload
+                async for payload in self._iter_normalized_events(run, runnable):
+                    yield payload
                 finalize_run(run)
                 self._cost_guard().record(run)
             except Exception as exc:  # noqa: BLE001
@@ -91,6 +92,32 @@ class GraphExecutor:
                 self._store.save(run)
 
         return _generator()
+
+    async def _iter_normalized_events(
+        self,
+        run: GraphRun,
+        runnable: GraphRunnable,
+    ) -> AsyncIterator[dict[str, Any]]:
+        config: dict[str, Any] = dict(build_trace_config(run))
+        usage_bag = UsageCaptureBag()
+        attach_usage_callback(config, usage_bag)
+        parent_trace_id: str | None = None
+
+        try:
+            with usage_capture_context(usage_bag):
+                with langsmith_parent_trace(run, config) as parent_trace_id:
+                    async for lc_event in self._astream_events_v2(runnable, run.input, config):
+                        record_raw_event(run, lc_event)
+                        payload = self._normalize_to_payload(lc_event, run.graph_name)
+                        if payload is not None:
+                            record_normalized_event(run, payload)
+                            yield payload
+        finally:
+            apply_langsmith_capture(
+                run,
+                usage_by_model=usage_bag.usage_by_model or None,
+                langsmith_trace_id=parent_trace_id,
+            )
 
     def _normalize_to_payload(
         self,
@@ -106,8 +133,9 @@ class GraphExecutor:
         self,
         runnable: GraphRunnable,
         input_data: dict[str, Any],
+        config: dict[str, Any] | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        async for raw in runnable.astream_events(input_data, version="v2"):
+        async for raw in runnable.astream_events(input_data, version="v2", config=config):
             yield parse_langchain_event(raw)
 
 

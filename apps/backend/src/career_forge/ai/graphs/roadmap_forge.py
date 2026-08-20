@@ -366,8 +366,9 @@ class RoadmapForgeGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        del version
+        del version, config
         raw_diagnosis = input_data.get("diagnosis") or input_data
         diagnosis = DiagnosisResponse.model_validate(raw_diagnosis)
         context = build_forge_context_from_input(user_id="forge-user", input_data=input_data)

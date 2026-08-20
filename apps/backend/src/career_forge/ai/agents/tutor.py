@@ -28,8 +28,9 @@ class TutorAgentRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        del version
+        del version, config
         payload = TutorRequest.model_validate(input_data)
         context = TutorContext.model_validate(input_data.get("context_snapshot") or {})
         run_id = new_run_id()

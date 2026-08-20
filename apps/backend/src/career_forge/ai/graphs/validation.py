@@ -95,8 +95,9 @@ class ValidationGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        del version
+        del version, config
         payload = ValidationRequest.model_validate(input_data)
         result = build_validation_response(payload)
         run_id = new_run_id()
