@@ -47,6 +47,19 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.12). Amend 2026
 
 ---
 
+## Observability — LangSmith cost (cross-cutting)
+
+Grill 2026-08-19 — hybrid Postgres gate + LangSmith analytics. CAR-7 `cost_gate.py` stays synthetic; production rollup → CAR-43.
+
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
+| [CAR-42](https://linear.app/career-forge-v2/issue/CAR-42) | LangSmith metadata on StructuredToolClient (PR1) | [P] | **Done** — PR #37 · `ai/tracing.py` · 5 callers tagged |
+| [CAR-43](https://linear.app/career-forge-v2/issue/CAR-43) | GraphRun ↔ LangSmith link + cost-report (PR2) | [S] | Backlog — blocked by CAR-42 ✅ |
+
+**Start order:** CAR-43 (migration + GraphExecutor + `cost-report` script).
+
+---
+
 ## Phase 1 (Infra + cost gate) — ✅ Completed
 
 **Gate:** cost report + budget (hard R$500 / approval ≤ R$700) — **Yuri GO 2026-08-08**.
