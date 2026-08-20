@@ -133,6 +133,32 @@ async def test_execute_collect_records_events(executor: GraphExecutor) -> None:
 
 
 @pytest.mark.asyncio
+async def test_execute_collect_applies_langsmith_capture(
+    executor: GraphExecutor,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("LANGCHAIN_TRACING_V2", "true")
+
+    from contextlib import contextmanager
+
+    @contextmanager
+    def fake_parent(_run, _config):
+        yield "parent-trace-id"
+
+    monkeypatch.setattr(
+        "career_forge.ai.executor.langsmith_parent_trace",
+        fake_parent,
+    )
+    run = GraphRun(
+        graph_name="roadmap_forge",
+        user_id="test-user",
+        input={"diagnosis": _FORGE_DIAGNOSIS},
+    )
+    result = await executor.execute(run, stream=False)
+    assert result.run.langsmith_trace_id == "parent-trace-id"
+
+
+@pytest.mark.asyncio
 async def test_execute_stream_yields_normalized_events(
     executor: GraphExecutor,
 ) -> None:

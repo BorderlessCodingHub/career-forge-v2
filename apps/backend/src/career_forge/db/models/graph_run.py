@@ -34,6 +34,9 @@ class GraphRunRecord(Base):
     billable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     exclude_reason: Mapped[str | None] = mapped_column(String(32), nullable=True)
     estimated_cost_brl: Mapped[float | None] = mapped_column(Float, nullable=True)
+    langsmith_trace_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    actual_cost_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
+    token_usage: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

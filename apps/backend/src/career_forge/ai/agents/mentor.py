@@ -26,8 +26,9 @@ class MentorAgentRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        del version
+        del version, config
         payload = MentorRequest.model_validate(input_data)
         context_raw = input_data.get("context_snapshot") or {}
         context = MentorContextSnapshot.model_validate(context_raw)

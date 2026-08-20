@@ -204,8 +204,9 @@ class DiagnosisGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        del version
+        del version, config
         payload = DiagnosisRequest.model_validate(input_data)
         diagnosis = build_diagnosis_response(payload)
         run_id = new_run_id()

@@ -110,7 +110,24 @@ Prefer **`trace list --show-hierarchy`** or **`trace get … --full`** for Graph
 2. `./scripts/langsmith-env.sh` — confirm project + API key status.
 3. List recent traces (`--last-n-minutes 60`); add `--error` or `--min-latency 5` if needed.
 4. Drill into trace/run IDs; compare inputs, outputs, and token usage. Filter by `user_id` / `graph_name` metadata (CAR-42).
-5. Cross-reference backend `GraphRun` / `run_id` with LangSmith trace ID — planned in CAR-43 (`langsmith_trace_id` column + cost-report).
+5. Cross-reference backend `GraphRun` with LangSmith via `graph_runs.langsmith_trace_id` (CAR-43). Production spend rollup:
+
+```bash
+./scripts/cost-report.sh --user <external_id> --since 2026-08-01 --until 2026-08-31 --format pretty
+./scripts/cost-report.sh --user <external_id> --since 2026-08-01 --format json
+./scripts/cost-report.sh --user <external_id> --since 2026-08-01 --enrich-langsmith
+```
+
+SQL rollup (when `actual_cost_usd` is populated):
+
+```sql
+SELECT graph_name, COUNT(*), SUM(actual_cost_usd)
+FROM graph_runs
+WHERE user_id = '…'
+GROUP BY 1;
+```
+
+Note: `./scripts/cost-gate.sh` (CAR-7) remains the **synthetic** budget gate — do not conflate with `cost-report`.
 
 ---
 

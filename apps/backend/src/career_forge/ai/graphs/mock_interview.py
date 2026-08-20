@@ -136,8 +136,9 @@ class MockInterviewGraphRunnable:
         input_data: dict[str, Any],
         *,
         version: str = "v2",
+        config: Any | None = None,
     ) -> AsyncIterator[LangChainStreamEvent]:
-        del version
+        del version, config
         payload = MockInterviewRequest.model_validate(input_data)
         result = build_mock_interview_response(payload)
         run_id = new_run_id()

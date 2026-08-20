@@ -41,6 +41,9 @@ class GraphRun(BaseModel):
     billable: bool = True
     exclude_reason: str | None = None
     estimated_cost_brl: float | None = None
+    langsmith_trace_id: str | None = None
+    actual_cost_usd: float | None = None
+    token_usage: dict[str, Any] | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     completed_at: datetime | None = None
