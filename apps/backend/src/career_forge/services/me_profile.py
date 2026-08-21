@@ -11,6 +11,7 @@ from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.errors import ConflictError
 from career_forge.schemas.me_profile import MeProfileResponse
 from career_forge.schemas.profile_diagnosis import parse_profile_diagnosis
+from career_forge.services.entitlement import stripe_configured
 from career_forge.services.soft_gate import enrich_diagnosis_soft_gate
 
 _DEMO_EMAIL_SUFFIX = "@demo.careerforge.local"
@@ -19,7 +20,10 @@ _DEMO_EMAIL_SUFFIX = "@demo.careerforge.local"
 def get_me_profile(session: Session, external_id: str) -> MeProfileResponse:
     user = get_by_external_id(session, external_id)
     if user is None:
-        return MeProfileResponse(external_id=external_id)
+        return MeProfileResponse(
+            external_id=external_id,
+            checkout_available=stripe_configured(),
+        )
 
     profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
     record = parse_profile_diagnosis(profile.diagnosis) if profile else None
@@ -31,6 +35,8 @@ def get_me_profile(session: Session, external_id: str) -> MeProfileResponse:
         email=_public_email(user.email),
         membership_label=user.membership_label,
         membership_entitled=bool(user.membership_entitled),
+        billing_entitled=bool(user.billing_entitled),
+        checkout_available=stripe_configured(),
         has_diagnosis=record is not None,
         diagnosis=diagnosis,
         intake=record.intake if record else None,

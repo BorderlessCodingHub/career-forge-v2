@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from career_forge.api import (
     auth,
+    billing,
     demo,
     diagnosis,
     diagnosis_interview,
@@ -24,6 +25,7 @@ from career_forge.api import (
 api_router = APIRouter()
 api_router.include_router(health.router)
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(billing.router, prefix="/billing", tags=["billing"])
 api_router.include_router(demo.router, prefix="/demo", tags=["demo"])
 api_router.include_router(diagnosis.router, prefix="/diagnosis", tags=["diagnosis"])
 api_router.include_router(

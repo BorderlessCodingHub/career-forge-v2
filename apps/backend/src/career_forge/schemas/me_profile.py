@@ -41,6 +41,8 @@ class MeProfileResponse(BaseModel):
     email: str | None = None
     membership_label: Literal["base", "psp", "external"] = "external"
     membership_entitled: bool = False
+    billing_entitled: bool = False
+    checkout_available: bool = False
     has_diagnosis: bool = False
     diagnosis: DiagnosisResponse | None = None
     intake: DiagnosisMotorIntake | None = None

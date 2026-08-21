@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 import { ForgeEventLine, ForgeTimeline } from "@/components/forge";
+import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import { SoftGateWarningBanner } from "@/components/diagnosis/SoftGateWarningBanner";
 import { Button } from "@/components/ui";
-import { startForgeRunFromProfile, streamForgeRun } from "@/lib/api-client";
+import { startForgeRunFromProfile, streamForgeRun, syncBillingSession } from "@/lib/api-client";
 import {
   extractGraphFromEvents,
   getForgeRunId,
@@ -16,6 +17,7 @@ import {
   clearForgeSession,
 } from "@/lib/forge-session";
 import { getStoredDiagnosis } from "@/lib/onboarding-session";
+import { isPaywallError, type PaywallError } from "@/lib/paywall";
 import type { RoadmapForgeEvent } from "@/types/contracts";
 
 export default function ForgePage() {
@@ -25,6 +27,7 @@ export default function ForgePage() {
     "idle",
   );
   const [error, setError] = useState<string | null>(null);
+  const [paywall, setPaywall] = useState<PaywallError | null>(null);
   const [elapsedSec, setElapsedSec] = useState(0);
   const softGateWarning = (() => {
     const stored = getStoredDiagnosis();
@@ -101,10 +104,20 @@ export default function ForgePage() {
   const startForge = useCallback(async (forceNewRun = false) => {
     setStatus("starting");
     setError(null);
+    setPaywall(null);
     setEvents([]);
     timerRef.current = setInterval(() => setElapsedSec((s) => s + 1), 1000);
 
     try {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const sessionId = params.get("session_id");
+        if (params.get("billing") === "success" && sessionId) {
+          await syncBillingSession(sessionId);
+          window.history.replaceState({}, "", window.location.pathname);
+          forceNewRun = true;
+        }
+      }
       const existingRunId = forceNewRun ? null : getForgeRunId();
       const runId = existingRunId
         ? existingRunId
@@ -116,6 +129,12 @@ export default function ForgePage() {
 
       await connectStream(runId);
     } catch (err) {
+      if (isPaywallError(err)) {
+        setPaywall(err);
+        setStatus("error");
+        if (timerRef.current) clearInterval(timerRef.current);
+        return;
+      }
       const message =
         err instanceof Error ? err.message : "Failed to start forge";
       if (message.includes("404")) {
@@ -177,6 +196,11 @@ export default function ForgePage() {
           )}
         </div>
 
+        {paywall ? (
+          <div className="mb-4">
+            <PaywallPanel checkoutAvailable={paywall.checkoutAvailable} />
+          </div>
+        ) : null}
         {error && (
           <p className="mb-4 rounded-md border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
             {error}
@@ -195,7 +219,7 @@ export default function ForgePage() {
         </ForgeTimeline>
         <div ref={sentinelRef} />
 
-        {status === "error" && (
+        {status === "error" && !paywall && (
           <div className="mt-8 flex gap-4">
             <Button
               onClick={() => {

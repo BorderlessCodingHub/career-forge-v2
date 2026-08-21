@@ -57,6 +57,11 @@ check test -f apps/backend/src/career_forge/db/stores/postgres_graph_run.py
 check test -f apps/backend/src/career_forge/persistence/store_mode.py
 check test -f apps/backend/src/career_forge/auth/stream_tickets.py
 check test -f apps/backend/src/career_forge/services/membership.py
+check test -f apps/backend/src/career_forge/services/entitlement.py
+check test -f apps/backend/src/career_forge/services/stripe_billing.py
+check test -f apps/backend/src/career_forge/api/billing.py
+check test -f docs/engineering/MEMBERSHIP.md
+check test -f docs/engineering/ENTITLEMENT.md
 check test -f apps/backend/src/career_forge/api/forge.py
 check grep -q 'stream-ticket' apps/backend/src/career_forge/api/forge.py
 check test ! -f apps/backend/src/career_forge/database.py

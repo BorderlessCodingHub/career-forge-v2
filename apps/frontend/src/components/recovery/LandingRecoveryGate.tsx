@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { GoalPicker } from "@/components/diagnosis";
+import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import { Button } from "@/components/ui";
 import {
   getMyProfile,
@@ -13,6 +14,7 @@ import {
 } from "@/lib/api-client";
 import { setForgeRunId } from "@/lib/forge-session";
 import { hydrateOnboardingFromProfile } from "@/lib/profile-reuse";
+import { isPaywallError, type PaywallError } from "@/lib/paywall";
 import type { ForgeArtifactSummary } from "@/types/contracts";
 
 type GateState =
@@ -30,6 +32,7 @@ export function LandingRecoveryGate() {
   const router = useRouter();
   const [state, setState] = useState<GateState>({ status: "loading" });
   const [busy, setBusy] = useState(false);
+  const [paywall, setPaywall] = useState<PaywallError | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,6 +79,7 @@ export function LandingRecoveryGate() {
 
   async function handleReforgeFromProfile() {
     setBusy(true);
+    setPaywall(null);
     try {
       const profile = await getMyProfile();
       if (!profile.has_diagnosis || !profile.diagnosis) {
@@ -96,6 +100,10 @@ export function LandingRecoveryGate() {
       router.push("/forge");
     } catch (err) {
       setBusy(false);
+      if (isPaywallError(err)) {
+        setPaywall(err);
+        return;
+      }
       setState({
         status: "error",
         message:
@@ -150,6 +158,9 @@ export function LandingRecoveryGate() {
                 New from scratch
               </Button>
             </div>
+            {paywall ? (
+              <PaywallPanel checkoutAvailable={paywall.checkoutAvailable} />
+            ) : null}
           </div>
         </main>
       );
@@ -239,6 +250,9 @@ export function LandingRecoveryGate() {
             New forge
           </Button>
         </div>
+        {paywall ? (
+          <PaywallPanel checkoutAvailable={paywall.checkoutAvailable} />
+        ) : null}
       </div>
     </main>
   );

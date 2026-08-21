@@ -50,6 +50,7 @@ import {
   isQuotaExhaustedMessage,
   toUserFacingApiError,
 } from "@/lib/quota";
+import { paywallErrorFromResponse } from "@/lib/paywall";
 
 export { QUOTA_EXHAUSTED_COPY, isQuotaExhaustedMessage };
 
@@ -70,23 +71,28 @@ function resolveBackendUrl(): string {
 
 const backendUrl = resolveBackendUrl();
 
-async function readApiErrorMessage(res: Response): Promise<string> {
+async function readApiError(res: Response): Promise<Error> {
+  let body: { detail?: unknown } = {};
   try {
-    const body = (await res.json()) as { detail?: unknown };
-    const detail = body.detail;
-    if (typeof detail === "string") return detail;
-    if (
-      detail &&
-      typeof detail === "object" &&
-      "message" in detail &&
-      typeof detail.message === "string"
-    ) {
-      return detail.message;
-    }
+    body = (await res.json()) as { detail?: unknown };
   } catch {
     // ignore JSON parse errors
   }
-  return `${res.status} ${res.statusText}`;
+  const paywall = paywallErrorFromResponse(res.status, body);
+  if (paywall) return paywall;
+  const detail = body.detail;
+  let message = `${res.status} ${res.statusText}`;
+  if (typeof detail === "string") {
+    message = detail;
+  } else if (
+    detail &&
+    typeof detail === "object" &&
+    "message" in detail &&
+    typeof detail.message === "string"
+  ) {
+    message = detail.message;
+  }
+  return new Error(toUserFacingApiError(res.status, message));
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -114,8 +120,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     );
   }
   if (!res.ok) {
-    const detail = await readApiErrorMessage(res);
-    throw new Error(toUserFacingApiError(res.status, detail));
+    throw await readApiError(res);
   }
   return res.json() as Promise<T>;
 }
@@ -481,6 +486,22 @@ export async function getMyProfile(): Promise<MeProfileResponse> {
   return apiFetch<MeProfileResponse>("/me/profile");
 }
 
+export async function startBillingCheckout(): Promise<string> {
+  const body = await apiFetch<{ checkout_url: string }>("/billing/checkout", {
+    method: "POST",
+  });
+  return body.checkout_url;
+}
+
+export async function syncBillingSession(
+  sessionId: string,
+): Promise<{ billing_entitled: boolean }> {
+  return apiFetch<{ billing_entitled: boolean }>("/billing/sync", {
+    method: "POST",
+    body: JSON.stringify({ session_id: sessionId }),
+  });
+}
+
 export async function updateMyEmail(email: string): Promise<MeEmailUpdateResponse> {
   return apiFetch<MeEmailUpdateResponse>("/me/email", {
     method: "PATCH",
@@ -496,8 +517,7 @@ export async function requestOtp(email: string): Promise<OtpRequestResponse> {
     body: JSON.stringify({ email }),
   });
   if (!res.ok) {
-    const detail = await readApiErrorMessage(res);
-    throw new Error(toUserFacingApiError(res.status, detail));
+    throw await readApiError(res);
   }
   return res.json() as Promise<OtpRequestResponse>;
 }
@@ -545,8 +565,7 @@ export async function verifyOtp(
     throw new Error(toUserFacingApiError(409, "email already linked"));
   }
   if (!res.ok) {
-    const detail = await readApiErrorMessage(res);
-    throw new Error(toUserFacingApiError(res.status, detail));
+    throw await readApiError(res);
   }
   return res.json() as Promise<OtpVerifyResponse>;
 }
@@ -557,8 +576,7 @@ export async function fetchSharedForge(token: string): Promise<RoadmapResponse> 
     `${backendUrl}/public/share/${encodeURIComponent(token)}`,
   );
   if (!res.ok) {
-    const detail = await readApiErrorMessage(res);
-    throw new Error(toUserFacingApiError(res.status, detail));
+    throw await readApiError(res);
   }
   return res.json() as Promise<RoadmapResponse>;
 }
@@ -572,8 +590,7 @@ export async function consumeResumeLink(
     { method: "POST" },
   );
   if (!res.ok) {
-    const detail = await readApiErrorMessage(res);
-    throw new Error(toUserFacingApiError(res.status, detail));
+    throw await readApiError(res);
   }
   return res.json() as Promise<ResumeConsumeResponse>;
 }

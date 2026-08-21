@@ -84,3 +84,18 @@ class QuotaExhaustedError(DomainError):
     def __init__(self, code: QuotaExhaustedCode) -> None:
         self.code = code
         super().__init__(QUOTA_EXHAUSTED_MESSAGE)
+
+
+PAYWALL_MESSAGE = "You've used your free forge — subscribe to continue"
+PAYWALL_CODE = "paywall"
+
+
+class PaywallError(DomainError):
+    """External user blocked after the free forge (CAR-46)."""
+
+    status_code = 402
+
+    def __init__(self, *, checkout_available: bool) -> None:
+        self.code = PAYWALL_CODE
+        self.checkout_available = checkout_available
+        super().__init__(PAYWALL_MESSAGE)

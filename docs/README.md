@@ -38,6 +38,7 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | [engineering/AGENT-LIFECYCLE.md](./engineering/AGENT-LIFECYCLE.md) | Session planning · P/S/B · QA |
 | [engineering/DEPLOY-VPS.md](./engineering/DEPLOY-VPS.md) | Alternate VPS notes (Labs path is primary) |
 | [engineering/MEMBERSHIP.md](./engineering/MEMBERSHIP.md) | CAR-45 soft label · Borderless `GET members?email=` contract |
+| [engineering/ENTITLEMENT.md](./engineering/ENTITLEMENT.md) | CAR-46 paywall · 1 free forge then Stripe/allowlist for `external` |
 
 ## Product decisions (ADRs)
 

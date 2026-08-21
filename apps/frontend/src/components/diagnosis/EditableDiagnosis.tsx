@@ -22,9 +22,11 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui";
+import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import { SoftGateWarningBanner } from "@/components/diagnosis/SoftGateWarningBanner";
 import { confirmDiagnosis, startForgeRunFromProfile } from "@/lib/api-client";
 import { setForgeRunId } from "@/lib/forge-session";
+import { isPaywallError, type PaywallError } from "@/lib/paywall";
 import type { DiagnosisResponse } from "@/types/contracts";
 import {
   clearStoredDiagnosis,
@@ -350,6 +352,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
   );
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [paywall, setPaywall] = useState<PaywallError | null>(null);
 
   useEffect(() => {
     if (diagnosis) return;
@@ -388,6 +391,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
 
     setConfirming(true);
     setError(null);
+    setPaywall(null);
     try {
       await confirmDiagnosis({
         diagnosis,
@@ -401,6 +405,11 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
       setForgeRunId(forge.run_id);
       router.push("/forge");
     } catch (err) {
+      if (isPaywallError(err)) {
+        setPaywall(err);
+        setConfirming(false);
+        return;
+      }
       setError(
         err instanceof Error
           ? err.message
@@ -466,6 +475,11 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
           understanding in an AI interview.
         </div>
 
+        {paywall ? (
+          <div className="mt-6">
+            <PaywallPanel checkoutAvailable={paywall.checkoutAvailable} />
+          </div>
+        ) : null}
         {error && (
           <p className="mt-6 rounded-md border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
             {error}

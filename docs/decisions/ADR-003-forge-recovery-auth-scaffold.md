@@ -98,7 +98,7 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 - Magic-link (click) IdP — **OTP codes are in scope for F3b** (amend 2026-08-20); magic **links** remain out
 - Borderless JWT issuer / SSO as Career Forge IdP (superseded 2026-08-20)
 - Multi-active roadmaps
-- Stripe checkout (tracked as CAR-46; design-only until scheduled)
+- Stripe checkout (CAR-46 — 1 free forge then paywall for `external`; BASE/PSP skip; allowlist until Stripe keys exist)
 
 ---
 

@@ -18,6 +18,8 @@ When growth / commercialisation is in scope (after Frame / platform auth as need
 | **Email / waitlist** | Optional capture for non-pilot audiences; must not block BASE/PSP pilot paths |
 | **Checkout** | Paid access or seat billing (e.g. Stripe-class) — **explicitly out of v2** (V2-PLAN fora) |
 
+[CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) is **post-forge entitlement** (1 free forge → Stripe/allowlist for `external`), not a marketing `/welcome` checkout. This intent doc still applies to waitlist + landing pricing theater.
+
 ## Non-goals for now
 
 - No waitlist UI on `/welcome` in CAR-35
