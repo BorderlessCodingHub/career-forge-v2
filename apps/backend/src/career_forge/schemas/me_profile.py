@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -38,6 +39,8 @@ class MeProfileResponse(BaseModel):
 
     external_id: str
     email: str | None = None
+    membership_label: Literal["base", "psp", "external"] = "external"
+    membership_entitled: bool = False
     has_diagnosis: bool = False
     diagnosis: DiagnosisResponse | None = None
     intake: DiagnosisMotorIntake | None = None

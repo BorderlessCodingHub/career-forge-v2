@@ -29,6 +29,8 @@ def get_me_profile(session: Session, external_id: str) -> MeProfileResponse:
     return MeProfileResponse(
         external_id=external_id,
         email=_public_email(user.email),
+        membership_label=user.membership_label,
+        membership_entitled=bool(user.membership_entitled),
         has_diagnosis=record is not None,
         diagnosis=diagnosis,
         intake=record.intake if record else None,

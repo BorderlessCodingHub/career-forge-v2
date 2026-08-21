@@ -24,6 +24,7 @@ from career_forge.errors import (
     RateLimitedError,
 )
 from career_forge.services.mailer import Mailer, get_mailer
+from career_forge.services.membership import MembershipClient, apply_membership_label
 
 
 class OtpTokenPayload(TypedDict):
@@ -135,8 +136,12 @@ def verify_otp(
     external_id: str,
     email: str,
     code: str,
+    membership: MembershipClient | None = None,
 ) -> OtpPromoteResult:
-    """Validate OTP then promote anon or raise conflict for chooser."""
+    """Validate OTP then promote anon or raise conflict for chooser.
+
+    Successful verify (promote or owned-email chooser) re-resolves membership.
+    """
     now = datetime.now(UTC)
     row = session.scalar(
         select(EmailOtp)
@@ -166,10 +171,12 @@ def verify_otp(
     if owner is not None:
         if not owner.external_id:
             raise BadRequestError("email account is missing external_id")
+        apply_membership_label(owner, email, membership)
         session.commit()
         raise EmailOwnedConflictError(_token_payload(owner.external_id))
 
     current.email = email
+    apply_membership_label(current, email, membership)
     session.commit()
 
     payload = _token_payload(external_id)

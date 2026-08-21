@@ -37,6 +37,7 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | [engineering/REPO-STRUCTURE.md](./engineering/REPO-STRUCTURE.md) | Canonical layout |
 | [engineering/AGENT-LIFECYCLE.md](./engineering/AGENT-LIFECYCLE.md) | Session planning · P/S/B · QA |
 | [engineering/DEPLOY-VPS.md](./engineering/DEPLOY-VPS.md) | Alternate VPS notes (Labs path is primary) |
+| [engineering/MEMBERSHIP.md](./engineering/MEMBERSHIP.md) | CAR-45 soft label · Borderless `GET members?email=` contract |
 
 ## Product decisions (ADRs)
 
