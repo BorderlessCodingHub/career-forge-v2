@@ -62,9 +62,9 @@ Grill 2026-08-19 — hybrid Postgres gate + LangSmith analytics. CAR-7 `cost_gat
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
 | [CAR-42](https://linear.app/career-forge-v2/issue/CAR-42) | LangSmith metadata on StructuredToolClient (PR1) | [P] | **Done** — PR #37 · `ai/tracing.py` · 5 callers tagged |
-| [CAR-43](https://linear.app/career-forge-v2/issue/CAR-43) | GraphRun ↔ LangSmith link + cost-report (PR2) | [S] | Backlog — blocked by CAR-42 ✅ |
+| [CAR-43](https://linear.app/career-forge-v2/issue/CAR-43) | GraphRun ↔ LangSmith link + cost-report (PR2) | [S] | **Done** — PR #38 · migration `010` · GraphExecutor capture · `./scripts/cost-report` |
 
-**Start order:** CAR-43 (migration + GraphExecutor + `cost-report` script).
+**Observability track complete** (CAR-42 + CAR-43). CAR-7 `cost_gate.py` remains the synthetic gate.
 
 ---
 
