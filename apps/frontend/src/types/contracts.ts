@@ -182,9 +182,13 @@ export type MeEmailUpdateResponse = {
   email: string;
 };
 
+export type MembershipLabel = "base" | "psp" | "external";
+
 export type MeProfileResponse = {
   external_id: string;
   email: string | null;
+  membership_label: MembershipLabel;
+  membership_entitled: boolean;
   has_diagnosis: boolean;
   diagnosis: DiagnosisResponse | null;
   intake: {

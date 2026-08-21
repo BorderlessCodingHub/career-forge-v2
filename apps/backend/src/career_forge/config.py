@@ -37,6 +37,11 @@ class Settings(BaseSettings):
     mail_from: str = "Career Forge <noreply@careerforge.local>"
     resend_api_key: str = ""
     aws_ses_region: str = ""
+    # CAR-45 — membership soft label (stub allowlist until Borderless HTTP is live)
+    membership_backend: str = "stub"  # stub | http
+    membership_stub_allowlist: str = ""  # email:base,email:psp
+    borderless_members_url: str = ""  # GET {url}?email=
+    borderless_members_token: str = ""
 
     @property
     def cors_origin_list(self) -> list[str]:

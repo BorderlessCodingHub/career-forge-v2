@@ -43,6 +43,8 @@ def test_get_profile_empty(raw_client: TestClient) -> None:
     assert body["has_diagnosis"] is False
     assert body["email"] is None
     assert body["diagnosis"] is None
+    assert body["membership_label"] == "external"
+    assert body["membership_entitled"] is False
 
 
 def test_get_profile_with_diagnosis(
