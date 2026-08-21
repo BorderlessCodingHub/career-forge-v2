@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-19** · Last merge: **CAR-42** (PR #37 — LangSmith metadata on StructuredToolClient) · prior **CAR-41** (PR #36) · Linear **CAR-42 Done** · **CAR-41 Done** · **CAR-40 Done** · **CAR-39 Done** · **CAR-38 Done** · **CAR-35 Done** · **CAR-33 Done** · **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
+Last updated: **2026-08-20** · Last merge: **CAR-43** (PR #38 — GraphRun ↔ LangSmith link + cost-report) · prior **CAR-42** (PR #37) · Linear **CAR-43 Done** · **CAR-42 Done** · **CAR-41 Done** · **CAR-40 Done** · **CAR-39 Done** · **CAR-38 Done** · **CAR-35 Done** · **CAR-33 Done** · **CAR-34 Done** · **CAR-18** · Epic **CAR-22** closed (Slice 3 → F3b)  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12)  
-**Next eng:** **F3a** — [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · **observability** — [CAR-43](https://linear.app/career-forge-v2/issue/CAR-43) GraphRun↔LangSmith link + cost-report. **CAR-42 Done** · **CAR-41 Done** · **CAR-40 Done** · **CAR-39 Done** · **CAR-38 Done** (none gate pilots). **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
+**Next eng:** **F3a** — [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots. **CAR-43 Done** · **CAR-42 Done** · **CAR-41 Done** · **CAR-40 Done** · **CAR-39 Done** · **CAR-38 Done** (none gate pilots). **F3b** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) blocked on `borderless-api`.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -102,7 +102,7 @@ MVP + Slice 2 shipped. **Slice 3 ([CAR-28](https://linear.app/career-forge-v2/is
 | 4 LLM goals + catalog seeds | ✅ Done | CAR-5 — `data/catalog/` ×4 tracks |
 | Cost pool + per-user cap | ✅ Done | CAR-6 — CostGuard + usage_monthly + 429 kill-switch; F3a bump P95 → 1.3639 |
 | LangSmith trace metadata (StructuredToolClient) | ✅ Done | CAR-42 — `ai/tracing.py`; filter by `user_id` / `graph:*` tags; PR #37 |
-| LangSmith ↔ GraphRun link + cost-report | ⬜ Next | CAR-43 — `langsmith_trace_id` column + `./scripts/cost-report` |
+| LangSmith ↔ GraphRun link + cost-report | ✅ Done | CAR-43 — `langsmith_trace_id` + `actual_cost_usd` + `./scripts/cost-report`; PR #38 |
 | Kill-switch P95 = F2 re-cost | ✅ Done | CAR-33 — Labs + `.env.example` + config default **1.3639**; pool R$500; forge cap/user **2** |
 | F1 synthetic cost gate report | ✅ Done | CAR-7 — 24 forges + samples · GO vs R$500/R$700 |
 | English-first | ✅ Done | CAR-16 — UI + remaining prompts/catalog/reports EN (CAR-14 diagnosis/validation prompts) |
