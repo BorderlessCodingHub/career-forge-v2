@@ -122,7 +122,7 @@ Grill 2026-08-19 — hybrid Postgres gate + LangSmith analytics. CAR-7 `cost_gat
 |-------|-------|-------|
 | [CAR-29](https://linear.app/career-forge-v2/issue/CAR-29) | Slice 2: `/forges` UI + optional email + diagnosis profile | [S] ✅ Done |
 | [CAR-31](https://linear.app/career-forge-v2/issue/CAR-31) | Polish `/forges` list UX — scan & open hierarchy | [P] ✅ Done |
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic F3b: Email OTP + membership (was issuer Slice 3) | [S] → **F3b** — children CAR-44…47 |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic F3b: Email OTP + membership (was issuer Slice 3) | [S] → **F3b** — CAR-44 Done; next CAR-45…47 |
 
 ---
 
