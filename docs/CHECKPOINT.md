@@ -125,7 +125,7 @@ Core models under `apps/backend/src/career_forge/db/models/`:
 ## Deployment baseline
 
 - Primary runbook: [DEPLOY-LABS-MANUAL.md](./DEPLOY-LABS-MANUAL.md) — path `labs.borderlesscoding.com/career-forge`
-- Images: GHCR (`ghcr.io/pedroalano/career-forge-{backend,frontend}` or org GHCR as configured)
+- Images: GHCR (`ghcr.io/borderlesscodinghub/career-forge-{backend,frontend}`; CI login via PAT `GHCR_TOKEN`)
 - Post-deploy: `curl -fsS` health on API path under Labs
 
 ## AI execution layer

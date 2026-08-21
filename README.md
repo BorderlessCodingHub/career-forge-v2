@@ -198,7 +198,7 @@ Make sure `CORS_ORIGINS`, `FRONTEND_URL`, and `NEXT_PUBLIC_*` in the root `.env`
 | Environment | How |
 |-------------|-----|
 | **Labs (primary)** | [labs.borderlesscoding.com/career-forge](https://labs.borderlesscoding.com/career-forge) · path `/career-forge` · auto-deploy on push to `main` |
-| Images | `ghcr.io/pedroalano/career-forge-{backend,frontend}` |
+| Images | `ghcr.io/borderlesscodinghub/career-forge-{backend,frontend}` |
 | CI/CD | [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) |
 
 Full runbook: [docs/DEPLOY-LABS-MANUAL.md](./docs/DEPLOY-LABS-MANUAL.md).

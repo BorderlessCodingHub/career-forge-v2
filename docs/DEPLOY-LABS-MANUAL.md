@@ -14,9 +14,9 @@ Code changes (Next.js basePath, 4 tracks, forge cap, GHCR namespace) are deliver
 
 Before touching the VPS, confirm:
 
-- [ ] PR merged to `main` (4 tracks + basePath + forge cap + GHCR namespace)
+- [ ] PR merged to `main` (includes GHCR namespace `borderlesscodinghub`)
 - [ ] You have SSH access to the VPS
-- [ ] You have a GHCR PAT from `pedroalano` account (read:packages + write:packages)
+- [ ] You have a GHCR PAT from `pedroalano` with `read:packages` + `write:packages` **and** permission to publish packages under org `BorderlessCodingHub`
 - [ ] `OPENAI_API_KEY` in hand
 - [ ] `LANGSMITH_API_KEY` in hand (optional but recommended)
 
@@ -31,7 +31,8 @@ All steps below refer to the **new** org repo.
 
 ### 1.2 Create a GHCR token (conta `pedroalano`)
 
-Images são publicadas em `ghcr.io/pedroalano/career-forge-{backend,frontend}` — sem dependência de acesso admin na org `borderlesscodinghub`.
+Images são publicadas em `ghcr.io/borderlesscodinghub/career-forge-{backend,frontend}`.  
+O CI faz login com o PAT da conta `pedroalano` (`GHCR_TOKEN`) — **não** usa `GITHUB_TOKEN`, então não depende de Workflow permissions da org.
 
 **Criar o PAT:**
 
@@ -41,6 +42,8 @@ Images são publicadas em `ghcr.io/pedroalano/career-forge-{backend,frontend}` �
 4. Expiration: 90 dias (ou No expiration)
 5. Marque os scopes: `write:packages` + `read:packages` (isso já inclui `repo` implicitamente para packages)
 6. Clique **Generate token** e **copie o valor imediatamente** — ele não aparece novamente
+
+O PAT precisa conseguir **escrever packages no namespace da org**. Se o primeiro push retornar 403, peça a um admin da org package write / criar `career-forge-*` — **não** peça mudança de Actions Workflow permissions.
 
 Você vai usar esse token em dois lugares:
 - **Passo 1.3** → secret `GHCR_TOKEN` no repo da org (usado pelo CI para push)
@@ -79,10 +82,24 @@ These are baked into the frontend image at **build time** — if you change them
 
 After the first workflow run pushes images:
 
-1. Go to `github.com/pedroalano?tab=packages`
+1. Go to [github.com/orgs/BorderlessCodingHub/packages](https://github.com/orgs/BorderlessCodingHub/packages)
 2. For `career-forge-backend` and `career-forge-frontend`:
+   - Link each package to the `career-forge-v2` repository when the UI allows
    - If keeping private: ensure the VPS `docker login` token has `read:packages` (already set in 1.2)
    - If making public: change visibility to Public (simpler, no VPS login needed at step 4)
+3. If you lack access to the org Packages UI, ask an admin for link/visibility only — authenticated pull with `GHCR_TOKEN` still works.
+
+### 1.6 Cutover from `pedroalano` personal GHCR (existing Labs)
+
+When migrating an already-deployed Labs stack from `ghcr.io/pedroalano/...`:
+
+1. Confirm `GHCR_TOKEN` still has `write:packages` + `read:packages` and can publish under the org.
+2. Merge the workflow/docs PR that switches the image namespace; run **Deploy production (VPS)** (or push to `main`).
+3. First green run should create/update `ghcr.io/borderlesscodinghub/career-forge-*`.
+4. On the VPS, set `GHCR_IMAGE_NAMESPACE=ghcr.io/borderlesscodinghub` in `.env` (CI also exports this on deploy).
+5. `docker login` with the same PAT if packages are private; then `docker compose -f docker-compose.prod.yml pull && up -d --no-build`.
+6. Smoke: `curl -fsS http://127.0.0.1:18000/health` and public `/career-forge`.
+7. Optional: keep old `pedroalano` packages until Labs is stable; then archive.
 
 ---
 
@@ -162,7 +179,7 @@ LANGSMITH_API_KEY=<your-key>                   # CHANGE (or leave empty)
 LANGSMITH_PROJECT=career-forge
 
 # --- GHCR images ---
-GHCR_IMAGE_NAMESPACE=ghcr.io/pedroalano
+GHCR_IMAGE_NAMESPACE=ghcr.io/borderlesscodinghub
 IMAGE_TAG=latest
 ```
 

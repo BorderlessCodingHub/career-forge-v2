@@ -40,13 +40,14 @@ For host-nginx path blocks (`/career-forge` + `/career-forge/api`), see [DEPLOY-
 
 ## GitHub Actions setup (one-time)
 
-GHCR image names must be **lowercase**. This project publishes under `ghcr.io/pedroalano/...` (not the org name `ProgramadoresSemPatria`).
+GHCR image names must be **lowercase**. This project publishes under `ghcr.io/borderlesscodinghub/...` (derived from `GITHUB_REPOSITORY_OWNER` in CI). Login uses a personal PAT (`pedroalano` + `GHCR_TOKEN`) — not `GITHUB_TOKEN` — so org Actions workflow-permission settings are not required.
 
 ### Personal access token (PAT)
 
 1. GitHub profile → **Settings → Developer settings → Personal access tokens**
 2. Create a token with **`read:packages`** and **`write:packages`**
-3. Store the value as repo secret **`GHCR_TOKEN`**
+3. The account must be able to **publish packages under the org** `BorderlessCodingHub` (membership with package write). If the first push returns 403, ask an org admin to grant package write / create `career-forge-*` packages.
+4. Store the value as repo secret **`GHCR_TOKEN`**
 
 ### Repository secrets
 
@@ -73,7 +74,7 @@ These are baked into the frontend image at **build** time in CI. For labs path +
 
 ### Package visibility
 
-After the first successful workflow run, open [github.com/pedroalano?tab=packages](https://github.com/pedroalano?tab=packages) and set `career-forge-backend` / `career-forge-frontend` to **public**, or keep private and ensure the VPS `docker login` token can **read** packages.
+After the first successful workflow run, open [github.com/orgs/BorderlessCodingHub/packages](https://github.com/orgs/BorderlessCodingHub/packages) (or the package pages created under the org) and set `career-forge-backend` / `career-forge-frontend` to **public**, or keep private and ensure the VPS `docker login` token can **read** packages. Link each package to the `career-forge-v2` repo when the UI allows.
 
 ## 1) Prepare the VPS directory
 
@@ -102,7 +103,7 @@ Set at minimum:
 - `OPENAI_API_KEY` and `LANGSMITH_API_KEY`
 - `CORS_ORIGINS` must include the browser origin (`https://$APP_DOMAIN`, or `https://labs.borderlesscoding.com` when the app is served under `/career-forge` — Origin has no path)
 - `FRONTEND_HOST_PORT` and `BACKEND_HOST_PORT` must be free on the host (defaults `13000` / `18000`)
-- `GHCR_IMAGE_NAMESPACE=ghcr.io/pedroalano`
+- `GHCR_IMAGE_NAMESPACE=ghcr.io/borderlesscodinghub`
 - `IMAGE_TAG=latest` (must match tags pushed by CI)
 
 Tip: compose binds app ports to `127.0.0.1` only; nginx is the public entrypoint. **Do not** use `docker-compose.yml` (dev) on the VPS — it can publish Postgres on `5432` and conflict with other stacks.
@@ -219,7 +220,8 @@ docker compose -f docker-compose.prod.yml up -d
 
 | Symptom | Cause | Fix |
 |---------|--------|-----|
-| `repository name must be lowercase` | GHCR tag used `ProgramadoresSemPatria` | Use `ghcr.io/pedroalano/...` (see workflow) |
+| `repository name must be lowercase` | GHCR tag used mixed-case org name | Use lowercase `ghcr.io/borderlesscodinghub/...` (workflow lowercases `GITHUB_REPOSITORY_OWNER`) |
+| Push 403 to org GHCR | PAT lacks org package write | Ask org admin for package write; keep using `GHCR_TOKEN` (not Actions settings) |
 | `manifest unknown` on pull | `IMAGE_TAG` mismatch | Set `IMAGE_TAG=latest` or the SHA CI pushed; run `docker compose pull` |
 | Postgres exits immediately | Empty `POSTGRES_PASSWORD` in `.env` | Set password; if volume was initialized with another password, `docker compose down -v` (data loss) |
 | `Bind for 0.0.0.0:5432 failed` | Wrong compose file (dev) | Use `docker-compose.prod.yml` only |
