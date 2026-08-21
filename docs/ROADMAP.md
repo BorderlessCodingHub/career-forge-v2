@@ -46,9 +46,9 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP auth + Borderless membership | — | — |
-| [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade (promote / chooser) | [S] | — **start here** |
-| [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) | Membership soft label (stub + Borderless members client) | [S] | CAR-44 |
-| [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume link by email | [S] | CAR-44 |
+| [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade (promote / chooser) | [S] | **Done** |
+| [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) | Membership soft label (stub + Borderless members client) | [S] | CAR-44 Done — **start here** |
+| [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume link by email | [S] | CAR-44 Done |
 | [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Entitlement paywall (1 free forge → Stripe for external) | [S] | CAR-44 + CAR-45 · later |
 
 **Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
