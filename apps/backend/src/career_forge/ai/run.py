@@ -64,6 +64,8 @@ class GraphRunStore(Protocol):
 
     def get(self, run_id: str) -> GraphRun | None: ...
 
+    def count_for_user(self, user_id: str, *, graph_name: str) -> int: ...
+
 
 class InMemoryGraphRunStore:
     """Process-local store for scaffold/tests. Phase 2: SQLAlchemy GraphRunRecord."""
@@ -78,6 +80,13 @@ class InMemoryGraphRunStore:
     def get(self, run_id: str) -> GraphRun | None:
         stored = self._runs.get(run_id)
         return stored.model_copy(deep=True) if stored else None
+
+    def count_for_user(self, user_id: str, *, graph_name: str) -> int:
+        return sum(
+            1
+            for run in self._runs.values()
+            if run.user_id == user_id and run.graph_name == graph_name
+        )
 
 
 # Module-level default for API layer (lazy-init for prod Postgres).

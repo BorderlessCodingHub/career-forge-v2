@@ -42,6 +42,12 @@ class Settings(BaseSettings):
     membership_stub_allowlist: str = ""  # email:base,email:psp
     borderless_members_url: str = ""  # GET {url}?email=
     borderless_members_token: str = ""
+    # CAR-46 — 1 free forge then Stripe for external; allowlist until Stripe is live
+    frontend_url: str = "http://localhost:3300/career-forge"
+    entitlement_billing_allowlist: str = ""  # comma emails
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_price_id: str = ""
 
     @property
     def cors_origin_list(self) -> list[str]:

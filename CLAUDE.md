@@ -209,7 +209,8 @@ At the start of a session involving implementation work, read in order:
 |--------|---------------|
 | `/health` | Health probe |
 | `/diagnosis/interview/start`, `/{session_id}/turn` | Multi-turn CTRR diagnosis |
-| `/forge`, `/forge/stream`, `/forge/{run_id}/stream` | Forge run + SSE |
+| `/forge`, `/forge/stream`, `/forge/{run_id}/stream` | Forge run + SSE; **402 paywall** after free forge for `external` |
+| `/billing/checkout`, `/billing/sync`, `/billing/stripe/webhook` | CAR-46 Stripe (allowlist until keys exist) |
 | `/roadmap/`, `/roadmap/sync` | Steady-state trail |
 | `/validation/questions`, `/validation` | Mastery validation |
 | `/mentor/context`, `/mentor` | Contextual mentor |

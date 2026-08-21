@@ -10,6 +10,7 @@ from career_forge.ai.llm.diagnosis_interview import (
 from career_forge.ai.run import set_graph_run_store
 from career_forge.main import app
 from career_forge.services.cost_guard import set_cost_guard
+from career_forge.services.stripe_billing import set_stripe_client
 from career_forge.services.diagnosis_session import (
     InMemoryDiagnosisSessionStore,
     set_diagnosis_session_service,
@@ -36,6 +37,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     reset_mock_interview_sessions()
     set_graph_run_store(None)
     set_cost_guard(None)
+    set_stripe_client(None)
     set_diagnosis_session_store(None)
     set_diagnosis_interview_llm(MockDiagnosisInterviewLlm())
     set_diagnosis_session_service(
@@ -45,12 +47,17 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     from career_forge.services.otp import reset_otp_rate_limiter
 
     settings.jwt_secret = _TEST_JWT_SECRET
+    settings.stripe_secret_key = ""
+    settings.stripe_webhook_secret = ""
+    settings.stripe_price_id = ""
+    settings.entitlement_billing_allowlist = ""
     reset_otp_rate_limiter()
     yield
     reset_mock_interview_sessions()
     reset_diagnosis_interview_llm()
     set_graph_run_store(None)
     set_cost_guard(None)
+    set_stripe_client(None)
     set_diagnosis_session_store(None)
     reset_otp_rate_limiter()
 
@@ -116,6 +123,7 @@ def client(raw_client: TestClient):
         public = (
             path.rstrip("/").endswith("/health")
             or path.endswith("/auth/anon/mint")
+            or path.rstrip("/").endswith("/billing/stripe/webhook")
             or path.rstrip("/").endswith("/openapi.json")
         )
         if not public and "authorization" not in {k.lower() for k in request.headers.keys()}:

@@ -88,7 +88,7 @@ def test_stream_with_wrong_run_id_in_ticket_rejected(raw_client: TestClient) -> 
     assert mint.status_code == 200
     ticket = mint.json()["ticket"]
 
-    other_run = _enqueue_forge(raw_client, "stream-ticket-wrong-run")
+    other_run = _enqueue_forge(raw_client, "stream-ticket-wrong-run-b")
     res = raw_client.get(f"/forge/{other_run}/stream", params={"ticket": ticket})
     assert res.status_code == 401
 

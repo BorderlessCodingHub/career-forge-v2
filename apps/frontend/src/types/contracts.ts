@@ -189,6 +189,8 @@ export type MeProfileResponse = {
   email: string | null;
   membership_label: MembershipLabel;
   membership_entitled: boolean;
+  billing_entitled: boolean;
+  checkout_available: boolean;
   has_diagnosis: boolean;
   diagnosis: DiagnosisResponse | null;
   intake: {

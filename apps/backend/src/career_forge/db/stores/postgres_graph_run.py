@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from uuid import UUID
 
+from sqlalchemy import func, select
+
 from career_forge.ai.run import GraphRun
 from career_forge.db.models.graph_run import GraphRunRecord
 from career_forge.db.session import SessionLocal
@@ -79,5 +81,20 @@ class PostgresGraphRunStore:
             if record is None:
                 return None
             return record_to_graph_run(record)
+        finally:
+            db.close()
+
+    def count_for_user(self, user_id: str, *, graph_name: str) -> int:
+        db = SessionLocal()
+        try:
+            total = db.scalar(
+                select(func.count())
+                .select_from(GraphRunRecord)
+                .where(
+                    GraphRunRecord.user_id == user_id,
+                    GraphRunRecord.graph_name == graph_name,
+                )
+            )
+            return int(total or 0)
         finally:
             db.close()

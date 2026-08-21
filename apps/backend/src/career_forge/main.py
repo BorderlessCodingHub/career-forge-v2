@@ -9,7 +9,12 @@ from fastapi.responses import JSONResponse
 from career_forge.api.router import api_router
 from career_forge.auth.middleware import BearerAuthMiddleware
 from career_forge.config import settings
-from career_forge.errors import DomainError, EmailOwnedConflictError, QuotaExhaustedError
+from career_forge.errors import (
+    DomainError,
+    EmailOwnedConflictError,
+    PaywallError,
+    QuotaExhaustedError,
+)
 from career_forge.logging_config import configure_logging
 
 
@@ -25,6 +30,17 @@ async def _domain_error_handler(_request: Request, exc: DomainError) -> JSONResp
         return JSONResponse(
             status_code=exc.status_code,
             content={"detail": {"message": str(exc), "code": exc.code}},
+        )
+    if isinstance(exc, PaywallError):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "detail": {
+                    "message": str(exc),
+                    "code": exc.code,
+                    "checkout_available": exc.checkout_available,
+                }
+            },
         )
     if isinstance(exc, EmailOwnedConflictError):
         return JSONResponse(

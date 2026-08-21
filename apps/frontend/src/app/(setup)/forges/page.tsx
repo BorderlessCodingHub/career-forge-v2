@@ -6,6 +6,7 @@ import { MoreHorizontal } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui";
+import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import {
   absoluteAppUrl,
   getMyProfile,
@@ -19,6 +20,7 @@ import {
 } from "@/lib/api-client";
 import { hydrateOnboardingFromProfile } from "@/lib/profile-reuse";
 import { setForgeRunId } from "@/lib/forge-session";
+import { isPaywallError, type PaywallError } from "@/lib/paywall";
 import type { ForgeArtifactSummary } from "@/types/contracts";
 
 /** Mirrors backend `artifact_title()` — default titles count as untitled. */
@@ -166,6 +168,7 @@ export default function ForgesListPage() {
   const router = useRouter();
   const [items, setItems] = useState<ForgeArtifactSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [paywall, setPaywall] = useState<PaywallError | null>(null);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
@@ -270,6 +273,7 @@ export default function ForgesListPage() {
   async function handleReforgeFromProfile() {
     setBusyId("reforge");
     setError(null);
+    setPaywall(null);
     try {
       const profile = await getMyProfile();
       if (!profile.has_diagnosis || !profile.diagnosis) {
@@ -287,6 +291,10 @@ export default function ForgesListPage() {
       router.push("/forge");
     } catch (err) {
       setBusyId(null);
+      if (isPaywallError(err)) {
+        setPaywall(err);
+        return;
+      }
       setError(
         err instanceof Error ? err.message : "Failed to start forge from profile",
       );
@@ -333,6 +341,9 @@ export default function ForgesListPage() {
 
         {loading ? (
           <p className="text-text-secondary">Loading…</p>
+        ) : null}
+        {paywall ? (
+          <PaywallPanel checkoutAvailable={paywall.checkoutAvailable} />
         ) : null}
         {error ? (
           <p className="text-sm text-red-400" data-testid="forges-error">
