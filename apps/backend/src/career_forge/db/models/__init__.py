@@ -1,6 +1,7 @@
 from career_forge.db.base import Base
 
 from career_forge.db.models.diagnosis_session import DiagnosisSessionRecord
+from career_forge.db.models.email_otp import EmailOtp
 from career_forge.db.models.forge_access_token import ForgeAccessToken
 from career_forge.db.models.forge_artifact import ForgeArtifact
 from career_forge.db.models.graph_run import GraphRunRecord
@@ -15,6 +16,7 @@ from career_forge.db.models.validation import Validation
 __all__ = [
     "Base",
     "DiagnosisSessionRecord",
+    "EmailOtp",
     "ForgeAccessToken",
     "ForgeArtifact",
     "GLOBAL_USAGE_USER_ID",

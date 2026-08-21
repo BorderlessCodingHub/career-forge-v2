@@ -25,6 +25,9 @@ import type {
   ForgeShareRevokeResponse,
   MeEmailUpdateResponse,
   MeProfileResponse,
+  OtpEmailOwnedConflict,
+  OtpRequestResponse,
+  OtpVerifyResponse,
   ResumeConsumeResponse,
   RoadmapResponse,
   RoadmapForgeEvent,
@@ -483,6 +486,69 @@ export async function updateMyEmail(email: string): Promise<MeEmailUpdateRespons
     method: "PATCH",
     body: JSON.stringify({ email }),
   });
+}
+
+/** Public OTP request — code delivered via mailer (dev: backend logs). */
+export async function requestOtp(email: string): Promise<OtpRequestResponse> {
+  const res = await fetch(`${backendUrl}/auth/otp/request`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const detail = await readApiErrorMessage(res);
+    throw new Error(toUserFacingApiError(res.status, detail));
+  }
+  return res.json() as Promise<OtpRequestResponse>;
+}
+
+export class OtpEmailOwnedError extends Error {
+  readonly conflict: OtpEmailOwnedConflict;
+
+  constructor(conflict: OtpEmailOwnedConflict) {
+    super(conflict.message);
+    this.name = "OtpEmailOwnedError";
+    this.conflict = conflict;
+  }
+}
+
+/** Verify OTP with current Bearer — promote or throw OtpEmailOwnedError (409). */
+export async function verifyOtp(
+  email: string,
+  code: string,
+): Promise<OtpVerifyResponse> {
+  const token = await ensureAccessToken();
+  const res = await fetch(`${backendUrl}/auth/otp/verify`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email, code }),
+  });
+  if (res.status === 409) {
+    try {
+      const body = (await res.json()) as { detail?: unknown };
+      const detail = body.detail;
+      if (
+        detail &&
+        typeof detail === "object" &&
+        "code" in detail &&
+        (detail as OtpEmailOwnedConflict).code === "email_owned" &&
+        "existing" in detail
+      ) {
+        throw new OtpEmailOwnedError(detail as OtpEmailOwnedConflict);
+      }
+    } catch (err) {
+      if (err instanceof OtpEmailOwnedError) throw err;
+    }
+    throw new Error(toUserFacingApiError(409, "email already linked"));
+  }
+  if (!res.ok) {
+    const detail = await readApiErrorMessage(res);
+    throw new Error(toUserFacingApiError(res.status, detail));
+  }
+  return res.json() as Promise<OtpVerifyResponse>;
 }
 
 /** Public share fetch — no identity adoption (Bearer optional). */

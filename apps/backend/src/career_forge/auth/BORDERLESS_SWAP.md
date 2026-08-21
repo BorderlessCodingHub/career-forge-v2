@@ -6,8 +6,9 @@ Bearer wire stays: `Authorization: Bearer <token>` · `AuthPrincipal(external_id
 
 ## Current (shipped)
 
-- `AnonymousLocalProvider` — app-signed JWT `provider=anonymous`
-- `CompositeAuthProvider` — anon first; stub `BorderlessTokenProvider` unused for IdP
+- `AnonymousLocalProvider` — app-signed JWT `provider=anonymous` **or** `provider=email` (CAR-44)
+- `CompositeAuthProvider` — app-signed first; stub `BorderlessTokenProvider` unused for IdP
+- `POST /auth/otp/request` · `POST /auth/otp/verify` — promote new email / 409 chooser when owned
 
 ## F3b target (CAR-28 epic)
 
@@ -20,6 +21,6 @@ Bearer wire stays: `Authorization: Bearer <token>` · `AuthPrincipal(external_id
 
 Do **not** implement `BorderlessTokenProvider.verify` as the product IdP.
 
-Code: `career_forge/auth/providers.py`, `api/deps.py`, `auth/middleware.py`.
+Code: `career_forge/auth/providers.py`, `api/auth.py`, `services/otp.py`, `services/mailer.py`.
 
 See [ADR-003](../../../../../docs/decisions/ADR-003-forge-recovery-auth-scaffold.md) · [pivot report](../../../../../docs/reports/2026-08-20-auth-otp-pivot.md).

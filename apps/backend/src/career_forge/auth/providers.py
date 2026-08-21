@@ -1,7 +1,7 @@
-"""AuthProvider protocol + anonymous issuer + Borderless stub (F3).
+"""AuthProvider protocol + app-signed JWT issuer + Borderless stub (unused IdP).
 
-Swap path for CAR-28: implement :meth:`BorderlessTokenProvider.verify` against
-``borderless-api``, keep the same Bearer wire and :class:`AuthPrincipal` shape.
+Career Forge owns email OTP (CAR-44). Do not implement Borderless as IdP —
+membership soft label is CAR-45.
 """
 
 from __future__ import annotations
@@ -10,7 +10,14 @@ from typing import Protocol, runtime_checkable
 
 import jwt
 
-from career_forge.auth.jwt_tokens import ANON_PROVIDER, decode_token, mint_anonymous_token
+from career_forge.auth.jwt_tokens import (
+    ANON_PROVIDER,
+    APP_PROVIDERS,
+    EMAIL_PROVIDER,
+    decode_token,
+    mint_anonymous_token,
+    mint_email_token,
+)
 from career_forge.auth.principal import AuthPrincipal
 
 _auth_provider: AuthProvider | None = None
@@ -18,10 +25,14 @@ _auth_provider: AuthProvider | None = None
 
 @runtime_checkable
 class AuthProvider(Protocol):
-    """F3-ready identity contract — mint/verify without knowing the HTTP layer."""
+    """Identity contract — mint/verify without knowing the HTTP layer."""
 
     def mint_anonymous(self, external_id: str) -> str:
         """Return a Bearer access token for an anonymous external_id."""
+        ...
+
+    def mint_email(self, external_id: str) -> str:
+        """Return a Bearer access token after email OTP verify (CAR-44)."""
         ...
 
     def verify(self, token: str) -> AuthPrincipal:
@@ -30,10 +41,13 @@ class AuthProvider(Protocol):
 
 
 class AnonymousLocalProvider:
-    """App-signed JWT issuer (CAR-23). Claim ``provider=anonymous``."""
+    """App-signed JWT issuer (CAR-23/44). Claims ``provider=anonymous|email``."""
 
     def mint_anonymous(self, external_id: str) -> str:
         return mint_anonymous_token(external_id)
+
+    def mint_email(self, external_id: str) -> str:
+        return mint_email_token(external_id)
 
     def verify(self, token: str) -> AuthPrincipal:
         try:
@@ -44,27 +58,33 @@ class AnonymousLocalProvider:
         provider = payload.get("provider")
         if not isinstance(sub, str) or not sub.strip():
             raise ValueError("token missing sub")
-        if provider != ANON_PROVIDER:
+        if provider not in APP_PROVIDERS:
             raise ValueError(f"unsupported provider: {provider!r}")
-        return AuthPrincipal(external_id=sub.strip(), provider=ANON_PROVIDER)
+        assert provider in (ANON_PROVIDER, EMAIL_PROVIDER)
+        return AuthPrincipal(external_id=sub.strip(), provider=provider)
 
 
 class BorderlessTokenProvider:
-    """Stub for F3 / CAR-28 — same protocol, platform issuer not wired yet."""
+    """Legacy stub — Borderless is membership-only (CAR-45), not IdP."""
 
     def mint_anonymous(self, external_id: str) -> str:
         raise NotImplementedError(
             "BorderlessTokenProvider does not mint anonymous tokens; use AnonymousLocalProvider"
         )
 
+    def mint_email(self, external_id: str) -> str:
+        raise NotImplementedError(
+            "BorderlessTokenProvider does not mint email tokens; use AnonymousLocalProvider"
+        )
+
     def verify(self, token: str) -> AuthPrincipal:
         raise NotImplementedError(
-            "Borderless issuer lands in F3 (CAR-28); token not verified here"
+            "Borderless issuer abandoned 2026-08-20; email OTP is Career Forge IdP"
         )
 
 
 class CompositeAuthProvider:
-    """Try anonymous JWT first; later add Borderless without changing callers."""
+    """App-signed JWT first; Borderless stub kept only for protocol completeness."""
 
     def __init__(
         self,
@@ -78,12 +98,14 @@ class CompositeAuthProvider:
     def mint_anonymous(self, external_id: str) -> str:
         return self._anonymous.mint_anonymous(external_id)
 
+    def mint_email(self, external_id: str) -> str:
+        return self._anonymous.mint_email(external_id)
+
     def verify(self, token: str) -> AuthPrincipal:
         try:
             return self._anonymous.verify(token)
         except ValueError:
             pass
-        # F3: decode unverified provider claim and route to borderless.verify
         try:
             return self._borderless.verify(token)
         except NotImplementedError as exc:

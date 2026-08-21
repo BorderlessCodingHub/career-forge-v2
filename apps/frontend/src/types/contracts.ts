@@ -151,6 +151,33 @@ export type ResumeConsumeResponse = {
   external_id: string;
 };
 
+export type OtpRequestResponse = {
+  ok: boolean;
+  email: string;
+  expires_in: number;
+};
+
+export type OtpVerifyResponse = {
+  status: "promoted";
+  access_token: string;
+  token_type: string;
+  external_id: string;
+  provider: string;
+  expires_in: number;
+};
+
+export type OtpEmailOwnedConflict = {
+  code: "email_owned";
+  message: string;
+  existing: {
+    access_token: string;
+    token_type: string;
+    external_id: string;
+    provider: string;
+    expires_in: number;
+  };
+};
+
 export type MeEmailUpdateResponse = {
   email: string;
 };

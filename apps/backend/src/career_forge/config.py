@@ -21,13 +21,22 @@ class Settings(BaseSettings):
     cost_p95_brl_per_run: float = 1.3639  # F2 re-cost forge P95 (CAR-33; docs/reports/2026-08-06-cost-gate.md)
     cost_buffer_factor: float = 1.10
 
-    # Auth scaffold (CAR-23 / ADR-003) — anon JWT; Borderless issuer in F3
+    # Auth scaffold (CAR-23 / ADR-003) — anon JWT; email OTP IdP in F3b (CAR-44)
     jwt_secret: str = "career-forge-dev-jwt-secret-change-me-32b+"
     jwt_anon_ttl_days: int = 90
     # CAR-26 — short-lived forge SSE stream ticket (Bearer → ?ticket=)
     jwt_stream_ticket_ttl_seconds: int = 300
     # CAR-27 — resume deep-link TTL (single-use + expiry)
     jwt_resume_ttl_days: int = 7
+    # CAR-44 — email OTP (6-digit); mailer=log for local, resend|ses for prod
+    otp_ttl_seconds: int = 600
+    otp_rate_limit_per_email: int = 5
+    otp_rate_limit_per_ip: int = 20
+    otp_rate_limit_window_seconds: int = 600
+    mailer_backend: str = "log"  # log | resend | ses
+    mail_from: str = "Career Forge <noreply@careerforge.local>"
+    resend_api_key: str = ""
+    aws_ses_region: str = ""
 
     @property
     def cors_origin_list(self) -> list[str]:

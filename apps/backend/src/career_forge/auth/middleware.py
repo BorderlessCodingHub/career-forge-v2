@@ -20,6 +20,7 @@ _PUBLIC_EXACT = frozenset(
         "/docs/oauth2-redirect",
         "/redoc",
         "/auth/anon/mint",
+        "/auth/otp/request",
     }
 )
 _PUBLIC_PREFIXES = ("/docs", "/redoc")
