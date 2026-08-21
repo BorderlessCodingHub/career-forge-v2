@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-20** · Last merge: **CAR-44** (email OTP IdP + post-forge upgrade) · prior **CAR-43** (PR #38) · **CAR-42** (PR #37) · Linear **CAR-44 Done** · **CAR-43 Done** · **CAR-42 Done** · Epic **CAR-22** closed · **F3b** epic **CAR-28** + CAR-45…47  
+Last updated: **2026-08-21** · Last merge: **CAR-45** (membership soft label, PR #41) · prior **CAR-44** (email OTP) · **CAR-43** (PR #38) · **CAR-42** (PR #37) · Linear **CAR-45 Done** · **CAR-44 Done** · Epic **CAR-22** closed · **F3b** epic **CAR-28** + CAR-47…46  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · **F3b:** [Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf)  
-**Next eng:** **F3a** — [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · **F3b next** — [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) membership soft label (after CAR-44 Done).
+**Next eng:** **F3a** — [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · **F3b next** — [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) send resume by email (CAR-45 Done).
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -66,7 +66,7 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | CAR-29 | Slice 2: rich `/forges` + email store + diagnosis re-forge | [S] | Done — rename/revoke, resume conflict chooser, `PATCH /me/email`, `GET /me/profile` re-forge |
 | CAR-31 | Polish `/forges` list UX — scan & open hierarchy | [P] | Done — Open+Rename visible; share/resume/revoke in ⋯; untitled shows goal_id |
 | CAR-26 | Forge SSE stream ticket | [S] | Done — `POST …/stream-ticket` + `GET …/stream?ticket=` |
-| CAR-28 | Epic F3b: Email OTP + membership | — | In progress — CAR-44 Done; children CAR-45…47 |
+| CAR-28 | Epic F3b: Email OTP + membership | — | In progress — CAR-44 + CAR-45 Done; next CAR-47 |
 
 ---
 
@@ -85,9 +85,9 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | [CAR-40](https://linear.app/career-forge-v2/issue/CAR-40) | Marketing `/welcome/plg` (product-led) | [P] | **Done** — PR #35 · first fold pinned; trail/phases/features slide in; not linked from `/welcome`; does not gate CAR-36 |
 | [CAR-41](https://linear.app/career-forge-v2/issue/CAR-41) | Preview premium landings A/B | [P] | **Done** — PR #36 · `/welcome/premium-a` + `/welcome/premium-b`; static HTML rewrite; not linked; does not gate CAR-37/36 |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | Backlog — after CAR-35 |
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP + membership (F3b) | — | In progress — grill 2026-08-20 pivot · CAR-44 Done |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP + membership (F3b) | — | In progress — grill 2026-08-20 pivot · CAR-44 + CAR-45 Done |
 | [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade | [S] | **Done** — `/auth/otp/*` + forge/complete gate · promote/chooser |
-| [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) | Membership soft label + Borderless client | [S] | Backlog — **next** after CAR-44 |
+| [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) | Membership soft label + Borderless client | [S] | **Done** — PR #41 · stub allowlist + `BorderlessMembershipClient` · `GET /me/profile` |
 | [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume by email | [S] | Backlog — after CAR-44 |
 | [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Paywall (1 free forge → Stripe external) | [S] | Backlog — later |
 
@@ -120,7 +120,7 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | Forge recovery (share / resume / Continue) | ✅ Done | CAR-27 — `forge_access_tokens`; landing gate; `/share` + `/resume` deep-links |
 | Forge recovery Slice 2 | ✅ Done | CAR-29 — rich `/forges`, conflict chooser, email store, diagnosis re-forge |
 | `/forges` list UX polish | ✅ Done | CAR-31 — scan & open hierarchy (Open+Rename; ⋯ overflow) |
-| Email OTP IdP + membership (F3b) | 🟡 CAR-44 Done | OTP promote/chooser on `/forge/complete`; CAR-45 membership next |
+| Email OTP IdP + membership (F3b) | 🟡 CAR-44 + CAR-45 Done | OTP promote/chooser; membership soft label on user; next CAR-47 send resume |
 | Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon; PR #29 copies `public/` into standalone (Labs `/brand/*`) |
 | Marketing landing `/welcome` | ✅ Done | CAR-35 — EN `/welcome`; CTA → `/`; no pricing/email; pt-BR → CAR-37 |
 | `/welcome` motion polish | ✅ Done | CAR-38 — lean CSS hero stagger + scroll reveal; reduced-motion still; PR #32 |
@@ -136,7 +136,7 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | Item | Owner | Status |
 |------|-------|--------|
 | Labs forge SSE through reverse proxy | Pedro | Done (CAR-21) |
-| Borderless membership API (`GET members?email=`) | Yuri / platform | Needed for CAR-45 HTTP path; stub/allowlist until then |
+| Borderless membership API (`GET members?email=`) | Yuri / platform | Stub/allowlist live (CAR-45); HTTP path waits on staging URL + token |
 | Org `borderlesscodinghub` access | Pedro / Yuri | Partial OK |
 
 ---
