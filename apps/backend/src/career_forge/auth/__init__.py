@@ -1,7 +1,8 @@
-"""Auth scaffold (ADR-003 / CAR-23).
+"""Auth scaffold (ADR-003 / CAR-23 / CAR-44).
 
 Wire: ``Authorization: Bearer <JWT>``.
-Anon issuer now; Borderless issuer swaps in via :class:`BorderlessTokenProvider` (F3 / CAR-28).
+App-signed issuer for ``provider=anonymous`` and ``provider=email`` (OTP).
+Borderless is membership-only (CAR-45) — not an IdP.
 """
 
 from career_forge.auth.principal import AuthPrincipal

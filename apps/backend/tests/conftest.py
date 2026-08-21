@@ -42,14 +42,17 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
         DiagnosisSessionService(session_store=InMemoryDiagnosisSessionStore()),
     )
     from career_forge.config import settings
+    from career_forge.services.otp import reset_otp_rate_limiter
 
     settings.jwt_secret = _TEST_JWT_SECRET
+    reset_otp_rate_limiter()
     yield
     reset_mock_interview_sessions()
     reset_diagnosis_interview_llm()
     set_graph_run_store(None)
     set_cost_guard(None)
     set_diagnosis_session_store(None)
+    reset_otp_rate_limiter()
 
 
 @pytest.fixture

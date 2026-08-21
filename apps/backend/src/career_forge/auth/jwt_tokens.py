@@ -1,4 +1,4 @@
-"""App-signed JWT helpers for the anonymous AuthProvider."""
+"""App-signed JWT helpers for anonymous + email AuthProviders."""
 
 from __future__ import annotations
 
@@ -11,6 +11,8 @@ from career_forge.config import settings
 
 ALGORITHM = "HS256"
 ANON_PROVIDER = "anonymous"
+EMAIL_PROVIDER = "email"
+APP_PROVIDERS = frozenset({ANON_PROVIDER, EMAIL_PROVIDER})
 
 
 def _secret() -> str:
@@ -19,11 +21,25 @@ def _secret() -> str:
 
 def mint_anonymous_token(external_id: str, *, expires_days: int | None = None) -> str:
     """Issue a JWT with ``sub`` = external_id and ``provider=anonymous``."""
+    return _mint_token(external_id, provider=ANON_PROVIDER, expires_days=expires_days)
+
+
+def mint_email_token(external_id: str, *, expires_days: int | None = None) -> str:
+    """Issue a JWT with ``sub`` = external_id and ``provider=email`` (CAR-44)."""
+    return _mint_token(external_id, provider=EMAIL_PROVIDER, expires_days=expires_days)
+
+
+def _mint_token(
+    external_id: str,
+    *,
+    provider: str,
+    expires_days: int | None = None,
+) -> str:
     ttl_days = expires_days if expires_days is not None else settings.jwt_anon_ttl_days
     now = datetime.now(UTC)
     payload: dict[str, Any] = {
         "sub": external_id,
-        "provider": ANON_PROVIDER,
+        "provider": provider,
         "iat": now,
         "exp": now + timedelta(days=ttl_days),
     }

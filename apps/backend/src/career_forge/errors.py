@@ -56,10 +56,24 @@ class ConflictError(DomainError):
     status_code = 409
 
 
+class EmailOwnedConflictError(ConflictError):
+    """OTP verify hit an email already owned by another account (CAR-44 chooser)."""
+
+    def __init__(self, existing: dict[str, object]) -> None:
+        self.existing = existing
+        super().__init__("email already linked to another account")
+
+
 class BadRequestError(DomainError):
     """Invalid client input that is not a schema-validation failure."""
 
     status_code = 400
+
+
+class RateLimitedError(DomainError):
+    """Client exceeded OTP request rate limits (CAR-44)."""
+
+    status_code = 429
 
 
 class QuotaExhaustedError(DomainError):
