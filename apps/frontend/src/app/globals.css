@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Exclude static Premium HTML clones from class detection (CAR-50 / CAR-55). */
+/* Exclude static Premium A HTML clone from class detection (CAR-50 / CAR-55 / CAR-56). */
 @source not "../../public/premium-landings";
 
 /* Bridge CAR-34 :root tokens + next/font vars into utilities (no hex duplication). */

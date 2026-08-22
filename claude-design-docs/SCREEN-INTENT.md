@@ -7,28 +7,33 @@
 
 ## Global rules
 
-- Product UI copy: **English** (CAR-16). Marketing `/welcome` ships EN in CAR-35; **pt-BR marketing + chrome** = CAR-37
+- Product UI copy: **English** (CAR-16). Marketing `/welcome` ships EN (CAR-56 Premium B); **pt-BR marketing + chrome** = CAR-37
 - Status enum: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar` — never rename without CHECKPOINT + API
-- No gamification (confetti, XP, streaks) on **product** UI. CAR-41 `/welcome/premium-*` clones are exempt (preview theater only).
+- No gamification (confetti, XP, streaks) on **product** UI. Welcome ApplicationModal may use confetti (Welcome-scoped only). Premium A HTML preview remains theater.
 - P0 wow moments must survive: **Forge stream**, **Animation reveal**, **Validation**, **Adaptive roadmap**
 
 ---
 
-## 0. Marketing welcome (`/welcome`) — MUST match (CAR-35)
+## 0. Marketing welcome (`/welcome`) — MUST match (CAR-56 · Premium B)
+
+Supersedes CAR-35 screen-intent for this route. Spec lock: CAR-54.
 
 | Constraint | Detail |
 |------------|--------|
 | Route | `/welcome` under `basePath=/career-forge` — **not** a thin layer replacing `/` |
-| Language | EN in CAR-35; pt-BR → CAR-37 |
-| Nav | Sticky: BrandMark + single **Start diagnosis** CTA → `/` |
-| Sections | Hero · honest Borderless/BASE/PSP line · features · showcase (diagnose→forge→validate) · benefits · FAQ ×3 (What / Who / How) · final CTA · footer |
-| Out | Pricing · email capture · checkout · fake testimonials · motion binge · next-intl |
-| Motion (CAR-38) | Lean CSS: hero load stagger; features/benefits/showcase/FAQ one-shot scroll-in (IO); sticky header + final CTA static; orb static; fade + ≤8px / 300–400ms / 40–80ms stagger; **no** Framer |
-| Reduced motion | `prefers-reduced-motion: reduce` → still page (no anim/transform); hover ≤150ms OK |
+| Look | Commercial Premium B (slate/orange Vite chrome) via `components/marketing/welcome/` — **not** CAR-34 product tokens / BrandMark on first cutover |
+| Language | EN; pt-BR → CAR-37 |
+| Conversion | Nav / hero / final primary → Next `Link` `/` · **Start diagnosis** · `data-testid="welcome-cta-start"` (desktop + mobile nav variants). Local B-styled links — do **not** reuse `StartDiagnosisCta` |
+| Scenery | Claim Scholarship, Syllabus, Strategy, other Apply → modals (Apply + Strategy + Syllabus). Pricing/apply theater is scenery |
+| Proof | Fake social proof / testimonials allowed until CAR-53 honesty pass |
+| Font | `Plus_Jakarta_Sans` via `next/font` on Welcome shell only. Product stays Inter |
+| CSS | `welcome/welcome.css` imported only from Welcome shell. Welcome-scoped confetti OK in ApplicationModal only |
+| Out | Real Stripe / waitlist / email · Google Fonts `<link>` · restyling to BrandMark on cutover |
 | Product `/` | Unchanged — `LandingRecoveryGate` / GoalPicker |
 | Hook | `data-screen="marketing-welcome"` · `data-testid="welcome-cta-start"` |
+| Redirect | `/welcome/premium-b` → `/welcome` (permanent) |
 
-**Can evolve:** pt-BR (CAR-37); stagger timing within grill bands
+**Can evolve:** pt-BR (CAR-37); CAR-53 honesty pass; BrandMark polish
 
 ---
 
@@ -45,19 +50,20 @@ Direct URL only. **Do not** replace `/welcome` or add a chooser there.
 
 ---
 
-## 0c. Premium landing previews (`/welcome/premium-a` · `/welcome/premium-b`) — bake-off only (CAR-41)
+## 0c. Premium landing preview A (`/welcome/premium-a`) — bake-off only (CAR-41)
 
-Direct URL only. **Do not** replace `/welcome` / `/welcome/plg` or add links there. **Do not** restyle to Borderless tokens or port into Next/Tailwind 3.
+Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B preview URL redirects to `/welcome` (CAR-56).
 
 | Constraint | Detail |
 |------------|--------|
-| Routes | `/welcome/premium-a` · `/welcome/premium-b` under `basePath=/career-forge` |
-| Serve | Next rewrite → committed Vite single-file HTML (`public/premium-landings/{a,b}.html`) |
-| Fidelity | Pixel clone of `claude-design-docs/premium-landings/{a,b}/` including pricing and fake apply/strategy UI |
+| Route | `/welcome/premium-a` under `basePath=/career-forge` |
+| Serve | Next rewrite → committed Vite single-file HTML (`public/premium-landings/a.html`) |
+| Fidelity | Pixel clone of `claude-design-docs/premium-landings/a/` including pricing and fake apply/strategy UI |
 | Out of funnel | CTAs do **not** go to `/`; Apply/Strategy stay client-only theater; `noindex,nofollow`; title `· preview` |
-| Source | [premium-landings/README.md](./premium-landings/README.md) · regenerate with `make premium-landings` |
+| Source | [premium-landings/README.md](./premium-landings/README.md) · regenerate A with `make premium-landings` |
+| B Vite folder | Frozen history at `claude-design-docs/premium-landings/b/` — not built; living SoT is Next `marketing/welcome/` |
 
-**Can evolve:** pick a winner later; until then both stay unlinked previews
+**Can evolve:** keep or retire Premium A later; do not resurrect `b.html`
 
 ---
 

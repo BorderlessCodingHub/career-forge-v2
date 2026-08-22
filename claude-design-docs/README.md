@@ -18,7 +18,7 @@ UI documentation generated in Claude Design, per-screen product intent, and the 
 | [MOCK-PROTOTYPE-PLAN.md](./MOCK-PROTOTYPE-PLAN.md) | HTML prototype evolution (Phase 1–4) |
 | [UI-SUGGESTIONS-BACKLOG.md](./UI-SUGGESTIONS-BACKLOG.md) | User UI feedback backlog |
 | [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) | Route table + quick reference |
-| [premium-landings/README.md](./premium-landings/README.md) | CAR-41 Vite clones A/B — bake-off only, not the funnel |
+| [premium-landings/README.md](./premium-landings/README.md) | Welcome = B (Next); Premium A bake-off HTML; Vite `b/` frozen |
 
 **Before UI work:** read PRODUCT-SOURCE-OF-TRUTH → UX-FLOW → SCREEN-INTENT → [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) → open [Code Breakers reference](./references/borderless-code-breakers-dashboard.png) → read [docs/CHECKPOINT.md](../docs/CHECKPOINT.md).
 
