@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | **Accepted** — grill 2026-07-30 (Founder Engineer) · **Amend 2026-08-20** (email OTP IdP) |
+| **Status** | **Accepted** — grill 2026-07-30 (Founder Engineer) · **Amend 2026-08-20** (email OTP IdP) · **Partial supersede 2026-08-22:** identity-gate **timing** and free forge → [ADR-005](./ADR-005-identity-gate-product-entry.md) |
 | **Date** | 2026-07-30 |
 | **Deciders** | Pedro Alano |
 | **Linear (v2)** | Epic [CAR-22](https://linear.app/career-forge-v2/issue/CAR-22) · project Forge recovery + auth scaffold · parallel to F2 · F3b epic [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) |
@@ -70,6 +70,8 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 
 **Amend 2026-08-20 (auth pivot grill):** F3b abandons Borderless JWT issuer. Career Forge owns passwordless **email OTP** (6-digit). After OTP, call Borderless **membership** API (stub/allowlist until ready) → soft label `base|psp|external`. Anon until 1st forge → mandatory OTP upgrade (promote new email / chooser if exists). No paywall in first slices; target = 1 free forge then Stripe for `external`; BASE/PSP active = entitled. Project: [F3b — Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf). Children: [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) OTP · [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) membership · [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) send resume · [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) paywall.
 
+**Amend 2026-08-22 (identity-gate grill):** Timing + free forge **superseded** by [ADR-005](./ADR-005-identity-gate-product-entry.md) / [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57). Product loop requires Email identity at entry (server-side). Unpaid `external` Paywall before diagnosis (no free forge). Artifacts, share/resume, OTP-as-IdP, Bearer + stream ticket **unchanged**.
+
 ### 6. Priority vs F2
 
 - Track runs **in parallel** with F2 (CAR-14…18).
@@ -98,7 +100,7 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 - Magic-link (click) IdP — **OTP codes are in scope for F3b** (amend 2026-08-20); magic **links** remain out
 - Borderless JWT issuer / SSO as Career Forge IdP (superseded 2026-08-20)
 - Multi-active roadmaps
-- Stripe checkout (CAR-46 — 1 free forge then paywall for `external`; BASE/PSP skip; allowlist until Stripe keys exist)
+- Stripe checkout mechanics (CAR-46 shipped; **when** it fires → [ADR-005](./ADR-005-identity-gate-product-entry.md) / CAR-57 — before diagnosis, no free forge)
 
 ---
 
@@ -107,5 +109,6 @@ Waiting for `borderless-api` blocks internal/real use recovery. We need a **mini
 - [V2-PLAN.md](../V2-PLAN.md) — decision log #1 amended; #13+
 - [CHECKPOINT.md](../CHECKPOINT.md)
 - [EXECUTION-FLOW.md](../engineering/EXECUTION-FLOW.md)
-- Grill session 2026-07-30 · auth pivot grill 2026-08-20
+- Grill session 2026-07-30 · auth pivot grill 2026-08-20 · identity-gate grill 2026-08-22
+- [ADR-005](./ADR-005-identity-gate-product-entry.md) — supersedes identity-gate timing + free forge
 - [2026-08-20-auth-otp-pivot.md](../reports/2026-08-20-auth-otp-pivot.md)

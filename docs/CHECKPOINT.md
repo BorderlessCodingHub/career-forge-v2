@@ -51,7 +51,7 @@ Catalog seeds land in F1 (CAR-5). Must-have nodes (job-market lean fit) draft in
 - Gate approval ceiling: **R$700** (Yuri go/no-go)
 - Per-user forge cap (1–2/month after gate)
 - Soft gate on diagnosis in pilot (lean forge + warning); hard block = later
-- First humans: **F3a** after hard caps + landing (login **not** required); email OTP = **F3b**
+- First humans: **F3a** after hard caps + landing; product loop requires **Email identity** ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) / CAR-57); unpaid `external` Paywall before diagnosis
 - Demo user `demo-ana`: outside student cost pool
 
 Details: [V2-PLAN.md](./V2-PLAN.md)

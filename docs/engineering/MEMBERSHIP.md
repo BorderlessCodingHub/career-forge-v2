@@ -8,7 +8,7 @@ Career Forge **identity** is email OTP (CAR-44). Borderless is **membership only
 | `psp` | active PSP member | `true` |
 | `external` | unknown, inactive, or non BASE/PSP | `false` |
 
-No paywall in the membership slice itself. **CAR-46** enforces 1 free forge then a Stripe (or allowlist) gate for `external`. BASE/PSP stay entitled. See [ENTITLEMENT.md](./ENTITLEMENT.md).
+No paywall in the membership slice itself. **CAR-57 / ADR-005** enforces Paywall for unpaid `external` **before diagnosis** (and before a new forge). BASE/PSP stay entitled. See [ENTITLEMENT.md](./ENTITLEMENT.md).
 
 The label is **re-resolved on every successful OTP login** (promote or owned-email chooser).
 

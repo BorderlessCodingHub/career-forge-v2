@@ -2,9 +2,9 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-22** · Last merge: **CAR-56** (Welcome cutover Premium B, PR #46) · prior **CAR-55** (PR #45) · **CAR-47** (PR #43) · **CAR-46** (PR #42) · **CAR-45** (PR #41) · **CAR-44** (email OTP) · Linear **CAR-56 Done** · **CAR-55 Done** · **CAR-54 Done** · **CAR-47 Done** · **CAR-46 Done** · **CAR-45 Done** · **CAR-44 Done** · Epic **CAR-22** closed · **F3b** epic **CAR-28** children complete  
+Last updated: **2026-08-22** · Last merge: **CAR-56** (Welcome cutover Premium B, PR #46) · prior **CAR-55** (PR #45) · **CAR-47** (PR #43) · **CAR-46** (PR #42) · **CAR-45** (PR #41) · **CAR-44** (email OTP) · Linear **CAR-57 Backlog** (ADR-005) · **CAR-56 Done** · **CAR-55 Done** · **CAR-54 Done** · **CAR-47 Done** · **CAR-46 Done** · **CAR-45 Done** · **CAR-44 Done** · Epic **CAR-22** closed · **F3b** epic **CAR-28** children complete except **CAR-57**  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · **F3b:** [Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf)  
-**Next eng:** **F3a** — [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof (honesty pass). [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots still open. **F3b** eng complete (CAR-44…47).
+**Next eng:** **F3b** — [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) identity gate at product entry ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md)). **F3a** — [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof. [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots after CAR-57.
 
 **Deploy:** Auto-deploy on `main` (CAR-13). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
@@ -89,14 +89,15 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | [CAR-55](https://linear.app/career-forge-v2/issue/CAR-55) | Upgrade `apps/frontend` Tailwind 3 → 4 | [S] | **Done** — PR #45 · hand `@theme` path; `@tailwindcss/postcss` |
 | [CAR-56](https://linear.app/career-forge-v2/issue/CAR-56) | Welcome cutover: Premium B as `/welcome` | [S] | **Done** — PR #46 · `marketing/welcome/`; premium-b → `/welcome`; A-only bake-off |
 | [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) | Real Welcome proof | — | Backlog — honesty pass after CAR-56 |
-| [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | Backlog — after CAR-35 |
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP + membership (F3b) | — | **Done** — grill 2026-08-20 pivot · CAR-44…47 |
-| [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade | [S] | **Done** — `/auth/otp/*` + forge/complete gate · promote/chooser |
+| [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | Backlog — after **CAR-57** (Email identity + allowlist) |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP + membership (F3b) | — | **Done** — grill 2026-08-20 pivot · CAR-44…47; **CAR-57** follow-on |
+| [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade | [S] | **Done** — `/auth/otp/*` + forge/complete gate · promote/chooser · **location → CAR-57** |
 | [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) | Membership soft label + Borderless client | [S] | **Done** — PR #41 · stub allowlist + `BorderlessMembershipClient` · `GET /me/profile` |
 | [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume by email | [S] | **Done** — PR #43 · `POST …/resume/email` + CTAs |
-| [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Paywall (1 free forge → Stripe external) | [S] | **Done** — PR #42 · 402 after free forge; BASE/PSP skip; allowlist until Stripe |
+| [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Paywall (Stripe external) | [S] | **Done** — PR #42 · **free forge → CAR-57** |
+| [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) | Identity gate at product entry + paywall before diagnosis | [S] | **Backlog** — [ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) |
 
-**Start order:** CAR-53 honesty pass next. CAR-37 → CAR-36 still open. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done** · **CAR-54 Done** · **CAR-55 Done** · **CAR-56 Done.**
+**Start order:** CAR-53 honesty pass · **CAR-57** identity gate · CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done** · **CAR-54 Done** · **CAR-55 Done** · **CAR-56 Done.**
 
 ---
 
@@ -125,9 +126,10 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | Forge recovery (share / resume / Continue) | ✅ Done | CAR-27 — `forge_access_tokens`; landing gate; `/share` + `/resume` deep-links |
 | Forge recovery Slice 2 | ✅ Done | CAR-29 — rich `/forges`, conflict chooser, email store, diagnosis re-forge |
 | `/forges` list UX polish | ✅ Done | CAR-31 — scan & open hierarchy (Open+Rename; ⋯ overflow) |
-| Email OTP IdP + membership (F3b) | ✅ Done | CAR-44…47 — OTP; membership; paywall; resume email (PR #43) |
+| Email OTP IdP + membership (F3b) | ✅ Done | CAR-44…47 — OTP; membership; paywall; resume email (PR #43) · **gate timing → CAR-57** |
 | Send resume by email | ✅ Done | CAR-47 — PR #43 · OTP-verified `POST /me/forges/{id}/resume/email` · forge/complete + `/forges` CTAs |
-| Entitlement paywall (external) | ✅ Done | CAR-46 — PR #42 · HTTP 402 after free forge; BASE/PSP skip; `ENTITLEMENT_BILLING_ALLOWLIST` until Stripe keys |
+| Entitlement paywall (external) | ⬜ CAR-57 | CAR-46 shipped 402-after-free-forge; **ADR-005** moves Paywall to diagnosis start, no free forge |
+| Identity gate at product entry | ⬜ CAR-57 | [ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) — Email identity before product loop; server-side |
 | Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon; PR #29 copies `public/` into standalone (Labs `/brand/*`) |
 | Marketing landing `/welcome` | ✅ Done | CAR-35 — EN `/welcome`; CTA → `/`; no pricing/email; pt-BR → CAR-37 |
 | `/welcome` motion polish | ✅ Done | CAR-38 — lean CSS hero stagger + scroll reveal; reduced-motion still; PR #32 |
@@ -135,7 +137,7 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | Marketing `/welcome/plg` | ✅ Done | CAR-40 — EN product-led exploration; first fold pinned; CTA → `/`; not linked from `/welcome`; PR #35 |
 | Preview premium A/B | ✅ Done | CAR-41 — PR #36 · `/welcome/premium-a` + `/welcome/premium-b`; Vite clones, rewrite to static HTML, `noindex`; not the funnel; not linked from `/welcome` |
 | Welcome-as-B cutover | ✅ Done | CAR-56 — PR #46 · `/welcome` is Premium B (`marketing/welcome/`); `/welcome/premium-b` → `/welcome`; Vite `b/` frozen; honesty pass = CAR-53 |
-| BASE/PSP pilots (×2 E2E) | ⬜ F3a | After caps + landing; anon OK (F3.7/F3.9) |
+| BASE/PSP pilots (×2 E2E) | ⬜ F3a | After caps + landing + **CAR-57** (Email identity + allowlist; F3.7 anon scaffold dead) |
 
 ---
 
