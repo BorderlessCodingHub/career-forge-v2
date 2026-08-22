@@ -50,11 +50,11 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 | [CAR-51](https://linear.app/career-forge-v2/issue/CAR-51) | Welcome port architecture | — | **Done** |
 | [CAR-52](https://linear.app/career-forge-v2/issue/CAR-52) | Vite Premium B source after the port | — | **Done** |
 | [CAR-54](https://linear.app/career-forge-v2/issue/CAR-54) | Welcome cutover spec lock | — | **Done** |
-| [CAR-55](https://linear.app/career-forge-v2/issue/CAR-55) | Upgrade `apps/frontend` Tailwind 3 → 4 | [S] | Backlog — **start next** |
-| [CAR-56](https://linear.app/career-forge-v2/issue/CAR-56) | Welcome cutover: Premium B as `/welcome` | [S] | Blocked by CAR-55 |
+| [CAR-55](https://linear.app/career-forge-v2/issue/CAR-55) | Upgrade `apps/frontend` Tailwind 3 → 4 | [S] | **Done** — PR #45 |
+| [CAR-56](https://linear.app/career-forge-v2/issue/CAR-56) | Welcome cutover: Premium B as `/welcome` | [S] | Backlog — **start next** |
 | [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) | Real Welcome proof | — | Backlog — after CAR-56 |
 
-**Start order:** CAR-55 → CAR-56. CAR-37 pt-BR and real Welcome checkout stay unspecified.
+**Start order:** CAR-56 next. CAR-37 pt-BR and real Welcome checkout stay unspecified.
 
 ### F3b — email OTP auth + membership **[S]**
 
