@@ -118,7 +118,8 @@ apps/frontend/
 ├── package.json
 ├── Dockerfile
 ├── next.config.mjs
-├── tailwind.config.ts
+├── postcss.config.mjs
+├── vitest.config.ts
 ├── public/
 │   ├── brand/
 │   └── premium-landings/    # CAR-41 Vite clones; rewrite /welcome/premium-{a,b}

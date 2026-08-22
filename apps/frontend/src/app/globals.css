@@ -26,9 +26,9 @@
   --color-border: var(--border);
   --color-border-soft: var(--border-soft);
 
-  --radius-card: 12px;
-  --radius-node: 16px;
-  --radius-modal: 12px;
+  --radius-card: var(--radius-card);
+  --radius-node: var(--radius-node);
+  --radius-modal: var(--radius-modal);
 
   --spacing-grid: 4px;
 
@@ -87,6 +87,9 @@
   --evidence: #2debb1;
   --accent-glow: rgba(83, 22, 204, 0.22);
   --mint-glow: rgba(45, 235, 177, 0.18);
+  --radius-card: 12px;
+  --radius-node: 16px;
+  --radius-modal: 12px;
 }
 
 body {
