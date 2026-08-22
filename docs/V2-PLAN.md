@@ -3,7 +3,7 @@
 > Borderless · labs.borderlesscoding.com/career-forge  
 > Executor: Pedro Alano  
 > Prazo estimado: 4–5 semanas ·  
-> **Atualizado:** 2026-08-20 — F3b auth pivot (email OTP IdP; Borderless membership only; supersedes issuer JWT) · prior 2026-08-13 CAR-35 grill · 2026-08-08 F3a/F3b · 2026-07-30 ADR-003
+> **Atualizado:** 2026-08-22 — ADR-005 identity gate at product entry (CAR-57; supersedes post-forge OTP + free forge) · prior 2026-08-20 F3b auth pivot · 2026-08-13 CAR-35 grill · 2026-08-08 F3a/F3b · 2026-07-30 ADR-003
 
 ---
 
@@ -21,7 +21,7 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 
 | # | Decisão |
 |---|--------|
-| 1 | Auth = **Career Forge IdP** — passwordless **email OTP** (F3b). Borderless API = **membership soft label** only (`base\|psp\|external`). **Amend 2026-07-30:** scaffold (`AuthProvider` + Bearer JWT anon) ships before F3 per [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md). **Amend 2026-08-08:** pilots (F3a) do **not** require login. **Amend 2026-08-20:** abandons Borderless JWT **issuer**; magic **link** still fora; OTP codes **in**. Epic [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) · [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44)…[CAR-47](https://linear.app/career-forge-v2/issue/CAR-47). |
+| 1 | Auth = **Career Forge IdP** — passwordless **email OTP**. Borderless API = **membership soft label** only (`base\|psp\|external`). **Amend 2026-08-22:** identity gate at **product entry** (server-side Email identity); no anonymous diagnosis/forge; unpaid `external` Paywall **before diagnosis** ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) · [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)). **Amend 2026-07-30:** scaffold (`AuthProvider` + Bearer JWT) ships before F3 per [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md). **Amend 2026-08-20:** abandons Borderless JWT **issuer**; magic **link** still fora; OTP codes **in**. Epic [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) · [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44)…[CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) · follow-on [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57). |
 | 2 | Hard stop API: **R$500/mês** (pool global). **R$700** = teto de *aprovação* do gate F1 (não o kill-switch). |
 | 3 | Throttle: **pool global R$500** + **cap por usuário** — F3.2 lock: **`FORGE_CAP_PER_USER_MONTH=2`**; kill-switch P95 **`COST_P95_BRL_PER_RUN=1.3639`** (F2 re-cost). |
 | 4 | Funil único (4 goals); barra de passagem por **evidência CTRR**, não por anos de XP. |
@@ -59,11 +59,11 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 
 ### Autenticação
 
-- **F1/F2 (amend 2026-07-30):** scaffold `AuthProvider` + JWT anon Bearer ([ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md)) — uso interno / recovery / **F3a pilots**
-- **F3a:** funnel = marketing CTA → product (anon); entry-gate login deferred
-- **F3b (amend 2026-08-20):** Career Forge **owns** login — email OTP (6 dígitos) pós 1º forge; JWT app-signed `provider=email`. Borderless = membership check (`GET members?email=`) → soft label; stub/allowlist até API existir. Issuer JWT Borderless: **fora**.
-- Magic **link** local: fora. OTP por código: **in** (F3b).
-- Entitlement alvo: BASE/PSP ativo = entitled; `external` = 1 forge grátis → Stripe ([CAR-46](https://linear.app/career-forge-v2/issue/CAR-46)); paywall **não** no primeiro slice
+- **F1/F2 (amend 2026-07-30):** scaffold `AuthProvider` + JWT Bearer ([ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md))
+- **F3a landing:** funnel = marketing CTA → product; Welcome stays public
+- **F3b IdP (amend 2026-08-20):** Career Forge **owns** login — email OTP (6 dígitos); JWT app-signed `provider=email`. Borderless = membership check (`GET members?email=`) → soft label; stub/allowlist até API existir. Issuer JWT Borderless: **fora**.
+- **Amend 2026-08-22 ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md)):** Email identity **before** the product loop (not pós 1º forge). No new anon mints. Unpaid `external` = Paywall before diagnosis (no free forge). BASE/PSP entitled skip Stripe. Pilots = OTP + allowlist, not anon scaffold ([CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)).
+- Magic **link** local: fora. OTP por código: **in**.
 
 ### Demo user
 
@@ -175,7 +175,7 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 
 ### Fase 3 — Rebrand + landing + pilotos (F3a) · email OTP auth (F3b)
 
-**Split (F3.8):** **F3a** closeable without login; **F3b** = epic [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) email OTP + membership (**amend 2026-08-20** — not Borderless issuer).
+**Split (F3.8):** **F3a** landing shipped without login; **humans in the loop** require Email identity ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) / [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)). **F3b** = epic [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) email OTP + membership + CAR-57 gate move.
 
 **F3a entrega:** hard-cap P95 bump + rebrand + marketing `/welcome` (EN; pt-BR → CAR-37) + 2 BASE/PSP humans complete core E2E + short note to Yuri  
 **F3b entrega:** Email OTP IdP + membership soft label (+ later send resume + paywall). Ask Yuri: membership endpoint — not issuer JWT.
@@ -185,7 +185,7 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 - Kill-switch `COST_P95_BRL_PER_RUN=1.3639`; pool R$500; forge cap/user = 2 (no ops UI)
 - Rebrand tokens + logo/favicon + marketing landing composition (`/welcome`)
 - pt-BR marketing + chrome ([CAR-37](https://linear.app/career-forge-v2/issue/CAR-37)) — deferred from CAR-35
-- 2 pilots on anon scaffold (login not required)
+- 2 pilots on Email identity + billing allowlist (ADR-005 / CAR-57 — not anon scaffold)
 
 **Critério de aceite F3a (F3.12):** checklist above + short note to Yuri — **no** formal GO ritual.  
 **Pilot E2E (F3.9):** goal → diagnosis → forge SSE → roadmap → ≥1 validation → roadmap reacts (mentor/report out of acceptance).
@@ -199,16 +199,16 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 | F3.3 | **Amend 2026-08-13:** marketing on `/welcome`; product stays at `/` (no `/app` migration); no auto-redirect from `/` |
 | F3.4 | **Amend 2026-08-13:** CAR-35 `/welcome` = EN; pt-BR marketing + chrome = [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37); AI/prompts stay EN |
 | F3.5 | Rebrand = tokens + logo/favicon **and** marketing landing composition on `/welcome`; no product redesign |
-| F3.6 | **Amend 2026-08-20:** Full login = Career Forge email OTP (not Borderless issuer); funnel stays CTA → product (anon) until post-forge upgrade |
-| F3.7 | 2 pilots do **not** depend on login — E2E valid on anon scaffold |
-| F3.8 | Split: F3a closeable without login; F3b = CAR-28 epic (OTP + membership) |
+| F3.6 | **Amend 2026-08-22:** Full login = Career Forge email OTP at **product entry** ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md)); Welcome stays public; post-forge upgrade **dead** |
+| F3.7 | **Amend 2026-08-22:** Pilots **require** Email identity + allowlist — E2E on anon scaffold is invalid |
+| F3.8 | Split: F3a landing closeable without login (historical); humans in the loop after CAR-57; F3b = CAR-28 epic (OTP + membership) + [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) |
 | F3.9 | Pilot E2E = goal → diagnosis → forge SSE → roadmap → ≥1 validation → roadmap reacts |
 | F3.10 | Pilot who/goals unconstrained |
 | F3.11 | Feedback-driven facilitation; no rigid “sem intervenção” gate |
 | F3.12 | F3a Done = P95 bump + rebrand + `/welcome` landing (+ CAR-37 pt-BR when scoped) + 2 E2E humans + short note to Yuri |
-| F3.13 | **Amend 2026-08-20:** Identity ≠ entitlement. Soft membership label now; paywall later (CAR-46). Ask platform for `GET members?email=` only. |
+| F3.13 | Identity ≠ entitlement (two gates). Soft membership label; Paywall for unpaid `external` **before diagnosis** ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md)). Ask platform for `GET members?email=` only. |
 
-Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · [F3b Email OTP](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) · CAR-33…38 · F3b [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) / [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44)…[CAR-47](https://linear.app/career-forge-v2/issue/CAR-47)
+Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · [F3b Email OTP](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) · CAR-33…38 · F3b [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) / [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44)…[CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) · [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)
 
 ---
 

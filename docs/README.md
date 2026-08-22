@@ -38,7 +38,7 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | [engineering/AGENT-LIFECYCLE.md](./engineering/AGENT-LIFECYCLE.md) | Session planning · P/S/B · QA |
 | [engineering/DEPLOY-VPS.md](./engineering/DEPLOY-VPS.md) | Alternate VPS notes (Labs path is primary) |
 | [engineering/MEMBERSHIP.md](./engineering/MEMBERSHIP.md) | CAR-45 soft label · Borderless `GET members?email=` contract |
-| [engineering/ENTITLEMENT.md](./engineering/ENTITLEMENT.md) | CAR-46 paywall · 1 free forge then Stripe/allowlist for `external` |
+| [engineering/ENTITLEMENT.md](./engineering/ENTITLEMENT.md) | Paywall · unpaid `external` blocked before diagnosis (ADR-005 / CAR-57) |
 
 ## Product decisions (ADRs)
 
@@ -47,8 +47,9 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | [decisions/README.md](./decisions/README.md) | ADR index |
 | [ADR-001 adaptive diagnosis](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) | CTRR loop brand · Interviewer/Judge · CV policy (**binding in v2**) |
 | [ADR-002 universal profile](./decisions/ADR-002-universal-profile-framework.md) | 5 profile dims — **keys live in prod**; no F2 schema migration |
-| [ADR-003 forge recovery](./decisions/ADR-003-forge-recovery-auth-scaffold.md) | Auth scaffold + forge artifacts (pre-Borderless) |
+| [ADR-003 forge recovery](./decisions/ADR-003-forge-recovery-auth-scaffold.md) | Auth scaffold + forge artifacts (timing → ADR-005) |
 | [ADR-004 canonical skill content](./decisions/ADR-004-canonical-skill-content.md) | Canônico por skill; forge só referencia (N:1) |
+| [ADR-005 identity gate](./decisions/ADR-005-identity-gate-product-entry.md) | Email identity at product entry · paywall before diagnosis |
 | [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) | Engineering spec · API · sequence |
 
 ## Research

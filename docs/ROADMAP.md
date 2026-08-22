@@ -11,8 +11,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 ## Current focus — Phase 3a (Rebrand + landing + pilots)
 
 **Prerequisite:** F2 golden cases + Yuri GO (#1/#2/#3) — **met 2026-08-08**.  
-**F3a humans after:** hard caps (P95 bump) + rebrand + marketing `/welcome` — **not** platform login (grill F3.7/F3.8).  
-**F3b:** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) epic — email OTP IdP + Borderless membership (grill 2026-08-20; **not** issuer JWT).
+**F3a humans after:** hard caps (P95 bump) + rebrand + marketing `/welcome`. **Product loop** requires Email identity ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) / [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)) — not anon scaffold.  
+**F3b:** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) epic — email OTP IdP + Borderless membership (grill 2026-08-20; **not** issuer JWT). Gate **timing** + no free forge = [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57).
 
 Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026-08-13: `/welcome` EN · pt-BR → CAR-37 · motion → CAR-38. Amend 2026-08-14: `/welcome` copy → CAR-39. Amend 2026-08-20: F3b OTP pivot.
 
@@ -35,9 +35,9 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026
 | [CAR-39](https://linear.app/career-forge-v2/issue/CAR-39) | `/welcome` marketing copy (outcome hero) | [P] | **Done** — PR #34 |
 | [CAR-40](https://linear.app/career-forge-v2/issue/CAR-40) | Marketing `/welcome/plg` (product-led) | [P] | **Done** — PR #35 |
 | [CAR-41](https://linear.app/career-forge-v2/issue/CAR-41) | Preview premium landings A/B (static HTML, unlinked) | [P] | **Done** — PR #36 |
-| [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 Done |
+| [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | CAR-35 Done · **CAR-57** (Email identity + allowlist, not anon) |
 
-**Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done**.
+**Start order:** CAR-37 → **CAR-57** → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done**.
 
 ### F3a — Welcome is Premium B ([CAR-48](https://linear.app/career-forge-v2/issue/CAR-48) map)
 
@@ -58,15 +58,16 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 
 ### F3b — email OTP auth + membership **[S]**
 
-**Project:** [F3b — Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) · ADR-003 amend 2026-08-20 · does **not** block F3a pilots
+**Project:** [F3b — Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) · ADR-003 + [ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) · **CAR-57** is the remaining F3b eng
 
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP auth + Borderless membership | — | **Done** |
-| [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade (promote / chooser) | [S] | **Done** |
+| [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade (promote / chooser) | [S] | **Done** (gate **location** superseded by CAR-57) |
 | [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) | Membership soft label (stub + Borderless members client) | [S] | **Done** — PR #41 |
 | [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume link by email | [S] | **Done** — PR #43 |
-| [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Entitlement paywall (1 free forge → Stripe for external) | [S] | **Done** — PR #42 |
+| [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Entitlement paywall (Stripe for external) | [S] | **Done** — PR #42 · **free forge superseded** by CAR-57 |
+| [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) | Identity gate at product entry + paywall before diagnosis | [S] | **Backlog** — ADR-005 |
 
 **Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
 
