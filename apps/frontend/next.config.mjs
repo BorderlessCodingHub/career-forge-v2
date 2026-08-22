@@ -24,7 +24,6 @@ const API_PREFIXES = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: process.env.CF_DIST_DIR || ".next",
   basePath: BASE_PATH,
   env: {
     // Same-origin fetch("/diagnosis/...") must include basePath; Link/router already do.
