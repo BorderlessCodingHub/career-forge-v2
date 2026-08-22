@@ -45,10 +45,10 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026
 
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP auth + Borderless membership | — | — |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP auth + Borderless membership | — | **Done** |
 | [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade (promote / chooser) | [S] | **Done** |
 | [CAR-45](https://linear.app/career-forge-v2/issue/CAR-45) | Membership soft label (stub + Borderless members client) | [S] | **Done** — PR #41 |
-| [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume link by email | [S] | CAR-44 Done — **start here** |
+| [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume link by email | [S] | **Done** — PR #43 |
 | [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Entitlement paywall (1 free forge → Stripe for external) | [S] | **Done** — PR #42 |
 
 **Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
@@ -122,7 +122,7 @@ Grill 2026-08-19 — hybrid Postgres gate + LangSmith analytics. CAR-7 `cost_gat
 |-------|-------|-------|
 | [CAR-29](https://linear.app/career-forge-v2/issue/CAR-29) | Slice 2: `/forges` UI + optional email + diagnosis profile | [S] ✅ Done |
 | [CAR-31](https://linear.app/career-forge-v2/issue/CAR-31) | Polish `/forges` list UX — scan & open hierarchy | [P] ✅ Done |
-| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic F3b: Email OTP + membership (was issuer Slice 3) | [S] → **F3b** — CAR-44 + CAR-45 + CAR-46 Done; next CAR-47 |
+| [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic F3b: Email OTP + membership (was issuer Slice 3) | [S] → **F3b** — CAR-44 + CAR-45 + CAR-46 + CAR-47 **Done** |
 
 ---
 
