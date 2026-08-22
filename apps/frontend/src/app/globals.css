@@ -1,6 +1,70 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Exclude static Premium HTML clones from class detection (CAR-50 / CAR-55). */
+@source not "../../public/premium-landings";
+
+/* Bridge CAR-34 :root tokens + next/font vars into utilities (no hex duplication). */
+@theme inline {
+  --font-sans: var(--font-sans), Inter, system-ui, sans-serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", monospace;
+
+  --color-bg: var(--bg);
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-node: var(--surface-node);
+  --color-accent: var(--accent);
+  --color-accent-mint: var(--accent-mint);
+  --color-accent-mint-bright: var(--accent-mint-bright);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-locked: var(--locked);
+  --color-evidence: var(--evidence);
+  --color-text-primary: var(--text);
+  --color-text-secondary: var(--text-2);
+  --color-text-muted: var(--text-3);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+
+  --radius-card: var(--radius-card);
+  --radius-node: var(--radius-node);
+  --radius-modal: var(--radius-modal);
+
+  --spacing-grid: 4px;
+
+  --default-border-color: var(--border);
+}
+
+@utility bg-brand-ribbon {
+  background-image: linear-gradient(
+    135deg,
+    var(--accent-mint) 0%,
+    var(--accent) 100%
+  );
+}
+
+@utility bg-dot-grid {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px
+  );
+}
+
+@utility bg-dots {
+  background-size: 24px 24px;
+}
+
+/* Used by forge reveal: animate-[reveal_400ms_ease-out] */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* CAR-34 — Borderless brand kit (grill 2026-08-12). Canonical: #121212 / #5316CC / #2DEBB1 */
 :root {
@@ -23,6 +87,9 @@
   --evidence: #2debb1;
   --accent-glow: rgba(83, 22, 204, 0.22);
   --mint-glow: rgba(45, 235, 177, 0.18);
+  --radius-card: 12px;
+  --radius-node: 16px;
+  --radius-modal: 12px;
 }
 
 body {
