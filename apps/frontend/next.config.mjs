@@ -24,12 +24,28 @@ const API_PREFIXES = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  distDir: process.env.CF_DIST_DIR || ".next",
   basePath: BASE_PATH,
   env: {
     // Same-origin fetch("/diagnosis/...") must include basePath; Link/router already do.
     NEXT_PUBLIC_BASE_PATH: BASE_PATH,
   },
   output: "standalone",
+  async redirects() {
+    // CAR-56 / CAR-52: Premium B is now App Router `/welcome`; old bake-off URL → canonical.
+    return [
+      {
+        source: "/welcome/premium-b",
+        destination: "/welcome",
+        permanent: true,
+      },
+      {
+        source: "/welcome/premium-b/",
+        destination: "/welcome",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     // Must be available at `next build` (Docker builder). Runtime-only compose
     // env is too late — empty rewrites → /career-forge/health 404 on Labs.
@@ -38,8 +54,8 @@ const nextConfig = {
     ).replace(/\/$/, "");
 
     return {
-      // CAR-41: static Vite clones — before App Router so /welcome/premium-*
-      // is not a 404. Files live in public/premium-landings/{a,b}.html.
+      // CAR-41: Premium A bake-off clone — before App Router.
+      // Premium B rewrite removed (CAR-56); redirect → /welcome instead.
       beforeFiles: [
         {
           source: "/welcome/premium-a",
@@ -48,14 +64,6 @@ const nextConfig = {
         {
           source: "/welcome/premium-a/",
           destination: "/premium-landings/a.html",
-        },
-        {
-          source: "/welcome/premium-b",
-          destination: "/premium-landings/b.html",
-        },
-        {
-          source: "/welcome/premium-b/",
-          destination: "/premium-landings/b.html",
         },
       ],
       afterFiles: [

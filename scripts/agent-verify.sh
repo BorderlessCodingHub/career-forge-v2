@@ -74,17 +74,19 @@ check test -f apps/frontend/src/app/\(setup\)/page.tsx
 check test -f apps/frontend/src/app/\(setup\)/welcome/page.tsx
 check test -f apps/frontend/src/app/\(setup\)/welcome/plg/page.tsx
 check test -f apps/frontend/public/premium-landings/a.html
-check test -f apps/frontend/public/premium-landings/b.html
+check test ! -f apps/frontend/public/premium-landings/b.html
 check grep -q 'noindex,nofollow' apps/frontend/public/premium-landings/a.html
-check grep -q 'noindex,nofollow' apps/frontend/public/premium-landings/b.html
 check grep -q 'preview</title>' apps/frontend/public/premium-landings/a.html
-check grep -q 'preview</title>' apps/frontend/public/premium-landings/b.html
 check grep -q '/welcome/premium-a' apps/frontend/next.config.mjs
+check grep -q 'destination: "/welcome"' apps/frontend/next.config.mjs
 check grep -q '/welcome/premium-b' apps/frontend/next.config.mjs
 check test -f claude-design-docs/premium-landings/a/package.json
 check test -f claude-design-docs/premium-landings/b/package.json
-check file_lacks 'premium-a|premium-b' apps/frontend/src/components/marketing/WelcomeLanding.tsx
+check test -f apps/frontend/src/components/marketing/welcome/WelcomeShell.tsx
 check file_lacks 'premium-a|premium-b' apps/frontend/src/components/marketing/PlgLanding.tsx
+check grep -q 'welcome-cta-start' apps/frontend/src/components/marketing/welcome/Hero.tsx
+check grep -q 'welcome-cta-start' apps/frontend/src/components/marketing/welcome/Navbar.tsx
+check grep -q 'welcome-cta-start' apps/frontend/src/components/marketing/welcome/CtaSection.tsx
 check test -f apps/frontend/public/brand/borderless-logo.svg
 check test -f apps/frontend/public/brand/favicon.ico
 check test -f apps/frontend/src/components/ui/BrandMark.tsx

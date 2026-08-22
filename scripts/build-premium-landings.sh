@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# Rebuild Vite single-file HTML for /welcome/premium-a and /welcome/premium-b.
+# Rebuild Vite single-file HTML for /welcome/premium-a only (CAR-56 / CAR-52).
+# Premium B is App Router `/welcome` — frozen Vite source under
+# claude-design-docs/premium-landings/b/ is not built.
 # Output is committed under apps/frontend/public/premium-landings/ — the
-# frontend Docker image does not run this (no Vite/Tailwind 4 in that image).
+# frontend Docker image does not run this (no Vite in that image).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -37,5 +39,4 @@ build_one() {
 }
 
 build_one a
-build_one b
-echo "premium-landings: OK"
+echo "premium-landings: OK (A only)"

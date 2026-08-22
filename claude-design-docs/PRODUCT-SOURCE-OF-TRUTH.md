@@ -111,7 +111,7 @@ Full spec: [UI-PRINCIPLES](./UI-PRINCIPLES.md) · Theming: [BORDERLESS-THEMING](
 - **Borderless shell** + **canvas roadmap** (Code Breakers reference) + adaptive skill graph (status, mastery %)
 - Flat dark aesthetic (`#121212`) — tokens in [design-tokens.md](./design-tokens.md)
 - Portuguese (Brazil) for all user-facing copy
-- Premium dev-tool feel — no LMS chrome, no confetti/gamification
+- Premium dev-tool feel — no LMS chrome, no confetti/gamification on **product** UI (Welcome ApplicationModal may use confetti)
 - Hero moments: **Forge timeline stream**, **Animation reveal**, **Validation interview + score**
 - Steady state: canvas nodes + **optional** AI sidebar (Explain / Test / Chat)
 
@@ -125,9 +125,9 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
-| `/welcome` Marketing (CAR-35/38) | BrandMark + Start diagnosis→`/`; EN hero (outcome H1 + roadmap-canonical copy); features · showcase · benefits · FAQ ×3; honest BASE/PSP line; lean CSS motion + reduced-motion still page; no pricing/email | pt-BR CAR-37 |
+| `/welcome` Marketing (CAR-56) | Premium B commercial chrome in `marketing/welcome/`; Start diagnosis→`/`; scenery modals; fake proof until CAR-53; indexed; Plus Jakarta Sans on shell only | pt-BR CAR-37; BrandMark polish |
 | `/welcome/plg` | Product-led (EN); first fold stays on screen; trail/phases/features slide into the remaining viewport; forge HTML mock in hero; split-flap plaque as section titles; before/during/after; dark tokens; not linked from `/welcome` | Visual polish |
-| `/welcome/premium-a` · `/welcome/premium-b` | Vite clones via rewrite; commercial sections intact; `noindex`; not linked from `/welcome`; CTAs do not enter `/` | Pick a winner; do not restyle |
+| `/welcome/premium-a` | Vite clone A via rewrite; commercial sections intact; `noindex`; not linked; CTAs do not enter `/`. `/welcome/premium-b` → `/welcome` | Retire A later |
 | `/` Goal picker / recovery | Hero + **4** LLM track cards + motivation; if ≥1 forge artifact → **Continue** / **View all** / **New forge**; if saved diagnosis → **Forge again from last diagnosis** (`landing-recovery`) | Animation library, form validation UX |
 | `/forges` | Artifact list — Open, Rename, Copy share, **Revoke share**, Copy resume; optional re-forge from profile CTA | Visual polish |
 | `/share/[token]` | Read-only snapshot roadmap; **no** session adopt (API `GET /public/share/{token}`) | Visual polish |
@@ -192,10 +192,10 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Forge recovery Slice 2 (CAR-29) | Not in prototype | N/A | Rich **`/forges`**: Rename (`PATCH /me/forges/{id}`), **Revoke share**, re-forge CTA; **`/resume/[token]`** conflict chooser (`resume-conflict` / keep local / switch) before `adoptSession` when local forges ≠ resume owner; forge complete **optional email** store (`PATCH /me/email`, no SMTP); **`GET /me/profile`** + `hydrateOnboardingFromProfile` → `/onboarding/edit` or `startForgeRunFromProfile`; landing CTA **Forge again from last diagnosis** when profile has diagnosis (also empty-artifact + diagnosis gate → Welcome back / New from scratch) | **Code wins** — Slice 2 recovery polish; Borderless send = CAR-28 | 2026-08-01 |
 | Soft gate warning (CAR-15) | Not in prototype | N/A | **`SoftGateWarningBanner`** — copy + status only (`soft_gated` / `soft_gate_warning` from API); shown on `/onboarding/edit` (`soft-gate-warning`) and `/forge` entry (`soft-gate-warning-forge`); **does not block** Generate roadmap / forge stream; lean prune is BE-only (same GraphExecutor path). No new layout/tokens/routes | **Code wins** — F2 soft gate; cutoff retune CAR-18 | 2026-08-03 |
 | Rebrand tokens + logo (CAR-34) | Lucide `Axe` + purple-black `#0D0B14` / `#7C3AED` / `#2DD4BF` | N/A | Global tokens `#121212` / `#5316CC` / `#2DEBB1` (official site logo mint; `#44D5AD` retired); `public/brand/` + **`BrandMark`** on artifact topbar; favicon via `metadata.icons`; no layout rewrite; marketing chrome = CAR-35 | **Code + brand kit win** | 2026-08-12 |
-| Marketing `/welcome` (CAR-35) | Not in prototype | N/A | Route **`/welcome`**: EN marketing page (`WelcomeLanding`); sticky BrandMark + Start→`/`; hero diagnose/forge/validate; features · showcase · benefits · FAQ ×3; honest BASE/PSP line; **no** pricing/email/checkout; product `/` unchanged; pt-BR → CAR-37; intent [waitlist-checkout-intent.md](../docs/product/waitlist-checkout-intent.md) | **Grill + code win** | 2026-08-13 |
-| `/welcome` motion (CAR-38) | Not in prototype | N/A | Lean CSS only (no Framer): hero load stagger; features/benefits/showcase/FAQ one-shot `ScrollReveal` (IO); sticky header + final CTA + hero orb **static**; fade + ≤8px / 300–400ms / 40–80ms; `prefers-reduced-motion` → still page; marketing-scoped (`components/marketing/`) — not product motion system | **Grill + code win** | 2026-08-14 |
+| Marketing `/welcome` (CAR-35→56) | Not in prototype | Vite Premium B | Route **`/welcome`**: commercial B via `marketing/welcome/` (CAR-56); Start diagnosis→`/`; pricing/apply scenery; fake proof until CAR-53; waitlist/checkout not runtime; `/welcome/premium-b` redirects → `/welcome`; pt-BR → CAR-37; intent [waitlist-checkout-intent.md](../docs/product/waitlist-checkout-intent.md) | **Grill + code win (CAR-56)** | 2026-08-22 |
+| `/welcome` motion (CAR-38) | Not in prototype | N/A | Historical lean CSS motion on prior WelcomeLanding; PLG keeps `ScrollReveal` / `welcome-motion`. Canonical Welcome now uses B CSS motion (no ScrollReveal) | **Superseded for `/welcome` by CAR-56** | 2026-08-14 |
 | `/welcome/plg` | Not in prototype | N/A | EN product-led exploration; default `/welcome` unchanged and unlinked; same CTA → `/`; no price/email/fake proof; hero HTML/CSS forge mock (`ForgeProductMock`); **first fold stays in the viewport**; trail / phases / features **slide into** the remaining viewport (`PlgStackScroll` wheel lock); split-flap plaque (`PlgScrollPlaque`) follows active step; wheel releases to final CTA. Editorial + offer explorations discarded. | **Grill + code win** | 2026-08-18 |
-| Premium landings A/B (CAR-41) | Not in prototype | Vite apps in `claude-design-docs/premium-landings/{a,b}/` | Direct URL `/welcome/premium-a` + `/welcome/premium-b` rewrite to committed single-file HTML; `noindex,nofollow`; title `· preview`; **not** linked from `/welcome`; CTAs do not enter product; apply/strategy remain client theater | **Grill + static HTML win** — do not port into Next/Tailwind 3 | 2026-08-18 |
+| Premium landings A/B (CAR-41→52) | Not in prototype | Vite `premium-landings/{a,b}/` | A remains rewrite HTML `noindex` preview. B ported to `/welcome` (CAR-56); `b.html` deleted; Vite `b/` frozen; `make premium-landings` builds A only | **CAR-56 cutover** | 2026-08-22 |
 
 ---
 

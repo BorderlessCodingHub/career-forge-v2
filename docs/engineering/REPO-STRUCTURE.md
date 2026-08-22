@@ -122,14 +122,14 @@ apps/frontend/
 ├── vitest.config.ts
 ├── public/
 │   ├── brand/
-│   └── premium-landings/    # CAR-41 Vite clones; rewrite /welcome/premium-{a,b}
+│   └── premium-landings/    # CAR-41 A only; /welcome/premium-b → /welcome
 └── src/
     ├── app/                     # Next App Router
     │   ├── layout.tsx
     │   ├── globals.css
     │   ├── (setup)/
     │   │   ├── page.tsx
-    │   │   ├── welcome/         # CAR-35/38 marketing + /plg exploration
+    │   │   ├── welcome/         # CAR-56 Premium B Welcome + /plg exploration
     │   │   ├── onboarding/
     │   │   │   └── edit/
     │   │   └── forge/
@@ -141,7 +141,7 @@ apps/frontend/
     ├── components/
     │   ├── ui/
     │   ├── layout/
-    │   ├── marketing/           # CAR-35/38 WelcomeLanding; /welcome/plg exploration
+    │   ├── marketing/           # welcome/ (CAR-56 B) + PlgLanding exploration
     │   ├── roadmap/
     │   ├── forge/
     │   ├── diagnosis/

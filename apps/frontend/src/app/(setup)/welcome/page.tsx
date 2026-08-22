@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 
-import { WelcomeLanding } from "@/components/marketing/WelcomeLanding";
+import { WelcomeShell } from "@/components/marketing/welcome/WelcomeShell";
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-welcome-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Welcome · Career Forge",
@@ -9,5 +16,9 @@ export const metadata: Metadata = {
 };
 
 export default function WelcomePage() {
-  return <WelcomeLanding />;
+  return (
+    <WelcomeShell
+      className={`${plusJakarta.variable} ${plusJakarta.className}`}
+    />
+  );
 }

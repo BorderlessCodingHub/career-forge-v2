@@ -43,8 +43,13 @@ _Avoid_: quiz for grades, certificate exam, job guarantee
 ### Marketing surface
 
 **Welcome** (`/welcome`):
-EN marketing landpage: convert with Start diagnosis; educate as means; no pricing, waitlist, or email capture in pilot.
-_Avoid_: product entry (`/` — GoalPicker / recovery, not marketing)
+Commercial Premium B landpage (CAR-56): convert with **Start diagnosis** → `/`; pricing / apply / syllabus / strategy = scenery modals; fake proof until CAR-53; waitlist/checkout still not runtime. Welcome-scoped confetti allowed in ApplicationModal; product UI still none.
+_Avoid_: treating pricing theater as live checkout; product entry (`/` — GoalPicker / recovery)
 
 **Welcome PLG** (`/welcome/plg`):
-EN product-led exploration (Granola rhythm). Same CTA and constraints as Welcome. Direct URL only — do not replace `/welcome`.
+EN product-led exploration (Granola rhythm). Same CTA → `/`. Direct URL only — do not replace `/welcome`.
+_Avoid_: linking PLG from canonical Welcome as a chooser
+
+**Premium A** (`/welcome/premium-a`):
+Unlinked bake-off HTML preview (`noindex`). Not the funnel. Legacy `/welcome/premium-b` redirects → `/welcome`.
+_Avoid_: resurrecting Premium B HTML as a second public surface

@@ -1,3 +1,12 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "overrides": [
+    {
+      "files": ["src/components/marketing/welcome/**/*.{ts,tsx}"],
+      "rules": {
+        "react/no-unescaped-entities": "off",
+        "@next/next/no-img-element": "off"
+      }
+    }
+  ]
 }

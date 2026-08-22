@@ -221,9 +221,10 @@ At the start of a session involving implementation work, read in order:
 
 | Route | Purpose |
 |-------|---------|
-| `(setup)/welcome` | Marketing landpage (EN) |
+| `(setup)/welcome` | Marketing landpage — Premium B (CAR-56), indexed |
 | `(setup)/welcome/plg` | Product-led exploration (Granola rhythm) |
-| `/welcome/premium-a` · `/welcome/premium-b` | CAR-41 bake-off clones (static HTML rewrite, unlinked, `noindex`) |
+| `/welcome/premium-a` | CAR-41 bake-off clone A (static HTML rewrite, unlinked, `noindex`) |
+| `/welcome/premium-b` | Redirect → `/welcome` (CAR-56) |
 | `(setup)/` | Goal entry |
 | `(setup)/onboarding` | Adaptive diagnosis interview |
 | `(setup)/onboarding/edit` | Editable diagnosis |

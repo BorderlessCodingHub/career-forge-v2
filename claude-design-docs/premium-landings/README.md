@@ -1,26 +1,24 @@
-# Premium landing previews (A / B)
+# Premium landings
 
-Stakeholder bake-off clones. **Not** the F3a product funnel.
+| Variant | Role | Source | Artifact |
+|---------|------|--------|----------|
+| **B → `/welcome`** | Canonical marketing Welcome (CAR-56) | Living SoT: `apps/frontend/src/components/marketing/welcome/` | App Router page (indexed) |
+| **A** | Bake-off preview only | [`a/`](./a/) | `apps/frontend/public/premium-landings/a.html` |
+| **B (frozen Vite)** | History / visual diff only — **not built** | [`b/`](./b/) | — (superseded by `/welcome`) |
 
-| URL | Source | Artifact |
-|-----|--------|----------|
-| `/welcome/premium-a` | [`a/`](./a/) | `apps/frontend/public/premium-landings/a.html` |
-| `/welcome/premium-b` | [`b/`](./b/) | `apps/frontend/public/premium-landings/b.html` |
+Labs: `/career-forge/welcome` (canonical B) · `/career-forge/welcome/premium-a` (A preview) · `/career-forge/welcome/premium-b` **redirects → `/welcome`**.
 
-Labs: `/career-forge/welcome/premium-a` and `/career-forge/welcome/premium-b`.
+## Contract (CAR-56 / CAR-52)
 
-## Contract (CAR-41 grill)
+- **Welcome** is commercial Premium B in Next: Start diagnosis → `/`; pricing/apply/syllabus/strategy = scenery modals; fake proof until CAR-53; waitlist/checkout still not runtime.
+- **Premium A** remains an unlinked `noindex` HTML rewrite (CAR-41 pipeline unchanged).
+- Vite `b/` stays frozen for history. Do not edit it for product changes — edit Next `marketing/welcome/` (CAR-53 honesty pass edits Next only).
+- Welcome-scoped confetti allowed in ApplicationModal only. Product UI still has no confetti.
 
-- Visual **and** commercial clone of these Vite apps (pricing, apply/strategy theater, confetti on B).
-- Direct URL only — **not** linked from `/welcome` or `/welcome/plg`.
-- CTAs do **not** enter diagnosis (`/`).
-- `noindex,nofollow` + title suffix `· preview`.
-- Served via Next rewrite to committed single-file HTML. Do **not** port into `apps/frontend` Tailwind 3.
-
-## Regenerate
+## Regenerate (A only)
 
 ```bash
 make premium-landings
 ```
 
-Commit the overwritten HTML under `apps/frontend/public/premium-landings/`.
+Commits overwritten HTML under `apps/frontend/public/premium-landings/a.html`.

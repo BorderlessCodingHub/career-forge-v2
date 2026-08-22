@@ -16,7 +16,7 @@ help:
 	@echo "  make golden-check  CAR-18 deterministic golden suite"
 	@echo "  make golden-run    CAR-18 Pedro helper (CASE=… / ALL=1 / LIVE=1)"
 	@echo "  make stack-smoke   Docker stack health only"
-	@echo "  make premium-landings  Rebuild /welcome/premium-a and /welcome/premium-b HTML"
+	@echo "  make premium-landings  Rebuild /welcome/premium-a HTML (B is App Router /welcome)"
 
 # Full smoke — harness + monorepo + stack health (starts docker if needed)
 smoke:
