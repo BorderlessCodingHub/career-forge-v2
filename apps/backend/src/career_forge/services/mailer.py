@@ -1,4 +1,4 @@
-"""Outbound mail adapters — log (dev) · Resend · SES (CAR-44)."""
+"""Outbound mail adapters — log (dev) · Resend · SES (CAR-44 / CAR-47)."""
 
 from __future__ import annotations
 
@@ -16,9 +16,11 @@ logger = logging.getLogger(__name__)
 class Mailer(Protocol):
     def send_otp(self, *, to_email: str, code: str) -> None: ...
 
+    def send_resume_link(self, *, to_email: str, resume_url: str) -> None: ...
+
 
 class LogMailer:
-    """Dev/test mailer — prints the OTP so local stacks need no SMTP."""
+    """Dev/test mailer — prints payloads so local stacks need no SMTP."""
 
     def send_otp(self, *, to_email: str, code: str) -> None:
         logger.info(
@@ -28,24 +30,49 @@ class LogMailer:
             settings.otp_ttl_seconds,
         )
 
+    def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
+        logger.info(
+            "Resume link for %s: %s — mailer_backend=log",
+            to_email,
+            resume_url,
+        )
+
 
 class ResendMailer:
     """Prod mailer via Resend HTTP API when ``RESEND_API_KEY`` is set."""
 
     def send_otp(self, *, to_email: str, code: str) -> None:
+        minutes = max(1, settings.otp_ttl_seconds // 60)
+        self._send(
+            to_email=to_email,
+            subject="Your Career Forge code",
+            text=(
+                f"Your verification code is {code}. "
+                f"It expires in {minutes} minutes."
+            ),
+        )
+
+    def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
+        self._send(
+            to_email=to_email,
+            subject="Your Career Forge resume link",
+            text=(
+                "Use this single-use link to resume your Career Forge roadmap "
+                f"(expires in about {settings.jwt_resume_ttl_days} days):\n\n"
+                f"{resume_url}\n"
+            ),
+        )
+
+    def _send(self, *, to_email: str, subject: str, text: str) -> None:
         api_key = settings.resend_api_key.strip()
         if not api_key:
             raise RuntimeError("RESEND_API_KEY is required when mailer_backend=resend")
-        minutes = max(1, settings.otp_ttl_seconds // 60)
         payload = json.dumps(
             {
                 "from": settings.mail_from,
                 "to": [to_email],
-                "subject": "Your Career Forge code",
-                "text": (
-                    f"Your verification code is {code}. "
-                    f"It expires in {minutes} minutes."
-                ),
+                "subject": subject,
+                "text": text,
             }
         ).encode("utf-8")
         req = request.Request(
@@ -69,6 +96,28 @@ class SesMailer:
     """Prod mailer via AWS SES (boto3) when region is configured."""
 
     def send_otp(self, *, to_email: str, code: str) -> None:
+        minutes = max(1, settings.otp_ttl_seconds // 60)
+        self._send(
+            to_email=to_email,
+            subject="Your Career Forge code",
+            text=(
+                f"Your verification code is {code}. "
+                f"It expires in {minutes} minutes."
+            ),
+        )
+
+    def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
+        self._send(
+            to_email=to_email,
+            subject="Your Career Forge resume link",
+            text=(
+                "Use this single-use link to resume your Career Forge roadmap "
+                f"(expires in about {settings.jwt_resume_ttl_days} days):\n\n"
+                f"{resume_url}\n"
+            ),
+        )
+
+    def _send(self, *, to_email: str, subject: str, text: str) -> None:
         region = settings.aws_ses_region.strip()
         if not region:
             raise RuntimeError("AWS_SES_REGION is required when mailer_backend=ses")
@@ -77,21 +126,13 @@ class SesMailer:
         except ImportError as exc:
             raise RuntimeError("boto3 is required for mailer_backend=ses") from exc
 
-        minutes = max(1, settings.otp_ttl_seconds // 60)
         client = boto3.client("ses", region_name=region)
         client.send_email(
             Source=settings.mail_from,
             Destination={"ToAddresses": [to_email]},
             Message={
-                "Subject": {"Data": "Your Career Forge code"},
-                "Body": {
-                    "Text": {
-                        "Data": (
-                            f"Your verification code is {code}. "
-                            f"It expires in {minutes} minutes."
-                        )
-                    }
-                },
+                "Subject": {"Data": subject},
+                "Body": {"Text": {"Data": text}},
             },
         )
 

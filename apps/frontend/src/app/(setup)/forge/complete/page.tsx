@@ -8,6 +8,7 @@ import { StreamReveal } from "@/components/forge";
 import { Button } from "@/components/ui";
 import {
   absoluteAppUrl,
+  emailResumeLink,
   listForges,
   mintResumeLink,
   OtpEmailOwnedError,
@@ -49,6 +50,10 @@ export default function ForgeCompletePage() {
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailSendBusy, setEmailSendBusy] = useState(false);
+  const [emailSendError, setEmailSendError] = useState<string | null>(null);
+  const [resumePublicId, setResumePublicId] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [otpPhase, setOtpPhase] = useState<OtpPhase>({ status: "idle" });
@@ -111,7 +116,10 @@ export default function ForgeCompletePage() {
           return;
         }
         const minted = await mintResumeLink(target.public_id);
-        if (!cancelled) setResumeUrl(absoluteAppUrl(minted.path));
+        if (!cancelled) {
+          setResumePublicId(target.public_id);
+          setResumeUrl(absoluteAppUrl(minted.path));
+        }
       } catch (err) {
         if (!cancelled) {
           setResumeError(
@@ -385,21 +393,65 @@ export default function ForgeCompletePage() {
                 this link again on this screen.
               </p>
               {resumeUrl ? (
-                <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <code className="block flex-1 truncate rounded bg-bg px-2 py-1 text-xs text-text-secondary">
-                    {resumeUrl}
-                  </code>
-                  <Button
-                    variant="ghost"
-                    data-testid="forge-resume-copy-btn"
-                    onClick={() => {
-                      void navigator.clipboard.writeText(resumeUrl).then(() => {
-                        setCopied(true);
-                      });
-                    }}
-                  >
-                    {copied ? "Copied" : "Copy resume link"}
-                  </Button>
+                <div className="mt-3 space-y-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <code className="block flex-1 truncate rounded bg-bg px-2 py-1 text-xs text-text-secondary">
+                      {resumeUrl}
+                    </code>
+                    <Button
+                      variant="ghost"
+                      data-testid="forge-resume-copy-btn"
+                      onClick={() => {
+                        void navigator.clipboard.writeText(resumeUrl).then(() => {
+                          setCopied(true);
+                        });
+                      }}
+                    >
+                      {copied ? "Copied" : "Copy resume link"}
+                    </Button>
+                  </div>
+                  {verified && resumePublicId ? (
+                    <div className="space-y-1">
+                      <Button
+                        variant="ghost"
+                        data-testid="forge-resume-email-btn"
+                        disabled={emailSendBusy || emailSent}
+                        onClick={() => {
+                          void (async () => {
+                            setEmailSendBusy(true);
+                            setEmailSendError(null);
+                            try {
+                              const res = await emailResumeLink(resumePublicId);
+                              setEmailSent(true);
+                              setResumeUrl(absoluteAppUrl(res.path));
+                            } catch (err) {
+                              setEmailSendError(
+                                err instanceof Error
+                                  ? err.message
+                                  : "Failed to email resume link",
+                              );
+                            } finally {
+                              setEmailSendBusy(false);
+                            }
+                          })();
+                        }}
+                      >
+                        {emailSent
+                          ? "Sent to your email"
+                          : emailSendBusy
+                            ? "Sending…"
+                            : "Email me this link"}
+                      </Button>
+                      {emailSendError ? (
+                        <p
+                          className="text-sm text-red-400"
+                          data-testid="forge-resume-email-error"
+                        >
+                          {emailSendError}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
               ) : (
                 <p className="mt-2 text-sm text-text-secondary">

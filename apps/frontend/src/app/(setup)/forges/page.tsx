@@ -9,6 +9,7 @@ import { Button } from "@/components/ui";
 import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import {
   absoluteAppUrl,
+  emailResumeLink,
   getMyProfile,
   listForges,
   mintResumeLink,
@@ -21,7 +22,21 @@ import {
 import { hydrateOnboardingFromProfile } from "@/lib/profile-reuse";
 import { setForgeRunId } from "@/lib/forge-session";
 import { isPaywallError, type PaywallError } from "@/lib/paywall";
+import { getAccessToken } from "@/lib/user-session";
 import type { ForgeArtifactSummary } from "@/types/contracts";
+
+function readJwtProvider(token: string | null): string | null {
+  if (!token) return null;
+  try {
+    const part = token.split(".")[1];
+    if (!part) return null;
+    const json = atob(part.replace(/-/g, "+").replace(/_/g, "/"));
+    const payload = JSON.parse(json) as { provider?: unknown };
+    return typeof payload.provider === "string" ? payload.provider : null;
+  } catch {
+    return null;
+  }
+}
 
 /** Mirrors backend `artifact_title()` — default titles count as untitled. */
 function defaultArtifactTitle(goalId: string | null | undefined): string {
@@ -55,10 +70,13 @@ type ForgeOverflowMenuProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   busy: boolean;
+  canEmailResume: boolean;
   copiedShare: boolean;
   copiedResume: boolean;
+  emailedResume: boolean;
   onShare: () => void;
   onResume: () => void;
+  onEmailResume: () => void;
   onRevoke: () => void;
 };
 
@@ -67,10 +85,13 @@ function ForgeOverflowMenu({
   open,
   onOpenChange,
   busy,
+  canEmailResume,
   copiedShare,
   copiedResume,
+  emailedResume,
   onShare,
   onResume,
+  onEmailResume,
   onRevoke,
 }: ForgeOverflowMenuProps) {
   const menuId = useId();
@@ -145,6 +166,20 @@ function ForgeOverflowMenu({
           >
             {copiedResume ? "Resume copied" : "Copy resume"}
           </button>
+          {canEmailResume ? (
+            <button
+              type="button"
+              role="menuitem"
+              className="block w-full px-3 py-2 text-left text-sm text-text-secondary hover:bg-bg hover:text-text-primary disabled:opacity-45"
+              data-testid={`forge-resume-email-${publicId}`}
+              disabled={busy || emailedResume}
+              onClick={() => {
+                onEmailResume();
+              }}
+            >
+              {emailedResume ? "Resume emailed" : "Email resume"}
+            </button>
+          ) : null}
           <button
             type="button"
             role="menuitem"
@@ -176,6 +211,7 @@ export default function ForgesListPage() {
   const [editTitle, setEditTitle] = useState("");
   const [hasDiagnosis, setHasDiagnosis] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+  const emailVerified = readJwtProvider(getAccessToken()) === "email";
 
   useEffect(() => {
     let cancelled = false;
@@ -231,6 +267,22 @@ export default function ForgesListPage() {
       setCopied(`${publicId}-${kind}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to mint link");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handleEmailResume(publicId: string): Promise<void> {
+    setBusyId(`${publicId}-email-resume`);
+    setError(null);
+    try {
+      await emailResumeLink(publicId);
+      setCopied(`${publicId}-email-resume`);
+      setMenuOpenId(null);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to email resume link",
+      );
     } finally {
       setBusyId(null);
     }
@@ -437,10 +489,15 @@ export default function ForgesListPage() {
                         setMenuOpenId(open ? item.public_id : null)
                       }
                       busy={busyId !== null}
+                      canEmailResume={emailVerified}
                       copiedShare={copied === `${item.public_id}-share`}
                       copiedResume={copied === `${item.public_id}-resume`}
+                      emailedResume={copied === `${item.public_id}-email-resume`}
                       onShare={() => void copyLink(item.public_id, "share")}
                       onResume={() => void copyLink(item.public_id, "resume")}
+                      onEmailResume={() =>
+                        void handleEmailResume(item.public_id)
+                      }
                       onRevoke={() => void handleRevoke(item.public_id)}
                     />
                   ) : null}
