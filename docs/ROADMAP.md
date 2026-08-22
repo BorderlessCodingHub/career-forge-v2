@@ -39,6 +39,23 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026
 
 **Start order:** CAR-37 → CAR-36. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done**.
 
+### F3a — Welcome is Premium B ([CAR-48](https://linear.app/career-forge-v2/issue/CAR-48) map)
+
+Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54)). Honesty pass [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) is after the cutover, not a blocker.
+
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
+| [CAR-49](https://linear.app/career-forge-v2/issue/CAR-49) | Tailwind 4 upgrade path on Next 14 | [P] | **Done** — research |
+| [CAR-50](https://linear.app/career-forge-v2/issue/CAR-50) | Tailwind 4 upgrade contract | — | **Done** |
+| [CAR-51](https://linear.app/career-forge-v2/issue/CAR-51) | Welcome port architecture | — | **Done** |
+| [CAR-52](https://linear.app/career-forge-v2/issue/CAR-52) | Vite Premium B source after the port | — | **Done** |
+| [CAR-54](https://linear.app/career-forge-v2/issue/CAR-54) | Welcome cutover spec lock | — | **Done** |
+| [CAR-55](https://linear.app/career-forge-v2/issue/CAR-55) | Upgrade `apps/frontend` Tailwind 3 → 4 | [S] | Backlog — **start next** |
+| [CAR-56](https://linear.app/career-forge-v2/issue/CAR-56) | Welcome cutover: Premium B as `/welcome` | [S] | Blocked by CAR-55 |
+| [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) | Real Welcome proof | — | Backlog — after CAR-56 |
+
+**Start order:** CAR-55 → CAR-56. CAR-37 pt-BR and real Welcome checkout stay unspecified.
+
 ### F3b — email OTP auth + membership **[S]**
 
 **Project:** [F3b — Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) · ADR-003 amend 2026-08-20 · does **not** block F3a pilots
