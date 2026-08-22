@@ -29,6 +29,7 @@ import type {
   OtpRequestResponse,
   OtpVerifyResponse,
   ResumeConsumeResponse,
+  ResumeEmailResponse,
   RoadmapResponse,
   RoadmapForgeEvent,
   RoadmapSyncNode,
@@ -456,6 +457,15 @@ export async function mintShareLink(publicId: string): Promise<ForgeLinkMintResp
 export async function mintResumeLink(publicId: string): Promise<ForgeLinkMintResponse> {
   return apiFetch<ForgeLinkMintResponse>(
     `/me/forges/${encodeURIComponent(publicId)}/resume`,
+    { method: "POST" },
+  );
+}
+
+export async function emailResumeLink(
+  publicId: string,
+): Promise<ResumeEmailResponse> {
+  return apiFetch<ResumeEmailResponse>(
+    `/me/forges/${encodeURIComponent(publicId)}/resume/email`,
     { method: "POST" },
   );
 }

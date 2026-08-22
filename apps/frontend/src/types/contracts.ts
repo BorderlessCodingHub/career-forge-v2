@@ -151,6 +151,12 @@ export type ResumeConsumeResponse = {
   external_id: string;
 };
 
+export type ResumeEmailResponse = {
+  ok: boolean;
+  email: string;
+  path: string;
+};
+
 export type OtpRequestResponse = {
   ok: boolean;
   email: string;

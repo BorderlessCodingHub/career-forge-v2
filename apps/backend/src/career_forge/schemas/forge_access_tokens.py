@@ -1,4 +1,4 @@
-"""Schemas for share / resume forge deep-links (CAR-27)."""
+"""Schemas for share / resume forge deep-links (CAR-27 / CAR-47)."""
 
 from __future__ import annotations
 
@@ -18,3 +18,9 @@ class ResumeConsumeResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     external_id: str
+
+
+class ResumeEmailResponse(BaseModel):
+    ok: bool = True
+    email: str = Field(min_length=1)
+    path: str = Field(min_length=1)

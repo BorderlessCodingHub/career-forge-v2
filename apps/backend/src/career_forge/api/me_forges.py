@@ -1,17 +1,20 @@
-"""Bearer-scoped forge artifact list + open + share/resume mint (CAR-25/27/29)."""
+"""Bearer-scoped forge artifact list + open + share/resume mint (CAR-25/27/29/47)."""
 
 from __future__ import annotations
 
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import ExternalId, get_principal
+from career_forge.auth.principal import AuthPrincipal
 from career_forge.db.session import get_db
 from career_forge.schemas.forge_access_tokens import (
     ForgeLinkMintResponse,
     ForgeShareRevokeResponse,
+    ResumeEmailResponse,
 )
 from career_forge.schemas.forge_artifacts import (
     ForgeArtifactListResponse,
@@ -78,6 +81,21 @@ def mint_resume_link(
 ) -> ForgeLinkMintResponse:
     result = forge_access_tokens_service.create_resume_token(db, external_id, public_id)
     return ForgeLinkMintResponse.model_validate(result)
+
+
+@router.post("/forges/{public_id}/resume/email", response_model=ResumeEmailResponse)
+def email_resume_link(
+    public_id: UUID,
+    principal: Annotated[AuthPrincipal, Depends(get_principal)],
+    db: Session = Depends(get_db),
+) -> ResumeEmailResponse:
+    result = forge_access_tokens_service.email_resume_link(
+        db,
+        external_id=principal.external_id,
+        provider=principal.provider,
+        public_id=public_id,
+    )
+    return ResumeEmailResponse.model_validate(result)
 
 
 @router.post("/forges/{public_id}/share/revoke", response_model=ForgeShareRevokeResponse)

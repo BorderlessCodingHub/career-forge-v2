@@ -1,4 +1,4 @@
-"""Share + resume forge deep-link tokens (CAR-27 / ADR-003)."""
+"""Share + resume forge deep-link tokens (CAR-27 / ADR-003 / CAR-47)."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from typing import TypedDict
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
-from career_forge.auth.jwt_tokens import mint_anonymous_token
+from career_forge.auth.jwt_tokens import EMAIL_PROVIDER, mint_anonymous_token
 from career_forge.config import settings
 from career_forge.db.models.forge_access_token import (
     ROLE_RESUME,
@@ -20,12 +20,15 @@ from career_forge.db.models.forge_access_token import (
 )
 from career_forge.db.models.forge_artifact import ForgeArtifact
 from career_forge.db.repositories.user import ensure_user
-from career_forge.errors import GoneError, NotFoundError
+from career_forge.errors import BadRequestError, GoneError, NotFoundError
 from career_forge.schemas.roadmap import RoadmapResponse
 from career_forge.services.forge_artifacts import (
     ForgeArtifactNotFoundError,
     roadmap_from_snapshot,
 )
+from career_forge.services.mailer import Mailer, get_mailer
+
+_DEMO_EMAIL_SUFFIX = "@demo.careerforge.local"
 
 
 class TokenMintResult(TypedDict):
@@ -37,6 +40,12 @@ class ResumeConsumeResult(TypedDict):
     access_token: str
     external_id: str
     token_type: str
+
+
+class ResumeEmailResult(TypedDict):
+    ok: bool
+    email: str
+    path: str
 
 
 class ForgeAccessTokenNotFoundError(NotFoundError):
@@ -103,6 +112,52 @@ def create_resume_token(
     session.add(row)
     session.commit()
     return {"token": raw, "path": f"/resume/{raw}"}
+
+
+def email_resume_link(
+    session: Session,
+    *,
+    external_id: str,
+    provider: str,
+    public_id: uuid.UUID,
+    mailer: Mailer | None = None,
+) -> ResumeEmailResult:
+    """Mint a resume token and email it to the OTP-verified account address.
+
+    Requires ``provider=email`` (CAR-44). Optional CAR-29 email store alone is
+    not sufficient. Persists the token only after the mailer accepts the send.
+    """
+    if provider != EMAIL_PROVIDER:
+        raise BadRequestError(
+            "verify your email with OTP before requesting a resume email",
+        )
+
+    user = ensure_user(session, external_id)
+    email = user.email
+    if not email or email.endswith(_DEMO_EMAIL_SUFFIX):
+        raise BadRequestError("no verified email on this account")
+
+    artifact = _owned_artifact(session, external_id, public_id)
+    raw = _mint_raw_token()
+    path = f"/resume/{raw}"
+    resume_url = f"{settings.frontend_url.rstrip('/')}{path}"
+    row = ForgeAccessToken(
+        artifact_id=artifact.id,
+        role=ROLE_RESUME,
+        token_hash=_hash_token(raw),
+        expires_at=datetime.now(UTC) + timedelta(days=settings.jwt_resume_ttl_days),
+    )
+    session.add(row)
+    session.flush()
+    try:
+        (mailer or get_mailer()).send_resume_link(to_email=email, resume_url=resume_url)
+        session.commit()
+    except Exception as exc:
+        session.rollback()
+        raise BadRequestError(
+            "failed to send resume email — try again later",
+        ) from exc
+    return {"ok": True, "email": email, "path": path}
 
 
 def revoke_share_tokens(
