@@ -1,3 +1,4 @@
+export { BrandLockup } from "./BrandLockup";
 export { BrandMark } from "./BrandMark";
 export { Button } from "./Button";
 export { Pill } from "./Pill";
