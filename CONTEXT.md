@@ -52,7 +52,7 @@ _Avoid_: unauthenticated, logged out, guest, “no auth”
 
 **Email identity**:
 Proof that the learner owns an email address, established by Career Forge OTP. This is what “authenticate” means in product talk.
-_Avoid_: authenticate (overloaded), login (generic), Borderless account, membership
+_Avoid_: authenticate (overloaded), login (generic), Borderless account, membership, Operator OTP
 
 **Identity gate**:
 The rule that the product loop requires Email identity before any step in it. Welcome, share, and resume stay outside. Not billing.
@@ -69,6 +69,40 @@ _Avoid_: authentication, one free forge, ransoming artifacts
 **Paywall**:
 The billing gate for an external learner without entitlement. It blocks **starting** diagnosis and **starting** a forge. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have.
 _Avoid_: OTP, login, calling the identity gate “the paywall”; blocking `/` Continue on an existing artifact; blocking the goal picker
+
+### Operator console
+
+**Operator**:
+A Borderless person who uses the Operator console. Not a learner and not a mentor.
+_Avoid_: admin, staff (diagnosis XP persona), editor (that is a role)
+
+**Operator identity**:
+Proof the Operator belongs on the Operator console, established by Operator OTP. Distinct from Email identity even when the email is the same — two identities, never one session. Not Membership and not Entitlement.
+_Avoid_: login, admin password, “authenticate as staff”, learner OTP plus allowlist
+
+**Operator OTP**:
+The Career Forge OTP namespace that proves Operator identity. Separate from the OTP that proves Email identity.
+_Avoid_: learner OTP, magic link, shared secret
+
+**Operator console**:
+Staff-only surface outside the product loop: Access desk + Content desk, one Operator identity.
+_Avoid_: admin panel, dashboard OPS, Staff console
+
+**Access desk**:
+The Operator console desk that writes pilot access (Membership stub and billing entitlement) and shows cost burn read-only, plus Access cards.
+_Avoid_: user admin, impersonation, live kill-switch
+
+**Content desk**:
+The Operator console desk for canonical skill metadata (published, title, URL) in Postgres. Markdown body stays in git. Not a CMS.
+_Avoid_: admin editor, NocoDB, Postgres CMS
+
+**Access card**:
+Read-only lookup of a learner by email: Email identity, Membership, Entitlement, forge count this month. Not a Roadmap or diagnosis.
+_Avoid_: learner file, user admin, mentor view
+
+**Editor**:
+The Operator console role that may use the Content desk. An Operator may hold Access, Editor, or both.
+_Avoid_: CMS author, admin
 
 ### Marketing surface
 
