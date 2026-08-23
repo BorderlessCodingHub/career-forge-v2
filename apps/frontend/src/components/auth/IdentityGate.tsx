@@ -58,22 +58,23 @@ export function IdentityGate({
 
   async function handleVerifyCode() {
     if (otpPhase.status !== "code_sent") return;
+    const currentEmail = otpPhase.email;
     setOtpBusy(true);
     setOtpError(null);
-    setOtpPhase({ status: "verifying", email: otpPhase.email });
+    setOtpPhase({ status: "verifying" });
     try {
-      await verifyOtp(otpPhase.email, code.trim());
+      await verifyOtp(currentEmail, code.trim());
       onVerified();
     } catch (err) {
       if (err instanceof OtpEmailOwnedError) {
         setOtpPhase({
           status: "conflict",
-          email: otpPhase.email,
+          email: currentEmail,
           existing: err.conflict.existing,
         });
         return;
       }
-      setOtpPhase({ status: "code_sent", email: otpPhase.email });
+      setOtpPhase({ status: "code_sent", email: currentEmail });
       setOtpError(err instanceof Error ? err.message : "Verification failed.");
     } finally {
       setOtpBusy(false);
