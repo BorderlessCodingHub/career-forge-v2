@@ -54,6 +54,10 @@ _Avoid_: unauthenticated, logged out, guest, “no auth”
 Proof that the learner owns an email address, established by Career Forge OTP. This is what “authenticate” means in product talk.
 _Avoid_: authenticate (overloaded), login (generic), Borderless account, membership, Operator OTP
 
+**Sign out** (UI: *Sair*):
+Ends Email identity on this browser. Clears all client state and revokes the access JWT server-side. Returns the learner to the Identity gate — not “logged out of Borderless.”
+_Avoid_: logged out, logout (generic), deauthenticate, Borderless sign-out
+
 **Identity gate**:
 The rule that the product loop requires Email identity before any step in it. Welcome, share, and resume stay outside. Not billing.
 _Avoid_: paywall, post-forge upgrade, Welcome login, entry-gate on marketing
