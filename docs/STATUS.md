@@ -2,7 +2,7 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-23** · Last merge: **PR #49** CAR-57 identity gate + paywall before diagnosis (`9bcce35`) · prior **PR #47** ADR-005 lock · **CAR-56** (PR #46) · **CAR-55** (PR #45) · **CAR-47** (PR #43) · **CAR-46** (PR #42) · **CAR-45** (PR #41) · **CAR-44** (email OTP) · **CAR-57 Done** · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
+Last updated: **2026-08-23** · Last merge: **PR #50** CAR-69 Sign out + JWT jti revocation (`cbea572`) · prior **PR #49** CAR-57 identity gate + paywall before diagnosis (`9bcce35`) · **CAR-56** (PR #46) · **CAR-55** (PR #45) · **CAR-47** (PR #43) · **CAR-46** (PR #42) · **CAR-45** (PR #41) · **CAR-44** (email OTP) · **CAR-57 Done** · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · **F3b:** [Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) **Completed**  
 **Next eng:** **F3a** — [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots (unblocked) · [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof · [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR.
 
@@ -96,6 +96,7 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) | Send resume by email | [S] | **Done** — PR #43 · `POST …/resume/email` + CTAs |
 | [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Paywall (Stripe external) | [S] | **Done** — PR #42 · **free forge → CAR-57** |
 | [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) | Identity gate at product entry + paywall before diagnosis | [S] | **Done** — PR #49 · [ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) |
+| [CAR-69](https://linear.app/career-forge-v2/issue/CAR-69) | Sign out + JWT jti revocation | [S] | **Done** — PR #50 · [ADR-006](./decisions/ADR-006-sign-out-jti-revocation.md) |
 
 **Start order:** CAR-36 pilots · CAR-53 honesty pass · CAR-37 pt-BR. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done** · **CAR-54 Done** · **CAR-55 Done** · **CAR-56 Done** · **CAR-57 Done.**
 
@@ -130,6 +131,7 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | Send resume by email | ✅ Done | CAR-47 — PR #43 · OTP-verified `POST /me/forges/{id}/resume/email` · forge/complete + `/forges` CTAs |
 | Entitlement paywall (external) | ✅ Done | CAR-57 — 402 on diagnosis start + forge; no free forge ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md)) |
 | Identity gate at product entry | ✅ Done | CAR-57 — Email identity before product loop; server-side `provider=email` |
+| Sign out (this device) | ✅ Done | CAR-69 — PR #50 · `POST /auth/sign-out` + jti denylist; client wipe + confirm ([ADR-006](./decisions/ADR-006-sign-out-jti-revocation.md)) |
 | Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon; PR #29 copies `public/` into standalone (Labs `/brand/*`) |
 | Marketing landing `/welcome` | ✅ Done | CAR-35 — EN `/welcome`; CTA → `/`; no pricing/email; pt-BR → CAR-37 |
 | `/welcome` motion polish | ✅ Done | CAR-38 — lean CSS hero stagger + scroll reveal; reduced-motion still; PR #32 |
