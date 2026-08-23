@@ -1,5 +1,6 @@
-/** Anonymous user session + JWT access token (ADR-003 / CAR-23). */
+/** User session + JWT access token (ADR-003 / CAR-57). */
 
+import { hasEmailProvider } from "@/lib/jwt";
 import { readString, writeString } from "@/lib/session/storage";
 
 const USER_ID_KEY = "career-forge.user-id";
@@ -50,20 +51,30 @@ export function adoptSession(accessToken: string, externalId: string): void {
   setAccessToken(accessToken, externalId);
 }
 
-let mintInFlight: Promise<string> | null = null;
+/** Store email JWT after OTP verify (CAR-57). */
+export function setSessionFromOtp(accessToken: string, externalId: string): void {
+  adoptSession(accessToken, externalId);
+}
+
+export function hasEmailIdentity(): boolean {
+  return hasEmailProvider(getAccessToken());
+}
+
+let migrationMintInFlight: Promise<string> | null = null;
 
 /**
- * Ensure a Bearer JWT exists, migrating ``career-forge.user-id`` on first mint.
+ * Migration-only: mint anon JWT for OTP promote when a legacy session has no token.
+ * Happy path uses OTP verify with ``external_id`` — never calls anon mint (CAR-57).
  */
-export async function ensureAccessToken(): Promise<string> {
+export async function ensureMigrationAccessToken(): Promise<string> {
   if (typeof window === "undefined") {
-    throw new Error("ensureAccessToken() is client-only");
+    throw new Error("ensureMigrationAccessToken() is client-only");
   }
   const existing = getAccessToken();
   if (existing) return existing;
-  if (mintInFlight) return mintInFlight;
+  if (migrationMintInFlight) return migrationMintInFlight;
 
-  mintInFlight = (async () => {
+  migrationMintInFlight = (async () => {
     const externalId = getUserId();
     const backendUrl = resolveBackendUrl();
     const res = await fetch(`${backendUrl}/auth/anon/mint`, {
@@ -73,7 +84,7 @@ export async function ensureAccessToken(): Promise<string> {
     });
     if (!res.ok) {
       const detail = await res.text().catch(() => res.statusText);
-      throw new Error(`Failed to mint auth token: ${res.status} ${detail}`);
+      throw new Error(`Failed to mint migration token: ${res.status} ${detail}`);
     }
     const data = (await res.json()) as {
       access_token: string;
@@ -84,8 +95,21 @@ export async function ensureAccessToken(): Promise<string> {
   })();
 
   try {
-    return await mintInFlight;
+    return await migrationMintInFlight;
   } finally {
-    mintInFlight = null;
+    migrationMintInFlight = null;
   }
+}
+
+/**
+ * Return Bearer JWT for authenticated API calls. Requires email identity on the
+ * product loop — complete the identity gate first (CAR-57).
+ */
+export async function ensureAccessToken(): Promise<string> {
+  if (typeof window === "undefined") {
+    throw new Error("ensureAccessToken() is client-only");
+  }
+  const existing = getAccessToken();
+  if (existing && hasEmailProvider(existing)) return existing;
+  throw new Error("Email identity required — complete the sign-in gate first.");
 }

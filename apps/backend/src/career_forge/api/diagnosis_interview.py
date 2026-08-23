@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 
 from career_forge.ai.llm.diagnosis_interview import DiagnosisInterviewLlmError
 from career_forge.ai.streaming.sse import format_sse, sse_connected_body, sse_response
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
+from career_forge.db.session import get_db
 from career_forge.schemas.diagnosis_interview import (
     InterviewStartRequest,
     InterviewTurnRequest,
@@ -19,6 +20,7 @@ from career_forge.services.diagnosis_session import (
     DiagnosisSessionNotFoundError,
     get_diagnosis_session_service,
 )
+from career_forge.services.entitlement import require_diagnosis_entitlement
 
 router = APIRouter()
 
@@ -26,9 +28,11 @@ router = APIRouter()
 @router.post("/interview/start", response_model=InterviewTurnResponse)
 async def start_diagnosis_interview(
     body: InterviewStartRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
+    db: Session = Depends(get_db),
 ) -> InterviewTurnResponse:
     """Start adaptive diagnosis interview — intake + optional CV → first questions."""
+    require_diagnosis_entitlement(db, external_id)
     service = get_diagnosis_session_service()
     payload = body.model_copy(update={"user_id": external_id})
     try:
@@ -43,9 +47,11 @@ async def start_diagnosis_interview(
 @router.post("/interview/start/stream")
 async def start_diagnosis_interview_stream(
     body: InterviewStartRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
+    db: Session = Depends(get_db),
 ) -> StreamingResponse:
     """SSE stream — live mapping progress while starting the interview."""
+    require_diagnosis_entitlement(db, external_id)
     service = get_diagnosis_session_service()
     payload = body.model_copy(update={"user_id": external_id})
 
@@ -62,7 +68,7 @@ async def start_diagnosis_interview_stream(
 @router.get("/interview/{session_id}", response_model=InterviewTurnResponse)
 async def get_diagnosis_session(
     session_id: str,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
 ) -> InterviewTurnResponse:
     """Resume an in-progress or completed diagnosis interview session."""
     _ = external_id  # Bearer required (ADR-003)
@@ -77,7 +83,7 @@ async def get_diagnosis_session(
 async def submit_diagnosis_turn(
     session_id: str,
     body: InterviewTurnRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
 ) -> InterviewTurnResponse:
     """Submit answers for current round → next questions or final diagnosis."""
     _ = external_id
@@ -101,7 +107,7 @@ async def submit_diagnosis_turn(
 async def submit_diagnosis_turn_stream(
     session_id: str,
     body: InterviewTurnRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
 ) -> StreamingResponse:
     """SSE stream — live mapping progress while processing a turn."""
     _ = external_id

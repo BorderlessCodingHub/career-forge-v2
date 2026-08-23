@@ -39,6 +39,7 @@ class OtpRequestResponse(BaseModel):
 class OtpVerifyBody(BaseModel):
     email: str = Field(min_length=3, max_length=255)
     code: str = Field(min_length=6, max_length=6)
+    external_id: str | None = Field(default=None, max_length=64)
 
     @field_validator("email")
     @classmethod

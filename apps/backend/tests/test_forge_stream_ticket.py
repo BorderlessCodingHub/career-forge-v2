@@ -15,7 +15,10 @@ from career_forge.auth.stream_tickets import (
     decode_forge_stream_ticket,
     mint_forge_stream_ticket,
 )
+from career_forge.auth.providers import get_auth_provider
 from career_forge.config import settings
+from career_forge.db.repositories.user import ensure_user
+from career_forge.db.session import SessionLocal
 from career_forge.schemas.diagnosis import DiagnosisRequest
 from career_forge.ai.graphs.diagnosis import build_diagnosis_response
 
@@ -23,7 +26,13 @@ from career_forge.ai.graphs.diagnosis import build_diagnosis_response
 def _auth_headers(raw_client: TestClient, external_id: str) -> dict[str, str]:
     res = raw_client.post("/auth/anon/mint", json={"external_id": external_id})
     assert res.status_code == 200, res.text
-    return {"Authorization": f"Bearer {res.json()['access_token']}"}
+    with SessionLocal() as session:
+        row = ensure_user(session, external_id)
+        row.membership_label = "base"
+        row.membership_entitled = True
+        session.commit()
+    token = get_auth_provider().mint_email(external_id)
+    return {"Authorization": f"Bearer {token}"}
 
 
 def _diagnosis_payload() -> dict[str, Any]:

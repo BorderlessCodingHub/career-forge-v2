@@ -45,7 +45,7 @@ import {
   parseForgeStreamEvent,
   type ForgeStreamSideEffects,
 } from "@/lib/forge-stream";
-import { ensureAccessToken, getUserId } from "@/lib/user-session";
+import { ensureAccessToken, getAccessToken, getUserId, setSessionFromOtp } from "@/lib/user-session";
 import {
   QUOTA_EXHAUSTED_COPY,
   isQuotaExhaustedMessage,
@@ -542,19 +542,24 @@ export class OtpEmailOwnedError extends Error {
   }
 }
 
-/** Verify OTP with current Bearer — promote or throw OtpEmailOwnedError (409). */
+/** Verify OTP — promote anon or mint email JWT via external_id (CAR-57). */
 export async function verifyOtp(
   email: string,
   code: string,
 ): Promise<OtpVerifyResponse> {
-  const token = await ensureAccessToken();
+  const token = getAccessToken();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const payload: { email: string; code: string; external_id?: string } = {
+    email,
+    code,
+  };
+  if (!token) payload.external_id = getUserId();
+
   const res = await fetch(`${backendUrl}/auth/otp/verify`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ email, code }),
+    headers,
+    body: JSON.stringify(payload),
   });
   if (res.status === 409) {
     try {
@@ -577,7 +582,9 @@ export async function verifyOtp(
   if (!res.ok) {
     throw await readApiError(res);
   }
-  return res.json() as Promise<OtpVerifyResponse>;
+  const data = (await res.json()) as OtpVerifyResponse;
+  setSessionFromOtp(data.access_token, data.external_id);
+  return data;
 }
 
 /** Public share fetch — no identity adoption (Bearer optional). */

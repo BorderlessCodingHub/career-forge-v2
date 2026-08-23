@@ -13,7 +13,7 @@ from career_forge.ai.executor import get_graph_executor
 from career_forge.ai.tracing import with_trace_input
 from career_forge.ai.run import GraphRun, GraphRunResult, get_graph_run_store
 from career_forge.ai.streaming.sse import format_sse, sse_connected_body, sse_response
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
 from career_forge.auth.stream_tickets import (
     decode_forge_stream_ticket,
     mint_forge_stream_ticket,
@@ -85,7 +85,7 @@ def _validate_stream_ticket(run_id: str, ticket: str | None) -> GraphRun:
 @router.post("/runs", response_model=ForgeRunResponse, status_code=202)
 async def forge_run(
     body: ForgeRunRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     db: Session = Depends(get_db),
 ) -> ForgeRunResponse:
     """Enqueue roadmap forge run — client streams via GET /forge/{run_id}/stream.
@@ -127,7 +127,7 @@ async def forge_run(
 @router.post("/{run_id}/stream-ticket", response_model=ForgeStreamTicketResponse)
 async def forge_stream_ticket(
     run_id: str,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
 ) -> ForgeStreamTicketResponse:
     """Mint a short-lived ticket for EventSource-compatible SSE (CAR-26)."""
     _require_owned_run(run_id, external_id)

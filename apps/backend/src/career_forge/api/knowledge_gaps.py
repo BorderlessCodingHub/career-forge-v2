@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.knowledge_gap import KnowledgeGapItem
 from career_forge.services import knowledge_gaps as knowledge_gaps_service
@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.get("", response_model=list[KnowledgeGapItem])
 def list_knowledge_gaps(
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     node_id: str | None = Query(None),
     db: Session = Depends(get_db),
 ) -> list[KnowledgeGapItem]:

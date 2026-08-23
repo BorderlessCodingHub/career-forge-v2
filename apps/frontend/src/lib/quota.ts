@@ -8,7 +8,7 @@ export function isQuotaExhaustedMessage(message: string): boolean {
 
 export function toUserFacingApiError(status: number, detail: string): string {
   if (status === 402) {
-    return "You've used your free forge — subscribe to continue";
+    return "Subscribe to start diagnosis and forge your roadmap";
   }
   if (status === 429 || isQuotaExhaustedMessage(detail)) {
     return QUOTA_EXHAUSTED_COPY;

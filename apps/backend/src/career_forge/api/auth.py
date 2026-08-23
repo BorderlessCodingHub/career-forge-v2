@@ -5,11 +5,10 @@ from __future__ import annotations
 import re
 import uuid
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from career_forge.api.deps import ExternalId
 from career_forge.auth.jwt_tokens import ANON_PROVIDER
 from career_forge.auth.providers import get_auth_provider
 from career_forge.config import settings
@@ -92,13 +91,33 @@ def otp_request(
     return OtpRequestResponse(email=body.email, expires_in=expires_in)
 
 
+def _resolve_verify_external_id(request: Request, body: OtpVerifyBody) -> str:
+    """Bearer (anon promote) or body ``external_id`` (happy path without anon mint)."""
+    header = request.headers.get("authorization") or request.headers.get("Authorization")
+    if header and header.lower().startswith("bearer "):
+        token = header[7:].strip()
+        if token:
+            try:
+                principal = get_auth_provider().verify(token)
+                return principal.external_id
+            except ValueError:
+                pass
+    if body.external_id:
+        return _normalize_external_id(body.external_id)
+    raise HTTPException(
+        status_code=401,
+        detail="Missing Bearer token or external_id for OTP verify",
+    )
+
+
 @router.post("/otp/verify", response_model=OtpVerifyResponse)
 def otp_verify(
     body: OtpVerifyBody,
-    external_id: ExternalId,
+    request: Request,
     db: Session = Depends(get_db),
 ) -> OtpVerifyResponse:
     """Verify OTP → promote anon or 409 conflict payload for chooser."""
+    external_id = _resolve_verify_external_id(request, body)
     result = verify_otp(
         db,
         external_id=external_id,

@@ -21,6 +21,7 @@ _PUBLIC_EXACT = frozenset(
         "/redoc",
         "/auth/anon/mint",
         "/auth/otp/request",
+        "/auth/otp/verify",
         "/billing/stripe/webhook",
     }
 )

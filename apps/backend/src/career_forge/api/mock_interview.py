@@ -6,7 +6,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from career_forge.ai.tools.mock_interview_mcq import generate_mcq_mock_interview
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.mock_interview import (
     MockInterviewQuestionsResponse,
@@ -23,7 +23,7 @@ router = APIRouter()
 
 @router.get("/questions", response_model=MockInterviewQuestionsResponse)
 async def get_mock_interview_questions(
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     node_id: str = Query(..., min_length=1),
     db: Session = Depends(get_db),
 ) -> MockInterviewQuestionsResponse:
@@ -47,7 +47,7 @@ async def get_mock_interview_questions(
 @router.post("", response_model=MockInterviewRunResponse)
 async def run_mock_interview(
     body: MockInterviewRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ) -> MockInterviewRunResponse:

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 
+import { ProductEntryGate } from "@/components/auth";
 import { ForgeEventLine, ForgeTimeline } from "@/components/forge";
 import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import { SoftGateWarningBanner } from "@/components/diagnosis/SoftGateWarningBanner";
@@ -20,7 +21,7 @@ import { getStoredDiagnosis } from "@/lib/onboarding-session";
 import { isPaywallError, type PaywallError } from "@/lib/paywall";
 import type { RoadmapForgeEvent } from "@/types/contracts";
 
-export default function ForgePage() {
+function ForgePageContent() {
   const router = useRouter();
   const [events, setEvents] = useState<RoadmapForgeEvent[]>([]);
   const [status, setStatus] = useState<"idle" | "starting" | "streaming" | "done" | "error">(
@@ -247,5 +248,13 @@ export default function ForgePage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function ForgePage() {
+  return (
+    <ProductEntryGate>
+      <ForgePageContent />
+    </ProductEntryGate>
   );
 }

@@ -1,8 +1,4 @@
-"""Entitlement paywall — 1 free forge then Stripe for external (CAR-46).
-
-Seams: evaluate_entitlement(...) → EntitlementDecision;
-POST /forge/runs raises PaywallError (HTTP 402) after the free forge.
-"""
+"""Product entitlement paywall — before diagnosis and forge for unpaid external (CAR-57)."""
 
 from __future__ import annotations
 
@@ -15,6 +11,7 @@ from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
 from career_forge.demo.ana_state import DEMO_ANA_EXTERNAL_ID
+from career_forge.auth.providers import get_auth_provider
 from career_forge.errors import PAYWALL_MESSAGE, PaywallError
 from career_forge.schemas.diagnosis import DiagnosisRequest
 from career_forge.services.cost_guard import CostGuard, InMemoryUsageStore, current_year_month
@@ -30,7 +27,7 @@ def test_parse_billing_allowlist_normalizes_emails() -> None:
     assert parsed == {"pilot@x.com", "other@y.com"}
 
 
-def test_external_first_forge_is_allowed() -> None:
+def test_unpaid_external_is_paywalled() -> None:
     decision = evaluate_entitlement(
         user_id="ext-1",
         membership_label="external",
@@ -39,11 +36,11 @@ def test_external_first_forge_is_allowed() -> None:
         email="ext@example.com",
         forge_count=0,
     )
-    assert decision.allowed is True
-    assert decision.reason == "ok"
+    assert decision.allowed is False
+    assert decision.reason == "paywall"
 
 
-def test_external_second_forge_is_paywalled() -> None:
+def test_unpaid_external_stays_paywalled_after_forge() -> None:
     decision = evaluate_entitlement(
         user_id="ext-1",
         membership_label="external",
@@ -151,7 +148,14 @@ def _diagnosis_payload(user_id: str) -> dict:
     }
 
 
-def _auth_headers(raw_client: TestClient, external_id: str) -> dict[str, str]:
+def _email_auth_headers(raw_client: TestClient, external_id: str) -> dict[str, str]:
+    res = raw_client.post("/auth/anon/mint", json={"external_id": external_id})
+    assert res.status_code == 200, res.text
+    token = get_auth_provider().mint_email(external_id)
+    return {"Authorization": f"Bearer {token}"}
+
+
+def _anon_auth_headers(raw_client: TestClient, external_id: str) -> dict[str, str]:
     res = raw_client.post("/auth/anon/mint", json={"external_id": external_id})
     assert res.status_code == 200, res.text
     return {"Authorization": f"Bearer {res.json()['access_token']}"}
@@ -168,33 +172,30 @@ def test_memory_store_counts_forge_runs_per_user() -> None:
     assert store.count_for_user("a", graph_name="mentor") == 1
 
 
-def test_external_second_forge_http_402(
+def test_external_first_forge_http_402(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(settings, "entitlement_billing_allowlist", "")
     user = "paywall-ext-http"
-    headers = _auth_headers(raw_client, user)
+    headers = _email_auth_headers(raw_client, user)
     body = _diagnosis_payload(user)
 
     first = raw_client.post("/forge/runs", json=body, headers=headers)
-    assert first.status_code == 202, first.text
-
-    second = raw_client.post("/forge/runs", json=body, headers=headers)
-    assert second.status_code == 402, second.text
-    detail = second.json()["detail"]
+    assert first.status_code == 402, first.text
+    detail = first.json()["detail"]
     assert detail["code"] == "paywall"
     assert detail["message"] == PAYWALL_MESSAGE
     assert detail["checkout_available"] is False
 
 
-def test_base_member_second_forge_skips_paywall(
+def test_base_member_forge_skips_paywall(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(settings, "entitlement_billing_allowlist", "")
     user = "paywall-base-http"
-    headers = _auth_headers(raw_client, user)
+    headers = _email_auth_headers(raw_client, user)
     with SessionLocal() as session:
         row = ensure_user(session, user)
         row.membership_label = "base"
@@ -214,7 +215,7 @@ def test_allowlisted_external_skips_http_paywall(
 ) -> None:
     monkeypatch.setattr(settings, "entitlement_billing_allowlist", "pilot@example.com")
     user = "paywall-allow-http"
-    headers = _auth_headers(raw_client, user)
+    headers = _email_auth_headers(raw_client, user)
     with SessionLocal() as session:
         row = ensure_user(session, user)
         row.email = "pilot@example.com"
@@ -235,7 +236,7 @@ def test_cost_cap_still_applies_after_entitlement(
 ) -> None:
     monkeypatch.setattr(settings, "entitlement_billing_allowlist", "")
     user = "paywall-cap-http"
-    headers = _auth_headers(raw_client, user)
+    headers = _email_auth_headers(raw_client, user)
     with SessionLocal() as session:
         row = ensure_user(session, user)
         row.membership_label = "psp"

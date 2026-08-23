@@ -1,5 +1,6 @@
 "use client";
 
+import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import { Button } from "@/components/ui";
 import { OnboardingRecapSidebar } from "@/components/diagnosis/OnboardingRecapSidebar";
 import { CAREER_GOALS } from "@/lib/onboarding-data";
@@ -25,6 +26,7 @@ export function DiagnosticPills() {
     streamPhaseLabel,
     analyzingKey,
     error,
+    paywall,
     activeKeys,
     roundComplete,
     progressPct,
@@ -64,7 +66,9 @@ export function DiagnosticPills() {
         />
 
         <section className="rounded-md border border-border bg-surface p-6">
-          {bootstrapping ? (
+          {paywall ? (
+            <PaywallPanel checkoutAvailable={paywall.checkoutAvailable} />
+          ) : bootstrapping ? (
             <div className="space-y-4" data-testid="diagnosis-bootstrapping">
               <div className="h-6 w-40 animate-pulse rounded bg-surface-elevated" />
               <div className="h-4 w-full max-w-md animate-pulse rounded bg-surface-elevated" />
