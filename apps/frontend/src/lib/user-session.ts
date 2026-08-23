@@ -1,10 +1,16 @@
 /** User session + JWT access token (ADR-003 / CAR-57). */
 
 import { hasEmailProvider } from "@/lib/jwt";
-import { readString, writeString } from "@/lib/session/storage";
+import { clearCareerForgeStorage, readString, writeString } from "@/lib/session/storage";
+
+const DIAGNOSIS_SESSION_KEY = "career-forge.diagnosis-session-id";
+const FORGE_RUN_KEY = "career-forge.forge-run-id";
 
 const USER_ID_KEY = "career-forge.user-id";
 const ACCESS_TOKEN_KEY = "career-forge.access-token";
+
+export const SIGN_OUT_CONFIRM_MESSAGE =
+  "You will lose in-progress work on this device. Continue?";
 
 function sameOriginApiBase(): string {
   return (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
@@ -58,6 +64,46 @@ export function setSessionFromOtp(accessToken: string, externalId: string): void
 
 export function hasEmailIdentity(): boolean {
   return hasEmailProvider(getAccessToken());
+}
+
+export function hasInProgressWork(): boolean {
+  if (typeof window === "undefined") return false;
+  return Boolean(
+    readString(DIAGNOSIS_SESSION_KEY, "session") || readString(FORGE_RUN_KEY, "session"),
+  );
+}
+
+function productEntryPath(): string {
+  const base = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
+  return `${base}/` || "/";
+}
+
+/** End Email identity on this browser — API first, wipe regardless, redirect home. */
+export async function signOut(options?: { skipConfirm?: boolean }): Promise<void> {
+  if (typeof window === "undefined") {
+    throw new Error("signOut() is client-only");
+  }
+
+  if (!options?.skipConfirm && hasInProgressWork()) {
+    const confirmed = window.confirm(SIGN_OUT_CONFIRM_MESSAGE);
+    if (!confirmed) return;
+  }
+
+  const token = getAccessToken();
+  if (token) {
+    const backendUrl = resolveBackendUrl();
+    try {
+      await fetch(`${backendUrl}/auth/sign-out`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch {
+      // Wipe client even when API fails (CAR-69).
+    }
+  }
+
+  clearCareerForgeStorage();
+  window.location.assign(productEntryPath());
 }
 
 let migrationMintInFlight: Promise<string> | null = null;

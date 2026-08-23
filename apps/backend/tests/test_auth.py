@@ -47,6 +47,7 @@ def test_anon_mint_creates_user_and_token(raw_client: TestClient) -> None:
     )
     assert payload["sub"] == "user-car23aa"
     assert payload["provider"] == ANON_PROVIDER
+    assert payload.get("jti")
 
     with SessionLocal() as session:
         user = session.scalar(select(User).where(User.external_id == "user-car23aa"))

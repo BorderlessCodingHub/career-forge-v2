@@ -5,12 +5,15 @@ from __future__ import annotations
 import re
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from career_forge.auth.jwt_tokens import ANON_PROVIDER
 from career_forge.auth.providers import get_auth_provider
+from career_forge.auth.token_revocation import revoke_token
+from career_forge.api.deps import get_principal
+from career_forge.auth.principal import AuthPrincipal
 from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import get_db
@@ -125,3 +128,30 @@ def otp_verify(
         code=body.code,
     )
     return OtpVerifyResponse(**result)
+
+
+def _bearer_token(request: Request) -> str:
+    header = request.headers.get("authorization") or request.headers.get("Authorization")
+    if not header or not header.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid Authorization Bearer token")
+    token = header[7:].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Missing or invalid Authorization Bearer token")
+    return token
+
+
+@router.post("/sign-out", status_code=204)
+def sign_out(
+    request: Request,
+    db: Session = Depends(get_db),
+    _principal: AuthPrincipal = Depends(get_principal),
+) -> Response:
+    """Revoke the current access token jti (this device only)."""
+    token = _bearer_token(request)
+    try:
+        revoke_token(db, token)
+        db.commit()
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=401, detail="Invalid or expired Bearer token") from exc
+    return Response(status_code=204)

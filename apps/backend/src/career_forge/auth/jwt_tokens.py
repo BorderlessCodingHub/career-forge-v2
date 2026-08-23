@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 from typing import Any
+from uuid import uuid4
 
 import jwt
 
@@ -40,6 +41,7 @@ def _mint_token(
     payload: dict[str, Any] = {
         "sub": external_id,
         "provider": provider,
+        "jti": str(uuid4()),
         "iat": now,
         "exp": now + timedelta(days=ttl_days),
     }

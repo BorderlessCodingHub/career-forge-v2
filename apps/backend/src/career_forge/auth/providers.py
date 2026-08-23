@@ -8,17 +8,13 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-import jwt
-
 from career_forge.auth.jwt_tokens import (
-    ANON_PROVIDER,
-    APP_PROVIDERS,
-    EMAIL_PROVIDER,
-    decode_token,
     mint_anonymous_token,
     mint_email_token,
 )
 from career_forge.auth.principal import AuthPrincipal
+from career_forge.auth.token_revocation import verify_access_token
+from career_forge.db.session import SessionLocal
 
 _auth_provider: AuthProvider | None = None
 
@@ -50,18 +46,14 @@ class AnonymousLocalProvider:
         return mint_email_token(external_id)
 
     def verify(self, token: str) -> AuthPrincipal:
-        try:
-            payload = decode_token(token)
-        except jwt.PyJWTError as exc:
-            raise ValueError("invalid or expired token") from exc
-        sub = payload.get("sub")
-        provider = payload.get("provider")
-        if not isinstance(sub, str) or not sub.strip():
-            raise ValueError("token missing sub")
-        if provider not in APP_PROVIDERS:
-            raise ValueError(f"unsupported provider: {provider!r}")
-        assert provider in (ANON_PROVIDER, EMAIL_PROVIDER)
-        return AuthPrincipal(external_id=sub.strip(), provider=provider)
+        with SessionLocal() as db:
+            try:
+                principal = verify_access_token(db, token)
+                db.commit()
+                return principal
+            except ValueError:
+                db.rollback()
+                raise
 
 
 class BorderlessTokenProvider:

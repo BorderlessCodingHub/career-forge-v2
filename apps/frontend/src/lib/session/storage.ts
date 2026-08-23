@@ -44,3 +44,25 @@ export function removeItem(key: string, kind: StorageKind = "session"): void {
 export function removeItems(keys: string[], kind: StorageKind = "session"): void {
   keys.forEach((key) => removeItem(key, kind));
 }
+
+const CAREER_FORGE_PREFIXES = ["career-forge.", "career-forge:"] as const;
+
+function keyMatchesCareerForgePrefix(key: string): boolean {
+  return CAREER_FORGE_PREFIXES.some((prefix) => key.startsWith(prefix));
+}
+
+/** Wipe all career-forge.* and career-forge: keys from local + session storage. */
+export function clearCareerForgeStorage(): void {
+  for (const kind of ["local", "session"] as const) {
+    const storage = getStorage(kind);
+    if (!storage) continue;
+    const keys: string[] = [];
+    for (let i = 0; i < storage.length; i += 1) {
+      const key = storage.key(i);
+      if (key && keyMatchesCareerForgePrefix(key)) {
+        keys.push(key);
+      }
+    }
+    keys.forEach((key) => storage.removeItem(key));
+  }
+}
