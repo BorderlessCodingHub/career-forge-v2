@@ -24,6 +24,7 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026
 |-------|-------|-------|--------|
 | [CAR-33](https://linear.app/career-forge-v2/issue/CAR-33) | Kill-switch P95 → 1.3639 (env + Labs) | [P] | **Done** — Labs live; repo default synced |
 | [CAR-34](https://linear.app/career-forge-v2/issue/CAR-34) | Rebrand tokens + logo SVG + favicon | [P] | **Done** — PR #28 |
+| [CAR-70](https://linear.app/career-forge-v2/issue/CAR-70) | Product chrome brand lockup (Career Forge + Borderless Labs) | [P] | **Done** — PR #51 |
 
 ### F3a — sequential
 
