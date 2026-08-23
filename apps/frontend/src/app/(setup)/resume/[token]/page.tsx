@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui";
+import { BrandLockup } from "@/components/ui/BrandLockup";
 import { consumeResumeLink, listForges, openForge } from "@/lib/api-client";
 import { adoptSession, getAccessToken, getUserId } from "@/lib/user-session";
 import type { ResumeConsumeResponse } from "@/types/contracts";
@@ -125,6 +126,9 @@ export default function ResumeForgePage() {
       data-screen="resume-consume"
     >
       <div className="mx-auto max-w-md space-y-4 text-center">
+        <div className="flex justify-center pb-2">
+          <BrandLockup />
+        </div>
         {phase.status === "working" ? (
           <p className="text-text-secondary" data-testid="resume-working">
             Restoring your session…

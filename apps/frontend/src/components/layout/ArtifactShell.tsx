@@ -4,8 +4,8 @@ import type { HTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
 import { FileText } from "lucide-react";
 
-import { BrandMark } from "@/components/ui/BrandMark";
 import { SignOutButton } from "@/components/auth/SignOutButton";
+import { BrandLockup } from "@/components/ui/BrandLockup";
 
 const topbarActionClass =
   "inline-flex h-9 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium text-text-secondary transition hover:border-accent/40 hover:bg-surface hover:text-text-primary";
@@ -30,13 +30,7 @@ export function ArtifactShell({
         className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-bg-sidebar px-6 py-4"
         data-testid="artifact-topbar"
       >
-        <div className="flex items-center gap-3">
-          <BrandMark size={36} className="h-9 w-auto" />
-          <div>
-            <p className="text-sm font-semibold text-text-primary">Career Forge</p>
-            <p className="text-xs text-text-muted">Personalized trail</p>
-          </div>
-        </div>
+        <BrandLockup />
 
         <div className="flex flex-wrap items-end justify-end gap-2 sm:gap-3">
           <SignOutButton />
