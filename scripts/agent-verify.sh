@@ -56,6 +56,8 @@ check test -f apps/backend/src/career_forge/schemas/profile_diagnosis.py
 check test -f apps/backend/src/career_forge/db/stores/postgres_graph_run.py
 check test -f apps/backend/src/career_forge/persistence/store_mode.py
 check test -f apps/backend/src/career_forge/auth/stream_tickets.py
+check test -f apps/backend/src/career_forge/auth/token_revocation.py
+check test -f docs/decisions/ADR-006-sign-out-jti-revocation.md
 check test -f apps/backend/src/career_forge/services/membership.py
 check test -f apps/backend/src/career_forge/services/entitlement.py
 check test -f apps/backend/src/career_forge/services/stripe_billing.py
