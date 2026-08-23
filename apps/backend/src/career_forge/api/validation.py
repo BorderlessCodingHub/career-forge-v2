@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.validation import (
     ValidationQuestionsResponse,
@@ -20,7 +20,7 @@ router = APIRouter()
 
 @router.get("/questions", response_model=ValidationQuestionsResponse)
 def get_validation_questions(
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     node_id: str = Query(..., min_length=1),
     db: Session = Depends(get_db),
 ) -> ValidationQuestionsResponse:
@@ -34,7 +34,7 @@ def get_validation_questions(
 @router.post("", response_model=ValidationRunResponse)
 async def run_validation(
     body: ValidationRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     db: Session = Depends(get_db),
 ) -> ValidationRunResponse:
     """Run mastery interview evaluation — orchestrated by assessment_flow."""

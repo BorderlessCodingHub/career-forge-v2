@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
+import { ProductEntryGate } from "@/components/auth";
 import { Button } from "@/components/ui";
 import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import {
@@ -23,20 +24,8 @@ import { hydrateOnboardingFromProfile } from "@/lib/profile-reuse";
 import { setForgeRunId } from "@/lib/forge-session";
 import { isPaywallError, type PaywallError } from "@/lib/paywall";
 import { getAccessToken } from "@/lib/user-session";
+import { hasEmailProvider } from "@/lib/jwt";
 import type { ForgeArtifactSummary } from "@/types/contracts";
-
-function readJwtProvider(token: string | null): string | null {
-  if (!token) return null;
-  try {
-    const part = token.split(".")[1];
-    if (!part) return null;
-    const json = atob(part.replace(/-/g, "+").replace(/_/g, "/"));
-    const payload = JSON.parse(json) as { provider?: unknown };
-    return typeof payload.provider === "string" ? payload.provider : null;
-  } catch {
-    return null;
-  }
-}
 
 /** Mirrors backend `artifact_title()` — default titles count as untitled. */
 function defaultArtifactTitle(goalId: string | null | undefined): string {
@@ -200,6 +189,14 @@ function ForgeOverflowMenu({
 }
 
 export default function ForgesListPage() {
+  return (
+    <ProductEntryGate>
+      <ForgesListPageContent />
+    </ProductEntryGate>
+  );
+}
+
+function ForgesListPageContent() {
   const router = useRouter();
   const [items, setItems] = useState<ForgeArtifactSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -211,7 +208,7 @@ export default function ForgesListPage() {
   const [editTitle, setEditTitle] = useState("");
   const [hasDiagnosis, setHasDiagnosis] = useState(false);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
-  const emailVerified = readJwtProvider(getAccessToken()) === "email";
+  const emailVerified = hasEmailProvider(getAccessToken());
 
   useEffect(() => {
     let cancelled = false;

@@ -35,6 +35,7 @@ import {
   setDiagnosisSessionId,
   setStoredDiagnosis,
 } from "@/lib/onboarding-session";
+import { isPaywallError, type PaywallError } from "@/lib/paywall";
 import type {
   DiagnosisStreamEvent,
   InterviewQuestion,
@@ -99,6 +100,7 @@ export function useDiagnosisInterview() {
   const [roundCount, setRoundCount] = useState(0);
   const [phase, setPhase] = useState<InterviewPhase>("bootstrapping");
   const [error, setError] = useState<string | null>(null);
+  const [paywall, setPaywall] = useState<PaywallError | null>(null);
 
   const { mappingProgress, streamPhase, analyzingKey } = streamUi;
 
@@ -226,6 +228,11 @@ export function useDiagnosisInterview() {
         setPhase("ready");
       } catch (cause) {
         if (cancelled) return;
+        if (isPaywallError(cause)) {
+          setPaywall(cause);
+          setPhase("ready");
+          return;
+        }
         setError(
           cause instanceof Error
             ? cause.message
@@ -332,6 +339,7 @@ export function useDiagnosisInterview() {
     streamPhaseLabel: diagnosisStreamPhaseLabel(streamPhase),
     analyzingKey,
     error,
+    paywall,
     activeKeys: activeKeys as Set<RubricDimensionKey>,
     roundComplete,
     progressPct,

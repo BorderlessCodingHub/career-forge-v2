@@ -12,7 +12,7 @@ from career_forge.ai.run import (
     get_graph_run_store,
     unwrap_graph_output,
 )
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.diagnosis import (
     DiagnosisRequest,
@@ -23,6 +23,7 @@ from career_forge.schemas.profile_diagnosis import (
     DiagnosisConfirmRequest,
     DiagnosisConfirmResponse,
 )
+from career_forge.services.entitlement import require_diagnosis_entitlement
 from career_forge.services.profile_diagnosis import confirm_diagnosis
 
 router = APIRouter()
@@ -31,9 +32,11 @@ router = APIRouter()
 @router.post("", response_model=DiagnosisRunResponse)
 async def create_diagnosis(
     body: DiagnosisRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
+    db: Session = Depends(get_db),
 ) -> DiagnosisRunResponse:
     """Run onboarding diagnosis — collect full result (no SSE to client)."""
+    require_diagnosis_entitlement(db, external_id)
     payload = body.model_copy(update={"user_id": external_id})
     store = get_graph_run_store()
     run = GraphRun(
@@ -60,7 +63,7 @@ async def create_diagnosis(
 @router.post("/confirm", response_model=DiagnosisConfirmResponse)
 def confirm_diagnosis_route(
     body: DiagnosisConfirmRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     db: Session = Depends(get_db),
 ) -> DiagnosisConfirmResponse:
     """Persist confirmed diagnosis + intake context for forge motor."""

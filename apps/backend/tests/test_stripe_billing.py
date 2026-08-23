@@ -14,6 +14,7 @@ import time
 import pytest
 from fastapi.testclient import TestClient
 
+from career_forge.auth.providers import get_auth_provider
 from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
@@ -122,7 +123,8 @@ def test_subscription_deleted_revokes_billing() -> None:
 def _auth_headers(raw_client: TestClient, external_id: str) -> dict[str, str]:
     res = raw_client.post("/auth/anon/mint", json={"external_id": external_id})
     assert res.status_code == 200
-    return {"Authorization": f"Bearer {res.json()['access_token']}"}
+    token = get_auth_provider().mint_email(external_id)
+    return {"Authorization": f"Bearer {token}"}
 
 
 def test_webhook_http_sets_entitlement(raw_client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:

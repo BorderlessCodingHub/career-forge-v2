@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
 from career_forge.db.session import get_db
 from career_forge.errors import DomainError
 from career_forge.schemas.roadmap import ChecklistToggleRequest, RoadmapResponse, RoadmapSyncRequest
@@ -17,7 +17,7 @@ router = APIRouter()
 @router.get("/", response_model=RoadmapResponse)
 @router.get("/current", response_model=RoadmapResponse)
 def get_roadmap(
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     db: Session = Depends(get_db),
 ) -> RoadmapResponse:
     """Return the user's steady-state trail.
@@ -35,7 +35,7 @@ def get_roadmap(
 @router.post("/sync", response_model=RoadmapResponse)
 def sync_roadmap(
     body: RoadmapSyncRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     db: Session = Depends(get_db),
 ) -> RoadmapResponse:
     try:
@@ -59,7 +59,7 @@ def sync_roadmap(
 def patch_node_checklist(
     node_id: str,
     body: ChecklistToggleRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     db: Session = Depends(get_db),
 ) -> RoadmapResponse:
     try:

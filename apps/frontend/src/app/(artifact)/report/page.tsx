@@ -1,5 +1,10 @@
 import { MentorReportContent } from "./MentorReportContent";
+import { ProductEntryGate } from "@/components/auth";
 
 export default function MentorReportPage() {
-  return <MentorReportContent />;
+  return (
+    <ProductEntryGate>
+      <MentorReportContent />
+    </ProductEntryGate>
+  );
 }

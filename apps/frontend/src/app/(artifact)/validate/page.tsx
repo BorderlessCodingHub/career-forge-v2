@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
+import { ProductEntryGate } from "@/components/auth";
 import { InterviewLoop, type InterviewMode } from "@/components/validation";
 
 function parseMode(value: string | null): InterviewMode {
@@ -36,14 +37,16 @@ function ValidatePageContent() {
 
 export default function ValidatePage() {
   return (
-    <Suspense
-      fallback={
-        <p className="py-20 text-center text-sm text-text-muted animate-pulse">
-          Loading validation…
-        </p>
-      }
-    >
-      <ValidatePageContent />
-    </Suspense>
+    <ProductEntryGate>
+      <Suspense
+        fallback={
+          <p className="py-20 text-center text-sm text-text-muted animate-pulse">
+            Loading validation…
+          </p>
+        }
+      >
+        <ValidatePageContent />
+      </Suspense>
+    </ProductEntryGate>
   );
 }

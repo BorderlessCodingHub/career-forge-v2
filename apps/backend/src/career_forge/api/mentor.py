@@ -12,7 +12,7 @@ from career_forge.ai.run import (
     get_graph_run_store,
     unwrap_graph_output,
 )
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.mentor import (
     MentorContextSnapshot,
@@ -27,7 +27,7 @@ router = APIRouter()
 
 @router.get("/context", response_model=MentorContextSnapshot)
 def get_mentor_context(
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     node_id: str | None = Query(default=None),
     db: Session = Depends(get_db),
 ) -> MentorContextSnapshot:
@@ -38,7 +38,7 @@ def get_mentor_context(
 @router.post("", response_model=MentorRunResponse)
 async def chat_with_mentor(
     body: MentorRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     db: Session = Depends(get_db),
 ) -> MentorRunResponse:
     """Run contextual mentor chat — collect via GraphExecutor."""

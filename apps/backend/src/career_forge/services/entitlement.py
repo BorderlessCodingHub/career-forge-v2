@@ -1,4 +1,4 @@
-"""Forge entitlement — 1 free forge then paywall for external (CAR-46).
+"""Product entitlement — paywall before diagnosis and forge for unpaid external (CAR-57).
 
 BASE/PSP membership skips Stripe. Paid/allowlisted ``external`` skips too.
 Cost caps (FORGE_CAP_PER_USER_MONTH) still apply after this gate.
@@ -17,7 +17,6 @@ from career_forge.db.repositories.user import ensure_user
 from career_forge.errors import PaywallError
 from career_forge.services.cost_guard import resolve_exclude_reason
 
-FREE_FORGE_LIMIT = 1
 _DEMO_EMAIL_SUFFIX = "@demo.careerforge.local"
 
 EntitlementReason = Literal["ok", "paywall", "membership", "billing", "excluded"]
@@ -31,7 +30,6 @@ class EntitlementDecision:
     membership_entitled: bool = False
     billing_entitled: bool = False
     free_forges_used: int = 0
-    free_forge_limit: int = FREE_FORGE_LIMIT
 
 
 def parse_billing_allowlist(raw: str) -> set[str]:
@@ -95,15 +93,6 @@ def evaluate_entitlement(
             billing_entitled=True,
             free_forges_used=forge_count,
         )
-    if forge_count < FREE_FORGE_LIMIT:
-        return EntitlementDecision(
-            allowed=True,
-            reason="ok",
-            membership_label=membership_label,
-            membership_entitled=membership_entitled,
-            billing_entitled=False,
-            free_forges_used=forge_count,
-        )
     return EntitlementDecision(
         allowed=False,
         reason="paywall",
@@ -122,24 +111,60 @@ def stripe_configured() -> bool:
     )
 
 
+def _entitlement_for_user(
+    session: Session,
+    external_id: str,
+    *,
+    forge_count: int = 0,
+    run_input: dict | None = None,
+) -> EntitlementDecision:
+    user = ensure_user(session, external_id)
+    return evaluate_entitlement(
+        user_id=external_id,
+        membership_label=user.membership_label,
+        membership_entitled=bool(user.membership_entitled),
+        billing_entitled=bool(user.billing_entitled),
+        email=user.email,
+        forge_count=forge_count,
+        run_input=run_input,
+        billing_allowlist=parse_billing_allowlist(settings.entitlement_billing_allowlist),
+    )
+
+
+def require_product_entitlement(
+    session: Session,
+    external_id: str,
+    *,
+    forge_count: int = 0,
+    run_input: dict | None = None,
+) -> EntitlementDecision:
+    """Raise ``PaywallError`` when unpaid ``external`` starts diagnosis or forge."""
+    decision = _entitlement_for_user(
+        session,
+        external_id,
+        forge_count=forge_count,
+        run_input=run_input,
+    )
+    if not decision.allowed:
+        raise PaywallError(checkout_available=stripe_configured())
+    return decision
+
+
 def require_forge_entitlement(
     session: Session,
     run: GraphRun,
     *,
     forge_count: int,
 ) -> EntitlementDecision:
-    """Raise ``PaywallError`` when an external user has used the free forge."""
-    user = ensure_user(session, run.user_id)
-    decision = evaluate_entitlement(
-        user_id=run.user_id,
-        membership_label=user.membership_label,
-        membership_entitled=bool(user.membership_entitled),
-        billing_entitled=bool(user.billing_entitled),
-        email=user.email,
+    """Raise ``PaywallError`` when unpaid ``external`` starts a forge."""
+    return require_product_entitlement(
+        session,
+        run.user_id,
         forge_count=forge_count,
         run_input=run.input if isinstance(run.input, dict) else None,
-        billing_allowlist=parse_billing_allowlist(settings.entitlement_billing_allowlist),
     )
-    if not decision.allowed:
-        raise PaywallError(checkout_available=stripe_configured())
-    return decision
+
+
+def require_diagnosis_entitlement(session: Session, external_id: str) -> EntitlementDecision:
+    """Raise ``PaywallError`` when unpaid ``external`` starts diagnosis."""
+    return require_product_entitlement(session, external_id)

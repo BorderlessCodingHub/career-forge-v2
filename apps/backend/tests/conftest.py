@@ -8,6 +8,9 @@ from career_forge.ai.llm.diagnosis_interview import (
     set_diagnosis_interview_llm,
 )
 from career_forge.ai.run import set_graph_run_store
+from career_forge.auth.providers import get_auth_provider
+from career_forge.db.repositories.user import ensure_user
+from career_forge.db.session import SessionLocal
 from career_forge.main import app
 from career_forge.services.cost_guard import set_cost_guard
 from career_forge.services.stripe_billing import set_stripe_client
@@ -114,7 +117,12 @@ def client(raw_client: TestClient):
         )
         res = original_send(mint_req)
         assert res.status_code == 200, res.text
-        token = res.json()["access_token"]
+        with SessionLocal() as session:
+            row = ensure_user(session, external_id)
+            row.membership_label = "base"
+            row.membership_entitled = True
+            session.commit()
+        token = get_auth_provider().mint_email(external_id)
         token_cache[external_id] = token
         return token
 
@@ -123,6 +131,7 @@ def client(raw_client: TestClient):
         public = (
             path.rstrip("/").endswith("/health")
             or path.endswith("/auth/anon/mint")
+            or path.rstrip("/").endswith("/auth/otp/verify")
             or path.rstrip("/").endswith("/billing/stripe/webhook")
             or path.rstrip("/").endswith("/openapi.json")
         )

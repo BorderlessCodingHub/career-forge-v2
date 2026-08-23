@@ -13,7 +13,7 @@ from career_forge.ai.run import (
     get_graph_run_store,
     unwrap_graph_output,
 )
-from career_forge.api.deps import ExternalId
+from career_forge.api.deps import EmailExternalId
 from career_forge.db.session import get_db
 from career_forge.schemas.tutor import (
     TutorContext,
@@ -28,7 +28,7 @@ router = APIRouter()
 
 @router.get("/context", response_model=TutorContext)
 def get_tutor_context(
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     node_id: str | None = Query(default=None),
     node_title: str | None = Query(default=None),
     db: Session = Depends(get_db),
@@ -40,7 +40,7 @@ def get_tutor_context(
 @router.post("", response_model=TutorRunResponse)
 async def chat_with_tutor(
     body: TutorRequest,
-    external_id: ExternalId,
+    external_id: EmailExternalId,
     db: Session = Depends(get_db),
 ) -> TutorRunResponse:
     """Run chapter Q&A tutor — collect via GraphExecutor."""
