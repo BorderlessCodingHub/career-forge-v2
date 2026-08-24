@@ -168,7 +168,7 @@ docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d --no-build
 ```
 
-Or trigger **Actions → Deploy production (VPS)** on `main` (requires `VPS_*` secrets). The deploy job verifies `https://$API_DOMAIN/health` with `curl` (no Python required on the VPS).
+Or trigger **Actions → Deploy production (VPS)** on `main` (requires `VPS_*` secrets). The deploy job **git-pulls `origin/main` (ff-only)** in `APP_DIR` so `docker-compose.prod.yml` env wiring matches git, then pulls GHCR images and `up -d`. A dirty VPS working tree fails the deploy on purpose. Health check: `http://127.0.0.1:18000/health`.
 
 Always **`pull`** before **`up`** when using `IMAGE_TAG=latest`.
 

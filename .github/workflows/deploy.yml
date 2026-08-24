@@ -86,6 +86,11 @@ jobs:
             APP_DIR="/home/career-forge-v2"
             cd "$APP_DIR"
 
+            # Compose env wiring lives in git. Images-only pull leaves a stale
+            # docker-compose.prod.yml and new keys never enter the container.
+            git fetch origin
+            git pull --ff-only origin main
+
             if [ -f .env ]; then
               set -a
               # shellcheck disable=SC1091

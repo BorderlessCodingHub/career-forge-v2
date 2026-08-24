@@ -153,5 +153,6 @@ docker compose exec backend pytest
 | Forge page `network error`, 0 steps | Diagnosis `track_id` saved as goal slug (`rag-engineer`) but catalog is `rag-engineer-beginner.json`; SSE yields FileNotFoundError then connection abort masks as network error | Fixed via `normalize_catalog_track_id` in `paths.py` + persist/load forge input; click **Tentar novamente** after backend reload |
 | `make smoke` hangs / CI fails frontend probe | Wrong probe URL (`:3000` default, or ignored CI `:13000`) | Source `.env`; `WEB_URL` override → else `http://localhost:${WEB_HOST_PORT:-3300}/career-forge`; CI sets `WEB_URL` + `WEB_HOST_PORT=13000` |
 | Operator console shows `Failed to fetch` while learner API works | Cookie client used `NEXT_PUBLIC_BACKEND_URL` and crossed origins instead of the path-scoped Labs route | Operator client must call `${NEXT_PUBLIC_BASE_PATH}/operator/*`; Next same-origin rewrite forwards to backend |
+| OTP never emails in Docker even with `RESEND_API_KEY` in `.env` | Compose only injects keys listed in `backend.environment`; default `MAILER_BACKEND=log` | Add `MAILER_BACKEND` / `RESEND_API_KEY` / `MAIL_FROM` to compose; recreate backend; confirm `/proc/1/environ` |
 
 **When you find a new local-only trick, append it to section 8 of this skill.**

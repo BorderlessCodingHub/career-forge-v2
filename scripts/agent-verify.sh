@@ -66,6 +66,10 @@ check test -f apps/frontend/src/components/operator/OperatorConsole.tsx
 check grep -q '"operator"' apps/frontend/next.config.mjs
 check grep -q 'OPERATOR_ALLOWLIST' docker-compose.yml
 check grep -q 'OPERATOR_ALLOWLIST' docker-compose.prod.yml
+check grep -q 'RESEND_API_KEY' docker-compose.yml
+check grep -q 'RESEND_API_KEY' docker-compose.prod.yml
+check grep -q 'MAILER_BACKEND' docker-compose.prod.yml
+check grep -q 'git pull --ff-only origin main' .github/workflows/deploy.yml
 check test -f docs/decisions/ADR-006-sign-out-jti-revocation.md
 check test -f apps/backend/src/career_forge/services/membership.py
 check test -f apps/backend/src/career_forge/services/entitlement.py
