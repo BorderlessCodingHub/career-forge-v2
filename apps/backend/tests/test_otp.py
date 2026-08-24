@@ -85,6 +85,31 @@ def test_otp_verify_promotes_anon_and_mints_email_jwt(
         assert user.email == "new-pilot@example.com"
 
 
+def test_otp_verify_falls_back_to_body_external_id_for_invalid_bearer(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(otp_service, "_generate_otp_code", lambda: "121212")
+    external_id = "user-stale-bearer"
+    raw_client.post(
+        "/auth/otp/request",
+        json={"email": "stale-bearer@example.com"},
+    )
+
+    verify = raw_client.post(
+        "/auth/otp/verify",
+        json={
+            "email": "stale-bearer@example.com",
+            "code": "121212",
+            "external_id": external_id,
+        },
+        headers={"Authorization": "Bearer invalid-or-revoked-token"},
+    )
+
+    assert verify.status_code == 200, verify.text
+    assert verify.json()["external_id"] == external_id
+
+
 def test_otp_verify_conflict_when_email_owned(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
