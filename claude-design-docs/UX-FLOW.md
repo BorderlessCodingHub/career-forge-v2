@@ -13,6 +13,8 @@
 Return visit (CAR-27/29): if ≥1 forge artifact → Continue last / View all (/forges) / New forge; if saved diagnosis → Forge again from last diagnosis
 Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner)
 Marketing: /welcome (CAR-56 Premium B) — CTA Start diagnosis → `/` product; pricing/apply scenery; no auto-redirect from `/`. Exploration (direct URL only): `/welcome/plg`. Bake-off A (CAR-41, `noindex`): `/welcome/premium-a`. Legacy `/welcome/premium-b` redirects → `/welcome`.
+
+Operator (separate identity): /operator → Operator OTP → Access | Content desk rooms. Desks outside the seat grant are hidden; no learner or Mentor chrome.
 ```
 
 **Mental breadcrumb:** (Welcome) → Goal → Diagnosis → Review diagnosis → Forge roadmap → Explore roadmap · Recovery: Continue / forges / share / resume / re-forge from profile
@@ -42,6 +44,21 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 ---
 
 ## Screen-by-screen
+
+### 0d. Operator console (`/operator`) — CAR-76
+
+Independent workspace on the same Next app and Labs origin. An HttpOnly, path-scoped
+Operator session gates the route; learner sessions never open it.
+
+| | |
+|---|---|
+| **Entry** | Separate Operator email OTP (`data-screen="operator-login"`) |
+| **Shell** | Operator lockup, role-filtered desk tabs **Access \| Content**, role-agnostic seat email list, sign out |
+| **Rooms** | Access and Content placeholders establish the seams for CAR-77/78 and CAR-79 |
+| **Route** | `/operator` under `basePath=/career-forge` · `data-screen="operator-console"` |
+| **Forbidden** | Learner product chrome, Mentor chrome, Welcome scenery, third desk, role labels in seat list |
+
+---
 
 ### 1. Goal Picker (`/`)
 

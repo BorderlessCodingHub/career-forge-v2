@@ -25,6 +25,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 | 0 | `/welcome` | `marketing` | `marketing-welcome` | — | CAR-56 Premium B: commercial sections + scenery modals; Start diagnosis→`/`; `welcome-cta-start`; indexed; slate/orange chrome | pt-BR CAR-37; CAR-53 honesty |
 | 0p | `/welcome/plg` | — | `marketing-welcome-plg` | — | EN product-led; first fold stays put; trail/phases/features slide in; forge mock in hero; split-flap plaque; not linked from `/welcome` | Visual polish |
 | 0q | `/welcome/premium-a` | — | — (static HTML) | — | CAR-41 bake-off A only; rewrite to `public/premium-landings/a.html`; `noindex`; not linked; **not** the funnel. `/welcome/premium-b` → redirect `/welcome` | Retire A later |
+| 0o | `/operator` | — | `operator-login` / `operator-console` | — | Separate Operator OTP; Access/Content tabs filtered by grant; role-agnostic seat emails; no learner/Mentor chrome | Desk implementations CAR-77/78/79 |
 | 1 | `/` | `goal` | `goal-picker` / `landing-recovery` | — | Headline EN, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA; if ≥1 artifact → Continue / View all / New forge; if diagnosis → Forge again from last diagnosis | Card hover, validation toast |
 | 1b | `/forges` | — | `forges-list` | — | Scan & open: Open + Rename visible; share/resume/revoke in ⋯; untitled shows goal_id; optional re-forge CTA | Visual polish |
 | 1c | `/share/[token]` | — | `share-readonly` | — | Read-only roadmap; no session adopt | Visual polish |
@@ -52,6 +53,10 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 ## Per-screen intent (summary)
 
 Full must-match: [SCREEN-INTENT.md](./SCREEN-INTENT.md)
+
+### 0d. Operator console (`/operator`) — CAR-76
+Separate Operator OTP gate and shell on the Labs origin. Desk tabs are filtered by the
+Operator grant; the seat list exposes emails without roles. No learner or Mentor chrome.
 
 ### 1. Goal Picker (`/`)
 Declare dream role + motivation. Prototype: `screens-flow.jsx`  
@@ -138,6 +143,7 @@ Do not add screens without Linear issue + CHECKPOINT update:
 
 Playwright Gate B targets:
 
+- `data-testid="operator-login"` · `operator-console` · `operator-seat-list` · `operator-tab-access` · `operator-tab-content`
 - `data-testid="goal-picker"`
 - `data-testid="landing-continue"` · `landing-view-all` · `landing-new-forge` · `landing-reforge-profile` · `landing-recovery-fallback`
 - `data-testid="forge-row-{public_id}"` · `forge-open-{id}` · `forge-rename-{id}` · `forge-overflow-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile`

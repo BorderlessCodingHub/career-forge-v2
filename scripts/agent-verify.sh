@@ -61,6 +61,11 @@ check test -f apps/backend/src/career_forge/auth/operator_session.py
 check test -f apps/backend/src/career_forge/api/operator.py
 check test -f apps/backend/src/career_forge/services/operator_otp.py
 check test -f apps/backend/src/career_forge/db/models/operator.py
+check test -f apps/frontend/src/app/operator/page.tsx
+check test -f apps/frontend/src/components/operator/OperatorConsole.tsx
+check grep -q '"operator"' apps/frontend/next.config.mjs
+check grep -q 'OPERATOR_ALLOWLIST' docker-compose.yml
+check grep -q 'OPERATOR_ALLOWLIST' docker-compose.prod.yml
 check test -f docs/decisions/ADR-006-sign-out-jti-revocation.md
 check test -f apps/backend/src/career_forge/services/membership.py
 check test -f apps/backend/src/career_forge/services/entitlement.py

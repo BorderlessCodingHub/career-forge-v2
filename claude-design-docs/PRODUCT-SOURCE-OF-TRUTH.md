@@ -32,6 +32,7 @@ Return visit (CAR-27/29): landing Continue / View all (/forges) / New forge · o
 |------|---------|--------|
 | `setup` | Goal (+ recovery gate), `/forges`, `/resume/[token]` (incl. conflict chooser), diagnostic, diagnosis edit, forge, forge complete (+ optional email store), validation | Onboarding stepper (01–07) optional/minimal; recovery surfaces = centered columns, no `ArtifactShell` |
 | `artifact` | Steady `/roadmap`, adaptive recalibration, **`/report`**, **`/share/[token]`** (read-only list, no shell) | Steady roadmap/`/report`: `ArtifactShell` topbar — logo; right cluster `items-end`; `mentor-report-link` → `/report` + track block; page intro = subtitle + optional `trail-progress-ring`; spine + solid `roadmap-connector-{id}` lines; **no** stepper / progress sidebar |
+| `operator` | `/operator` login + Access/Content desk rooms | Separate Operator identity and shell; role-filtered desk tabs + role-agnostic seat emails; **no** learner or Mentor chrome |
 
 Full screen-by-screen: [UX-FLOW.md](./UX-FLOW.md) · Must-match: [SCREEN-INTENT.md](./SCREEN-INTENT.md)
 
@@ -125,6 +126,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
+| `/operator` | Separate Operator OTP; Access/Content tabs filtered by `GET /operator/me`; seat emails without role labels; no learner/Mentor chrome | Access/Content desk bodies in CAR-77/78/79 |
 | `/welcome` Marketing (CAR-56) | Premium B commercial chrome in `marketing/welcome/`; Start diagnosis→`/`; scenery modals; fake proof until CAR-53; indexed; Plus Jakarta Sans on shell only | pt-BR CAR-37; BrandMark polish |
 | `/welcome/plg` | Product-led (EN); first fold stays on screen; trail/phases/features slide into the remaining viewport; forge HTML mock in hero; split-flap plaque as section titles; before/during/after; dark tokens; not linked from `/welcome` | Visual polish |
 | `/welcome/premium-a` | Vite clone A via rewrite; commercial sections intact; `noindex`; not linked; CTAs do not enter `/`. `/welcome/premium-b` → `/welcome` | Retire A later |
@@ -196,6 +198,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | `/welcome` motion (CAR-38) | Not in prototype | N/A | Historical lean CSS motion on prior WelcomeLanding; PLG keeps `ScrollReveal` / `welcome-motion`. Canonical Welcome now uses B CSS motion (no ScrollReveal) | **Superseded for `/welcome` by CAR-56** | 2026-08-14 |
 | `/welcome/plg` | Not in prototype | N/A | EN product-led exploration; default `/welcome` unchanged and unlinked; same CTA → `/`; no price/email/fake proof; hero HTML/CSS forge mock (`ForgeProductMock`); **first fold stays in the viewport**; trail / phases / features **slide into** the remaining viewport (`PlgStackScroll` wheel lock); split-flap plaque (`PlgScrollPlaque`) follows active step; wheel releases to final CTA. Editorial + offer explorations discarded. | **Grill + code win** | 2026-08-18 |
 | Premium landings A/B (CAR-41→52) | Not in prototype | Vite `premium-landings/{a,b}/` | A remains rewrite HTML `noindex` preview. B ported to `/welcome` (CAR-56); `b.html` deleted; Vite `b/` frozen; `make premium-landings` builds A only | **CAR-56 cutover** | 2026-08-22 |
+| Operator console shell (CAR-76) | Not in prototype | N/A | `/operator` in the same Next app: separate OTP gate; path-scoped cookie API; Access/Content desk tabs hidden by grant; seat email list without roles; Operator-only chrome and placeholders for CAR-77/78/79 | **Linear F3c spec + code win** | 2026-08-24 |
 
 ---
 

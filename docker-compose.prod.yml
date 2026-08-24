@@ -47,6 +47,10 @@ services:
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
       STRIPE_PRICE_ID: ${STRIPE_PRICE_ID:-}
+      OPERATOR_ALLOWLIST: ${OPERATOR_ALLOWLIST:-}
+      OPERATOR_SESSION_TTL_HOURS: ${OPERATOR_SESSION_TTL_HOURS:-8}
+      OPERATOR_COOKIE_NAME: ${OPERATOR_COOKIE_NAME:-cf_operator_session}
+      OPERATOR_COOKIE_PATH: ${OPERATOR_COOKIE_PATH:-/career-forge/operator}
     volumes:
       - ./data:/data:ro
       - ./logs:/app/logs

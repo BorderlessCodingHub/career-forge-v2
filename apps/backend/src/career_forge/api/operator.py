@@ -1,4 +1,4 @@
-"""Operator console HTTP routes — identity only (CAR-75)."""
+"""Operator console HTTP routes — identity and shell contracts."""
 
 from __future__ import annotations
 
@@ -19,8 +19,10 @@ from career_forge.schemas.operator_auth import (
     OperatorOtpRequestResponse,
     OperatorOtpVerifyBody,
     OperatorOtpVerifyResponse,
+    OperatorSeatListResponse,
+    OperatorSeatResponse,
 )
-from career_forge.services.operator_allowlist import desks_for_roles
+from career_forge.services.operator_allowlist import desks_for_roles, list_operator_seat_emails
 from career_forge.services.operator_otp import request_operator_otp, verify_operator_otp
 
 router = APIRouter()
@@ -101,4 +103,17 @@ def operator_me(
         operator_id=principal.operator_id,
         desk_roles=principal.desk_roles,
         desks=desks_for_roles(principal.desk_roles),
+    )
+
+
+@router.get("/seats", response_model=OperatorSeatListResponse)
+def operator_seats(
+    db: Session = Depends(get_db),
+    _principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorSeatListResponse:
+    return OperatorSeatListResponse(
+        seats=[
+            OperatorSeatResponse(email=email)
+            for email in list_operator_seat_emails(db)
+        ],
     )

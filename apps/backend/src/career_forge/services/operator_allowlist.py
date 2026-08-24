@@ -45,6 +45,12 @@ def desks_for_roles(desk_roles: str) -> list[str]:
     return ["access", "content"]
 
 
+def list_operator_seat_emails(session: Session) -> list[str]:
+    """List Operator seats without exposing grants to either desk."""
+    rows = session.scalars(select(Operator.email).order_by(Operator.email)).all()
+    return list(rows)
+
+
 def upsert_operator_from_allowlist(
     session: Session,
     *,

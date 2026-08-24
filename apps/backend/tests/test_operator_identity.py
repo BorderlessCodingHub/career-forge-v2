@@ -97,6 +97,28 @@ def test_operator_session_cookie_and_me(
     assert body["desks"] == ["access", "content"]
 
 
+def test_operator_seat_list_is_role_agnostic(
+    raw_client: TestClient,
+    operator_allowlist: None,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    expected_emails: set[str] = set()
+    for email in ("access@borderless.com", "editor@borderless.com"):
+        monkeypatch.setattr(operator_otp_service, "_generate_otp_code", lambda: "575757")
+        raw_client.post("/operator/auth/otp/request", json={"email": email})
+        raw_client.post(
+            "/operator/auth/otp/verify",
+            json={"email": email, "code": "575757"},
+        )
+        expected_emails.add(email)
+
+        seats = raw_client.get("/operator/seats")
+        assert seats.status_code == 200, seats.text
+        body = seats.json()
+        assert {seat["email"] for seat in body["seats"]} >= expected_emails
+        assert all(set(seat) == {"email"} for seat in body["seats"])
+
+
 def test_learner_bearer_rejected_on_operator_api(
     raw_client: TestClient,
     operator_allowlist: None,
