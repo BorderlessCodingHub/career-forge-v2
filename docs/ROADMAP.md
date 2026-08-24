@@ -85,8 +85,9 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Next** — after CAR-76 (∥ CAR-77) |
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | After CAR-77 |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | After desks |
+| [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + deploy git-sync | [P] | **Done** — PR #54 |
 
-**Start order:** CAR-77 ∥ CAR-79 · then CAR-78 · CAR-80.
+**Start order:** CAR-82 then CAR-83 (login/JWT bugs) · CAR-77 ∥ CAR-79 · then CAR-78 · CAR-80.
 
 ---
 
