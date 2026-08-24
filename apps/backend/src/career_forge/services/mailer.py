@@ -11,6 +11,17 @@ from career_forge.config import settings
 
 logger = logging.getLogger(__name__)
 
+# Cloudflare in front of api.resend.com returns 1010 for Python-urllib's default UA (CAR-84).
+RESEND_USER_AGENT = "CareerForge/1.0 (+https://labs.borderlesscoding.com/career-forge)"
+_MAX_ERROR_BODY = 300
+
+
+def _http_error_detail(exc: error.HTTPError) -> str:
+    raw = exc.read()[:_MAX_ERROR_BODY].decode("utf-8", errors="replace").strip()
+    if not raw:
+        return str(exc.code)
+    return f"{exc.code}: {raw}"
+
 
 @runtime_checkable
 class Mailer(Protocol):
@@ -104,6 +115,8 @@ class ResendMailer:
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
+                "Accept": "application/json",
+                "User-Agent": RESEND_USER_AGENT,
             },
         )
         try:
@@ -111,7 +124,7 @@ class ResendMailer:
                 if resp.status >= 400:
                     raise RuntimeError(f"Resend HTTP {resp.status}")
         except error.HTTPError as exc:
-            raise RuntimeError(f"Resend HTTP {exc.code}") from exc
+            raise RuntimeError(f"Resend HTTP {_http_error_detail(exc)}") from exc
 
 
 class SesMailer:
