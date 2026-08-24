@@ -73,6 +73,21 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 
 **Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
 
+### F3c — Operator console **[S]** then **[P]**
+
+Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identity is a second Career Forge OTP (`provider=operator`), not learner OTP + allowlist.
+
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
+| [CAR-75](https://linear.app/career-forge-v2/issue/CAR-75) | Operator identity — OTP, operators table, session cookie | [S] | **Done** — PR #52 |
+| [CAR-76](https://linear.app/career-forge-v2/issue/CAR-76) | Operator console shell — path, desk tabs, roles | [S] | **Next** — CAR-75 Done |
+| [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access desk writes + audit | [S] | After CAR-76 |
+| [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | After CAR-76 (∥ CAR-77) |
+| [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | After CAR-77 |
+| [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | After desks |
+
+**Start order:** CAR-76 next · then CAR-77 ∥ CAR-79 · CAR-78 · CAR-80.
+
 ---
 
 ## Observability — LangSmith cost (cross-cutting)
