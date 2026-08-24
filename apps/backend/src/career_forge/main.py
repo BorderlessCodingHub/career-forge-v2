@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from career_forge.api.router import api_router
 from career_forge.auth.middleware import BearerAuthMiddleware
-from career_forge.config import settings
+from career_forge.config import assert_production_jwt_secret, settings
 from career_forge.errors import (
     DomainError,
     EmailOwnedConflictError,
@@ -22,6 +22,7 @@ from career_forge.logging_config import configure_logging
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     configure_logging()
+    assert_production_jwt_secret()
     yield
 
 

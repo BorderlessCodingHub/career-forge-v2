@@ -69,6 +69,8 @@ check grep -q 'OPERATOR_ALLOWLIST' docker-compose.prod.yml
 check grep -q 'RESEND_API_KEY' docker-compose.yml
 check grep -q 'RESEND_API_KEY' docker-compose.prod.yml
 check grep -q 'MAILER_BACKEND' docker-compose.prod.yml
+check grep -q 'JWT_SECRET' docker-compose.yml
+check grep -q 'JWT_SECRET' docker-compose.prod.yml
 check grep -q 'git pull --ff-only origin main' .github/workflows/deploy.yml
 check test -f docs/decisions/ADR-006-sign-out-jti-revocation.md
 check test -f apps/backend/src/career_forge/services/membership.py

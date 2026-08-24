@@ -1,5 +1,8 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Source-controlled local default — never valid when ENV=production (CAR-83).
+DEV_JWT_SECRET = "career-forge-dev-jwt-secret-change-me-32b+"
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -22,7 +25,7 @@ class Settings(BaseSettings):
     cost_buffer_factor: float = 1.10
 
     # Auth scaffold (CAR-23 / ADR-003) — anon JWT; email OTP IdP in F3b (CAR-44)
-    jwt_secret: str = "career-forge-dev-jwt-secret-change-me-32b+"
+    jwt_secret: str = DEV_JWT_SECRET
     jwt_anon_ttl_days: int = 90
     # CAR-26 — short-lived forge SSE stream ticket (Bearer → ?ticket=)
     jwt_stream_ticket_ttl_seconds: int = 300
@@ -75,3 +78,14 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def assert_production_jwt_secret() -> None:
+    """Refuse to boot production with the public default JWT secret."""
+    if settings.env.lower() != "production":
+        return
+    if settings.jwt_secret == DEV_JWT_SECRET:
+        raise RuntimeError(
+            "JWT_SECRET must not equal the development default when ENV=production. "
+            "Generate one with: openssl rand -base64 48"
+        )

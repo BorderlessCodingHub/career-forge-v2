@@ -49,6 +49,7 @@ services:
       MAIL_FROM: ${MAIL_FROM:-}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       AWS_SES_REGION: ${AWS_SES_REGION:-}
+      JWT_SECRET: ${JWT_SECRET:-career-forge-dev-jwt-secret-change-me-32b+}
       OPERATOR_ALLOWLIST: ${OPERATOR_ALLOWLIST:-}
       OPERATOR_SESSION_TTL_HOURS: ${OPERATOR_SESSION_TTL_HOURS:-8}
       OPERATOR_COOKIE_NAME: ${OPERATOR_COOKIE_NAME:-cf_operator_session}
