@@ -140,6 +140,29 @@ def test_apply_membership_fail_open_when_http_misconfigured(
     assert user.membership_entitled is False
 
 
+def test_operator_membership_override_wins_without_calling_borderless() -> None:
+    class _FailingClient:
+        def lookup(self, email: str) -> MembershipRecord:
+            raise AssertionError(f"Borderless lookup must not run for {email}")
+
+    class _User:
+        operator_membership_label = "psp"
+        membership_label = "external"
+        membership_entitled = False
+
+    user = _User()
+    record = apply_membership_label(  # type: ignore[arg-type]
+        user,
+        "override@example.com",
+        _FailingClient(),
+    )
+
+    assert record == MembershipRecord(active=True, program="psp")
+    assert user.operator_membership_label == "psp"
+    assert user.membership_label == "psp"
+    assert user.membership_entitled is True
+
+
 def _auth_headers(raw_client: TestClient, external_id: str) -> dict[str, str]:
     res = raw_client.post("/auth/anon/mint", json={"external_id": external_id})
     assert res.status_code == 200

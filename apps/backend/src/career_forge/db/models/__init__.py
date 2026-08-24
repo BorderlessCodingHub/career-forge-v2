@@ -7,6 +7,7 @@ from career_forge.db.models.forge_artifact import ForgeArtifact
 from career_forge.db.models.graph_run import GraphRunRecord
 from career_forge.db.models.knowledge_gap import KnowledgeGap
 from career_forge.db.models.operator import Operator
+from career_forge.db.models.operator_access_audit import OperatorAccessAudit
 from career_forge.db.models.profile import Profile
 from career_forge.db.models.skill_node import SkillNode
 from career_forge.db.models.usage_monthly import GLOBAL_USAGE_USER_ID, UsageMonthly
@@ -25,6 +26,7 @@ __all__ = [
     "GraphRunRecord",
     "KnowledgeGap",
     "Operator",
+    "OperatorAccessAudit",
     "User",
     "Profile",
     "RevokedTokenJti",

@@ -92,6 +92,21 @@ def test_stripe_billing_entitled_external_skips_paywall() -> None:
     assert decision.reason == "billing"
 
 
+def test_active_stripe_subscription_wins_over_stale_billing_row() -> None:
+    decision = evaluate_entitlement(
+        user_id="paid-active-1",
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=False,
+        stripe_subscription_status="active",
+        email="paid-active@example.com",
+        forge_count=4,
+    )
+    assert decision.allowed is True
+    assert decision.reason == "billing"
+    assert decision.billing_entitled is True
+
+
 def test_allowlisted_email_skips_paywall() -> None:
     decision = evaluate_entitlement(
         user_id="pilot-1",

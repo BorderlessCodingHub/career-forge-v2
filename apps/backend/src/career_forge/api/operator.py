@@ -1,8 +1,8 @@
-"""Operator console HTTP routes — identity and shell contracts."""
+"""Operator console HTTP routes — identity, shell, and Access desk."""
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
@@ -12,6 +12,7 @@ from career_forge.auth.operator_session import (
     revoke_operator_session,
 )
 from career_forge.config import settings
+from career_forge.db.models.user import User
 from career_forge.db.session import get_db
 from career_forge.schemas.operator_auth import (
     OperatorMeResponse,
@@ -21,6 +22,19 @@ from career_forge.schemas.operator_auth import (
     OperatorOtpVerifyResponse,
     OperatorSeatListResponse,
     OperatorSeatResponse,
+)
+from career_forge.schemas.operator_access import (
+    OperatorAccessAuditListResponse,
+    OperatorAccessAuditResponse,
+    OperatorAccessPatch,
+    OperatorLearnerAccessResponse,
+)
+from career_forge.services.access_audit import AccessActorType, list_access_audit
+from career_forge.services.operator_access import (
+    get_learner_by_email,
+    require_access_role,
+    stripe_billing_locked,
+    write_operator_access,
 )
 from career_forge.services.operator_allowlist import desks_for_roles, list_operator_seat_emails
 from career_forge.services.operator_otp import request_operator_otp, verify_operator_otp
@@ -42,6 +56,24 @@ def get_operator_principal(request: Request) -> OperatorPrincipal:
     if principal is None:
         raise HTTPException(status_code=401, detail="Operator session required")
     return principal
+
+
+def _access_response(user: User) -> OperatorLearnerAccessResponse:
+    return OperatorLearnerAccessResponse(
+        email=user.email,
+        operator_membership_label=user.operator_membership_label,
+        membership_label=user.membership_label,
+        membership_entitled=bool(user.membership_entitled),
+        billing_entitled=bool(user.billing_entitled),
+        stripe_subscription_status=user.stripe_subscription_status,
+        stripe_billing_locked=stripe_billing_locked(user),
+    )
+
+
+def _audit_response(rows: list[object]) -> OperatorAccessAuditListResponse:
+    return OperatorAccessAuditListResponse(
+        entries=[OperatorAccessAuditResponse.model_validate(row) for row in rows]
+    )
 
 
 @router.post("/auth/otp/request", response_model=OperatorOtpRequestResponse)
@@ -117,3 +149,63 @@ def operator_seats(
             for email in list_operator_seat_emails(db)
         ],
     )
+
+
+@router.get(
+    "/access/learners/{learner_email}",
+    response_model=OperatorLearnerAccessResponse,
+)
+def get_operator_learner_access(
+    learner_email: str,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorLearnerAccessResponse:
+    require_access_role(principal)
+    return _access_response(get_learner_by_email(db, learner_email))
+
+
+@router.patch(
+    "/access/learners/{learner_email}",
+    response_model=OperatorLearnerAccessResponse,
+)
+def patch_operator_learner_access(
+    learner_email: str,
+    body: OperatorAccessPatch,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorLearnerAccessResponse:
+    user = write_operator_access(
+        db,
+        principal=principal,
+        learner_email=learner_email,
+        patch=body,
+    )
+    db.commit()
+    db.refresh(user)
+    return _access_response(user)
+
+
+@router.get(
+    "/access/learners/{learner_email}/audit",
+    response_model=OperatorAccessAuditListResponse,
+)
+def get_operator_learner_audit(
+    learner_email: str,
+    limit: int = Query(default=50, ge=1, le=250),
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorAccessAuditListResponse:
+    require_access_role(principal)
+    user = get_learner_by_email(db, learner_email)
+    return _audit_response(list_access_audit(db, learner_id=user.id, limit=limit))
+
+
+@router.get("/access/audit", response_model=OperatorAccessAuditListResponse)
+def get_recent_operator_access_audit(
+    actor_type: AccessActorType | None = "operator",
+    limit: int = Query(default=50, ge=1, le=250),
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorAccessAuditListResponse:
+    require_access_role(principal)
+    return _audit_response(list_access_audit(db, actor_type=actor_type, limit=limit))

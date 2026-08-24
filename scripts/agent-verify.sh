@@ -61,6 +61,12 @@ check test -f apps/backend/src/career_forge/auth/operator_session.py
 check test -f apps/backend/src/career_forge/api/operator.py
 check test -f apps/backend/src/career_forge/services/operator_otp.py
 check test -f apps/backend/src/career_forge/db/models/operator.py
+check test -f apps/backend/src/career_forge/services/operator_access.py
+check test -f apps/backend/src/career_forge/services/access_audit.py
+check test -f apps/backend/src/career_forge/db/models/operator_access_audit.py
+check test -f apps/backend/alembic/versions/016_operator_access.py
+check grep -q 'operator_membership_label' apps/backend/src/career_forge/db/models/user.py
+check grep -q 'stripe_subscription_status' apps/backend/src/career_forge/db/models/user.py
 check test -f apps/frontend/src/app/operator/page.tsx
 check test -f apps/frontend/src/components/operator/OperatorConsole.tsx
 check grep -q '"operator"' apps/frontend/next.config.mjs
