@@ -2,11 +2,11 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-24** · Last merge: **PR #59** CAR-77 Access desk writes + audit (`8a19125`) · prior **PR #58** CAR-84 · **PR #57** CAR-83 · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
+Last updated: **2026-08-24** · Last merge: **PR #60** CAR-78 Access card UI (`d084c9f`) · prior **PR #59** CAR-77 · **PR #58** CAR-84 · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · **F3b:** [Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) **Completed** · **F3c:** Operator console (CAR-75+)  
-**Next eng:** **F3c** — [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) Content sidecar · [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) Access card UI · **F3a** — [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof · [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR.
+**Next eng:** **F3c** — [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) Content sidecar · [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) F3c docs amend · **F3a** — [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof · [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR.
 
-**Deploy:** Auto-deploy on `main` (CAR-13). **CAR-77 Done** — PR #59 Access desk writes + audit. **CAR-84 Done** — PR #58 Resend `User-Agent` (Cloudflare 1010). **CAR-83 Done** — PR #57 injects `JWT_SECRET`. **CAR-81 Done** — PR #54 injects mailer env; deploy `git pull --ff-only origin main` before `compose up`. VPS `APP_DIR` must be owned by `VPS_USER` (no `sudo git`). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
+**Deploy:** Auto-deploy on `main` (CAR-13). **CAR-78 Done** — PR #60 Access card UI. **CAR-77 Done** — PR #59 Access desk writes + audit. **CAR-84 Done** — PR #58 Resend `User-Agent` (Cloudflare 1010). **CAR-83 Done** — PR #57 injects `JWT_SECRET`. **CAR-81 Done** — PR #54 injects mailer env; deploy `git pull --ff-only origin main` before `compose up`. VPS `APP_DIR` must be owned by `VPS_USER` (no `sudo git`). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
 ---
 
@@ -113,7 +113,7 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Bui
 | [CAR-76](https://linear.app/career-forge-v2/issue/CAR-76) | Operator console shell — path, desk tabs, roles | [S] | **Done** — PR #53 · `/operator` shell, desk tabs by grant, role-agnostic seats |
 | [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access desk writes + audit | [S] | **Done** — PR #59 · override + billing writes; Stripe lock; append-only audit |
 | [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Next** — after CAR-76 |
-| [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Next** — after CAR-77 |
+| [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Done** — PR #60 · lookup + Access card + read-only cost strip |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs — V2-PLAN / ROADMAP / STATUS amend | [S] | After desks land |
 | [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + git-sync prod compose on deploy | [P] | **Done** — PR #54 · `MAILER_*`/`RESEND_*` injected; VPS `chown` (PR #55 not merged) |
 | [CAR-82](https://linear.app/career-forge-v2/issue/CAR-82) | OTP verify 401 with stale access token | [P] | **Done** — PR #56 · always send `external_id`; clear token on 401 |
@@ -157,6 +157,7 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Bui
 | Sign out (this device) | ✅ Done | CAR-69 — PR #50 · `POST /auth/sign-out` + jti denylist; client wipe + confirm ([ADR-006](./decisions/ADR-006-sign-out-jti-revocation.md)) |
 | Operator identity (F3c) | ✅ Done | CAR-75 — PR #52 · `operators` + Operator OTP + `cf_operator_session`; learner JWT 403 on `/operator/*` |
 | Access desk writes + audit (F3c) | ✅ Done | CAR-77 — PR #59 · `operator_membership_label` + `billing_entitled`; Stripe-active lock; `operator_access_audit` |
+| Access card UI (F3c) | ✅ Done | CAR-78 — PR #60 · email lookup; membership override; billing; Stripe lock; audit; `GET /operator/access/cost-pool` |
 | Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon; PR #29 copies `public/` into standalone (Labs `/brand/*`) |
 | Product chrome brand lockup | ✅ Done | CAR-70 — PR #51 · `BrandLockup` on `SetupHeader` + `ArtifactShell`; in-card on IdentityGate/resume; route rules hide duplicate topbar |
 | Marketing landing `/welcome` | ✅ Done | CAR-35 — EN `/welcome`; CTA → `/`; no pricing/email; pt-BR → CAR-37 |
