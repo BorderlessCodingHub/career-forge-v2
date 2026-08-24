@@ -1,6 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { operatorApiUrl, visibleOperatorDesks } from "./operator-console";
+import {
+  getOperatorCostPool,
+  getOperatorLearnerAccess,
+  getOperatorLearnerAccessAudit,
+  patchOperatorLearnerAccess,
+  visibleOperatorDesks,
+  operatorApiUrl,
+} from "./operator-console";
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 describe("operatorApiUrl", () => {
   it("keeps Operator cookie requests on the basePath origin", () => {
@@ -26,5 +37,99 @@ describe("visibleOperatorDesks", () => {
     expect(visibleOperatorDesks(["access"])).toEqual([
       { id: "access", label: "Access" },
     ]);
+  });
+});
+
+describe("Access desk API", () => {
+  it("loads the read-only monthly cost pool", async () => {
+    const body = {
+      year_month: "2026-08",
+      estimated_cost_brl: 187.4,
+      budget_brl: 500,
+      billable_runs: 12,
+      forge_runs: 3,
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => body,
+      }),
+    );
+
+    await expect(getOperatorCostPool()).resolves.toEqual(body);
+    expect(fetch).toHaveBeenCalledWith(
+      "/career-forge/operator/access/cost-pool",
+      expect.objectContaining({ credentials: "include" }),
+    );
+  });
+
+  it("encodes learner emails and sends only the requested access patch", async () => {
+    const learner = {
+      email: "learner+pilot@example.com",
+      operator_membership_label: "base" as const,
+      membership_label: "base",
+      membership_entitled: true,
+      billing_entitled: false,
+      stripe_subscription_status: null,
+      stripe_billing_locked: false,
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => learner,
+      }),
+    );
+
+    await getOperatorLearnerAccess(learner.email);
+    await patchOperatorLearnerAccess(learner.email, {
+      operator_membership_label: "base",
+    });
+
+    expect(fetch).toHaveBeenNthCalledWith(
+      1,
+      "/career-forge/operator/access/learners/learner%2Bpilot%40example.com",
+      expect.objectContaining({ credentials: "include" }),
+    );
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      "/career-forge/operator/access/learners/learner%2Bpilot%40example.com",
+      expect.objectContaining({
+        method: "PATCH",
+        body: JSON.stringify({ operator_membership_label: "base" }),
+      }),
+    );
+  });
+
+  it("returns the learner audit entries from the list envelope", async () => {
+    const entries = [
+      {
+        id: 1,
+        actor_type: "operator",
+        operator_id: 7,
+        actor_email: "operator@example.com",
+        learner_email: "learner@example.com",
+        field: "billing_entitled",
+        before: false,
+        after: true,
+        action: "set",
+        created_at: "2026-08-24T20:00:00Z",
+      },
+    ];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ entries }),
+      }),
+    );
+
+    await expect(getOperatorLearnerAccessAudit("learner@example.com")).resolves.toEqual(
+      entries,
+    );
   });
 });

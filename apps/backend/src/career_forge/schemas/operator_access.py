@@ -31,6 +31,16 @@ class OperatorLearnerAccessResponse(BaseModel):
     stripe_billing_locked: bool
 
 
+class OperatorCostPoolResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    year_month: str
+    estimated_cost_brl: float
+    budget_brl: float
+    billable_runs: int
+    forge_runs: int
+
+
 class OperatorAccessAuditResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

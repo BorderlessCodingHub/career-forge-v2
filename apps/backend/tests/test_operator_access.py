@@ -11,8 +11,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from career_forge.config import settings
+from career_forge.db.models.usage_monthly import GLOBAL_USAGE_USER_ID, UsageMonthly
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
+from career_forge.services.cost_guard import current_year_month
 from career_forge.services import operator_otp as operator_otp_service
 
 
@@ -113,6 +115,43 @@ def test_access_write_changes_membership_and_billing_with_field_audit(
     assert all(entry["learner_email"] == email for entry in entries)
 
 
+def test_access_operator_can_read_current_month_cost_pool(
+    access_operator: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "monthly_api_budget_brl", 500.0)
+    year_month = current_year_month()
+    with SessionLocal() as session:
+        row = session.get(
+            UsageMonthly,
+            {"year_month": year_month, "user_id": GLOBAL_USAGE_USER_ID},
+        )
+        if row is None:
+            row = UsageMonthly(
+                year_month=year_month,
+                user_id=GLOBAL_USAGE_USER_ID,
+                billable_runs=0,
+                forge_runs=0,
+                estimated_cost_brl=0.0,
+            )
+            session.add(row)
+        row.billable_runs = 12
+        row.forge_runs = 3
+        row.estimated_cost_brl = 187.4
+        session.commit()
+
+    response = access_operator.get("/operator/access/cost-pool")
+
+    assert response.status_code == 200, response.text
+    assert response.json() == {
+        "year_month": year_month,
+        "estimated_cost_brl": 187.4,
+        "budget_brl": 500.0,
+        "billable_runs": 12,
+        "forge_runs": 3,
+    }
+
+
 def test_clearing_membership_override_restores_borderless_resolution(
     access_operator: TestClient,
     monkeypatch: pytest.MonkeyPatch,
@@ -209,6 +248,7 @@ def test_editor_only_operator_cannot_read_or_write_access(
     _create_learner(external_id, email)
 
     read = raw_client.get(f"/operator/access/learners/{email}")
+    cost_pool = raw_client.get("/operator/access/cost-pool")
     write = raw_client.patch(
         f"/operator/access/learners/{email}",
         json={"billing_entitled": True},
@@ -216,6 +256,7 @@ def test_editor_only_operator_cannot_read_or_write_access(
     trail = raw_client.get(f"/operator/access/learners/{email}/audit")
 
     assert read.status_code == 403
+    assert cost_pool.status_code == 403
     assert write.status_code == 403
     assert trail.status_code == 403
     assert read.json()["detail"]["code"] == "access_desk_forbidden"

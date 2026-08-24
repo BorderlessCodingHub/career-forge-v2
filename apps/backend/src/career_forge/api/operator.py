@@ -27,11 +27,13 @@ from career_forge.schemas.operator_access import (
     OperatorAccessAuditListResponse,
     OperatorAccessAuditResponse,
     OperatorAccessPatch,
+    OperatorCostPoolResponse,
     OperatorLearnerAccessResponse,
 )
 from career_forge.services.access_audit import AccessActorType, list_access_audit
 from career_forge.services.operator_access import (
     get_learner_by_email,
+    get_operator_cost_pool,
     require_access_role,
     stripe_billing_locked,
     write_operator_access,
@@ -149,6 +151,15 @@ def operator_seats(
             for email in list_operator_seat_emails(db)
         ],
     )
+
+
+@router.get("/access/cost-pool", response_model=OperatorCostPoolResponse)
+def get_operator_access_cost_pool(
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorCostPoolResponse:
+    require_access_role(principal)
+    return OperatorCostPoolResponse.model_validate(get_operator_cost_pool(db))
 
 
 @router.get(

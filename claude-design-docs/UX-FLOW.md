@@ -45,7 +45,7 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 
 ## Screen-by-screen
 
-### 0d. Operator console (`/operator`) — CAR-76
+### 0d. Operator console (`/operator`) — CAR-76 / CAR-78
 
 Independent workspace on the same Next app and Labs origin. An HttpOnly, path-scoped
 Operator session gates the route; learner sessions never open it.
@@ -54,9 +54,10 @@ Operator session gates the route; learner sessions never open it.
 |---|---|
 | **Entry** | Separate Operator email OTP (`data-screen="operator-login"`) |
 | **Shell** | Operator lockup, role-filtered desk tabs **Access \| Content**, role-agnostic seat email list, sign out |
-| **Rooms** | Access and Content placeholders establish the seams for CAR-77/78 and CAR-79 |
+| **Access room** | Read-only monthly cost strip → learner email lookup → Access card. Card exposes effective Membership, BASE/PSP override (or clear to Borderless), billing entitlement, Stripe-active read-only lock, and per-learner audit |
+| **Content room** | Placeholder until CAR-79 sidecar desk |
 | **Route** | `/operator` under `basePath=/career-forge` · `data-screen="operator-console"` |
-| **Forbidden** | Learner product chrome, Mentor chrome, Welcome scenery, third desk, role labels in seat list |
+| **Forbidden** | Learner product chrome, Mentor chrome, Welcome scenery, third Cost desk, role labels in seat list, impersonation |
 
 ---
 
