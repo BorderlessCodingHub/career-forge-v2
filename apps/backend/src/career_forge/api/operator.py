@@ -1,4 +1,4 @@
-"""Operator console HTTP routes — identity, shell, and Access desk."""
+"""Operator console HTTP routes — identity, shell, Access, and Content desks."""
 
 from __future__ import annotations
 
@@ -30,6 +30,11 @@ from career_forge.schemas.operator_access import (
     OperatorCostPoolResponse,
     OperatorLearnerAccessResponse,
 )
+from career_forge.schemas.operator_content import (
+    OperatorContentListResponse,
+    OperatorContentPatch,
+    OperatorContentSkillResponse,
+)
 from career_forge.services.access_audit import AccessActorType, list_access_audit
 from career_forge.services.operator_access import (
     get_learner_by_email,
@@ -39,9 +44,18 @@ from career_forge.services.operator_access import (
     write_operator_access,
 )
 from career_forge.services.operator_allowlist import desks_for_roles, list_operator_seat_emails
+from career_forge.services.operator_content import (
+    ContentSkillSnapshot,
+    list_content_skills,
+    update_content_skill,
+)
 from career_forge.services.operator_otp import request_operator_otp, verify_operator_otp
 
 router = APIRouter()
+
+
+def _content_response(skill: ContentSkillSnapshot) -> OperatorContentSkillResponse:
+    return OperatorContentSkillResponse.model_validate(skill)
 
 
 def _client_ip(request: Request) -> str:
@@ -151,6 +165,39 @@ def operator_seats(
             for email in list_operator_seat_emails(db)
         ],
     )
+
+
+@router.get("/content/skills", response_model=OperatorContentListResponse)
+def get_operator_content_skills(
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorContentListResponse:
+    return OperatorContentListResponse(
+        skills=[
+            _content_response(skill)
+            for skill in list_content_skills(db, principal=principal)
+        ]
+    )
+
+
+@router.patch(
+    "/content/skills/{skill_id}",
+    response_model=OperatorContentSkillResponse,
+)
+def patch_operator_content_skill(
+    skill_id: str,
+    body: OperatorContentPatch,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorContentSkillResponse:
+    skill = update_content_skill(
+        db,
+        principal=principal,
+        skill_id=skill_id,
+        patch=body,
+    )
+    db.commit()
+    return _content_response(skill)
 
 
 @router.get("/access/cost-pool", response_model=OperatorCostPoolResponse)

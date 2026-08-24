@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui";
 import { BrandMark } from "@/components/ui/BrandMark";
 import { AccessDesk } from "@/components/operator/AccessDesk";
+import { ContentDesk } from "@/components/operator/ContentDesk";
 import {
   getOperatorMe,
   getOperatorSeats,
@@ -170,24 +171,7 @@ function DeskRoom({ desk }: { desk: OperatorDeskId }) {
     return <AccessDesk />;
   }
 
-  return (
-    <section data-testid="operator-desk-content">
-      <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent-mint">
-        Content desk
-      </p>
-      <h2 className="mt-2 text-2xl font-semibold text-text-primary">Catalog annotations</h2>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
-        Canonical skill metadata will be annotated here. Git remains the source of truth for
-        learning content and this desk does not mint skill IDs.
-      </p>
-      <div className="mt-8 rounded-card border border-dashed border-border bg-surface p-6">
-        <p className="text-sm font-medium text-text-primary">Content sidecar coming next</p>
-        <p className="mt-1 text-sm text-text-muted">
-          The 40 catalog IDs and publishing metadata land in CAR-79.
-        </p>
-      </div>
-    </section>
-  );
+  return <ContentDesk />;
 }
 
 function OperatorShell({

@@ -75,6 +75,14 @@ def catalog_dir() -> Path:
     raise FileNotFoundError("data/catalog/ not found — set CATALOG_DIR or mount ./data")
 
 
+def canonical_content_dir() -> Path:
+    """Resolve git-owned canonical skill bodies (`data/canonical/`)."""
+    env_path = os.environ.get("CANONICAL_CONTENT_DIR")
+    if env_path:
+        return Path(env_path)
+    return catalog_dir().parent / "canonical"
+
+
 def must_haves_dir() -> Path:
     """Resolve machine-readable must-have id lists (`data/must-haves/`, CAR-15)."""
     env_path = os.environ.get("MUST_HAVES_DIR")
