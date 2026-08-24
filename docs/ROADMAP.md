@@ -86,8 +86,9 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | After CAR-77 |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | After desks |
 | [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + deploy git-sync | [P] | **Done** — PR #54 |
+| [CAR-82](https://linear.app/career-forge-v2/issue/CAR-82) | OTP verify 401 with stale access token | [P] | **Done** — PR #56 |
 
-**Start order:** CAR-82 then CAR-83 (login/JWT bugs) · CAR-77 ∥ CAR-79 · then CAR-78 · CAR-80.
+**Start order:** CAR-83 (`JWT_SECRET` in compose) · CAR-77 ∥ CAR-79 · then CAR-78 · CAR-80.
 
 ---
 
