@@ -67,7 +67,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
-## 0d. Operator console (`/operator`) — MUST match (CAR-76)
+## 0d. Operator console (`/operator`) — MUST match (CAR-76 / CAR-78)
 
 | Constraint | Detail |
 |------------|--------|
@@ -77,9 +77,11 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Navigation | Desk rooms are tabs **Access \| Content**; hide tabs outside `desks` from `GET /operator/me` |
 | Roles | `access` → Access; `editor` → Content; `both` → both, in Access then Content order |
 | Seats | Email list is visible from either desk and deliberately omits role/grant labels |
-| Placeholders | Access points to CAR-77/78; Content points to CAR-79; no writes in CAR-76 |
-| Out | Welcome scenery, third desk, live cost controls, content ID minting |
-| Hooks | `operator-login`, `operator-console`, `operator-seat-list`, `operator-tab-access`, `operator-tab-content` |
+| Access desk | Monthly cost pool is read-only desk chrome; email lookup opens one Access card with Membership source/override, billing entitlement, Stripe-active lock, and per-learner audit |
+| Writes | Membership override is `BASE \| PSP \| clear`; billing grant/revoke is disabled while Stripe is active; every change refreshes the audit trail |
+| Content desk | Placeholder until CAR-79; no content ID minting |
+| Out | Welcome scenery, third desk, mutable cost controls, impersonation, learner/Mentor file |
+| Hooks | `operator-login`, `operator-console`, `operator-seat-list`, `operator-tab-access`, `operator-tab-content`, `operator-cost-strip`, `operator-learner-email`, `operator-learner-lookup`, `operator-access-card`, `operator-stripe-lock`, `operator-access-audit` |
 
 ---
 
@@ -249,7 +251,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 | Screen | `data-testid` |
 |--------|---------------|
-| Operator console | `operator-login` · `operator-console` · `operator-seat-list` · `operator-tab-access` · `operator-tab-content` |
+| Operator console | `operator-login` · `operator-console` · `operator-seat-list` · `operator-tab-access` · `operator-tab-content` · `operator-cost-strip` · `operator-learner-email` · `operator-learner-lookup` · `operator-access-card` · `operator-stripe-lock` · `operator-access-audit` |
 | Goal picker | `goal-picker` |
 | Landing recovery | `landing-continue` · `landing-view-all` · `landing-new-forge` · `landing-reforge-profile` · `landing-recovery-fallback` |
 | Forges list | `forge-row-{public_id}` · `forge-open-{id}` · `forge-rename-{id}` · `forge-overflow-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile` |

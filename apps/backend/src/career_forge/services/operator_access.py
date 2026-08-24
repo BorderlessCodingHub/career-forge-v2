@@ -2,16 +2,30 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from career_forge.auth.operator_session import OperatorPrincipal
+from career_forge.config import Settings, settings
+from career_forge.db.models.usage_monthly import GLOBAL_USAGE_USER_ID, UsageMonthly
 from career_forge.db.models.user import User
 from career_forge.errors import ConflictError, ForbiddenError, NotFoundError
 from career_forge.schemas.operator_access import OperatorAccessPatch
 from career_forge.services.access_audit import append_access_audit
+from career_forge.services.cost_guard import current_year_month
 from career_forge.services.entitlement import stripe_subscription_is_active
 from career_forge.services.membership import apply_membership_label
+
+
+@dataclass(frozen=True)
+class OperatorCostPoolSnapshot:
+    year_month: str
+    estimated_cost_brl: float
+    budget_brl: float
+    billable_runs: int
+    forge_runs: int
 
 
 class LearnerNotFoundError(NotFoundError):
@@ -47,6 +61,26 @@ def get_learner_by_email(
     if user is None:
         raise LearnerNotFoundError("learner not found")
     return user
+
+
+def get_operator_cost_pool(
+    session: Session,
+    *,
+    cfg: Settings | None = None,
+) -> OperatorCostPoolSnapshot:
+    resolved_settings = cfg or settings
+    year_month = current_year_month()
+    usage = session.get(
+        UsageMonthly,
+        {"year_month": year_month, "user_id": GLOBAL_USAGE_USER_ID},
+    )
+    return OperatorCostPoolSnapshot(
+        year_month=year_month,
+        estimated_cost_brl=float(usage.estimated_cost_brl) if usage else 0.0,
+        budget_brl=resolved_settings.monthly_api_budget_brl,
+        billable_runs=usage.billable_runs if usage else 0,
+        forge_runs=usage.forge_runs if usage else 0,
+    )
 
 
 def write_operator_access(

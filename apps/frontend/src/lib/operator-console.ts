@@ -16,6 +16,42 @@ export type OperatorSeat = {
   email: string;
 };
 
+export type OperatorCostPool = {
+  year_month: string;
+  estimated_cost_brl: number;
+  budget_brl: number;
+  billable_runs: number;
+  forge_runs: number;
+};
+
+export type OperatorLearnerAccess = {
+  email: string;
+  operator_membership_label: "base" | "psp" | null;
+  membership_label: string;
+  membership_entitled: boolean;
+  billing_entitled: boolean;
+  stripe_subscription_status: string | null;
+  stripe_billing_locked: boolean;
+};
+
+export type OperatorAccessPatch = {
+  operator_membership_label?: "base" | "psp" | null;
+  billing_entitled?: boolean;
+};
+
+export type OperatorAccessAuditEntry = {
+  id: number;
+  actor_type: string;
+  operator_id: number | null;
+  actor_email: string | null;
+  learner_email: string;
+  field: string;
+  before: unknown;
+  after: unknown;
+  action: string;
+  created_at: string;
+};
+
 const OPERATOR_DESKS: readonly OperatorDesk[] = [
   { id: "access", label: "Access" },
   { id: "content", label: "Content" },
@@ -97,4 +133,35 @@ export function verifyOperatorOtp(email: string, code: string): Promise<Operator
 
 export function signOutOperator(): Promise<void> {
   return operatorFetch<void>("/operator/auth/sign-out", { method: "POST" });
+}
+
+export function getOperatorCostPool(): Promise<OperatorCostPool> {
+  return operatorFetch<OperatorCostPool>("/operator/access/cost-pool");
+}
+
+function learnerAccessPath(email: string): string {
+  return `/operator/access/learners/${encodeURIComponent(email.trim().toLowerCase())}`;
+}
+
+export function getOperatorLearnerAccess(email: string): Promise<OperatorLearnerAccess> {
+  return operatorFetch<OperatorLearnerAccess>(learnerAccessPath(email));
+}
+
+export function patchOperatorLearnerAccess(
+  email: string,
+  patch: OperatorAccessPatch,
+): Promise<OperatorLearnerAccess> {
+  return operatorFetch<OperatorLearnerAccess>(learnerAccessPath(email), {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
+}
+
+export async function getOperatorLearnerAccessAudit(
+  email: string,
+): Promise<OperatorAccessAuditEntry[]> {
+  const body = await operatorFetch<{ entries: OperatorAccessAuditEntry[] }>(
+    `${learnerAccessPath(email)}/audit`,
+  );
+  return body.entries;
 }

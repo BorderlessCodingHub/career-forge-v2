@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui";
 import { BrandMark } from "@/components/ui/BrandMark";
+import { AccessDesk } from "@/components/operator/AccessDesk";
 import {
   getOperatorMe,
   getOperatorSeats,
@@ -166,24 +167,7 @@ function OperatorLogin({ onVerified }: { onVerified: () => Promise<void> }) {
 
 function DeskRoom({ desk }: { desk: OperatorDeskId }) {
   if (desk === "access") {
-    return (
-      <section data-testid="operator-desk-access">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-accent-mint">
-          Access desk
-        </p>
-        <h2 className="mt-2 text-2xl font-semibold text-text-primary">Learner access</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
-          Membership and billing entitlement controls will live in this room. Cost controls
-          remain read-only and runtime caps stay in environment configuration.
-        </p>
-        <div className="mt-8 rounded-card border border-dashed border-border bg-surface p-6">
-          <p className="text-sm font-medium text-text-primary">Access card coming next</p>
-          <p className="mt-1 text-sm text-text-muted">
-            Lookup and audited writes land in CAR-77 and CAR-78.
-          </p>
-        </div>
-      </section>
-    );
+    return <AccessDesk />;
   }
 
   return (
