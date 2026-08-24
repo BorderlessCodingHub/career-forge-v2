@@ -67,6 +67,22 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
+## 0d. Operator console (`/operator`) — MUST match (CAR-76)
+
+| Constraint | Detail |
+|------------|--------|
+| Identity | Separate Operator email OTP and `cf_operator_session`; learner JWT/session is not an Operator credential |
+| Route | `/operator` under `basePath=/career-forge`; same Next app and Labs origin |
+| Shell | Operator-specific lockup and sign out; **no** learner setup/artifact or Mentor chrome |
+| Navigation | Desk rooms are tabs **Access \| Content**; hide tabs outside `desks` from `GET /operator/me` |
+| Roles | `access` → Access; `editor` → Content; `both` → both, in Access then Content order |
+| Seats | Email list is visible from either desk and deliberately omits role/grant labels |
+| Placeholders | Access points to CAR-77/78; Content points to CAR-79; no writes in CAR-76 |
+| Out | Welcome scenery, third desk, live cost controls, content ID minting |
+| Hooks | `operator-login`, `operator-console`, `operator-seat-list`, `operator-tab-access`, `operator-tab-content` |
+
+---
+
 ## 1. Goal Picker — MUST match
 
 | Constraint | Detail |
@@ -233,6 +249,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 | Screen | `data-testid` |
 |--------|---------------|
+| Operator console | `operator-login` · `operator-console` · `operator-seat-list` · `operator-tab-access` · `operator-tab-content` |
 | Goal picker | `goal-picker` |
 | Landing recovery | `landing-continue` · `landing-view-all` · `landing-new-forge` · `landing-reforge-profile` · `landing-recovery-fallback` |
 | Forges list | `forge-row-{public_id}` · `forge-open-{id}` · `forge-rename-{id}` · `forge-overflow-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile` |

@@ -57,3 +57,11 @@ class OperatorMeResponse(BaseModel):
     operator_id: int
     desk_roles: str
     desks: list[str]
+
+
+class OperatorSeatResponse(BaseModel):
+    email: str
+
+
+class OperatorSeatListResponse(BaseModel):
+    seats: list[OperatorSeatResponse]

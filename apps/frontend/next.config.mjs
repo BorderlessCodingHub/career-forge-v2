@@ -8,6 +8,7 @@ const BASE_PATH = "/career-forge";
  */
 const API_PREFIXES = [
   "auth",
+  "operator",
   "me",
   "public",
   "diagnosis",
