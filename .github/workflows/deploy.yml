@@ -88,8 +88,10 @@ jobs:
 
             # Compose env wiring lives in git. Images-only pull leaves a stale
             # docker-compose.prod.yml and new keys never enter the container.
-            git fetch origin
-            git pull --ff-only origin main
+            # -c safe.directory: belt-and-suspenders if APP_DIR uid ≠ VPS_USER.
+            # Real fix: VPS_USER owns APP_DIR; never `sudo git` on the VPS.
+            git -c safe.directory="$APP_DIR" fetch origin
+            git -c safe.directory="$APP_DIR" pull --ff-only origin main
 
             if [ -f .env ]; then
               set -a

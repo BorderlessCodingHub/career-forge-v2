@@ -87,6 +87,12 @@ cd /home/ubuntu/soft-push
 
 If you use a different path, update `APP_DIR` in [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml).
 
+Git has no analogue of `usermod -aG docker`. The deploy SSH user (`VPS_USER`) must **own** `APP_DIR` and run `git` without `sudo`. `sudo git` makes `.git` root-owned; Git 2.35+ then refuses `git pull` from Actions (`dubious ownership`, exit 128). One-time fix:
+
+```bash
+sudo chown -R "$VPS_USER:$VPS_USER" /home/career-forge-v2
+```
+
 ## 2) Create `/home/ubuntu/soft-push/.env`
 
 ```bash
