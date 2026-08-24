@@ -13,6 +13,7 @@ from career_forge.config import settings
 ALGORITHM = "HS256"
 ANON_PROVIDER = "anonymous"
 EMAIL_PROVIDER = "email"
+OPERATOR_PROVIDER = "operator"
 APP_PROVIDERS = frozenset({ANON_PROVIDER, EMAIL_PROVIDER})
 
 
@@ -28,6 +29,31 @@ def mint_anonymous_token(external_id: str, *, expires_days: int | None = None) -
 def mint_email_token(external_id: str, *, expires_days: int | None = None) -> str:
     """Issue a JWT with ``sub`` = external_id and ``provider=email`` (CAR-44)."""
     return _mint_token(external_id, provider=EMAIL_PROVIDER, expires_days=expires_days)
+
+
+def mint_operator_session_token(
+    *,
+    email: str,
+    operator_id: int,
+    desk_roles: str,
+    expires_hours: int | None = None,
+) -> str:
+    """Issue an Operator console session JWT (cookie-only, CAR-75)."""
+    ttl_hours = (
+        expires_hours if expires_hours is not None else settings.operator_session_ttl_hours
+    )
+    now = datetime.now(UTC)
+    payload: dict[str, Any] = {
+        "sub": str(operator_id),
+        "provider": OPERATOR_PROVIDER,
+        "operator_id": operator_id,
+        "email": email.strip().lower(),
+        "desk_roles": desk_roles,
+        "jti": str(uuid4()),
+        "iat": now,
+        "exp": now + timedelta(hours=ttl_hours),
+    }
+    return jwt.encode(payload, _secret(), algorithm=ALGORITHM)
 
 
 def _mint_token(

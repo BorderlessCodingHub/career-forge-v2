@@ -76,6 +76,16 @@ class RateLimitedError(DomainError):
     status_code = 429
 
 
+class ForbiddenError(DomainError):
+    """Authenticated or identified client lacks permission (CAR-75 Operator allowlist)."""
+
+    status_code = 403
+
+    def __init__(self, message: str, *, code: str) -> None:
+        self.code = code
+        super().__init__(message)
+
+
 class QuotaExhaustedError(DomainError):
     """Global pool or per-user forge cap exhausted (CAR-6 kill-switch)."""
 

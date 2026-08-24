@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 from career_forge.auth.jwt_tokens import EMAIL_PROVIDER
 from career_forge.auth.providers import get_auth_provider
 from career_forge.config import settings
-from career_forge.db.models.email_otp import EmailOtp
+from career_forge.db.models.email_otp import EMAIL_OTP_PROVIDER, EmailOtp
 from career_forge.db.models.user import User
 from career_forge.db.repositories.user import ensure_user
 from career_forge.errors import (
@@ -113,6 +113,7 @@ def request_otp(
         update(EmailOtp)
         .where(
             EmailOtp.email == email,
+            EmailOtp.provider == EMAIL_OTP_PROVIDER,
             EmailOtp.consumed_at.is_(None),
         )
         .values(consumed_at=now),
@@ -120,6 +121,7 @@ def request_otp(
     session.add(
         EmailOtp(
             email=email,
+            provider=EMAIL_OTP_PROVIDER,
             code_hash=code_hash,
             expires_at=expires_at,
         ),
@@ -147,6 +149,7 @@ def verify_otp(
         select(EmailOtp)
         .where(
             EmailOtp.email == email,
+            EmailOtp.provider == EMAIL_OTP_PROVIDER,
             EmailOtp.consumed_at.is_(None),
         )
         .order_by(EmailOtp.created_at.desc()),

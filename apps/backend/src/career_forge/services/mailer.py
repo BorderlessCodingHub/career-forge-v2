@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 class Mailer(Protocol):
     def send_otp(self, *, to_email: str, code: str) -> None: ...
 
+    def send_operator_otp(self, *, to_email: str, code: str) -> None: ...
+
     def send_resume_link(self, *, to_email: str, resume_url: str) -> None: ...
 
 
@@ -25,6 +27,14 @@ class LogMailer:
     def send_otp(self, *, to_email: str, code: str) -> None:
         logger.info(
             "OTP for %s: %s (valid ~%ss) — mailer_backend=log",
+            to_email,
+            code,
+            settings.otp_ttl_seconds,
+        )
+
+    def send_operator_otp(self, *, to_email: str, code: str) -> None:
+        logger.info(
+            "Operator console OTP for %s: %s (valid ~%ss) — not learner Email identity",
             to_email,
             code,
             settings.otp_ttl_seconds,
@@ -48,6 +58,18 @@ class ResendMailer:
             subject="Your Career Forge code",
             text=(
                 f"Your verification code is {code}. "
+                f"It expires in {minutes} minutes."
+            ),
+        )
+
+    def send_operator_otp(self, *, to_email: str, code: str) -> None:
+        minutes = max(1, settings.otp_ttl_seconds // 60)
+        self._send(
+            to_email=to_email,
+            subject="Your Operator console code",
+            text=(
+                f"Your Operator console verification code is {code}. "
+                f"This is not your learner Email identity login. "
                 f"It expires in {minutes} minutes."
             ),
         )
@@ -102,6 +124,18 @@ class SesMailer:
             subject="Your Career Forge code",
             text=(
                 f"Your verification code is {code}. "
+                f"It expires in {minutes} minutes."
+            ),
+        )
+
+    def send_operator_otp(self, *, to_email: str, code: str) -> None:
+        minutes = max(1, settings.otp_ttl_seconds // 60)
+        self._send(
+            to_email=to_email,
+            subject="Your Operator console code",
+            text=(
+                f"Your Operator console verification code is {code}. "
+                f"This is not your learner Email identity login. "
                 f"It expires in {minutes} minutes."
             ),
         )

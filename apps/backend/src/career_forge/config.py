@@ -48,6 +48,18 @@ class Settings(BaseSettings):
     stripe_secret_key: str = ""
     stripe_webhook_secret: str = ""
     stripe_price_id: str = ""
+    # CAR-75 — Operator console identity (distinct from learner Email OTP)
+    operator_allowlist: str = ""  # email:both,email:access,email:editor
+    operator_session_ttl_hours: int = 8
+    operator_cookie_name: str = "cf_operator_session"
+    operator_cookie_path: str = "/career-forge/operator"
+
+    @property
+    def operator_cookie_path_resolved(self) -> str:
+        """Browser path on Labs; root path in local/test so API ``/operator/*`` receives the cookie."""
+        if self.env.lower() in {"local", "test"}:
+            return "/"
+        return self.operator_cookie_path
 
     @property
     def cors_origin_list(self) -> list[str]:
