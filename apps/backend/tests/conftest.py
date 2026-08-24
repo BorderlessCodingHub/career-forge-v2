@@ -48,13 +48,17 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     from career_forge.config import settings
     from career_forge.services.otp import reset_otp_rate_limiter
+    from career_forge.services.operator_otp import reset_operator_otp_rate_limiter
 
     settings.jwt_secret = _TEST_JWT_SECRET
+    settings.env = "local"
     settings.stripe_secret_key = ""
     settings.stripe_webhook_secret = ""
     settings.stripe_price_id = ""
     settings.entitlement_billing_allowlist = ""
+    settings.operator_allowlist = ""
     reset_otp_rate_limiter()
+    reset_operator_otp_rate_limiter()
     yield
     reset_mock_interview_sessions()
     reset_diagnosis_interview_llm()
@@ -63,6 +67,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     set_stripe_client(None)
     set_diagnosis_session_store(None)
     reset_otp_rate_limiter()
+    reset_operator_otp_rate_limiter()
 
 
 @pytest.fixture

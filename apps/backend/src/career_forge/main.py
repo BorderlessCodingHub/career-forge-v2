@@ -12,6 +12,7 @@ from career_forge.config import settings
 from career_forge.errors import (
     DomainError,
     EmailOwnedConflictError,
+    ForbiddenError,
     PaywallError,
     QuotaExhaustedError,
 )
@@ -50,6 +51,16 @@ async def _domain_error_handler(_request: Request, exc: DomainError) -> JSONResp
                     "code": "email_owned",
                     "message": str(exc),
                     "existing": exc.existing,
+                }
+            },
+        )
+    if isinstance(exc, ForbiddenError):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "detail": {
+                    "code": exc.code,
+                    "message": str(exc),
                 }
             },
         )
