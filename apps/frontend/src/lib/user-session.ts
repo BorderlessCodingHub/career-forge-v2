@@ -1,7 +1,12 @@
 /** User session + JWT access token (ADR-003 / CAR-57). */
 
 import { hasEmailProvider } from "@/lib/jwt";
-import { clearCareerForgeStorage, readString, writeString } from "@/lib/session/storage";
+import {
+  clearCareerForgeStorage,
+  readString,
+  removeItem,
+  writeString,
+} from "@/lib/session/storage";
 
 const DIAGNOSIS_SESSION_KEY = "career-forge.diagnosis-session-id";
 const FORGE_RUN_KEY = "career-forge.forge-run-id";
@@ -42,6 +47,10 @@ export function getUserId(): string {
 export function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
   return readString(ACCESS_TOKEN_KEY, "local");
+}
+
+export function clearAccessToken(): void {
+  removeItem(ACCESS_TOKEN_KEY, "local");
 }
 
 function setAccessToken(token: string, externalId: string): void {

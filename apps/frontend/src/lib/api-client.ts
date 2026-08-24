@@ -45,7 +45,13 @@ import {
   parseForgeStreamEvent,
   type ForgeStreamSideEffects,
 } from "@/lib/forge-stream";
-import { ensureAccessToken, getAccessToken, getUserId, setSessionFromOtp } from "@/lib/user-session";
+import {
+  clearAccessToken,
+  ensureAccessToken,
+  getAccessToken,
+  getUserId,
+  setSessionFromOtp,
+} from "@/lib/user-session";
 import {
   QUOTA_EXHAUSTED_COPY,
   isQuotaExhaustedMessage,
@@ -553,8 +559,8 @@ export async function verifyOtp(
   const payload: { email: string; code: string; external_id?: string } = {
     email,
     code,
+    external_id: getUserId(),
   };
-  if (!token) payload.external_id = getUserId();
 
   const res = await fetch(`${backendUrl}/auth/otp/verify`, {
     method: "POST",
@@ -578,6 +584,9 @@ export async function verifyOtp(
       if (err instanceof OtpEmailOwnedError) throw err;
     }
     throw new Error(toUserFacingApiError(409, "email already linked"));
+  }
+  if (res.status === 401) {
+    clearAccessToken();
   }
   if (!res.ok) {
     throw await readApiError(res);
