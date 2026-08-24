@@ -88,6 +88,7 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + deploy git-sync | [P] | **Done** — PR #54 |
 | [CAR-82](https://linear.app/career-forge-v2/issue/CAR-82) | OTP verify 401 with stale access token | [P] | **Done** — PR #56 |
 | [CAR-83](https://linear.app/career-forge-v2/issue/CAR-83) | Inject JWT_SECRET into compose | [P] | **Done** — PR #57 |
+| [CAR-84](https://linear.app/career-forge-v2/issue/CAR-84) | Resend User-Agent (Cloudflare 1010) | [P] | **Done** — PR #58 |
 
 **Start order:** CAR-77 ∥ CAR-79 · then CAR-78 · CAR-80.
 

@@ -2,11 +2,11 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-24** · Last merge: **PR #57** CAR-83 JWT_SECRET in compose (`9cd39d1`) · prior **PR #56** CAR-82 · **PR #54** CAR-81 · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
+Last updated: **2026-08-24** · Last merge: **PR #58** CAR-84 Resend User-Agent (`268140b`) · prior **PR #57** CAR-83 · **PR #56** CAR-82 · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · **F3b:** [Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) **Completed** · **F3c:** Operator console (CAR-75+)  
 **Next eng:** **F3c** — [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) Access desk ∥ [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) Content sidecar · **F3a** — [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof · [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR.
 
-**Deploy:** Auto-deploy on `main` (CAR-13). **CAR-83 Done** — PR #57 injects `JWT_SECRET` (fail-fast on prod default). **CAR-81 Done** — PR #54 injects mailer env; deploy `git pull --ff-only origin main` before `compose up`. VPS `APP_DIR` must be owned by `VPS_USER` (no `sudo git`). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
+**Deploy:** Auto-deploy on `main` (CAR-13). **CAR-84 Done** — PR #58 Resend `User-Agent` (Cloudflare 1010). **CAR-83 Done** — PR #57 injects `JWT_SECRET`. **CAR-81 Done** — PR #54 injects mailer env; deploy `git pull --ff-only origin main` before `compose up`. VPS `APP_DIR` must be owned by `VPS_USER` (no `sudo git`). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
 ---
 
@@ -118,6 +118,7 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Bui
 | [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + git-sync prod compose on deploy | [P] | **Done** — PR #54 · `MAILER_*`/`RESEND_*` injected; VPS `chown` (PR #55 not merged) |
 | [CAR-82](https://linear.app/career-forge-v2/issue/CAR-82) | OTP verify 401 with stale access token | [P] | **Done** — PR #56 · always send `external_id`; clear token on 401 |
 | [CAR-83](https://linear.app/career-forge-v2/issue/CAR-83) | Inject JWT_SECRET into compose + reject prod default | [P] | **Done** — PR #57 · fail-fast when ENV=production uses the public default |
+| [CAR-84](https://linear.app/career-forge-v2/issue/CAR-84) | Resend OTP 500 — Cloudflare 1010 / urllib User-Agent | [P] | **Done** — PR #58 · `User-Agent` + error body on Resend HTTP |
 
 ---
 
@@ -152,6 +153,7 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Bui
 | Identity gate at product entry | ✅ Done | CAR-57 — Email identity before product loop; server-side `provider=email` |
 | OTP verify with stale Bearer | ✅ Done | CAR-82 — PR #56 · `external_id` always in verify payload; clear token on 401 |
 | JWT_SECRET injected in compose | ✅ Done | CAR-83 — PR #57 · both compose files; prod boot rejects the public default |
+| Resend OTP through Cloudflare | ✅ Done | CAR-84 — PR #58 · `User-Agent` on Resend HTTP; error body in RuntimeError |
 | Sign out (this device) | ✅ Done | CAR-69 — PR #50 · `POST /auth/sign-out` + jti denylist; client wipe + confirm ([ADR-006](./decisions/ADR-006-sign-out-jti-revocation.md)) |
 | Operator identity (F3c) | ✅ Done | CAR-75 — PR #52 · `operators` + Operator OTP + `cf_operator_session`; learner JWT 403 on `/operator/*` |
 | Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon; PR #29 copies `public/` into standalone (Labs `/brand/*`) |
