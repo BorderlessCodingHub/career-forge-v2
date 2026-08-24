@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  getOperatorContentSkills,
   getOperatorCostPool,
   getOperatorLearnerAccess,
   getOperatorLearnerAccessAudit,
+  patchOperatorContentSkill,
   patchOperatorLearnerAccess,
   visibleOperatorDesks,
   operatorApiUrl,
@@ -130,6 +132,48 @@ describe("Access desk API", () => {
 
     await expect(getOperatorLearnerAccessAudit("learner@example.com")).resolves.toEqual(
       entries,
+    );
+  });
+});
+
+describe("Content desk API", () => {
+  it("loads the catalog sidecar and sends metadata-only patches", async () => {
+    const skill = {
+      skill_id: "rag-retrieval",
+      track_id: "rag-engineer-beginner",
+      title: "Vector retrieval",
+      description: "Index and top-k search",
+      url: null,
+      published: false,
+      body_present: true,
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({ skills: [skill] }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({ ...skill, published: true }),
+        }),
+    );
+
+    await expect(getOperatorContentSkills()).resolves.toEqual([skill]);
+    await expect(
+      patchOperatorContentSkill(skill.skill_id, { published: true }),
+    ).resolves.toEqual({ ...skill, published: true });
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      "/career-forge/operator/content/skills/rag-retrieval",
+      expect.objectContaining({
+        method: "PATCH",
+        body: JSON.stringify({ published: true }),
+      }),
     );
   });
 });

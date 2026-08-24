@@ -52,6 +52,22 @@ export type OperatorAccessAuditEntry = {
   created_at: string;
 };
 
+export type OperatorContentSkill = {
+  skill_id: string;
+  track_id: string;
+  title: string;
+  description: string | null;
+  url: string | null;
+  published: boolean;
+  body_present: boolean;
+};
+
+export type OperatorContentPatch = {
+  title?: string;
+  url?: string | null;
+  published?: boolean;
+};
+
 const OPERATOR_DESKS: readonly OperatorDesk[] = [
   { id: "access", label: "Access" },
   { id: "content", label: "Content" },
@@ -164,4 +180,24 @@ export async function getOperatorLearnerAccessAudit(
     `${learnerAccessPath(email)}/audit`,
   );
   return body.entries;
+}
+
+export async function getOperatorContentSkills(): Promise<OperatorContentSkill[]> {
+  const body = await operatorFetch<{ skills: OperatorContentSkill[] }>(
+    "/operator/content/skills",
+  );
+  return body.skills;
+}
+
+export function patchOperatorContentSkill(
+  skillId: string,
+  patch: OperatorContentPatch,
+): Promise<OperatorContentSkill> {
+  return operatorFetch<OperatorContentSkill>(
+    `/operator/content/skills/${encodeURIComponent(skillId)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(patch),
+    },
+  );
 }
