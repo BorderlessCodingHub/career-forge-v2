@@ -82,7 +82,7 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-75](https://linear.app/career-forge-v2/issue/CAR-75) | Operator identity — OTP, operators table, session cookie | [S] | **Done** — PR #52 |
 | [CAR-76](https://linear.app/career-forge-v2/issue/CAR-76) | Operator console shell — path, desk tabs, roles | [S] | **Done** — PR #53 |
 | [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access desk writes + audit | [S] | **Done** — PR #59 |
-| [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Next** — after CAR-76 |
+| [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Done** — PR #61 |
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Done** — PR #60 |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | After desks |
 | [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + deploy git-sync | [P] | **Done** — PR #54 |
@@ -90,7 +90,7 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-83](https://linear.app/career-forge-v2/issue/CAR-83) | Inject JWT_SECRET into compose | [P] | **Done** — PR #57 |
 | [CAR-84](https://linear.app/career-forge-v2/issue/CAR-84) | Resend User-Agent (Cloudflare 1010) | [P] | **Done** — PR #58 |
 
-**Start order:** CAR-79 · then CAR-80. **CAR-77 Done** · **CAR-78 Done.**
+**Start order:** CAR-80. **CAR-77 Done** · **CAR-78 Done** · **CAR-79 Done.**
 
 ---
 
