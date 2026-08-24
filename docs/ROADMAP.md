@@ -80,13 +80,13 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
 | [CAR-75](https://linear.app/career-forge-v2/issue/CAR-75) | Operator identity — OTP, operators table, session cookie | [S] | **Done** — PR #52 |
-| [CAR-76](https://linear.app/career-forge-v2/issue/CAR-76) | Operator console shell — path, desk tabs, roles | [S] | **Next** — CAR-75 Done |
-| [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access desk writes + audit | [S] | After CAR-76 |
-| [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | After CAR-76 (∥ CAR-77) |
+| [CAR-76](https://linear.app/career-forge-v2/issue/CAR-76) | Operator console shell — path, desk tabs, roles | [S] | **Done** — PR #53 |
+| [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access desk writes + audit | [S] | **Next** — after CAR-76 |
+| [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Next** — after CAR-76 (∥ CAR-77) |
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | After CAR-77 |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | After desks |
 
-**Start order:** CAR-76 next · then CAR-77 ∥ CAR-79 · CAR-78 · CAR-80.
+**Start order:** CAR-77 ∥ CAR-79 · then CAR-78 · CAR-80.
 
 ---
 
