@@ -13,9 +13,11 @@ import time
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 
 from career_forge.auth.providers import get_auth_provider
 from career_forge.config import settings
+from career_forge.db.models.operator_access_audit import OperatorAccessAudit
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
 from career_forge.errors import BadRequestError
@@ -50,6 +52,10 @@ def test_webhook_signature_rejects_bad_hmac() -> None:
 def test_checkout_completed_sets_billing_entitled() -> None:
     with SessionLocal() as session:
         user = ensure_user(session, "stripe-user-paid")
+        user.billing_entitled = False
+        user.stripe_customer_id = None
+        user.stripe_subscription_id = None
+        user.stripe_subscription_status = None
         session.commit()
         apply_stripe_event(
             session,
@@ -71,6 +77,17 @@ def test_checkout_completed_sets_billing_entitled() -> None:
         assert user.billing_entitled is True
         assert user.stripe_customer_id == "cus_123"
         assert user.stripe_subscription_id == "sub_123"
+        assert user.stripe_subscription_status == "active"
+        audit = session.scalar(
+            select(OperatorAccessAudit)
+            .where(OperatorAccessAudit.learner_id == user.id)
+            .order_by(OperatorAccessAudit.id.desc())
+        )
+        assert audit is not None
+        assert audit.actor_type == "stripe"
+        assert audit.field == "billing_entitled"
+        assert audit.before_value is False
+        assert audit.after_value is True
 
 
 def test_checkout_completed_unpaid_does_not_entitle() -> None:
@@ -118,6 +135,7 @@ def test_subscription_deleted_revokes_billing() -> None:
         session.commit()
         session.refresh(user)
         assert user.billing_entitled is False
+        assert user.stripe_subscription_status == "canceled"
 
 
 def _auth_headers(raw_client: TestClient, external_id: str) -> dict[str, str]:

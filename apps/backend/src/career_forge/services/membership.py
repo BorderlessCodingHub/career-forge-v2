@@ -157,13 +157,20 @@ def apply_membership_label(
     client: MembershipClient | None = None,
 ) -> MembershipRecord:
     """Persist soft label + entitled flag. Fail-open to ``external``."""
-    resolver: MembershipClient
-    try:
-        resolver = client or get_membership_client()
-        record = resolver.lookup(email)
-    except Exception:
-        logger.exception("membership lookup raised; defaulting to external")
-        record = _unknown()
+    override = getattr(user, "operator_membership_label", None)
+    if override in _PROGRAMS:
+        record = MembershipRecord(
+            active=True,
+            program=cast(MembershipProgram, override),
+        )
+    else:
+        resolver: MembershipClient
+        try:
+            resolver = client or get_membership_client()
+            record = resolver.lookup(email)
+        except Exception:
+            logger.exception("membership lookup raised; defaulting to external")
+            record = _unknown()
     user.membership_label = record.label
     user.membership_entitled = record.entitled
     return record

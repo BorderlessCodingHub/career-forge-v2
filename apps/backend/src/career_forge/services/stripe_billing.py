@@ -22,11 +22,14 @@ from career_forge.config import settings
 from career_forge.db.models.user import User
 from career_forge.db.repositories.user import get_by_external_id
 from career_forge.errors import BadRequestError
-from career_forge.services.entitlement import stripe_configured
+from career_forge.services.access_audit import append_access_audit
+from career_forge.services.entitlement import (
+    stripe_configured,
+    stripe_subscription_is_active,
+)
 
 logger = logging.getLogger(__name__)
 
-_ACTIVE_STATUSES = frozenset({"active", "trialing", "past_due"})
 STRIPE_API = "https://api.stripe.com/v1"
 
 
@@ -182,17 +185,31 @@ def verify_webhook_signature(
 
 
 def _set_billing(
+    session: Session,
     user: User,
     *,
     entitled: bool,
     customer_id: str | None = None,
     subscription_id: str | None = None,
+    subscription_status: str | None = None,
 ) -> None:
+    before = bool(user.billing_entitled)
     user.billing_entitled = entitled
     if customer_id:
         user.stripe_customer_id = customer_id
     if subscription_id:
         user.stripe_subscription_id = subscription_id
+    if subscription_status is not None:
+        user.stripe_subscription_status = subscription_status
+    if before != entitled:
+        append_access_audit(
+            session,
+            actor_type="stripe",
+            user=user,
+            field="billing_entitled",
+            before=before,
+            after=entitled,
+        )
 
 
 def _find_user(session: Session, *, external_id: str | None, customer_id: str | None) -> User | None:
@@ -232,7 +249,14 @@ def apply_stripe_event(session: Session, event: dict[str, Any]) -> None:
             return
         customer = obj.get("customer") if isinstance(obj.get("customer"), str) else None
         subscription = obj.get("subscription") if isinstance(obj.get("subscription"), str) else None
-        _set_billing(user, entitled=True, customer_id=customer, subscription_id=subscription)
+        _set_billing(
+            session,
+            user,
+            entitled=True,
+            customer_id=customer,
+            subscription_id=subscription,
+            subscription_status="active" if subscription else None,
+        )
         return
 
     if event_type in {"customer.subscription.updated", "customer.subscription.deleted"}:
@@ -243,8 +267,18 @@ def apply_stripe_event(session: Session, event: dict[str, Any]) -> None:
         if user is None:
             logger.warning("stripe subscription event for unknown customer %s", customer)
             return
-        entitled = event_type != "customer.subscription.deleted" and status in _ACTIVE_STATUSES
-        _set_billing(user, entitled=entitled, customer_id=customer, subscription_id=subscription)
+        entitled = (
+            event_type != "customer.subscription.deleted"
+            and stripe_subscription_is_active(status)
+        )
+        _set_billing(
+            session,
+            user,
+            entitled=entitled,
+            customer_id=customer,
+            subscription_id=subscription,
+            subscription_status="canceled" if event_type == "customer.subscription.deleted" else status,
+        )
 
 
 def apply_checkout_session(session: Session, payload: dict[str, Any]) -> None:

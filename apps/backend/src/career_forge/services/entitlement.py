@@ -20,6 +20,7 @@ from career_forge.services.cost_guard import resolve_exclude_reason
 _DEMO_EMAIL_SUFFIX = "@demo.careerforge.local"
 
 EntitlementReason = Literal["ok", "paywall", "membership", "billing", "excluded"]
+ACTIVE_STRIPE_SUBSCRIPTION_STATUSES = frozenset({"active", "trialing", "past_due"})
 
 
 @dataclass(frozen=True)
@@ -43,6 +44,10 @@ def parse_billing_allowlist(raw: str) -> set[str]:
     return emails
 
 
+def stripe_subscription_is_active(status: str | None) -> bool:
+    return status in ACTIVE_STRIPE_SUBSCRIPTION_STATUSES
+
+
 def _usable_email(email: str | None) -> str | None:
     if not email or email.endswith(_DEMO_EMAIL_SUFFIX):
         return None
@@ -59,6 +64,7 @@ def evaluate_entitlement(
     forge_count: int,
     run_input: dict | None = None,
     billing_allowlist: set[str] | None = None,
+    stripe_subscription_status: str | None = None,
 ) -> EntitlementDecision:
     """Pure decision: allow this forge, or paywall the caller."""
     if resolve_exclude_reason(user_id, run_input) is not None:
@@ -73,7 +79,11 @@ def evaluate_entitlement(
 
     allowlist = billing_allowlist or set()
     usable = _usable_email(email)
-    billed = billing_entitled or (usable in allowlist if usable else False)
+    billed = (
+        stripe_subscription_is_active(stripe_subscription_status)
+        or billing_entitled
+        or (usable in allowlist if usable else False)
+    )
 
     if membership_entitled and membership_label in {"base", "psp"}:
         return EntitlementDecision(
@@ -124,6 +134,7 @@ def _entitlement_for_user(
         membership_label=user.membership_label,
         membership_entitled=bool(user.membership_entitled),
         billing_entitled=bool(user.billing_entitled),
+        stripe_subscription_status=user.stripe_subscription_status,
         email=user.email,
         forge_count=forge_count,
         run_input=run_input,
