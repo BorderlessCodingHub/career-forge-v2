@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { Button } from "@/components/ui";
 import { getRoadmap, patchRoadmapChecklist } from "@/lib/api-client";
 import {
   buildReferenceViewerHref,
@@ -98,8 +97,11 @@ export default function ReferenceViewerContent() {
             Reference unavailable
           </h1>
           <p className="mt-2 text-sm text-danger">{error}</p>
-          <Link href={nodeId ? `/roadmap?node=${encodeURIComponent(nodeId)}` : "/roadmap"}>
-            <Button className="mt-5">Return to roadmap</Button>
+          <Link
+            href={nodeId ? `/roadmap?node=${encodeURIComponent(nodeId)}` : "/roadmap"}
+            className="mt-5 inline-flex rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+          >
+            Return to roadmap
           </Link>
         </div>
       </main>
