@@ -60,9 +60,9 @@ describe("AccessDesk pilot list", () => {
     render(<AccessDesk />);
 
     expect(await screen.findByTestId("operator-pilot-email-pilot@example.com")).toBeTruthy();
-    expect(screen.getByTestId("operator-pilot-badge-pilot@example.com").textContent).toBe(
-      "pilot list",
-    );
+    const listBadge = screen.getByTestId("operator-pilot-badge-pilot@example.com");
+    expect(listBadge.textContent).toBe("pilot list");
+    expect(listBadge.className).not.toContain("uppercase");
 
     fireEvent.change(screen.getByTestId("operator-pilot-email-input"), {
       target: { value: " New@Example.com " },

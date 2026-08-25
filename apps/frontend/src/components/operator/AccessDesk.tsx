@@ -104,7 +104,7 @@ function AccessFact({ label, value }: { label: string; value: string }) {
 function PilotListBadge({ testId }: { testId?: string }) {
   return (
     <span
-      className="inline-flex rounded-full border border-accent/50 bg-accent/15 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-accent-mint"
+      className="inline-flex rounded-full border border-accent/50 bg-accent/15 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.08em] text-accent-mint"
       data-testid={testId}
     >
       pilot list
