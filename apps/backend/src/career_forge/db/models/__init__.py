@@ -1,5 +1,9 @@
 from career_forge.db.base import Base
 
+from career_forge.db.models.billing_pilot_email import (
+    BillingPilotEmail,
+    BillingPilotEmailAudit,
+)
 from career_forge.db.models.diagnosis_session import DiagnosisSessionRecord
 from career_forge.db.models.email_otp import EmailOtp
 from career_forge.db.models.forge_access_token import ForgeAccessToken
@@ -19,6 +23,8 @@ from career_forge.db.models.validation import Validation
 
 __all__ = [
     "Base",
+    "BillingPilotEmail",
+    "BillingPilotEmailAudit",
     "DiagnosisSessionRecord",
     "EmailOtp",
     "ForgeAccessToken",

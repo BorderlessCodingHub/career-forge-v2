@@ -1,6 +1,6 @@
 """Product entitlement — paywall before diagnosis and forge for unpaid external (CAR-57).
 
-BASE/PSP membership skips Stripe. Paid/allowlisted ``external`` skips too.
+BASE/PSP membership skips Stripe. Paid/pilot-listed ``external`` skips too.
 Cost caps (FORGE_CAP_PER_USER_MONTH) still apply after this gate.
 """
 
@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from career_forge.ai.run import GraphRun
 from career_forge.config import settings
+from career_forge.db.models.billing_pilot_email import BillingPilotEmail
 from career_forge.db.repositories.user import ensure_user
 from career_forge.errors import PaywallError
 from career_forge.services.cost_guard import resolve_exclude_reason
@@ -33,17 +34,6 @@ class EntitlementDecision:
     free_forges_used: int = 0
 
 
-def parse_billing_allowlist(raw: str) -> set[str]:
-    """Parse comma-separated emails. Invalid fragments are skipped."""
-    emails: set[str] = set()
-    for chunk in raw.split(","):
-        email = chunk.strip().lower()
-        if "@" not in email or email.startswith("@") or email.endswith("@"):
-            continue
-        emails.add(email)
-    return emails
-
-
 def stripe_subscription_is_active(status: str | None) -> bool:
     return status in ACTIVE_STRIPE_SUBSCRIPTION_STATUSES
 
@@ -52,6 +42,11 @@ def _usable_email(email: str | None) -> str | None:
     if not email or email.endswith(_DEMO_EMAIL_SUFFIX):
         return None
     return email.strip().lower()
+
+
+def _pilot_email_is_listed(session: Session, email: str | None) -> bool:
+    usable = _usable_email(email)
+    return usable is not None and session.get(BillingPilotEmail, usable) is not None
 
 
 def evaluate_entitlement(
@@ -63,7 +58,7 @@ def evaluate_entitlement(
     email: str | None,
     forge_count: int,
     run_input: dict | None = None,
-    billing_allowlist: set[str] | None = None,
+    pilot_email_listed: bool = False,
     stripe_subscription_status: str | None = None,
 ) -> EntitlementDecision:
     """Pure decision: allow this forge, or paywall the caller."""
@@ -77,12 +72,10 @@ def evaluate_entitlement(
             free_forges_used=forge_count,
         )
 
-    allowlist = billing_allowlist or set()
-    usable = _usable_email(email)
     billed = (
         stripe_subscription_is_active(stripe_subscription_status)
         or billing_entitled
-        or (usable in allowlist if usable else False)
+        or (_usable_email(email) is not None and pilot_email_listed)
     )
 
     if membership_entitled and membership_label in {"base", "psp"}:
@@ -138,7 +131,7 @@ def _entitlement_for_user(
         email=user.email,
         forge_count=forge_count,
         run_input=run_input,
-        billing_allowlist=parse_billing_allowlist(settings.entitlement_billing_allowlist),
+        pilot_email_listed=_pilot_email_is_listed(session, user.email),
     )
 
 

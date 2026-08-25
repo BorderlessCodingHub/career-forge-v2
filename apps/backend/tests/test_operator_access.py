@@ -9,12 +9,16 @@ import uuid
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import delete, select
+from sqlalchemy.exc import DBAPIError
 
 from career_forge.config import settings
+from career_forge.db.models.billing_pilot_email import BillingPilotEmailAudit
 from career_forge.db.models.usage_monthly import GLOBAL_USAGE_USER_ID, UsageMonthly
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
 from career_forge.services.cost_guard import current_year_month
+from career_forge.services.entitlement import require_diagnosis_entitlement
 from career_forge.services import operator_otp as operator_otp_service
 
 
@@ -95,6 +99,7 @@ def test_access_write_changes_membership_and_billing_with_field_audit(
         "membership_label": "base",
         "membership_entitled": True,
         "billing_entitled": True,
+        "pilot_email_listed": False,
         "stripe_subscription_status": None,
         "stripe_billing_locked": False,
     }
@@ -113,6 +118,95 @@ def test_access_write_changes_membership_and_billing_with_field_audit(
     assert all(entry["actor_type"] == "operator" for entry in entries)
     assert all(entry["actor_email"] == "access@borderless.com" for entry in entries)
     assert all(entry["learner_email"] == email for entry in entries)
+
+
+def test_access_operator_manages_pre_otp_pilot_email_idempotently_with_audit(
+    access_operator: TestClient,
+) -> None:
+    _external_id, email = _learner_identity("car87-pre-otp")
+
+    first = access_operator.post(
+        "/operator/access/pilot-emails",
+        json={"email": email.upper()},
+    )
+    second = access_operator.post(
+        "/operator/access/pilot-emails",
+        json={"email": email},
+    )
+
+    assert first.status_code == 200, first.text
+    assert second.status_code == 200, second.text
+    assert first.json()["email"] == email
+    assert second.json()["email"] == email
+    assert access_operator.get(f"/operator/access/learners/{email}").status_code == 404
+    listed = access_operator.get("/operator/access/pilot-emails")
+    assert listed.status_code == 200, listed.text
+    assert email in [row["email"] for row in listed.json()["emails"]]
+
+    external_id = f"otp-{uuid.uuid4().hex}"
+    _create_learner(external_id, email)
+    learner = access_operator.get(f"/operator/access/learners/{email}")
+    assert learner.status_code == 200, learner.text
+    assert learner.json()["pilot_email_listed"] is True
+    with SessionLocal() as session:
+        decision = require_diagnosis_entitlement(session, external_id)
+        audit = list(
+            session.scalars(
+                select(BillingPilotEmailAudit)
+                .where(BillingPilotEmailAudit.email == email)
+                .order_by(BillingPilotEmailAudit.id)
+            )
+        )
+    assert decision.allowed is True
+    assert decision.reason == "billing"
+    assert [(row.action, row.actor_email) for row in audit] == [
+        ("add", "access@borderless.com")
+    ]
+    with SessionLocal() as session:
+        with pytest.raises(DBAPIError):
+            session.execute(
+                delete(BillingPilotEmailAudit).where(
+                    BillingPilotEmailAudit.email == email
+                )
+            )
+
+
+def test_pilot_email_revoke_does_not_clear_stripe_or_billing_flag(
+    access_operator: TestClient,
+) -> None:
+    external_id, email = _learner_identity("car87-revoke")
+    _create_learner(external_id, email)
+    with SessionLocal() as session:
+        user = ensure_user(session, external_id)
+        user.billing_entitled = True
+        user.stripe_subscription_status = "active"
+        session.commit()
+    added = access_operator.post(
+        "/operator/access/pilot-emails",
+        json={"email": email},
+    )
+    assert added.status_code == 200, added.text
+
+    removed = access_operator.delete(f"/operator/access/pilot-emails/{email}")
+    missing = access_operator.delete(f"/operator/access/pilot-emails/{email}")
+    invalid = access_operator.delete("/operator/access/pilot-emails/not-an-email")
+
+    assert removed.status_code == 204, removed.text
+    assert missing.status_code == 204, missing.text
+    assert invalid.status_code == 422, invalid.text
+    state = access_operator.get(f"/operator/access/learners/{email}").json()
+    assert state["pilot_email_listed"] is False
+    assert state["billing_entitled"] is True
+    assert state["stripe_subscription_status"] == "active"
+    with SessionLocal() as session:
+        audit = list(
+            session.scalars(
+                select(BillingPilotEmailAudit)
+                .where(BillingPilotEmailAudit.email == email)
+                .order_by(BillingPilotEmailAudit.id)
+            )
+        )
+    assert [row.action for row in audit] == ["add", "delete"]
 
 
 def test_access_operator_can_read_current_month_cost_pool(
@@ -253,11 +347,20 @@ def test_editor_only_operator_cannot_read_or_write_access(
         f"/operator/access/learners/{email}",
         json={"billing_entitled": True},
     )
+    pilot_list = raw_client.get("/operator/access/pilot-emails")
+    pilot_add = raw_client.post(
+        "/operator/access/pilot-emails",
+        json={"email": email},
+    )
+    pilot_delete = raw_client.delete(f"/operator/access/pilot-emails/{email}")
     trail = raw_client.get(f"/operator/access/learners/{email}/audit")
 
     assert read.status_code == 403
     assert cost_pool.status_code == 403
     assert write.status_code == 403
+    assert pilot_list.status_code == 403
+    assert pilot_add.status_code == 403
+    assert pilot_delete.status_code == 403
     assert trail.status_code == 403
     assert read.json()["detail"]["code"] == "access_desk_forbidden"
 

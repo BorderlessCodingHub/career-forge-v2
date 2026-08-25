@@ -55,7 +55,6 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     settings.stripe_secret_key = ""
     settings.stripe_webhook_secret = ""
     settings.stripe_price_id = ""
-    settings.entitlement_billing_allowlist = ""
     settings.operator_allowlist = ""
     reset_otp_rate_limiter()
     reset_operator_otp_rate_limiter()

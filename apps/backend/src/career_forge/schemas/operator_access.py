@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class OperatorAccessPatch(BaseModel):
@@ -27,8 +27,38 @@ class OperatorLearnerAccessResponse(BaseModel):
     membership_label: str
     membership_entitled: bool
     billing_entitled: bool
+    pilot_email_listed: bool
     stripe_subscription_status: str | None
     stripe_billing_locked: bool
+
+
+class BillingPilotEmailCreate(BaseModel):
+    email: str
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        normalized = value.strip().lower()
+        if (
+            "@" not in normalized
+            or normalized.startswith("@")
+            or normalized.endswith("@")
+            or len(normalized) > 255
+        ):
+            raise ValueError("valid email is required")
+        return normalized
+
+
+class BillingPilotEmailResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    email: str
+    created_at: datetime
+    created_by_operator_id: int | None
+
+
+class BillingPilotEmailListResponse(BaseModel):
+    emails: list[BillingPilotEmailResponse]
 
 
 class OperatorCostPoolResponse(BaseModel):
