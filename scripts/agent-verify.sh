@@ -66,6 +66,10 @@ check test -f apps/backend/src/career_forge/services/access_audit.py
 check test -f apps/backend/src/career_forge/db/models/operator_access_audit.py
 check test -f apps/backend/alembic/versions/016_operator_access.py
 check grep -q '"/access/cost-pool"' apps/backend/src/career_forge/api/operator.py
+check test -f apps/backend/src/career_forge/db/models/billing_pilot_email.py
+check test -f apps/backend/alembic/versions/018_billing_pilot_emails.py
+check grep -q '"/access/pilot-emails"' apps/backend/src/career_forge/api/operator.py
+check file_lacks 'ENTITLEMENT_BILLING_ALLOWLIST|entitlement_billing_allowlist' apps/backend/src/career_forge/services/entitlement.py
 check test -f apps/backend/src/career_forge/services/operator_content.py
 check test -f apps/backend/src/career_forge/db/models/skill_content.py
 check test -f apps/backend/alembic/versions/017_skill_content.py

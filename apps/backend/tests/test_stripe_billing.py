@@ -253,12 +253,10 @@ def test_sync_polls_checkout_session(
 
 def test_paid_external_second_forge_allowed(
     raw_client: TestClient,
-    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     from career_forge.ai.graphs.diagnosis import build_diagnosis_response
     from career_forge.schemas.diagnosis import DiagnosisRequest
 
-    monkeypatch.setattr(settings, "entitlement_billing_allowlist", "")
     user_id = "stripe-paid-forge"
     headers = _auth_headers(raw_client, user_id)
     with SessionLocal() as session:

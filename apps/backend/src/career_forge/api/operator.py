@@ -24,6 +24,9 @@ from career_forge.schemas.operator_auth import (
     OperatorSeatResponse,
 )
 from career_forge.schemas.operator_access import (
+    BillingPilotEmailCreate,
+    BillingPilotEmailListResponse,
+    BillingPilotEmailResponse,
     OperatorAccessAuditListResponse,
     OperatorAccessAuditResponse,
     OperatorAccessPatch,
@@ -36,6 +39,12 @@ from career_forge.schemas.operator_content import (
     OperatorContentSkillResponse,
 )
 from career_forge.services.access_audit import AccessActorType, list_access_audit
+from career_forge.services.billing_pilot_emails import (
+    add_pilot_email,
+    list_pilot_emails,
+    pilot_email_is_listed,
+    remove_pilot_email,
+)
 from career_forge.services.operator_access import (
     get_learner_by_email,
     get_operator_cost_pool,
@@ -74,13 +83,14 @@ def get_operator_principal(request: Request) -> OperatorPrincipal:
     return principal
 
 
-def _access_response(user: User) -> OperatorLearnerAccessResponse:
+def _access_response(db: Session, user: User) -> OperatorLearnerAccessResponse:
     return OperatorLearnerAccessResponse(
         email=user.email,
         operator_membership_label=user.operator_membership_label,
         membership_label=user.membership_label,
         membership_entitled=bool(user.membership_entitled),
         billing_entitled=bool(user.billing_entitled),
+        pilot_email_listed=pilot_email_is_listed(db, user.email),
         stripe_subscription_status=user.stripe_subscription_status,
         stripe_billing_locked=stripe_billing_locked(user),
     )
@@ -210,6 +220,54 @@ def get_operator_access_cost_pool(
 
 
 @router.get(
+    "/access/pilot-emails",
+    response_model=BillingPilotEmailListResponse,
+)
+def get_operator_pilot_emails(
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> BillingPilotEmailListResponse:
+    require_access_role(principal)
+    return BillingPilotEmailListResponse(
+        emails=[
+            BillingPilotEmailResponse.model_validate(row)
+            for row in list_pilot_emails(db, principal=principal)
+        ]
+    )
+
+
+@router.post(
+    "/access/pilot-emails",
+    response_model=BillingPilotEmailResponse,
+)
+def post_operator_pilot_email(
+    body: BillingPilotEmailCreate,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> BillingPilotEmailResponse:
+    require_access_role(principal)
+    row = add_pilot_email(db, principal=principal, email=body.email)
+    db.commit()
+    db.refresh(row)
+    return BillingPilotEmailResponse.model_validate(row)
+
+
+@router.delete("/access/pilot-emails/{email}", status_code=204)
+def delete_operator_pilot_email(
+    email: str,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> Response:
+    require_access_role(principal)
+    try:
+        remove_pilot_email(db, principal=principal, email=email)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    db.commit()
+    return Response(status_code=204)
+
+
+@router.get(
     "/access/learners/{learner_email}",
     response_model=OperatorLearnerAccessResponse,
 )
@@ -219,7 +277,7 @@ def get_operator_learner_access(
     principal: OperatorPrincipal = Depends(get_operator_principal),
 ) -> OperatorLearnerAccessResponse:
     require_access_role(principal)
-    return _access_response(get_learner_by_email(db, learner_email))
+    return _access_response(db, get_learner_by_email(db, learner_email))
 
 
 @router.patch(
@@ -240,7 +298,7 @@ def patch_operator_learner_access(
     )
     db.commit()
     db.refresh(user)
-    return _access_response(user)
+    return _access_response(db, user)
 
 
 @router.get(

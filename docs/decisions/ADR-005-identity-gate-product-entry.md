@@ -43,13 +43,13 @@ It also meant we paid for nameless diagnosis and forge, the OTP wall was **UI-on
 | Goal picker | Allowed without billing (no LLM). |
 | Existing Roadmap | **Not ransomed** — Continue / validate / report stay usable. Paywall does not lock `/` for someone who already has an artifact. |
 | Welcome | Pricing remains **scenery** until a later honesty pass (CAR-53). Runtime checkout is **not** on Welcome. Dissonance accepted. |
-| Stub | `ENTITLEMENT_BILLING_ALLOWLIST` still stands in for Stripe keys. The 402 just fires earlier. |
+| Pilot grant | **Amended by CAR-87:** `billing_pilot_emails` is the runtime source. Migration 018 imports `ENTITLEMENT_BILLING_ALLOWLIST` once; runtime then ignores the env. |
 
 Identity and Paywall remain **two gates**. Early identity does not mean BASE/PSP pay. It does mean `external` pays before we run diagnosis.
 
 ### 3. Pilots
 
-CAR-36 / V2-PLAN F3.7 (E2E on anon scaffold) is **dead**. Pilots use Email identity + billing allowlist (and real membership when the API exists). No secret anon bypass.
+CAR-36 / V2-PLAN F3.7 (E2E on anon scaffold) is **dead**. Pilots use Email identity + the database pilot billing list (and real membership when the API exists). No secret anon bypass.
 
 ---
 

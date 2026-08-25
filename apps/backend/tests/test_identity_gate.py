@@ -6,7 +6,6 @@ import pytest
 from fastapi.testclient import TestClient
 
 from career_forge.auth.providers import get_auth_provider
-from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
 from career_forge.errors import PAYWALL_MESSAGE
@@ -27,9 +26,7 @@ def _email_headers(raw_client: TestClient, external_id: str) -> dict[str, str]:
 
 def test_anon_jwt_rejected_on_product_loop(
     raw_client: TestClient,
-    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(settings, "entitlement_billing_allowlist", "")
     user = "anon-blocked"
     headers = _anon_headers(raw_client, user)
 
@@ -52,9 +49,7 @@ def test_anon_jwt_rejected_on_product_loop(
 
 def test_unpaid_external_diagnosis_start_returns_402(
     raw_client: TestClient,
-    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(settings, "entitlement_billing_allowlist", "")
     user = "diag-paywall"
     headers = _email_headers(raw_client, user)
 
@@ -76,9 +71,7 @@ def test_unpaid_external_diagnosis_start_returns_402(
 
 def test_base_member_diagnosis_start_allowed(
     raw_client: TestClient,
-    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(settings, "entitlement_billing_allowlist", "")
     user = "diag-base"
     headers = _email_headers(raw_client, user)
     with SessionLocal() as session:
