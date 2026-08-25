@@ -9,6 +9,8 @@ Immutable **business + architecture decisions** for Career Forge. Agents must re
 | [ADR-003](./ADR-003-forge-recovery-auth-scaffold.md) | **Accepted** (timing / free forge → ADR-005) | Forge recovery + auth scaffold (pre-Borderless) |
 | [ADR-004](./ADR-004-canonical-skill-content.md) | **Accepted** | Canonical skill content — forge refs N:1, not per-run posts |
 | [ADR-005](./ADR-005-identity-gate-product-entry.md) | **Accepted** | Identity gate at product entry · paywall before diagnosis (CAR-57) |
+| [ADR-006](./ADR-006-sign-out-jti-revocation.md) | **Accepted** | Sign out + JWT jti revocation |
+| [ADR-007](./ADR-007-reference-viewer.md) | **Accepted** | Reference viewer `/reference` — not overlay, not `/learn` |
 
 v2 execution decisions (cost pool, auth platform, goals): [V2-PLAN.md](../V2-PLAN.md) decision log.
 

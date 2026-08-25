@@ -11,7 +11,7 @@
 [/welcome marketing — optional] → Goal → Onboarding pill rounds → Editable diagnosis → [Generate roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
 
 Return visit (CAR-27/29): if ≥1 forge artifact → Continue last / View all (/forges) / New forge; if saved diagnosis → Forge again from last diagnosis
-Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner)
+Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner) · /reference?node=&item= (one Node Reference)
 Marketing: /welcome (CAR-56 Premium B) — CTA Start diagnosis → `/` product; pricing/apply scenery; no auto-redirect from `/`. Exploration (direct URL only): `/welcome/plg`. Bake-off A (CAR-41, `noindex`): `/welcome/premium-a`. Legacy `/welcome/premium-b` redirects → `/welcome`.
 
 Operator (separate identity): /operator → Operator OTP → Access | Content desk rooms. Desks outside the seat grant are hidden; no learner or Mentor chrome.
@@ -208,10 +208,26 @@ After the animation → navigates to steady state (`/roadmap`).
 - **Description** callout in the drawer when there are no knowledge gaps; a gaps block replaces the callout after a failed validation
 - Collapsible sections — **Expected outcomes**, **Practical tasks**, and **References** open by default (user can collapse); fixed validate CTA in the footer
 - **Practical tasks** section when the graph comes from `StudyPlan` — checkbox per item (optional, does not block mastery)
-- **References** section (real links when they come from web search) — mark as read
+- **References** section (real links when they come from web search) — opens `/reference?node=&item=` inside Career Forge; mark as studied remains a separate act
 - **Study progress** bar (`x/y` completed) when there are items; copy makes clear this does not replace AI validation
 - **Chapter tutor** (`open-tutor-drawer`) — optional technical Q&A; no inline mentor chat in the drawer
 - CTA **Mock interview — validate mastery** (real proof of learning)
+
+---
+
+### 6b. Reference viewer (`/reference`) — CAR-85
+
+**User job:** Study one Node Reference without losing the Roadmap context.
+
+| | |
+|---|---|
+| **Address** | `node` + Reference `item`; never a raw `url` query |
+| **Chrome** | Node title, this Reference's `done` control, sibling References, CTA back to the Node drawer |
+| **Preview** | Best-effort sandboxed iframe; persistent **Open on source site** escape hatch in a new tab |
+| **Invalid** | Missing/unknown Node or item returns to `/roadmap`; no empty viewer |
+| **Out** | `/learn`, tutor/mentor links, Live Forge sources, persisted “opened” event |
+
+Opening a Reference never marks it done. The viewer uses the existing checklist command.
 
 ---
 

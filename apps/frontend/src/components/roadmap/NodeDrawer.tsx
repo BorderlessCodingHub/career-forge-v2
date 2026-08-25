@@ -6,6 +6,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChecklistProgress, getChecklistProgress } from "@/components/roadmap/ChecklistProgress";
 import { Button } from "@/components/ui";
 import { getKnowledgeGaps } from "@/lib/api-client";
+import { buildReferenceViewerHref } from "@/lib/reference-viewer";
 import type { KnowledgeGapItem, RoadmapCategory, RoadmapChecklistItem, RoadmapNode } from "@/types/contracts";
 
 type NodeDrawerProps = {
@@ -279,15 +280,14 @@ export function NodeDrawer({
                       />
                       <span className={reference.done ? "opacity-70" : undefined}>
                         {reference.url ? (
-                          <a
-                            href={reference.url}
-                            target="_blank"
-                            rel="noreferrer"
+                          <Link
+                            href={buildReferenceViewerHref(nodeId, reference.id)}
                             className="font-medium text-text-primary underline-offset-2 hover:underline"
                             onClick={(event) => event.stopPropagation()}
+                            data-testid={`open-reference-${reference.id}`}
                           >
                             {reference.title ?? "Reference"}
-                          </a>
+                          </Link>
                         ) : (
                           <span className="font-medium text-text-primary">
                             {reference.title ?? "Reference"}
