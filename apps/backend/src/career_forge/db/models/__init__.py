@@ -6,6 +6,7 @@ from career_forge.db.models.billing_pilot_email import (
 )
 from career_forge.db.models.diagnosis_session import DiagnosisSessionRecord
 from career_forge.db.models.email_otp import EmailOtp
+from career_forge.db.models.embed_allowlist import EmbedHost, EmbedHostAudit
 from career_forge.db.models.forge_access_token import ForgeAccessToken
 from career_forge.db.models.forge_artifact import ForgeArtifact
 from career_forge.db.models.graph_run import GraphRunRecord
@@ -27,6 +28,8 @@ __all__ = [
     "BillingPilotEmailAudit",
     "DiagnosisSessionRecord",
     "EmailOtp",
+    "EmbedHost",
+    "EmbedHostAudit",
     "ForgeAccessToken",
     "ForgeArtifact",
     "GLOBAL_USAGE_USER_ID",

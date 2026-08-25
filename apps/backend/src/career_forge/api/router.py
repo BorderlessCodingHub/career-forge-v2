@@ -18,6 +18,7 @@ from career_forge.api import (
     mentor_report,
     mock_interview,
     operator,
+    reference,
     roadmap,
     tutor,
     validation,
@@ -39,6 +40,7 @@ api_router.include_router(forge.router, prefix="/forge", tags=["forge"])
 api_router.include_router(me_forges.router, prefix="/me", tags=["me"])
 api_router.include_router(me_profile.router, prefix="/me", tags=["me"])
 api_router.include_router(forge_links.router, tags=["forge-links"])
+api_router.include_router(reference.router, prefix="/reference", tags=["reference"])
 api_router.include_router(roadmap.router, prefix="/roadmap", tags=["roadmap"])
 api_router.include_router(validation.router, prefix="/validation", tags=["validation"])
 api_router.include_router(mentor.router, prefix="/mentor", tags=["mentor"])
