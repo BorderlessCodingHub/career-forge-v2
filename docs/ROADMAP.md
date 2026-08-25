@@ -92,6 +92,12 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 
 **Start order:** CAR-80. **CAR-77 Done** · **CAR-78 Done** · **CAR-79 Done.**
 
+### Product loop — Node References
+
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
+| [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) | In-product Reference viewer (`/reference`) | [P] | **Done** — PR #62 · [ADR-007](./decisions/ADR-007-reference-viewer.md) |
+
 ---
 
 ## Observability — LangSmith cost (cross-cutting)
