@@ -2,12 +2,12 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-25** · Last merge: **PR #65** CAR-87 Pilot billing emails (`e4b7957`) · prior **PR #64** CAR-86 · **PR #63** CAR-80 · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
+Last updated: **2026-08-25** · Last merge: **PR #66** CAR-88 Access desk pilot list UI (`5f8af62`) · prior **PR #65** CAR-87 · **PR #64** CAR-86 · **PR #63** CAR-80 · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · **F3b:** [Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) **Completed** · **F3c:** [Operator console spec](https://linear.app/career-forge-v2/issue/CAR-58) **Completed** (CAR-75…80)
 
-**Next eng:** [CAR-88](https://linear.app/career-forge-v2/issue/CAR-88) Access desk UI for pilot emails · **F3a** — [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof · [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR.
+**Next eng:** **F3a** — [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof · [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR.
 
-**Deploy:** Auto-deploy on `main` (CAR-13). **CAR-87 Done** — PR #65 `billing_pilot_emails` + operator APIs; run Alembic 018 with legacy env populated, then clear `ENTITLEMENT_BILLING_ALLOWLIST`. **CAR-86 Done** — PR #64 Reference source card (allowlist-only iframe). **CAR-80 Done** — PR #63 F3c docs amend. **CAR-85 Done** — PR #62 in-product Reference viewer (`/reference`). **CAR-79 Done** — PR #61 Content sidecar + desk. **CAR-78 Done** — PR #60 Access card UI. **CAR-77 Done** — PR #59 Access desk writes + audit. **CAR-84 Done** — PR #58 Resend `User-Agent` (Cloudflare 1010). **CAR-83 Done** — PR #57 injects `JWT_SECRET`. **CAR-81 Done** — PR #54 injects mailer env; deploy `git pull --ff-only origin main` before `compose up`. VPS `APP_DIR` must be owned by `VPS_USER` (no `sudo git`). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
+**Deploy:** Auto-deploy on `main` (CAR-13). **CAR-88 Done** — PR #66 Access desk list/add/remove for `billing_pilot_emails` + `pilot list` badges. **CAR-87 Done** — PR #65 `billing_pilot_emails` + operator APIs; run Alembic 018 with legacy env populated, then clear `ENTITLEMENT_BILLING_ALLOWLIST`. **CAR-86 Done** — PR #64 Reference source card (allowlist-only iframe). **CAR-80 Done** — PR #63 F3c docs amend. **CAR-85 Done** — PR #62 in-product Reference viewer (`/reference`). **CAR-79 Done** — PR #61 Content sidecar + desk. **CAR-78 Done** — PR #60 Access card UI. **CAR-77 Done** — PR #59 Access desk writes + audit. **CAR-84 Done** — PR #58 Resend `User-Agent` (Cloudflare 1010). **CAR-83 Done** — PR #57 injects `JWT_SECRET`. **CAR-81 Done** — PR #54 injects mailer env; deploy `git pull --ff-only origin main` before `compose up`. VPS `APP_DIR` must be owned by `VPS_USER` (no `sudo git`). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
 ---
 
@@ -117,7 +117,7 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Six
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Done** — PR #60 · lookup + Access card + read-only cost strip |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs — V2-PLAN / ROADMAP / STATUS amend | [S] | **Done** — PR #63 · F3c handoff |
 | [CAR-87](https://linear.app/career-forge-v2/issue/CAR-87) | Pilot billing emails — table, gate, API | [S] | **Done** — PR #65 · `billing_pilot_emails`; runtime ignores env |
-| [CAR-88](https://linear.app/career-forge-v2/issue/CAR-88) | Access desk UI — pilot email list CRUD | [S] | **Next** — unblocked by CAR-87 |
+| [CAR-88](https://linear.app/career-forge-v2/issue/CAR-88) | Access desk UI — pilot email list CRUD | [S] | **Done** — PR #66 · list/add/remove + `pilot list` badge |
 
 ### Supporting fixes delivered during F3c
 
@@ -168,6 +168,7 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Six
 | Operator console shell (F3c) | ✅ Done | CAR-76 — PR #53 · `/operator`; Access/Content tabs by grant; role-agnostic seats |
 | Access desk writes + audit (F3c) | ✅ Done | CAR-77 — PR #59 · `operator_membership_label` + `billing_entitled`; Stripe-active lock; `operator_access_audit` |
 | Access card UI (F3c) | ✅ Done | CAR-78 — PR #60 · email lookup; membership override; billing; Stripe lock; audit; `GET /operator/access/cost-pool` |
+| Pilot billing email list UI | ✅ Done | CAR-88 — PR #66 · Access desk CRUD; `pilot list` badge; delete does not toggle `billing_entitled` |
 | Content sidecar + desk (F3c) | ✅ Done | CAR-79 — PR #61 · annotate 40 catalog `skill_id`s; title/URL/`published`; git owns body (ADR-004) |
 | F3c docs amend | ✅ Done | CAR-80 — PR #63 · V2-PLAN F3c after identity/paywall; kitchen-sink OPS stays out |
 | In-product Reference viewer | ✅ Done | CAR-85 — PR #62 · `/reference?node=&item=`; CAR-86 — PR #64 source card default + empty embed allowlist; `done` stays checklist ([ADR-007](./decisions/ADR-007-reference-viewer.md)) |
@@ -179,7 +180,7 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Six
 | Marketing `/welcome/plg` | ✅ Done | CAR-40 — EN product-led exploration; first fold pinned; CTA → `/`; not linked from `/welcome`; PR #35 |
 | Preview premium A/B | ✅ Done | CAR-41 — PR #36 · `/welcome/premium-a` + `/welcome/premium-b`; Vite clones, rewrite to static HTML, `noindex`; not the funnel; not linked from `/welcome` |
 | Welcome-as-B cutover | ✅ Done | CAR-56 — PR #46 · `/welcome` is Premium B (`marketing/welcome/`); `/welcome/premium-b` → `/welcome`; Vite `b/` frozen; honesty pass = CAR-53 |
-| BASE/PSP pilots (×2 E2E) | ⬜ F3a | **Next** — CAR-57 Done; Email identity + DB pilot list (CAR-87); UI = CAR-88 |
+| BASE/PSP pilots (×2 E2E) | ⬜ F3a | **Next** — CAR-57 Done; Email identity + DB list (CAR-87) + Access UI (CAR-88) |
 
 ---
 

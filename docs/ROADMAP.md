@@ -86,7 +86,7 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Done** — PR #60 |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | **Done** — PR #63 |
 | [CAR-87](https://linear.app/career-forge-v2/issue/CAR-87) | Pilot billing emails — table, gate, API | [S] | **Done** — PR #65 |
-| [CAR-88](https://linear.app/career-forge-v2/issue/CAR-88) | Access desk UI — pilot billing email list CRUD | [S] | **Next** — unblocked by CAR-87 |
+| [CAR-88](https://linear.app/career-forge-v2/issue/CAR-88) | Access desk UI — pilot billing email list CRUD | [S] | **Done** — PR #66 |
 
 #### Supporting fixes delivered during F3c
 
