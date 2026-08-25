@@ -1,5 +1,6 @@
 "use client";
 
+import { ExternalLink, Link2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -7,6 +8,8 @@ import { useEffect, useMemo, useState } from "react";
 import { getRoadmap, patchRoadmapChecklist } from "@/lib/api-client";
 import {
   buildReferenceViewerHref,
+  getReferenceHostname,
+  isEmbeddableReferenceUrl,
   resolveReferenceViewer,
 } from "@/lib/reference-viewer";
 import type { RoadmapResponse } from "@/types/contracts";
@@ -109,6 +112,11 @@ export default function ReferenceViewerContent() {
   }
 
   const { node, reference, references } = resolved;
+  const canEmbed = isEmbeddableReferenceUrl(reference.url);
+  const sourceHostname = getReferenceHostname(reference.url);
+  const cardBody =
+    reference.outcome?.trim() ||
+    "Preview isn't available for this source. Open the original to continue studying.";
 
   return (
     <main
@@ -148,29 +156,65 @@ export default function ReferenceViewerContent() {
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <section className="overflow-hidden rounded-xl border border-border bg-surface">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
-            <p className="text-xs text-text-secondary">
-              Preview availability depends on the source site.
-            </p>
-            <a
-              href={reference.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium text-accent-mint hover:underline"
-              data-testid="reference-escape-hatch"
+          {canEmbed ? (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
+                <p className="text-xs text-text-secondary">
+                  Preview provided by the source site.
+                </p>
+                <a
+                  href={reference.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-accent-mint hover:underline"
+                  data-testid="reference-escape-hatch"
+                >
+                  Open original ↗
+                </a>
+              </div>
+              <iframe
+                key={reference.id}
+                src={reference.url}
+                title={reference.title ?? "Reference preview"}
+                className="h-[70vh] min-h-[32rem] w-full bg-white"
+                sandbox="allow-forms allow-popups allow-scripts"
+                referrerPolicy="no-referrer"
+                data-testid="reference-preview"
+              />
+            </>
+          ) : (
+            <div
+              className="grid min-h-[32rem] place-items-center bg-bg p-6 sm:p-10"
+              data-testid="reference-source-card"
             >
-              Open on source site ↗
-            </a>
-          </div>
-          <iframe
-            key={reference.id}
-            src={reference.url}
-            title={reference.title ?? "Reference preview"}
-            className="h-[70vh] min-h-[32rem] w-full bg-white"
-            sandbox="allow-forms allow-popups allow-scripts"
-            referrerPolicy="no-referrer"
-            data-testid="reference-preview"
-          />
+              <article className="w-full max-w-xl rounded-xl border border-border bg-surface-elevated p-6 shadow-[0_20px_60px_rgba(0,0,0,0.2)] sm:p-8">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-accent-mint/30 bg-accent-mint/10 text-accent-mint">
+                  <Link2 aria-hidden="true" className="h-5 w-5" />
+                </div>
+                <h2 className="mt-5 text-xl font-semibold text-text-primary">
+                  {reference.title ?? "Reference"}
+                </h2>
+                <p
+                  className="mt-2 text-sm text-text-muted"
+                  data-testid="reference-source-host"
+                >
+                  Source: {sourceHostname}
+                </p>
+                <div className="my-6 h-px bg-border" />
+                <p className="text-sm leading-7 text-text-secondary">{cardBody}</p>
+                <a
+                  href={reference.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-7 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent-mint"
+                  data-testid="reference-escape-hatch"
+                >
+                  Open original
+                  <ExternalLink aria-hidden="true" className="h-4 w-4" />
+                </a>
+              </article>
+            </div>
+          )}
         </section>
 
         <aside className="rounded-xl border border-border bg-surface p-4">

@@ -46,6 +46,7 @@ const roadmap: RoadmapResponse = {
           id: "mdn",
           title: "MDN HTTP",
           url: "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+          outcome: "Understand HTTP semantics and request lifecycles.",
           done: false,
         },
         {
@@ -80,7 +81,7 @@ describe("ReferenceViewerContent", () => {
     expect(getRoadmap).not.toHaveBeenCalled();
   });
 
-  it("keeps an honest escape hatch visible when preview permission is unknown", async () => {
+  it("shows an honest source card instead of a blank iframe for unknown hosts", async () => {
     navigation.searchParams = new URLSearchParams({
       node: "http-basics",
       item: "mdn",
@@ -89,17 +90,34 @@ describe("ReferenceViewerContent", () => {
 
     render(<ReferenceViewerContent />);
 
-    const preview = await screen.findByTestId("reference-preview");
+    const card = await screen.findByTestId("reference-source-card");
     const hatch = screen.getByTestId("reference-escape-hatch");
 
-    expect(preview.getAttribute("src")).toBe(
-      "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+    expect(card.textContent).toContain("MDN HTTP");
+    expect(card.textContent).toContain("Source: developer.mozilla.org");
+    expect(card.textContent).toContain(
+      "Understand HTTP semantics and request lifecycles.",
     );
-    expect(preview.getAttribute("sandbox")).not.toContain("allow-top-navigation");
+    expect(screen.queryByTestId("reference-preview")).toBeNull();
     expect(hatch.getAttribute("href")).toBe(
       "https://developer.mozilla.org/en-US/docs/Web/HTTP",
     );
     expect(hatch.getAttribute("target")).toBe("_blank");
+  });
+
+  it("uses honest fallback copy when the Reference has no outcome", async () => {
+    navigation.searchParams = new URLSearchParams({
+      node: "http-basics",
+      item: "rfc",
+    });
+    vi.mocked(getRoadmap).mockResolvedValue(roadmap);
+
+    render(<ReferenceViewerContent />);
+
+    const card = await screen.findByTestId("reference-source-card");
+    expect(card.textContent).toContain(
+      "Preview isn't available for this source. Open the original to continue studying.",
+    );
   });
 
   it("uses the existing checklist command without marking done on open", async () => {

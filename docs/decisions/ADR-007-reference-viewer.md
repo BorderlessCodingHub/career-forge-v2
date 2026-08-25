@@ -46,8 +46,9 @@ Iframe-always is a lie: many hosts (MDN, GitHub, OpenAI docs) refuse framing. Ov
 
 | Concern | Decision |
 |---------|----------|
-| Embed | Best-effort only. One rule for all URL kinds in v1 (no YouTube/PDF special case yet) |
-| Refusal | Honest **Escape hatch** (host in a **new tab**). Do not fake an in-product page |
+| Embed | Allowlist-only. A host adapter is added only after successful embed behavior is proven; the initial allowlist is empty |
+| Default | Honest source card with Reference title, hostname, available `outcome`, and a primary **Open original** action |
+| Refusal | The source card replaces the preview slot instead of leaving a blank iframe. The host opens in a **new tab** |
 | Proxy | **No** — do not fetch third-party HTML through Career Forge origin |
 | `/learn` | Forever a different route: Canonical skill content, not this viewer |
 
@@ -64,8 +65,15 @@ Iframe-always is a lie: many hosts (MDN, GitHub, OpenAI docs) refuse framing. Ov
 ## Consequences
 
 - Routing and identity-gate apply like the rest of the product loop; the Roadmap screen is left, the product is not.
-- Browsers do not expose `X-Frame-Options`/`frame-ancestors` refusal reliably to page JavaScript. The Escape hatch therefore stays visible before and after every preview attempt; QA covers both an embed-refused host and a successful host.
+- Browsers do not expose `X-Frame-Options`/`frame-ancestors` refusal reliably to page JavaScript. Unknown hosts therefore never enter an iframe: they render the source card. Allowlisted embeds retain the always-visible Escape hatch.
+- The allowlist matches an exact domain or its subdomains. Host-specific URL rewrites belong to the corresponding proven adapter, not generic fallback logic.
 - ADR-004 `/learn` stays the canônico; this page must not grow into a CMS viewer.
+
+### Amendment — CAR-86 (2026-08-24)
+
+CAR-86 replaces the universal best-effort iframe with allowlist-only embeds and a
+source card default. It does not add backend probes, proxying, scraping,
+extraction, or Reference ingestion for RAG.
 
 ---
 

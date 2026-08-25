@@ -212,10 +212,11 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Address | `/reference?node=<node_id>&item=<reference_id>` — never raw external URL |
 | Context | Node title, selected Reference, sibling References (one preview slot), explicit return to the Node drawer |
 | Progress | Existing Reference checklist checkbox; opening does **not** imply `done` and no “opened” event is persisted |
-| Preview | Best-effort sandboxed iframe + always-visible escape hatch to the source in a new tab |
+| Default slot | Source card: Reference title, source hostname, available `outcome` or honest fallback copy, and primary **Open original** action in a new tab |
+| Preview | Sandboxed iframe only for a domain on the frontend allowlist after successful embed proof; allowlisted embeds keep the escape hatch visible |
 | Invalid | Missing/unknown Node, item, or unsafe URL → `/roadmap`; no empty viewer |
-| Forbidden | Proxying third-party HTML; merging with `/learn`; Live Forge sources; top-level navigation to the host |
-| Hooks | `reference-viewer`, `reference-return-to-node`, `reference-preview`, `reference-escape-hatch`, `reference-viewer-done-{id}`, `reference-sibling-{id}` |
+| Forbidden | Backend probing/proxying/scraping/extracting third-party content; merging with `/learn`; Live Forge sources; top-level navigation to the host |
+| Hooks | `reference-viewer`, `reference-return-to-node`, `reference-source-card`, `reference-source-host`, `reference-preview` (allowlisted only), `reference-escape-hatch`, `reference-viewer-done-{id}`, `reference-sibling-{id}` |
 
 ---
 
@@ -277,7 +278,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Editable diagnosis | `diagnosis-editable` |
 | Forge timeline | `forge-timeline` |
 | Vertical roadmap | `vertical-roadmap` |
-| Reference viewer | `reference-viewer` · `reference-return-to-node` · `reference-preview` · `reference-escape-hatch` · `reference-viewer-done-{id}` · `reference-sibling-{id}` |
+| Reference viewer | `reference-viewer` · `reference-return-to-node` · `reference-source-card` · `reference-source-host` · `reference-preview` (allowlisted only) · `reference-escape-hatch` · `reference-viewer-done-{id}` · `reference-sibling-{id}` |
 | Trail progress ring | `trail-progress-ring` (page intro, not topbar) |
 | Spine canvas | `vertical-spine` · `roadmap-connector-{id}` |
 | Mentor report | `mentor-report` · `mentor-report-entry-{node_id}` |

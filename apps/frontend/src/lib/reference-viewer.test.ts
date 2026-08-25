@@ -4,6 +4,8 @@ import type { RoadmapResponse } from "@/types/contracts";
 
 import {
   buildReferenceViewerHref,
+  getReferenceHostname,
+  isEmbeddableReferenceUrl,
   resolveReferenceViewer,
 } from "./reference-viewer";
 
@@ -90,5 +92,42 @@ describe("Reference viewer route", () => {
     };
 
     expect(resolveReferenceViewer(unsafeRoadmap, "http-basics", "unsafe")).toBeNull();
+  });
+
+  it("defaults every external source to the card until its domain is allowlisted", () => {
+    expect(
+      isEmbeddableReferenceUrl(
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+      ),
+    ).toBe(false);
+  });
+
+  it("matches allowlisted domains and their subdomains without matching lookalikes", () => {
+    const allowedDomains = ["video.example.com"];
+
+    expect(
+      isEmbeddableReferenceUrl(
+        "https://player.video.example.com/embed/123",
+        allowedDomains,
+      ),
+    ).toBe(true);
+    expect(
+      isEmbeddableReferenceUrl(
+        "https://video.example.com/embed/123",
+        allowedDomains,
+      ),
+    ).toBe(true);
+    expect(
+      isEmbeddableReferenceUrl(
+        "https://video.example.com.evil.test/embed/123",
+        allowedDomains,
+      ),
+    ).toBe(false);
+  });
+
+  it("formats a source hostname for the fallback card", () => {
+    expect(getReferenceHostname("https://www.roadmap.sh/pdfs/ai.pdf")).toBe(
+      "roadmap.sh",
+    );
   });
 });

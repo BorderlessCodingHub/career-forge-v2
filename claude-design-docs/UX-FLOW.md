@@ -223,9 +223,10 @@ After the animation → navigates to steady state (`/roadmap`).
 |---|---|
 | **Address** | `node` + Reference `item`; never a raw `url` query |
 | **Chrome** | Node title, this Reference's `done` control, sibling References, CTA back to the Node drawer |
-| **Preview** | Best-effort sandboxed iframe; persistent **Open on source site** escape hatch in a new tab |
+| **Default slot** | Source card with Reference title, hostname, available `outcome` (or honest fallback), and primary **Open original** action in a new tab |
+| **Preview** | Sandboxed iframe only for domains with a proven adapter on the frontend allowlist; the initial allowlist is empty and embeds keep the escape hatch visible |
 | **Invalid** | Missing/unknown Node or item returns to `/roadmap`; no empty viewer |
-| **Out** | `/learn`, tutor/mentor links, Live Forge sources, persisted “opened” event |
+| **Out** | Backend URL probes, proxy/scrape/extract/RAG ingest, `/learn`, tutor/mentor links, Live Forge sources, persisted “opened” event |
 
 Opening a Reference never marks it done. The viewer uses the existing checklist command.
 
