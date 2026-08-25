@@ -44,6 +44,36 @@ _Avoid_: quiz for grades, certificate exam, job guarantee
 Goal → diagnosis → forge → roadmap → validate → report. Requires Email identity. Not Welcome, share, or resume.
 _Avoid_: calling Welcome part of the loop; “the app” as if marketing were inside it
 
+### Roadmap artifact
+
+**Node**:
+One skill step on a learner's Roadmap, with status, tasks, and references.
+_Avoid_: lesson, card, module, graph vertex (engineering)
+
+**Task**:
+A practice item on a Node. Completing it is a checklist act, not opening a URL.
+_Avoid_: homework, assignment, reference
+
+**Reference**:
+A pointed study source on a Node (title + URL). It is a checklist item. Opening it is not the same act as marking it done. It is not Canonical skill content and not a Forge source.
+_Avoid_: resource (forge-internal), link, bookmark, blog post, learn page, forge timeline source
+
+**Reference viewer**:
+The dedicated in-product page (`/reference`) that shows **one** Reference, addressed by Node + Reference item — never by the raw external URL. Entry: NodeDrawer or that URL. Not tutor, mentor, or Live Forge timeline. Chrome: Node title, this item's `done` control, and the Node's other References (switching replaces the slot). A CTA returns to that Node on the Roadmap. Opening is not `done`. Embed is best-effort; refused hosts get an Escape hatch. Bad or missing address returns the learner to the Roadmap — no empty viewer.
+_Avoid_: iframe (mechanism), in-app browser, overlay as the primary surface, `/learn` (Canonical skill content), `?url=` (generic browser)
+
+**Escape hatch**:
+The control that opens the host in a new tab when embed is refused or the learner wants the real site. It does not mark the Reference done and does not replace Career Forge.
+_Avoid_: top-level navigate to the host, “open in app browser”
+
+**Forge source**:
+A research hit on the Live Roadmap Forge timeline. Not a Reference until it is attached to a Node.
+_Avoid_: reference, citation
+
+**Canonical skill content**:
+The one published deep-dive per catalog skill (N learners → 1 piece). Not a per-forge article and not a Node Reference.
+_Avoid_: reference, forge post, blog (until a public mirror exists)
+
 ### Identity
 
 **Anonymous session**:

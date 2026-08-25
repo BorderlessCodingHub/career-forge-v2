@@ -136,6 +136,7 @@ apps/frontend/
     │   │       └── complete/
     │   └── (artifact)/
     │       ├── roadmap/
+    │       ├── reference/       # CAR-85 Node Reference viewer
     │       ├── validate/
     │       └── report/
     ├── components/

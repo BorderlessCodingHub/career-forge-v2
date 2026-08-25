@@ -7,7 +7,7 @@
 ## Demo flow (canonical — HAC-21)
 
 ```
-/ → /onboarding → /onboarding/edit → /forge → /forge/complete → /roadmap → /validate/:topic → /roadmap (adaptive)
+/ → /onboarding → /onboarding/edit → /forge → /forge/complete → /roadmap → [/reference?node=&item=] → /validate/:topic → /roadmap (adaptive)
 
 Recovery (CAR-27/29): / (Continue|View all|New|Forge again) · /forges · /share/:token · /resume/:token (conflict chooser)
 ```
@@ -35,6 +35,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 | 4 | `/forge` | `forge` ⚠️ | `forge-stream` | **P0** | **Timeline only**, numbered steps, **no graph during stream** | SSE reconnect, scroll |
 | 4b | `/forge/complete` | (inline reveal) ⚠️ | `forge-reveal` | **P0** | Items fly into vertical layout; resume copy-once; optional email store | Animation library |
 | 5 | `/roadmap` | `roadmap` ⚠️ | `vertical-roadmap` | **P0** | Vertical spine; cards show compact study `x/y` + mint bar when checklist items exist; drawer has full checklist + progress | Node detail panel, sidebar UX |
+| 5b | `/reference?node=&item=` | — | `reference-viewer` | — | One Node Reference; best-effort preview + new-tab escape hatch; same checklist command; return restores Node drawer | Host-specific previews after evidence |
 | 6 | `/validate/:topic` | `validate` | `validation` | **P0** | Interview headline, Q progress, ScoreRing result | Question count (3±) |
 | 7 | `/roadmap` | `adaptive` | `adaptive-state` | **P0** | Roadmap diff after fail, mentor/AI context | Drawer vs sidebar |
 
@@ -101,6 +102,11 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Loading:** `vertical-spine-skeleton` placeholder spine with connector stubs (no lone text spinner as primary feedback).
 
+### 5b. Reference viewer (`/reference`) — CAR-85
+One Node Reference per page, addressed by `node` + `item`. Keeps the Node title,
+siblings, and existing `done` control visible. Preview is a sandboxed best-effort
+iframe with a persistent new-tab escape hatch; invalid addresses return to the Roadmap.
+
 ### 6. Mentor evidence report (`/report`)
 Borderless learning evidence for ambassadors. Entry: artifact topbar **`mentor-report-link`**.
 
@@ -164,6 +170,7 @@ Playwright Gate B targets:
 - `data-testid="mentor-report"` · `data-testid="mentor-report-entry-{node_id}"`
 - `data-testid="vertical-spine-skeleton"` · `data-testid="node-drawer"` · `data-testid="node-checklist-progress"` · `data-testid="checklist-non-blocking-copy"`
 - `data-testid="checklist-task-{id}"` · `data-testid="checklist-reference-{id}"` · `data-testid="open-tutor-drawer"` · `data-testid="validate-node-cta"` · `data-testid="mentor-report-link"`
+- `data-testid="reference-viewer"` · `reference-return-to-node` · `reference-preview` · `reference-escape-hatch` · `reference-viewer-done-{id}` · `reference-sibling-{id}`
 - `data-testid="validation-score"`
 
 See [AGENT-DELIVERY.md](../docs/AGENT-DELIVERY.md).

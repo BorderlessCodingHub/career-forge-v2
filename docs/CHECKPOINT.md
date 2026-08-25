@@ -94,6 +94,7 @@ flowchart TD
 | `(setup)/forge` | Live forge timeline SSE |
 | `(setup)/forge/complete` | Post-forge transition |
 | `(artifact)/roadmap` | Vertical steady-state trail |
+| `(artifact)/reference` | In-product viewer for one Node Reference (`node` + `item`) |
 | `(artifact)/validate` | Mastery validation interview |
 | `(artifact)/report` | Mentor report (Borderless) |
 

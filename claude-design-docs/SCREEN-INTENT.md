@@ -204,6 +204,21 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
+## 6b. Reference viewer (`/reference`) — MUST match (CAR-85)
+
+| Constraint | Detail |
+|------------|--------|
+| Identity | ProductEntryGate; Reference belongs to the learner's current Roadmap |
+| Address | `/reference?node=<node_id>&item=<reference_id>` — never raw external URL |
+| Context | Node title, selected Reference, sibling References (one preview slot), explicit return to the Node drawer |
+| Progress | Existing Reference checklist checkbox; opening does **not** imply `done` and no “opened” event is persisted |
+| Preview | Best-effort sandboxed iframe + always-visible escape hatch to the source in a new tab |
+| Invalid | Missing/unknown Node, item, or unsafe URL → `/roadmap`; no empty viewer |
+| Forbidden | Proxying third-party HTML; merging with `/learn`; Live Forge sources; top-level navigation to the host |
+| Hooks | `reference-viewer`, `reference-return-to-node`, `reference-preview`, `reference-escape-hatch`, `reference-viewer-done-{id}`, `reference-sibling-{id}` |
+
+---
+
 ## 7. Mastery validation — MUST match
 
 | Constraint | Detail |
@@ -262,6 +277,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Editable diagnosis | `diagnosis-editable` |
 | Forge timeline | `forge-timeline` |
 | Vertical roadmap | `vertical-roadmap` |
+| Reference viewer | `reference-viewer` · `reference-return-to-node` · `reference-preview` · `reference-escape-hatch` · `reference-viewer-done-{id}` · `reference-sibling-{id}` |
 | Trail progress ring | `trail-progress-ring` (page intro, not topbar) |
 | Spine canvas | `vertical-spine` · `roadmap-connector-{id}` |
 | Mentor report | `mentor-report` · `mentor-report-entry-{node_id}` |

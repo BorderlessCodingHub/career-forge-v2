@@ -231,6 +231,7 @@ At the start of a session involving implementation work, read in order:
 | `(setup)/forge` | Live forge timeline SSE |
 | `(setup)/forge/complete` | Post-forge transition |
 | `(artifact)/roadmap` | Vertical roadmap |
+| `(artifact)/reference` | CAR-85 in-product Node Reference viewer |
 | `(artifact)/validate` | Mastery validation |
 | `(artifact)/report` | Mentor report |
 
