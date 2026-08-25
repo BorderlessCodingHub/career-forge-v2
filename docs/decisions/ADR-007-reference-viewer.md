@@ -5,7 +5,7 @@
 | **Status** | **Accepted** — grill 2026-08-24 |
 | **Date** | 2026-08-24 |
 | **Deciders** | Pedro Alano |
-| **Linear (v2)** | [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) |
+| **Linear (v2)** | [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) · [CAR-89](https://linear.app/career-forge-v2/issue/CAR-89) |
 | **Glossary** | [CONTEXT.md](../../CONTEXT.md) — **Reference**, **Reference viewer**, **Escape hatch**, **Forge source** |
 | **Related** | [ADR-004](./ADR-004-canonical-skill-content.md) — Canonical skill content / `/learn` |
 
@@ -74,6 +74,19 @@ Iframe-always is a lie: many hosts (MDN, GitHub, OpenAI docs) refuse framing. Ov
 CAR-86 replaces the universal best-effort iframe with allowlist-only embeds and a
 source card default. It does not add backend probes, proxying, scraping,
 extraction, or Reference ingestion for RAG.
+
+### Amendment — CAR-89 (2026-08-25)
+
+The proven-host allowlist is operational data in Postgres, not a frontend
+constant or deploy-time environment setting. A Content Operator proves iframe
+behavior by eye and persists the normalized hostname (`www.` stripped).
+Authenticated learners read the live set; backend memory caching is invalidated
+after every add or remove so revocation immediately restores the source card.
+
+The policy remains hostname-based and matches that hostname or its subdomains.
+Writes have an append-only actor/action/timestamp audit. Career Forge still does
+not probe frame headers, proxy third-party HTML, scan References, or infer that a
+host is embeddable.
 
 ---
 

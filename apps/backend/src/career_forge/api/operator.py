@@ -38,6 +38,11 @@ from career_forge.schemas.operator_content import (
     OperatorContentPatch,
     OperatorContentSkillResponse,
 )
+from career_forge.schemas.embed_allowlist import (
+    EmbedHostCreate,
+    EmbedHostResponse,
+    OperatorEmbedHostListResponse,
+)
 from career_forge.services.access_audit import AccessActorType, list_access_audit
 from career_forge.services.billing_pilot_emails import (
     add_pilot_email,
@@ -59,6 +64,12 @@ from career_forge.services.operator_content import (
     update_content_skill,
 )
 from career_forge.services.operator_otp import request_operator_otp, verify_operator_otp
+from career_forge.services.embed_allowlist import (
+    add_embed_host,
+    commit_embed_host_write,
+    list_embed_hosts,
+    remove_embed_host,
+)
 
 router = APIRouter()
 
@@ -208,6 +219,54 @@ def patch_operator_content_skill(
     )
     db.commit()
     return _content_response(skill)
+
+
+@router.get(
+    "/content/embed-hosts",
+    response_model=OperatorEmbedHostListResponse,
+)
+def get_operator_embed_hosts(
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorEmbedHostListResponse:
+    return OperatorEmbedHostListResponse(
+        hosts=[
+            EmbedHostResponse.model_validate(row)
+            for row in list_embed_hosts(db, principal=principal)
+        ]
+    )
+
+
+@router.post(
+    "/content/embed-hosts",
+    response_model=EmbedHostResponse,
+)
+def post_operator_embed_host(
+    body: EmbedHostCreate,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> EmbedHostResponse:
+    try:
+        row = add_embed_host(db, principal=principal, host=body.host)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    commit_embed_host_write(db)
+    db.refresh(row)
+    return EmbedHostResponse.model_validate(row)
+
+
+@router.delete("/content/embed-hosts/{host}", status_code=204)
+def delete_operator_embed_host(
+    host: str,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> Response:
+    try:
+        remove_embed_host(db, principal=principal, host=host)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    commit_embed_host_write(db)
+    return Response(status_code=204)
 
 
 @router.get("/access/cost-pool", response_model=OperatorCostPoolResponse)
