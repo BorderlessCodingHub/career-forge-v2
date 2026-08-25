@@ -4,9 +4,11 @@ import type {
   RoadmapResponse,
 } from "@/types/contracts";
 
+export const EMBEDDABLE_REFERENCE_DOMAINS: readonly string[] = [];
+
 export type ResolvedReferenceViewer = {
   node: RoadmapNode;
-  reference: RoadmapChecklistItem;
+  reference: RoadmapChecklistItem & { url: string };
   references: RoadmapChecklistItem[];
 };
 
@@ -26,9 +28,42 @@ export function resolveReferenceViewer(
   if (!node) return null;
 
   const reference = node.references.find((candidate) => candidate.id === itemId);
-  if (!reference?.url || !isSafeReferenceUrl(reference.url)) return null;
+  if (!reference || !hasSafeReferenceUrl(reference)) return null;
 
   return { node, reference, references: node.references };
+}
+
+export function getReferenceHostname(value: string): string {
+  try {
+    return new URL(value).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+export function isEmbeddableReferenceUrl(
+  value: string,
+  allowedDomains: readonly string[] = EMBEDDABLE_REFERENCE_DOMAINS,
+): boolean {
+  if (!isSafeReferenceUrl(value)) return false;
+
+  const hostname = getReferenceHostname(value).toLowerCase().replace(/\.$/, "");
+  if (!hostname) return false;
+
+  return allowedDomains.some((domain) => {
+    const normalizedDomain = domain
+      .toLowerCase()
+      .replace(/^www\./, "")
+      .replace(/\.$/, "");
+    if (!normalizedDomain) return false;
+    return hostname === normalizedDomain || hostname.endsWith(`.${normalizedDomain}`);
+  });
+}
+
+function hasSafeReferenceUrl(
+  reference: RoadmapChecklistItem,
+): reference is RoadmapChecklistItem & { url: string } {
+  return Boolean(reference.url && isSafeReferenceUrl(reference.url));
 }
 
 function isSafeReferenceUrl(value: string): boolean {

@@ -104,8 +104,10 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 ### 5b. Reference viewer (`/reference`) — CAR-85
 One Node Reference per page, addressed by `node` + `item`. Keeps the Node title,
-siblings, and existing `done` control visible. Preview is a sandboxed best-effort
-iframe with a persistent new-tab escape hatch; invalid addresses return to the Roadmap.
+siblings, and existing `done` control visible. The slot defaults to a source card
+with title, hostname, available outcome, and a primary new-tab escape hatch.
+Sandboxed iframe previews are allowlist-only after successful host proof; invalid
+addresses return to the Roadmap.
 
 ### 6. Mentor evidence report (`/report`)
 Borderless learning evidence for ambassadors. Entry: artifact topbar **`mentor-report-link`**.
