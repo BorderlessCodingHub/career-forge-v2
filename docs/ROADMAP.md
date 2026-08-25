@@ -102,6 +102,7 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
 | [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) | In-product Reference viewer (`/reference`) | [P] | **Done** — PR #62 · [ADR-007](./decisions/ADR-007-reference-viewer.md) |
+| [CAR-86](https://linear.app/career-forge-v2/issue/CAR-86) | Reference source card (blocked iframe fallback) | [P] | **Done** — PR #64 · ADR-007 amend |
 
 ---
 
