@@ -67,7 +67,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
-## 0d. Operator console (`/operator`) — MUST match (CAR-76 / CAR-78 / CAR-79)
+## 0d. Operator console (`/operator`) — MUST match (CAR-76 / CAR-78 / CAR-79 / CAR-88)
 
 | Constraint | Detail |
 |------------|--------|
@@ -77,11 +77,12 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Navigation | Desk rooms are tabs **Access \| Content**; hide tabs outside `desks` from `GET /operator/me` |
 | Roles | `access` → Access; `editor` → Content; `both` → both, in Access then Content order |
 | Seats | Email list is visible from either desk and deliberately omits role/grant labels |
-| Access desk | Monthly cost pool is read-only desk chrome; email lookup opens one Access card with Membership source/override, billing entitlement, Stripe-active lock, and per-learner audit |
+| Access desk | Monthly cost pool is read-only desk chrome; pilot billing email panel lists/adds/removes checkout shortcuts; email lookup opens one Access card with Membership source/override, billing entitlement, Stripe-active lock, and per-learner audit |
+| Pilot list | Exact `pilot list` badge on every list row and on a listed learner card; removing a row only revokes the pilot shortcut and never toggles `billing_entitled` |
 | Writes | Membership override is `BASE \| PSP \| clear`; billing grant/revoke is disabled while Stripe is active; every change refreshes the audit trail |
 | Content desk | Search/filter the 40 repo catalog IDs; edit title, URL, and `published`; git body status is read-only; `published=true` requires `data/canonical/{skill_id}.md`; no content ID minting or markdown editor |
 | Out | Welcome scenery, third desk, mutable cost controls, impersonation, learner/Mentor file |
-| Hooks | `operator-login`, `operator-console`, `operator-seat-list`, `operator-tab-access`, `operator-tab-content`, `operator-cost-strip`, `operator-learner-email`, `operator-learner-lookup`, `operator-access-card`, `operator-stripe-lock`, `operator-access-audit`, `operator-content-search`, `operator-content-filter`, `operator-content-list`, `operator-content-row-{skill_id}`, `operator-content-body-{skill_id}`, `operator-content-title-{skill_id}`, `operator-content-url-{skill_id}`, `operator-content-published-{skill_id}`, `operator-content-save-{skill_id}` |
+| Hooks | `operator-login`, `operator-console`, `operator-seat-list`, `operator-tab-access`, `operator-tab-content`, `operator-cost-strip`, `operator-pilot-email-panel`, `operator-pilot-email-input`, `operator-pilot-email-add`, `operator-pilot-email-{email}`, `operator-pilot-badge-{email}`, `operator-pilot-email-remove-{email}`, `operator-learner-email`, `operator-learner-lookup`, `operator-access-card`, `operator-access-pilot-badge`, `operator-stripe-lock`, `operator-access-audit`, `operator-content-search`, `operator-content-filter`, `operator-content-list`, `operator-content-row-{skill_id}`, `operator-content-body-{skill_id}`, `operator-content-title-{skill_id}`, `operator-content-url-{skill_id}`, `operator-content-published-{skill_id}`, `operator-content-save-{skill_id}` |
 
 ---
 
@@ -267,7 +268,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 | Screen | `data-testid` |
 |--------|---------------|
-| Operator console | `operator-login` · `operator-console` · `operator-seat-list` · `operator-tab-access` · `operator-tab-content` · `operator-cost-strip` · `operator-learner-email` · `operator-learner-lookup` · `operator-access-card` · `operator-stripe-lock` · `operator-access-audit` · `operator-content-search` · `operator-content-filter` · `operator-content-list` · `operator-content-row-{skill_id}` · `operator-content-body-{skill_id}` · `operator-content-title-{skill_id}` · `operator-content-url-{skill_id}` · `operator-content-published-{skill_id}` · `operator-content-save-{skill_id}` |
+| Operator console | `operator-login` · `operator-console` · `operator-seat-list` · `operator-tab-access` · `operator-tab-content` · `operator-cost-strip` · `operator-pilot-email-panel` · `operator-pilot-email-input` · `operator-pilot-email-add` · `operator-pilot-email-{email}` · `operator-pilot-badge-{email}` · `operator-pilot-email-remove-{email}` · `operator-learner-email` · `operator-learner-lookup` · `operator-access-card` · `operator-access-pilot-badge` · `operator-stripe-lock` · `operator-access-audit` · `operator-content-search` · `operator-content-filter` · `operator-content-list` · `operator-content-row-{skill_id}` · `operator-content-body-{skill_id}` · `operator-content-title-{skill_id}` · `operator-content-url-{skill_id}` · `operator-content-published-{skill_id}` · `operator-content-save-{skill_id}` |
 | Goal picker | `goal-picker` |
 | Landing recovery | `landing-continue` · `landing-view-all` · `landing-new-forge` · `landing-reforge-profile` · `landing-recovery-fallback` |
 | Forges list | `forge-row-{public_id}` · `forge-open-{id}` · `forge-rename-{id}` · `forge-overflow-{id}` · `forge-title-input-{id}` · `forge-title-save-{id}` · `forge-share-{id}` · `forge-revoke-{id}` · `forge-resume-{id}` · `forges-reforge-profile` |

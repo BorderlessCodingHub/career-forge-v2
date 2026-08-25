@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  addOperatorPilotEmail,
   getOperatorContentSkills,
   getOperatorCostPool,
   getOperatorLearnerAccess,
   getOperatorLearnerAccessAudit,
+  getOperatorPilotEmails,
+  removeOperatorPilotEmail,
   patchOperatorContentSkill,
   patchOperatorLearnerAccess,
   visibleOperatorDesks,
@@ -67,6 +70,51 @@ describe("Access desk API", () => {
     );
   });
 
+  it("lists, adds, and removes normalized pilot emails", async () => {
+    const pilot = {
+      email: "pilot@example.com",
+      created_at: "2026-08-25T12:00:00Z",
+      created_by_operator_id: 7,
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({ emails: [pilot] }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => pilot,
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 204,
+        }),
+    );
+
+    await expect(getOperatorPilotEmails()).resolves.toEqual([pilot]);
+    await expect(addOperatorPilotEmail(" Pilot@Example.com ")).resolves.toEqual(pilot);
+    await expect(removeOperatorPilotEmail(" Pilot@Example.com ")).resolves.toBeUndefined();
+
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      "/career-forge/operator/access/pilot-emails",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ email: " Pilot@Example.com " }),
+      }),
+    );
+    expect(fetch).toHaveBeenNthCalledWith(
+      3,
+      "/career-forge/operator/access/pilot-emails/pilot%40example.com",
+      expect.objectContaining({ method: "DELETE" }),
+    );
+  });
+
   it("encodes learner emails and sends only the requested access patch", async () => {
     const learner = {
       email: "learner+pilot@example.com",
@@ -74,6 +122,7 @@ describe("Access desk API", () => {
       membership_label: "base",
       membership_entitled: true,
       billing_entitled: false,
+      pilot_email_listed: false,
       stripe_subscription_status: null,
       stripe_billing_locked: false,
     };

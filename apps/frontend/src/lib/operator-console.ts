@@ -30,8 +30,15 @@ export type OperatorLearnerAccess = {
   membership_label: string;
   membership_entitled: boolean;
   billing_entitled: boolean;
+  pilot_email_listed: boolean;
   stripe_subscription_status: string | null;
   stripe_billing_locked: boolean;
+};
+
+export type OperatorPilotEmail = {
+  email: string;
+  created_at: string;
+  created_by_operator_id: number | null;
 };
 
 export type OperatorAccessPatch = {
@@ -153,6 +160,27 @@ export function signOutOperator(): Promise<void> {
 
 export function getOperatorCostPool(): Promise<OperatorCostPool> {
   return operatorFetch<OperatorCostPool>("/operator/access/cost-pool");
+}
+
+export async function getOperatorPilotEmails(): Promise<OperatorPilotEmail[]> {
+  const body = await operatorFetch<{ emails: OperatorPilotEmail[] }>(
+    "/operator/access/pilot-emails",
+  );
+  return body.emails;
+}
+
+export function addOperatorPilotEmail(email: string): Promise<OperatorPilotEmail> {
+  return operatorFetch<OperatorPilotEmail>("/operator/access/pilot-emails", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function removeOperatorPilotEmail(email: string): Promise<void> {
+  return operatorFetch<void>(
+    `/operator/access/pilot-emails/${encodeURIComponent(email.trim().toLowerCase())}`,
+    { method: "DELETE" },
+  );
 }
 
 function learnerAccessPath(email: string): string {
