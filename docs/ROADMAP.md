@@ -105,6 +105,8 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 |-------|-------|-------|--------|
 | [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) | In-product Reference viewer (`/reference`) | [P] | **Done** — PR #62 · [ADR-007](./decisions/ADR-007-reference-viewer.md) |
 | [CAR-86](https://linear.app/career-forge-v2/issue/CAR-86) | Reference source card (blocked iframe fallback) | [P] | **Done** — PR #64 · ADR-007 amend |
+| [CAR-89](https://linear.app/career-forge-v2/issue/CAR-89) | Embed allowlist: persist proven hosts (API + learner GET) | [P] | **Done** — PR #67 · ADR-007 amend |
+| [CAR-90](https://linear.app/career-forge-v2/issue/CAR-90) | Operator embed queue + `/reference` reads live allowlist | [S] | Next — blocked by CAR-89 Done |
 
 ---
 
