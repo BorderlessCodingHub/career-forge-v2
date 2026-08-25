@@ -3,7 +3,7 @@
 > Borderless · labs.borderlesscoding.com/career-forge  
 > Executor: Pedro Alano  
 > Prazo estimado: 4–5 semanas ·  
-> **Atualizado:** 2026-08-22 — ADR-005 identity gate at product entry (CAR-57; supersedes post-forge OTP + free forge) · prior 2026-08-20 F3b auth pivot · 2026-08-13 CAR-35 grill · 2026-08-08 F3a/F3b · 2026-07-30 ADR-003
+> **Atualizado:** 2026-08-24 — F3c Operator console shipped after identity/paywall (CAR-75…80) · prior 2026-08-22 ADR-005 identity gate at product entry · 2026-08-20 F3b auth pivot · 2026-08-13 CAR-35 grill
 
 ---
 
@@ -212,6 +212,25 @@ Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-l
 
 ---
 
+### Fase 3c — Operator console
+
+**Entrega:** console interno no mesmo app/origem, com uma identidade Operator separada e dois desks: **Access** e **Content**. Entrou na v2 depois de identity/paywall; não é um “dashboard OPS” genérico.
+
+**Especificação:** [CAR-58 — Operator console spec](https://linear.app/career-forge-v2/issue/CAR-58)
+
+| Ordem | Feature | Entrega |
+|-------|---------|---------|
+| 1 | [CAR-75](https://linear.app/career-forge-v2/issue/CAR-75) | Operator OTP, tabela `operators`, sessão em cookie |
+| 2 | [CAR-76](https://linear.app/career-forge-v2/issue/CAR-76) | Shell `/operator`, desks e grants |
+| 3a | [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access writes + auditoria append-only |
+| 3b | [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk, em paralelo com CAR-77 |
+| 4 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI + cost pool read-only |
+| 5 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | Handoff documental F3c |
+
+**Limites travados:** Mentors fora; Content anota os 40 `skill_id`s existentes e o git continua dono do markdown; Access não oferece ações Stripe; caps/kill-switch permanecem em env; sem controles de Welcome/waitlist.
+
+---
+
 ## Kick-off / externos
 
 | Item | Status |
@@ -226,7 +245,7 @@ Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-l
 
 ## Fora de escopo (v3+)
 
-SSO além da platform · NocoDB/Discord · dashboard OPS · certificação/Gate-as-a-Service · monetização Stripe · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout runtime ([intent doc](./product/waitlist-checkout-intent.md))
+SSO além da platform · NocoDB/Discord · dashboard OPS genérico além do Operator console F3c · certificação/Gate-as-a-Service · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout no Welcome ([intent doc](./product/waitlist-checkout-intent.md)) · ações Stripe no console
 
 ---
 
