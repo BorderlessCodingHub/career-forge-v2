@@ -17,7 +17,7 @@ Borderless BASE hackathon motor shipped (diagnosis CTRR → forge SSE → valida
 
 ---
 
-## Completed phase — F1 Infra + cost gate
+## Phase 1 — Infra + cost gate — ✅ Completed
 
 | Track | Item | Status |
 |-------|------|--------|
@@ -116,6 +116,11 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Six
 | [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Done** — PR #61 · annotate 40 catalog ids; `skill_content` sidecar; git body gate |
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Done** — PR #60 · lookup + Access card + read-only cost strip |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs — V2-PLAN / ROADMAP / STATUS amend | [S] | **Done** — F3c handoff |
+
+### Supporting fixes delivered during F3c
+
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
 | [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + git-sync prod compose on deploy | [P] | **Done** — PR #54 · `MAILER_*`/`RESEND_*` injected; VPS `chown` (PR #55 not merged) |
 | [CAR-82](https://linear.app/career-forge-v2/issue/CAR-82) | OTP verify 401 with stale access token | [P] | **Done** — PR #56 · always send `external_id`; clear token on 401 |
 | [CAR-83](https://linear.app/career-forge-v2/issue/CAR-83) | Inject JWT_SECRET into compose + reject prod default | [P] | **Done** — PR #57 · fail-fast when ENV=production uses the public default |

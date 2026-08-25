@@ -85,6 +85,11 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Done** — PR #61 |
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Done** — PR #60 |
 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | **Done** — V2-PLAN / ROADMAP / STATUS handoff |
+
+#### Supporting fixes delivered during F3c
+
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
 | [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + deploy git-sync | [P] | **Done** — PR #54 |
 | [CAR-82](https://linear.app/career-forge-v2/issue/CAR-82) | OTP verify 401 with stale access token | [P] | **Done** — PR #56 |
 | [CAR-83](https://linear.app/career-forge-v2/issue/CAR-83) | Inject JWT_SECRET into compose | [P] | **Done** — PR #57 |
@@ -192,7 +197,7 @@ Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 
 ---
 
-## Phase 3 — see Current focus (F3a / F3b)
+## Phase 3 — see Current focus (F3a / F3b / F3c)
 
 Placeholders replaced 2026-08-08 (grill freeze). Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · CAR-33…36 · F3b CAR-28.
 

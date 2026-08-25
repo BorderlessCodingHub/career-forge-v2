@@ -195,7 +195,7 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 | # | Decisão |
 |---|--------|
 | F3.1 | While auth F3b not shipped: ship rebrand + landing + i18n chrome + hard-cap polish; no invite-anon-as-platform-auth workaround |
-| F3.2 | Hard caps = config: `COST_P95_BRL_PER_RUN=1.3639`, pool R$500, `FORGE_CAP_PER_USER_MONTH=2`; no ops UI |
+| F3.2 | Hard caps = config: `COST_P95_BRL_PER_RUN=1.3639`, pool R$500, `FORGE_CAP_PER_USER_MONTH=2`; no learner-facing ops UI. **Amend 2026-08-24:** F3c Operator console may read the cost pool, but cap/kill-switch knobs stay in env. |
 | F3.3 | **Amend 2026-08-13:** marketing on `/welcome`; product stays at `/` (no `/app` migration); no auto-redirect from `/` |
 | F3.4 | **Amend 2026-08-13:** CAR-35 `/welcome` = EN; pt-BR marketing + chrome = [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37); AI/prompts stay EN |
 | F3.5 | Rebrand = tokens + logo/favicon **and** marketing landing composition on `/welcome`; no product redesign |
@@ -245,7 +245,7 @@ Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-l
 
 ## Fora de escopo (v3+)
 
-SSO além da platform · NocoDB/Discord · dashboard OPS genérico além do Operator console F3c · certificação/Gate-as-a-Service · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout no Welcome ([intent doc](./product/waitlist-checkout-intent.md)) · ações Stripe no console
+SSO além da platform · NocoDB/Discord · dashboard OPS genérico além do Operator console F3c · certificação/Gate-as-a-Service · monetização Stripe · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout runtime ([intent doc](./product/waitlist-checkout-intent.md))
 
 ---
 
