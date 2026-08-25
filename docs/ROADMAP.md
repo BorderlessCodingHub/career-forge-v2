@@ -84,7 +84,7 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access desk writes + audit | [S] | **Done** — PR #59 |
 | [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Done** — PR #61 |
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Done** — PR #60 |
-| [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | **Done** — V2-PLAN / ROADMAP / STATUS handoff |
+| [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | **Done** — PR #63 |
 
 #### Supporting fixes delivered during F3c
 
