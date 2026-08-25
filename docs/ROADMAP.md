@@ -73,9 +73,9 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 
 **Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
 
-### F3c — Operator console **[S]** then **[P]**
+### F3c — Operator console — ✅ Completed
 
-Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identity is a second Career Forge OTP (`provider=operator`), not learner OTP + allowlist.
+Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identity is a second Career Forge OTP (`provider=operator`), not learner OTP + allowlist. Six Feature CARs delivered the sequence identity → shell → (Access writes ∥ Content) → Access UI → docs.
 
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
@@ -84,13 +84,18 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access desk writes + audit | [S] | **Done** — PR #59 |
 | [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk | [P] | **Done** — PR #61 |
 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI | [S] | **Done** — PR #60 |
-| [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | After desks |
+| [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | F3c docs amend | [S] | **Done** — V2-PLAN / ROADMAP / STATUS handoff |
+
+#### Supporting fixes delivered during F3c
+
+| Issue | Title | Class | Status |
+|-------|-------|-------|--------|
 | [CAR-81](https://linear.app/career-forge-v2/issue/CAR-81) | Mailer env in compose + deploy git-sync | [P] | **Done** — PR #54 |
 | [CAR-82](https://linear.app/career-forge-v2/issue/CAR-82) | OTP verify 401 with stale access token | [P] | **Done** — PR #56 |
 | [CAR-83](https://linear.app/career-forge-v2/issue/CAR-83) | Inject JWT_SECRET into compose | [P] | **Done** — PR #57 |
 | [CAR-84](https://linear.app/career-forge-v2/issue/CAR-84) | Resend User-Agent (Cloudflare 1010) | [P] | **Done** — PR #58 |
 
-**Start order:** CAR-80. **CAR-77 Done** · **CAR-78 Done** · **CAR-79 Done.**
+**F3c complete:** CAR-75 → CAR-76 → (CAR-77 ∥ CAR-79) → CAR-78 → CAR-80.
 
 ### Product loop — Node References
 
@@ -192,7 +197,7 @@ Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 
 ---
 
-## Phase 3 — see Current focus (F3a / F3b)
+## Phase 3 — see Current focus (F3a / F3b / F3c)
 
 Placeholders replaced 2026-08-08 (grill freeze). Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · CAR-33…36 · F3b CAR-28.
 
@@ -200,6 +205,6 @@ Placeholders replaced 2026-08-08 (grill freeze). Linear: [Phase 3a](https://line
 
 ## Out of scope (v3+)
 
-SSO beyond platform · NocoDB/Discord · OPS dashboard · Gate-as-a-Service · Stripe · job-RAG in forge · diagnosis hard block · Frame landing · global standalone domain
+SSO beyond platform · NocoDB/Discord · generic OPS dashboard beyond the scoped F3c Operator console · Gate-as-a-Service · Stripe actions in the console · job-RAG in forge · diagnosis hard block · Frame landing · global standalone domain
 
 Hackathon sprint history: [archive/SPRINT-BOARD.md](./archive/SPRINT-BOARD.md)

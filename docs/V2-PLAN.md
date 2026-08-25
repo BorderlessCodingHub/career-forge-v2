@@ -3,7 +3,7 @@
 > Borderless · labs.borderlesscoding.com/career-forge  
 > Executor: Pedro Alano  
 > Prazo estimado: 4–5 semanas ·  
-> **Atualizado:** 2026-08-22 — ADR-005 identity gate at product entry (CAR-57; supersedes post-forge OTP + free forge) · prior 2026-08-20 F3b auth pivot · 2026-08-13 CAR-35 grill · 2026-08-08 F3a/F3b · 2026-07-30 ADR-003
+> **Atualizado:** 2026-08-24 — F3c Operator console shipped after identity/paywall (CAR-75…80) · prior 2026-08-22 ADR-005 identity gate at product entry · 2026-08-20 F3b auth pivot · 2026-08-13 CAR-35 grill
 
 ---
 
@@ -195,7 +195,7 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 | # | Decisão |
 |---|--------|
 | F3.1 | While auth F3b not shipped: ship rebrand + landing + i18n chrome + hard-cap polish; no invite-anon-as-platform-auth workaround |
-| F3.2 | Hard caps = config: `COST_P95_BRL_PER_RUN=1.3639`, pool R$500, `FORGE_CAP_PER_USER_MONTH=2`; no ops UI |
+| F3.2 | Hard caps = config: `COST_P95_BRL_PER_RUN=1.3639`, pool R$500, `FORGE_CAP_PER_USER_MONTH=2`; no learner-facing ops UI. **Amend 2026-08-24:** F3c Operator console may read the cost pool, but cap/kill-switch knobs stay in env. |
 | F3.3 | **Amend 2026-08-13:** marketing on `/welcome`; product stays at `/` (no `/app` migration); no auto-redirect from `/` |
 | F3.4 | **Amend 2026-08-13:** CAR-35 `/welcome` = EN; pt-BR marketing + chrome = [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37); AI/prompts stay EN |
 | F3.5 | Rebrand = tokens + logo/favicon **and** marketing landing composition on `/welcome`; no product redesign |
@@ -209,6 +209,25 @@ Linear: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/car
 | F3.13 | Identity ≠ entitlement (two gates). Soft membership label; Paywall for unpaid `external` **before diagnosis** ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md)). Ask platform for `GET members?email=` only. |
 
 Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · [F3b Email OTP](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) · CAR-33…38 · F3b [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) / [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44)…[CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) · [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)
+
+---
+
+### Fase 3c — Operator console
+
+**Entrega:** console interno no mesmo app/origem, com uma identidade Operator separada e dois desks: **Access** e **Content**. Entrou na v2 depois de identity/paywall; não é um “dashboard OPS” genérico.
+
+**Especificação:** [CAR-58 — Operator console spec](https://linear.app/career-forge-v2/issue/CAR-58)
+
+| Ordem | Feature | Entrega |
+|-------|---------|---------|
+| 1 | [CAR-75](https://linear.app/career-forge-v2/issue/CAR-75) | Operator OTP, tabela `operators`, sessão em cookie |
+| 2 | [CAR-76](https://linear.app/career-forge-v2/issue/CAR-76) | Shell `/operator`, desks e grants |
+| 3a | [CAR-77](https://linear.app/career-forge-v2/issue/CAR-77) | Access writes + auditoria append-only |
+| 3b | [CAR-79](https://linear.app/career-forge-v2/issue/CAR-79) | Content sidecar + desk, em paralelo com CAR-77 |
+| 4 | [CAR-78](https://linear.app/career-forge-v2/issue/CAR-78) | Access card UI + cost pool read-only |
+| 5 | [CAR-80](https://linear.app/career-forge-v2/issue/CAR-80) | Handoff documental F3c |
+
+**Limites travados:** Mentors fora; Content anota os 40 `skill_id`s existentes e o git continua dono do markdown; Access não oferece ações Stripe; caps/kill-switch permanecem em env; sem controles de Welcome/waitlist.
 
 ---
 
@@ -226,7 +245,7 @@ Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-l
 
 ## Fora de escopo (v3+)
 
-SSO além da platform · NocoDB/Discord · dashboard OPS · certificação/Gate-as-a-Service · monetização Stripe · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout runtime ([intent doc](./product/waitlist-checkout-intent.md))
+SSO além da platform · NocoDB/Discord · dashboard OPS genérico além do Operator console F3c · certificação/Gate-as-a-Service · monetização Stripe · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout runtime ([intent doc](./product/waitlist-checkout-intent.md))
 
 ---
 
