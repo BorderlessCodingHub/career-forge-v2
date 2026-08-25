@@ -5,11 +5,17 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import { getRoadmap, patchRoadmapChecklist } from "@/lib/api-client";
+import {
+  getReferenceEmbedHosts,
+  getRoadmap,
+  patchRoadmapChecklist,
+} from "@/lib/api-client";
 import {
   buildReferenceViewerHref,
   getReferenceHostname,
   isEmbeddableReferenceUrl,
+  REFERENCE_PREVIEW_REFERRER_POLICY,
+  REFERENCE_PREVIEW_SANDBOX,
   resolveReferenceViewer,
 } from "@/lib/reference-viewer";
 import type { RoadmapResponse } from "@/types/contracts";
@@ -21,6 +27,7 @@ export default function ReferenceViewerContent() {
   const itemId = searchParams.get("item");
 
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
+  const [allowedDomains, setAllowedDomains] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,14 +47,18 @@ export default function ReferenceViewerContent() {
     setLoading(true);
     setError(null);
 
-    void getRoadmap()
-      .then((data) => {
+    void Promise.all([
+      getRoadmap(),
+      getReferenceEmbedHosts().catch(() => []),
+    ])
+      .then(([data, liveAllowedDomains]) => {
         if (cancelled) return;
         if (!resolveReferenceViewer(data, nodeId, itemId)) {
           router.replace("/roadmap");
           return;
         }
         setRoadmap(data);
+        setAllowedDomains(liveAllowedDomains);
       })
       .catch((cause) => {
         if (!cancelled) {
@@ -112,7 +123,7 @@ export default function ReferenceViewerContent() {
   }
 
   const { node, reference, references } = resolved;
-  const canEmbed = isEmbeddableReferenceUrl(reference.url);
+  const canEmbed = isEmbeddableReferenceUrl(reference.url, allowedDomains);
   const sourceHostname = getReferenceHostname(reference.url);
   const cardBody =
     reference.outcome?.trim() ||
@@ -177,8 +188,8 @@ export default function ReferenceViewerContent() {
                 src={reference.url}
                 title={reference.title ?? "Reference preview"}
                 className="h-[70vh] min-h-[32rem] w-full bg-white"
-                sandbox="allow-forms allow-popups allow-scripts"
-                referrerPolicy="no-referrer"
+                sandbox={REFERENCE_PREVIEW_SANDBOX}
+                referrerPolicy={REFERENCE_PREVIEW_REFERRER_POLICY}
                 data-testid="reference-preview"
               />
             </>

@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import type { RoadmapResponse } from "@/types/contracts";
 
 import {
+  REFERENCE_PREVIEW_REFERRER_POLICY,
+  REFERENCE_PREVIEW_SANDBOX,
   buildReferenceViewerHref,
   getReferenceHostname,
   isEmbeddableReferenceUrl,
@@ -98,6 +100,7 @@ describe("Reference viewer route", () => {
     expect(
       isEmbeddableReferenceUrl(
         "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        [],
       ),
     ).toBe(false);
   });
@@ -123,6 +126,14 @@ describe("Reference viewer route", () => {
         allowedDomains,
       ),
     ).toBe(false);
+  });
+
+  it("grants the framed source its own origin so storage-dependent docs sites boot", () => {
+    const grants = REFERENCE_PREVIEW_SANDBOX.split(" ");
+
+    expect(grants).toContain("allow-same-origin");
+    expect(grants).not.toContain("allow-top-navigation");
+    expect(REFERENCE_PREVIEW_REFERRER_POLICY).toBe("no-referrer");
   });
 
   it("formats a source hostname for the fallback card", () => {

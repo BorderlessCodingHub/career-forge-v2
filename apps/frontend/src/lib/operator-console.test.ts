@@ -1,13 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  addOperatorEmbedHost,
   addOperatorPilotEmail,
   getOperatorContentSkills,
   getOperatorCostPool,
+  getOperatorEmbedHosts,
   getOperatorLearnerAccess,
   getOperatorLearnerAccessAudit,
   getOperatorPilotEmails,
   removeOperatorPilotEmail,
+  removeOperatorEmbedHost,
   patchOperatorContentSkill,
   patchOperatorLearnerAccess,
   visibleOperatorDesks,
@@ -223,6 +226,56 @@ describe("Content desk API", () => {
         method: "PATCH",
         body: JSON.stringify({ published: true }),
       }),
+    );
+  });
+
+  it("loads pending and liberated hosts and writes normalized host groups", async () => {
+    const queue = {
+      pending: [
+        {
+          host: "developer.mozilla.org",
+          sample_url: "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+          distinct_url_count: 2,
+        },
+      ],
+      liberated: [],
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => queue,
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({
+            host: "developer.mozilla.org",
+            created_at: "2026-08-25T16:00:00Z",
+          }),
+        })
+        .mockResolvedValueOnce({ ok: true, status: 204 }),
+    );
+
+    await expect(getOperatorEmbedHosts()).resolves.toEqual(queue);
+    await addOperatorEmbedHost("developer.mozilla.org");
+    await removeOperatorEmbedHost("developer.mozilla.org");
+
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      "/career-forge/operator/content/embed-hosts",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ host: "developer.mozilla.org" }),
+      }),
+    );
+    expect(fetch).toHaveBeenNthCalledWith(
+      3,
+      "/career-forge/operator/content/embed-hosts/developer.mozilla.org",
+      expect.objectContaining({ method: "DELETE" }),
     );
   });
 });

@@ -25,7 +25,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 | 0 | `/welcome` | `marketing` | `marketing-welcome` | — | CAR-56 Premium B: commercial sections + scenery modals; Start diagnosis→`/`; `welcome-cta-start`; indexed; slate/orange chrome | pt-BR CAR-37; CAR-53 honesty |
 | 0p | `/welcome/plg` | — | `marketing-welcome-plg` | — | EN product-led; first fold stays put; trail/phases/features slide in; forge mock in hero; split-flap plaque; not linked from `/welcome` | Visual polish |
 | 0q | `/welcome/premium-a` | — | — (static HTML) | — | CAR-41 bake-off A only; rewrite to `public/premium-landings/a.html`; `noindex`; not linked; **not** the funnel. `/welcome/premium-b` → redirect `/welcome` | Retire A later |
-| 0o | `/operator` | — | `operator-login` / `operator-console` | — | Separate Operator OTP; role-filtered desks; Access card + pilot billing email CRUD/badges; Content annotations over 40 static IDs with git-body publish guard; no learner/Mentor chrome | Desk polish |
+| 0o | `/operator` | — | `operator-login` / `operator-console` | — | Separate Operator OTP; role-filtered desks; Access card + pilot billing email CRUD/badges; Content annotations plus live Reference host proof queue (preview-confirm-liberate/revoke); no learner/Mentor chrome | Desk polish |
 | 1 | `/` | `goal` | `goal-picker` / `landing-recovery` | — | Headline EN, **4** LLM track cards (`rag-engineer` default), motivation textarea, single CTA; if ≥1 artifact → Continue / View all / New forge; if diagnosis → Forge again from last diagnosis | Card hover, validation toast |
 | 1b | `/forges` | — | `forges-list` | — | Scan & open: Open + Rename visible; share/resume/revoke in ⋯; untitled shows goal_id; optional re-forge CTA | Visual polish |
 | 1c | `/share/[token]` | — | `share-readonly` | — | Read-only roadmap; no session adopt | Visual polish |
@@ -35,7 +35,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 | 4 | `/forge` | `forge` ⚠️ | `forge-stream` | **P0** | **Timeline only**, numbered steps, **no graph during stream** | SSE reconnect, scroll |
 | 4b | `/forge/complete` | (inline reveal) ⚠️ | `forge-reveal` | **P0** | Items fly into vertical layout; resume copy-once; optional email store | Animation library |
 | 5 | `/roadmap` | `roadmap` ⚠️ | `vertical-roadmap` | **P0** | Vertical spine; cards show compact study `x/y` + mint bar when checklist items exist; drawer has full checklist + progress | Node detail panel, sidebar UX |
-| 5b | `/reference?node=&item=` | — | `reference-viewer` | — | One Node Reference; best-effort preview + new-tab escape hatch; same checklist command; return restores Node drawer | Host-specific previews after evidence |
+| 5b | `/reference?node=&item=` | — | `reference-viewer` | — | One Node Reference; live allowlist controls preview vs source card; revoke applies without deploy; same checklist command; return restores Node drawer | Host-specific adapters after proof |
 | 6 | `/validate/:topic` | `validate` | `validation` | **P0** | Interview headline, Q progress, ScoreRing result | Question count (3±) |
 | 7 | `/roadmap` | `adaptive` | `adaptive-state` | **P0** | Roadmap diff after fail, mentor/AI context | Drawer vs sidebar |
 
@@ -55,14 +55,16 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 
 Full must-match: [SCREEN-INTENT.md](./SCREEN-INTENT.md)
 
-### 0d. Operator console (`/operator`) — CAR-76 / CAR-78 / CAR-79 / CAR-88
+### 0d. Operator console (`/operator`) — CAR-76 / CAR-78 / CAR-79 / CAR-88 / CAR-90
 Separate Operator OTP gate and shell on the Labs origin. Desk tabs are filtered by the
 Operator grant; the seat list exposes emails without roles. Access shows the read-only
 monthly pool, pilot billing email list CRUD, and an email-loaded Access card for Membership,
 billing, Stripe lock, and audit. `pilot list` badges distinguish the shortcut from
 `billing_entitled`; removing the shortcut never toggles that field.
 Content lists the 40 static catalog IDs and edits only title, URL, and publishing state;
-git body status is read-only and gates publishing. No learner or Mentor chrome.
+git body status is read-only and gates publishing. It also derives pending Reference
+hosts from live learner evidence without PII, requires sandbox preview + explicit
+confirmation before Liberate, and lists liberated hosts for Revoke. No learner or Mentor chrome.
 
 ### 1. Goal Picker (`/`)
 Declare dream role + motivation. Prototype: `screens-flow.jsx`  
@@ -104,12 +106,12 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Loading:** `vertical-spine-skeleton` placeholder spine with connector stubs (no lone text spinner as primary feedback).
 
-### 5b. Reference viewer (`/reference`) — CAR-85
+### 5b. Reference viewer (`/reference`) — CAR-85 / CAR-86 / CAR-89 / CAR-90
 One Node Reference per page, addressed by `node` + `item`. Keeps the Node title,
 siblings, and existing `done` control visible. The slot defaults to a source card
 with title, hostname, available outcome, and a primary new-tab escape hatch.
-Sandboxed iframe previews are allowlist-only after successful host proof; invalid
-addresses return to the Roadmap.
+Sandboxed iframe previews use the authenticated live allowlist after successful host
+proof; revoke restores the source card without deploy. Invalid addresses return to the Roadmap.
 
 ### 6. Mentor evidence report (`/report`)
 Borderless learning evidence for ambassadors. Entry: artifact topbar **`mentor-report-link`**.

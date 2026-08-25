@@ -5,7 +5,7 @@
 | **Status** | **Accepted** — grill 2026-08-24 |
 | **Date** | 2026-08-24 |
 | **Deciders** | Pedro Alano |
-| **Linear (v2)** | [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) · [CAR-89](https://linear.app/career-forge-v2/issue/CAR-89) |
+| **Linear (v2)** | [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) · [CAR-89](https://linear.app/career-forge-v2/issue/CAR-89) · [CAR-90](https://linear.app/career-forge-v2/issue/CAR-90) |
 | **Glossary** | [CONTEXT.md](../../CONTEXT.md) — **Reference**, **Reference viewer**, **Escape hatch**, **Forge source** |
 | **Related** | [ADR-004](./ADR-004-canonical-skill-content.md) — Canonical skill content / `/learn` |
 
@@ -87,6 +87,34 @@ The policy remains hostname-based and matches that hostname or its subdomains.
 Writes have an append-only actor/action/timestamp audit. Career Forge still does
 not probe frame headers, proxy third-party HTML, scan References, or infer that a
 host is embeddable.
+
+### Amendment — CAR-90 (2026-08-25)
+
+The Content desk derives a pending queue directly from References in live
+`user_skill_nodes.evidence`. It groups distinct URLs by normalized hostname,
+shows one recent sample without learner identity, and requires the Operator to
+preview and confirm that sample using the learner viewer's sandbox and referrer
+policy before liberating the hostname. Revocation remains available beside the
+liberated list.
+
+The learner Reference viewer reads the authenticated live allowlist on every
+page load. Unknown or revoked hosts therefore render the source card without a
+frontend deploy.
+
+**Sandbox correction.** The shared preview sandbox grants `allow-same-origin`
+alongside `allow-forms allow-popups allow-scripts`. Without it the framed
+document gets an opaque origin, so any host whose scripts touch their own
+storage or cookies dies inside the frame even though it permits framing —
+observed on `pinecone.io`. `<embed>` renders those hosts only because it accepts
+no sandbox at all, so it is not the answer.
+
+`allow-scripts` plus `allow-same-origin` would let a **same-origin** document
+reach the embedder and delete its own `sandbox` attribute. The allowlist
+therefore refuses any hostname that covers one of our own origins
+(`frontend_url` plus `CORS_ORIGINS`), including a parent domain of them, and
+filters such hostnames out of both the pending queue and the learner read. A
+genuinely third-party host regains only its own origin and still cannot script
+our document.
 
 ---
 

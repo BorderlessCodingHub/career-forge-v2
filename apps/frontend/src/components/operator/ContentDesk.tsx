@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FileCheck2, FileX2, Search } from "lucide-react";
 
 import { Button } from "@/components/ui";
+import { EmbedHostQueue } from "@/components/operator/EmbedHostQueue";
 import {
   getOperatorContentSkills,
   patchOperatorContentSkill,
@@ -262,6 +263,7 @@ export function ContentDesk() {
           </ul>
         </>
       )}
+      <EmbedHostQueue />
     </section>
   );
 }
