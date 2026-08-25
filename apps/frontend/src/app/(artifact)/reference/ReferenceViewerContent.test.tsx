@@ -8,6 +8,10 @@ import {
   getRoadmap,
   patchRoadmapChecklist,
 } from "@/lib/api-client";
+import {
+  REFERENCE_PREVIEW_REFERRER_POLICY,
+  REFERENCE_PREVIEW_SANDBOX,
+} from "@/lib/reference-viewer";
 import type { RoadmapResponse } from "@/types/contracts";
 
 import ReferenceViewerContent from "./ReferenceViewerContent";
@@ -141,8 +145,10 @@ describe("ReferenceViewerContent", () => {
     expect(preview.getAttribute("src")).toBe(
       "https://developer.mozilla.org/en-US/docs/Web/HTTP",
     );
-    expect(preview.getAttribute("sandbox")).toBe("allow-forms allow-popups allow-scripts");
-    expect(preview.getAttribute("referrerpolicy")).toBe("no-referrer");
+    expect(preview.getAttribute("sandbox")).toBe(REFERENCE_PREVIEW_SANDBOX);
+    expect(preview.getAttribute("referrerpolicy")).toBe(
+      REFERENCE_PREVIEW_REFERRER_POLICY,
+    );
     expect(screen.queryByTestId("reference-source-card")).toBeNull();
   });
 

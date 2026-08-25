@@ -101,6 +101,21 @@ The learner Reference viewer reads the authenticated live allowlist on every
 page load. Unknown or revoked hosts therefore render the source card without a
 frontend deploy.
 
+**Sandbox correction.** The shared preview sandbox grants `allow-same-origin`
+alongside `allow-forms allow-popups allow-scripts`. Without it the framed
+document gets an opaque origin, so any host whose scripts touch their own
+storage or cookies dies inside the frame even though it permits framing —
+observed on `pinecone.io`. `<embed>` renders those hosts only because it accepts
+no sandbox at all, so it is not the answer.
+
+`allow-scripts` plus `allow-same-origin` would let a **same-origin** document
+reach the embedder and delete its own `sandbox` attribute. The allowlist
+therefore refuses any hostname that covers one of our own origins
+(`frontend_url` plus `CORS_ORIGINS`), including a parent domain of them, and
+filters such hostnames out of both the pending queue and the learner read. A
+genuinely third-party host regains only its own origin and still cannot script
+our document.
+
 ---
 
 ## Related

@@ -8,6 +8,10 @@ import {
   getOperatorEmbedHosts,
   removeOperatorEmbedHost,
 } from "@/lib/operator-console";
+import {
+  REFERENCE_PREVIEW_REFERRER_POLICY,
+  REFERENCE_PREVIEW_SANDBOX,
+} from "@/lib/reference-viewer";
 
 import { EmbedHostQueue } from "./EmbedHostQueue";
 
@@ -74,8 +78,10 @@ describe("EmbedHostQueue", () => {
 
     fireEvent.click(screen.getByTestId("operator-embed-preview-developer.mozilla.org"));
     const preview = screen.getByTestId("operator-embed-preview-frame");
-    expect(preview.getAttribute("sandbox")).toBe("allow-forms allow-popups allow-scripts");
-    expect(preview.getAttribute("referrerpolicy")).toBe("no-referrer");
+    expect(preview.getAttribute("sandbox")).toBe(REFERENCE_PREVIEW_SANDBOX);
+    expect(preview.getAttribute("referrerpolicy")).toBe(
+      REFERENCE_PREVIEW_REFERRER_POLICY,
+    );
     expect((liberate as HTMLButtonElement).disabled).toBe(true);
 
     fireEvent.load(preview);

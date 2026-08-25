@@ -147,6 +147,89 @@ def test_embed_allowlist_rejects_access_only_operator_and_unauthenticated_learne
     assert unauthenticated.status_code == 401
 
 
+def test_embed_allowlist_refuses_hosts_that_cover_the_app_own_origin(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`allow-same-origin` lets a same-origin frame strip its own sandbox."""
+    suffix = uuid.uuid4().hex
+    self_host = f"app-{suffix[:10]}.borderless-self.test"
+    parent_host = "borderless-self.test"
+    monkeypatch.setattr(
+        settings,
+        "frontend_url",
+        f"https://{self_host}/career-forge",
+    )
+    monkeypatch.setattr(settings, "cors_origins", f"https://{self_host}")
+
+    skill_id = f"car90-self-{suffix[:10]}"
+    with SessionLocal() as session:
+        user = ensure_user(session, f"car90-self-learner-{suffix}")
+        session.add(
+            SkillNode(
+                id=skill_id,
+                track_id="rag-engineer-beginner",
+                title="CAR-90 self-origin reference",
+                category="core",
+                description="Self-origin guard fixture",
+                sort_order=95,
+                prerequisites=[],
+                outcomes=[],
+                rubric=[],
+                key_concepts=[],
+            )
+        )
+        session.flush()
+        session.add(
+            UserSkillNode(
+                user_id=user.id,
+                skill_node_id=skill_id,
+                status="em_estudo",
+                evidence={
+                    "checklist": [
+                        {
+                            "type": "reference",
+                            "id": "self-ref",
+                            "url": f"https://{self_host}/career-forge/reference",
+                        }
+                    ],
+                    "validation": None,
+                    "remediation": [],
+                    "metadata": {"sort_order": 95},
+                },
+                checklist_progress={},
+                updated_at=datetime.now(UTC),
+            )
+        )
+        session.commit()
+
+    _login_operator(
+        raw_client,
+        monkeypatch,
+        email="embed-self-editor@borderless.com",
+        role="editor",
+    )
+
+    for candidate in (self_host, f"WWW.{self_host}", parent_host):
+        refused = raw_client.post(
+            "/operator/content/embed-hosts",
+            json={"host": candidate},
+        )
+        assert refused.status_code == 422, refused.text
+
+    queued = raw_client.get("/operator/content/embed-hosts")
+    assert queued.status_code == 200, queued.text
+    assert self_host not in {item["host"] for item in queued.json()["pending"]}
+
+    learner_headers = {
+        "Authorization": f"Bearer {get_auth_provider().mint_email('car90-self-reader')}"
+    }
+    hosts = raw_client.get("/reference/embed-hosts", headers=learner_headers)
+    assert hosts.status_code == 200, hosts.text
+    assert self_host not in hosts.json()["hosts"]
+    assert parent_host not in hosts.json()["hosts"]
+
+
 def test_content_operator_queue_groups_distinct_live_reference_urls_without_identity(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,

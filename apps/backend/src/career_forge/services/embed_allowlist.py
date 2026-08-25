@@ -13,6 +13,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from career_forge.auth.operator_session import OperatorPrincipal
+from career_forge.config import settings
 from career_forge.db.models.embed_allowlist import EmbedHost, EmbedHostAudit
 from career_forge.db.models.user_skill_node import UserSkillNode
 from career_forge.services.operator_content import require_content_role
@@ -55,6 +56,31 @@ def normalize_embed_host(value: str) -> str:
     return host
 
 
+def _self_hosts() -> frozenset[str]:
+    """Hostnames served by this application, normalized like allowlist entries."""
+    hosts: set[str] = set()
+    for origin in (settings.frontend_url, *settings.cors_origin_list):
+        hostname = urlsplit(origin).hostname
+        if not hostname:
+            continue
+        try:
+            hosts.add(normalize_embed_host(hostname))
+        except (ValueError, UnicodeError):
+            continue
+    return frozenset(hosts)
+
+
+def _covers_self_origin(host: str, self_hosts: frozenset[str]) -> bool:
+    """True when allowlisting `host` would also frame one of our own origins.
+
+    The Reference iframe grants `allow-same-origin`, so a same-origin document
+    could reach the embedder and strip its own sandbox attribute.
+    """
+    return any(
+        self_host == host or self_host.endswith(f".{host}") for self_host in self_hosts
+    )
+
+
 def commit_embed_host_write(session: Session) -> None:
     """Commit a write and invalidate atomically relative to cached reads."""
     global _cached_hosts
@@ -70,7 +96,11 @@ def learner_embed_hosts(session: Session) -> tuple[str, ...]:
             _cached_hosts = tuple(
                 session.scalars(select(EmbedHost.host).order_by(EmbedHost.host)).all()
             )
-        return _cached_hosts
+        cached = _cached_hosts
+    self_hosts = _self_hosts()
+    return tuple(
+        host for host in cached if not _covers_self_origin(host, self_hosts)
+    )
 
 
 def _host_is_allowed(host: str, approved: set[str]) -> bool:
@@ -94,6 +124,7 @@ def list_pending_embed_hosts(
     """Aggregate unapproved Reference hosts from the current learner graph only."""
     require_content_role(principal)
     approved = set(session.scalars(select(EmbedHost.host)).all())
+    self_hosts = _self_hosts()
     grouped: dict[str, _PendingHostGroup] = {}
     rows = session.execute(
         select(UserSkillNode.evidence, UserSkillNode.updated_at).order_by(
@@ -113,7 +144,9 @@ def list_pending_embed_hosts(
                 host = normalize_embed_host(parsed.hostname)
             except (ValueError, UnicodeError):
                 continue
-            if _host_is_allowed(host, approved):
+            if _host_is_allowed(host, approved) or _covers_self_origin(
+                host, self_hosts
+            ):
                 continue
             group = grouped.setdefault(
                 host,
@@ -145,6 +178,8 @@ def add_embed_host(
 ) -> EmbedHost:
     require_content_role(principal)
     normalized = normalize_embed_host(host)
+    if _covers_self_origin(normalized, _self_hosts()):
+        raise ValueError("cannot allowlist the application's own origin")
     inserted_host = session.scalar(
         insert(EmbedHost)
         .values(

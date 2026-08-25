@@ -4,7 +4,11 @@ import type {
   RoadmapResponse,
 } from "@/types/contracts";
 
-export const REFERENCE_PREVIEW_SANDBOX = "allow-forms allow-popups allow-scripts";
+// `allow-same-origin` gives the framed source its own origin back: without it a
+// storage-dependent docs site boots into an opaque origin and dies. Safe only
+// because the allowlist refuses hosts covering our own origin (embed_allowlist).
+export const REFERENCE_PREVIEW_SANDBOX =
+  "allow-forms allow-popups allow-same-origin allow-scripts";
 export const REFERENCE_PREVIEW_REFERRER_POLICY = "no-referrer";
 
 export type ResolvedReferenceViewer = {

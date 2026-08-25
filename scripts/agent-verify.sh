@@ -83,6 +83,8 @@ check grep -q 'list_pending_embed_hosts' apps/backend/src/career_forge/api/opera
 check test -f apps/frontend/src/components/operator/EmbedHostQueue.tsx
 check grep -q 'getReferenceEmbedHosts' apps/frontend/src/app/\(artifact\)/reference/ReferenceViewerContent.tsx
 check grep -q 'source: "/reference/embed-hosts"' apps/frontend/next.config.mjs
+check grep -q '_covers_self_origin' apps/backend/src/career_forge/services/embed_allowlist.py
+check grep -q 'allow-same-origin' apps/frontend/src/lib/reference-viewer.ts
 check grep -q 'operator_membership_label' apps/backend/src/career_forge/db/models/user.py
 check grep -q 'stripe_subscription_status' apps/backend/src/career_forge/db/models/user.py
 check test -f apps/frontend/src/app/operator/page.tsx
