@@ -3,7 +3,11 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { getRoadmap, patchRoadmapChecklist } from "@/lib/api-client";
+import {
+  getReferenceEmbedHosts,
+  getRoadmap,
+  patchRoadmapChecklist,
+} from "@/lib/api-client";
 import type { RoadmapResponse } from "@/types/contracts";
 
 import ReferenceViewerContent from "./ReferenceViewerContent";
@@ -19,6 +23,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/lib/api-client", () => ({
+  getReferenceEmbedHosts: vi.fn(),
   getRoadmap: vi.fn(),
   patchRoadmapChecklist: vi.fn(),
 }));
@@ -65,6 +70,8 @@ const roadmap: RoadmapResponse = {
 beforeEach(() => {
   navigation.router.replace.mockReset();
   navigation.searchParams = new URLSearchParams();
+  vi.mocked(getReferenceEmbedHosts).mockReset();
+  vi.mocked(getReferenceEmbedHosts).mockResolvedValue([]);
   vi.mocked(getRoadmap).mockReset();
   vi.mocked(patchRoadmapChecklist).mockReset();
 });
@@ -118,6 +125,25 @@ describe("ReferenceViewerContent", () => {
     expect(card.textContent).toContain(
       "Preview isn't available for this source. Open the original to continue studying.",
     );
+  });
+
+  it("renders the preview when the live learner allowlist contains the host", async () => {
+    navigation.searchParams = new URLSearchParams({
+      node: "http-basics",
+      item: "mdn",
+    });
+    vi.mocked(getRoadmap).mockResolvedValue(roadmap);
+    vi.mocked(getReferenceEmbedHosts).mockResolvedValue(["developer.mozilla.org"]);
+
+    render(<ReferenceViewerContent />);
+
+    const preview = await screen.findByTestId("reference-preview");
+    expect(preview.getAttribute("src")).toBe(
+      "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+    );
+    expect(preview.getAttribute("sandbox")).toBe("allow-forms allow-popups allow-scripts");
+    expect(preview.getAttribute("referrerpolicy")).toBe("no-referrer");
+    expect(screen.queryByTestId("reference-source-card")).toBeNull();
   });
 
   it("uses the existing checklist command without marking done on open", async () => {

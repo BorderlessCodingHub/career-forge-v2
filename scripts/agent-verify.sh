@@ -79,6 +79,10 @@ check test -f apps/backend/src/career_forge/db/models/embed_allowlist.py
 check test -f apps/backend/alembic/versions/019_embed_allowlist.py
 check grep -q '"/content/embed-hosts"' apps/backend/src/career_forge/api/operator.py
 check grep -q '"/embed-hosts"' apps/backend/src/career_forge/api/reference.py
+check grep -q 'list_pending_embed_hosts' apps/backend/src/career_forge/api/operator.py
+check test -f apps/frontend/src/components/operator/EmbedHostQueue.tsx
+check grep -q 'getReferenceEmbedHosts' apps/frontend/src/app/\(artifact\)/reference/ReferenceViewerContent.tsx
+check grep -q 'source: "/reference/embed-hosts"' apps/frontend/next.config.mjs
 check grep -q 'operator_membership_label' apps/backend/src/career_forge/db/models/user.py
 check grep -q 'stripe_subscription_status' apps/backend/src/career_forge/db/models/user.py
 check test -f apps/frontend/src/app/operator/page.tsx

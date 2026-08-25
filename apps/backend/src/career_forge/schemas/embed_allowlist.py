@@ -18,8 +18,17 @@ class EmbedHostResponse(BaseModel):
     created_at: datetime
 
 
+class PendingEmbedHostResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    host: str
+    sample_url: str
+    distinct_url_count: int = Field(ge=1)
+
+
 class OperatorEmbedHostListResponse(BaseModel):
-    hosts: list[EmbedHostResponse]
+    pending: list[PendingEmbedHostResponse]
+    liberated: list[EmbedHostResponse]
 
 
 class LearnerEmbedHostListResponse(BaseModel):

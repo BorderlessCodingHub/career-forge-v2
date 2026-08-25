@@ -55,7 +55,7 @@ Operator session gates the route; learner sessions never open it.
 | **Entry** | Separate Operator email OTP (`data-screen="operator-login"`) |
 | **Shell** | Operator lockup, role-filtered desk tabs **Access \| Content**, role-agnostic seat email list, sign out |
 | **Access room** | Read-only monthly cost strip → pilot billing email list (add/remove shortcut) → learner email lookup → Access card. The `pilot list` badge appears on list rows and listed learner cards; removing a list row does not change `billing_entitled`. Card also exposes effective Membership, BASE/PSP override (or clear to Borderless), billing entitlement, Stripe-active read-only lock, and per-learner audit |
-| **Content room** | Searchable 40-ID catalog inventory; inline title/URL/published annotations; read-only git body status; publishing disabled until `data/canonical/{skill_id}.md` exists |
+| **Content room** | Searchable 40-ID catalog inventory; inline title/URL/published annotations; read-only git body status; plus live Reference host proof queue: pending host groups show one recent sample + distinct URL count, sandbox preview + explicit confirmation gates Liberate, and liberated hosts can be revoked |
 | **Route** | `/operator` under `basePath=/career-forge` · `data-screen="operator-console"` |
 | **Forbidden** | Learner product chrome, Mentor chrome, Welcome scenery, third Cost desk, role labels in seat list, impersonation |
 
@@ -224,7 +224,7 @@ After the animation → navigates to steady state (`/roadmap`).
 | **Address** | `node` + Reference `item`; never a raw `url` query |
 | **Chrome** | Node title, this Reference's `done` control, sibling References, CTA back to the Node drawer |
 | **Default slot** | Source card with Reference title, hostname, available `outcome` (or honest fallback), and primary **Open original** action in a new tab |
-| **Preview** | Sandboxed iframe only for domains with a proven adapter on the frontend allowlist; the initial allowlist is empty and embeds keep the escape hatch visible |
+| **Preview** | Sandboxed iframe only for domains returned by the authenticated live allowlist GET; embeds keep the escape hatch visible and revocation restores the source card without deploy |
 | **Invalid** | Missing/unknown Node or item returns to `/roadmap`; no empty viewer |
 | **Out** | Backend URL probes, proxy/scrape/extract/RAG ingest, `/learn`, tutor/mentor links, Live Forge sources, persisted “opened” event |
 

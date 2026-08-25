@@ -81,4 +81,29 @@ describe("verifyOtp", () => {
     expect(localStorage.getItem("career-forge.access-token")).toBeNull();
     expect(localStorage.getItem("career-forge.user-id")).toBe("user-stale-device");
   });
+
+  it("loads the authenticated live Reference embed allowlist", async () => {
+    const learnerToken = `header.${Buffer.from(
+      JSON.stringify({ provider: "email" }),
+    ).toString("base64url")}.signature`;
+    localStorage.setItem("career-forge.access-token", learnerToken);
+    localStorage.setItem("career-forge.user-id", "learner-id");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ hosts: ["developer.mozilla.org"] }),
+      }),
+    );
+
+    const { getReferenceEmbedHosts } = await import("./api-client");
+    await expect(getReferenceEmbedHosts()).resolves.toEqual(["developer.mozilla.org"]);
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/reference/embed-hosts"),
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: `Bearer ${learnerToken}` }),
+      }),
+    );
+  });
 });

@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass, field
+from datetime import datetime
 from threading import Lock
+from urllib.parse import urlsplit
 
 from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
@@ -11,11 +14,27 @@ from sqlalchemy.orm import Session
 
 from career_forge.auth.operator_session import OperatorPrincipal
 from career_forge.db.models.embed_allowlist import EmbedHost, EmbedHostAudit
+from career_forge.db.models.user_skill_node import UserSkillNode
 from career_forge.services.operator_content import require_content_role
+from career_forge.services.roadmap.evidence import read_evidence
 
 _HOST_LABEL = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$")
 _cache_lock = Lock()
 _cached_hosts: tuple[str, ...] | None = None
+
+
+@dataclass(frozen=True)
+class PendingEmbedHost:
+    host: str
+    sample_url: str
+    distinct_url_count: int
+
+
+@dataclass
+class _PendingHostGroup:
+    sample_url: str
+    sample_updated_at: datetime
+    urls: set[str] = field(default_factory=set)
 
 
 def normalize_embed_host(value: str) -> str:
@@ -54,6 +73,10 @@ def learner_embed_hosts(session: Session) -> tuple[str, ...]:
         return _cached_hosts
 
 
+def _host_is_allowed(host: str, approved: set[str]) -> bool:
+    return any(host == allowed or host.endswith(f".{allowed}") for allowed in approved)
+
+
 def list_embed_hosts(
     session: Session,
     *,
@@ -61,6 +84,57 @@ def list_embed_hosts(
 ) -> list[EmbedHost]:
     require_content_role(principal)
     return list(session.scalars(select(EmbedHost).order_by(EmbedHost.host)))
+
+
+def list_pending_embed_hosts(
+    session: Session,
+    *,
+    principal: OperatorPrincipal,
+) -> list[PendingEmbedHost]:
+    """Aggregate unapproved Reference hosts from the current learner graph only."""
+    require_content_role(principal)
+    approved = set(session.scalars(select(EmbedHost.host)).all())
+    grouped: dict[str, _PendingHostGroup] = {}
+    rows = session.execute(
+        select(UserSkillNode.evidence, UserSkillNode.updated_at).order_by(
+            UserSkillNode.updated_at.desc(),
+            UserSkillNode.id,
+        )
+    )
+    for evidence, updated_at in rows:
+        for reference in read_evidence(evidence).reference_items():
+            raw_url = reference.get("url")
+            if not isinstance(raw_url, str):
+                continue
+            try:
+                parsed = urlsplit(raw_url)
+                if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+                    continue
+                host = normalize_embed_host(parsed.hostname)
+            except (ValueError, UnicodeError):
+                continue
+            if _host_is_allowed(host, approved):
+                continue
+            group = grouped.setdefault(
+                host,
+                _PendingHostGroup(
+                    sample_url=raw_url,
+                    sample_updated_at=updated_at,
+                ),
+            )
+            group.urls.add(raw_url)
+            if updated_at > group.sample_updated_at:
+                group.sample_url = raw_url
+                group.sample_updated_at = updated_at
+
+    return [
+        PendingEmbedHost(
+            host=host,
+            sample_url=group.sample_url,
+            distinct_url_count=len(group.urls),
+        )
+        for host, group in sorted(grouped.items())
+    ]
 
 
 def add_embed_host(

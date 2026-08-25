@@ -67,6 +67,11 @@ const nextConfig = {
         },
       ],
       afterFiles: [
+        // `/reference` is an App Router page; proxy only its learner allowlist API child.
+        {
+          source: "/reference/embed-hosts",
+          destination: `${internal}/reference/embed-hosts`,
+        },
         // Exact prefix roots first — POST /forge, POST /validation, etc. do not match /:path*
         ...API_PREFIXES.flatMap((prefix) => [
           {

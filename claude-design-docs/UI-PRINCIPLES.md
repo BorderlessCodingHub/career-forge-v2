@@ -140,6 +140,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) — connector stubs match loaded layout |
 | `VerticalSpine` connectors | Solid 2px `roadmap-connector-{id}` — `border` default, `warning` revisar, `accent-mint` selected |
 | `MentorReportView` | `/report` evidence cards — structured summary (gaps / correct answers / next step); `data-testid="mentor-report"` + `mentor-report-entry-{node_id}` |
+| `EmbedHostQueue` | Content desk proof ritual — pending live host groups, sandbox preview with explicit confirmation before Liberate, and liberated host Revoke; shares the Reference viewer sandbox/referrer policy |
 | `format-node-title.ts` | Display-only helpers — `formatNodeTitleForDisplay`, `formatGoalForDisplay` (Goal on `/report`), `humanizeNodeId`, `formatLegacyMentorSummary`; never mutates stored ids |
 | `NodeDrawer` study checklist | Right drawer: collapsible sections default open, optional tutor row, sticky `validate-node-cta`; Escape + focus return; **does not** gate validation |
 | `SkillNode` (canvas) | Uniform purple card — title, description, optional `ChecklistProgress` compact when checklist items exist; no mastery % on card |

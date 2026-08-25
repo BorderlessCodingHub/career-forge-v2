@@ -98,6 +98,7 @@ describe("Reference viewer route", () => {
     expect(
       isEmbeddableReferenceUrl(
         "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+        [],
       ),
     ).toBe(false);
   });

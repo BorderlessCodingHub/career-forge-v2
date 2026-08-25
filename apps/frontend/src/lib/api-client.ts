@@ -315,6 +315,11 @@ export async function getRoadmap(userId?: string): Promise<RoadmapResponse> {
   );
 }
 
+export async function getReferenceEmbedHosts(): Promise<string[]> {
+  const body = await apiFetch<{ hosts: string[] }>("/reference/embed-hosts");
+  return body.hosts;
+}
+
 export async function syncRoadmap(
   nodes: RoadmapSyncNode[],
   userId?: string,

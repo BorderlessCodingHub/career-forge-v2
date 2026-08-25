@@ -42,6 +42,7 @@ from career_forge.schemas.embed_allowlist import (
     EmbedHostCreate,
     EmbedHostResponse,
     OperatorEmbedHostListResponse,
+    PendingEmbedHostResponse,
 )
 from career_forge.services.access_audit import AccessActorType, list_access_audit
 from career_forge.services.billing_pilot_emails import (
@@ -68,6 +69,7 @@ from career_forge.services.embed_allowlist import (
     add_embed_host,
     commit_embed_host_write,
     list_embed_hosts,
+    list_pending_embed_hosts,
     remove_embed_host,
 )
 
@@ -230,10 +232,14 @@ def get_operator_embed_hosts(
     principal: OperatorPrincipal = Depends(get_operator_principal),
 ) -> OperatorEmbedHostListResponse:
     return OperatorEmbedHostListResponse(
-        hosts=[
+        pending=[
+            PendingEmbedHostResponse.model_validate(row)
+            for row in list_pending_embed_hosts(db, principal=principal)
+        ],
+        liberated=[
             EmbedHostResponse.model_validate(row)
             for row in list_embed_hosts(db, principal=principal)
-        ]
+        ],
     )
 
 

@@ -75,6 +75,22 @@ export type OperatorContentPatch = {
   published?: boolean;
 };
 
+export type OperatorPendingEmbedHost = {
+  host: string;
+  sample_url: string;
+  distinct_url_count: number;
+};
+
+export type OperatorLiberatedEmbedHost = {
+  host: string;
+  created_at: string;
+};
+
+export type OperatorEmbedHostQueue = {
+  pending: OperatorPendingEmbedHost[];
+  liberated: OperatorLiberatedEmbedHost[];
+};
+
 const OPERATOR_DESKS: readonly OperatorDesk[] = [
   { id: "access", label: "Access" },
   { id: "content", label: "Content" },
@@ -227,5 +243,23 @@ export function patchOperatorContentSkill(
       method: "PATCH",
       body: JSON.stringify(patch),
     },
+  );
+}
+
+export function getOperatorEmbedHosts(): Promise<OperatorEmbedHostQueue> {
+  return operatorFetch<OperatorEmbedHostQueue>("/operator/content/embed-hosts");
+}
+
+export function addOperatorEmbedHost(host: string): Promise<OperatorLiberatedEmbedHost> {
+  return operatorFetch<OperatorLiberatedEmbedHost>("/operator/content/embed-hosts", {
+    method: "POST",
+    body: JSON.stringify({ host }),
+  });
+}
+
+export function removeOperatorEmbedHost(host: string): Promise<void> {
+  return operatorFetch<void>(
+    `/operator/content/embed-hosts/${encodeURIComponent(host)}`,
+    { method: "DELETE" },
   );
 }
