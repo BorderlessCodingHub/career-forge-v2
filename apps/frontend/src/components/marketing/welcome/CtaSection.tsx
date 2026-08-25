@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Flame, ArrowRight, ShieldCheck, Clock } from "lucide-react";
+import { ArrowRight, ShieldCheck, Clock } from "lucide-react";
+
+import { BrandMark } from "@/components/ui/BrandMark";
 
 interface CtaSectionProps {
   onOpenStrategyModal: () => void;
@@ -17,9 +19,8 @@ export function CtaSection({ onOpenStrategyModal }: CtaSectionProps) {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="glass-panel p-8 sm:p-14 rounded-3xl border border-orange-500/40 bg-gradient-to-b from-slate-900/90 via-slate-950 to-slate-950 text-center shadow-2xl relative overflow-hidden">
           
-          {/* Top Forge Icon Badge */}
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-950 border border-orange-500/50 shadow-xl shadow-orange-500/20 mb-6">
-            <Flame className="w-8 h-8 text-orange-400 fill-orange-400/20 animate-pulse" />
+          <div className="inline-flex items-center justify-center mb-6">
+            <BrandMark size={64} />
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-6 leading-tight">

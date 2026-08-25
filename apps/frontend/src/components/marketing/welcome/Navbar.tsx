@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Flame, Sparkles, Menu, X, ArrowRight, ChevronRight, Clock } from "lucide-react";
+import { Sparkles, Menu, X, ArrowRight, ChevronRight, Clock } from "lucide-react";
+
+import { BrandMark } from "@/components/ui/BrandMark";
 
 interface NavbarProps {
   onOpenApplyModal: () => void;
@@ -89,11 +91,10 @@ export function Navbar({
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 via-amber-500 to-indigo-600 p-0.5 shadow-lg shadow-orange-500/20 group-hover:shadow-orange-500/40 transition-all duration-300">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Flame className="w-5 h-5 text-orange-400 group-hover:scale-110 transition-transform duration-300 fill-orange-400/20" />
-              </div>
-            </div>
+            <BrandMark
+              size={40}
+              className="group-hover:scale-110 transition-transform duration-300"
+            />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-extrabold text-xl tracking-tight text-white font-mono">
