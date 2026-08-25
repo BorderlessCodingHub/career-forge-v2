@@ -1,18 +1,22 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { LockKeyhole, Search } from "lucide-react";
+import { LockKeyhole, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui";
 import {
+  addOperatorPilotEmail,
   getOperatorCostPool,
   getOperatorLearnerAccess,
   getOperatorLearnerAccessAudit,
+  getOperatorPilotEmails,
   patchOperatorLearnerAccess,
+  removeOperatorPilotEmail,
   type OperatorAccessAuditEntry,
   type OperatorAccessPatch,
   type OperatorCostPool,
   type OperatorLearnerAccess,
+  type OperatorPilotEmail,
 } from "@/lib/operator-console";
 
 function formatBrl(value: number): string {
@@ -97,6 +101,130 @@ function AccessFact({ label, value }: { label: string; value: string }) {
   );
 }
 
+function PilotListBadge({ testId }: { testId?: string }) {
+  return (
+    <span
+      className="inline-flex rounded-full border border-accent/50 bg-accent/15 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.08em] text-accent-mint"
+      data-testid={testId}
+    >
+      pilot list
+    </span>
+  );
+}
+
+function PilotEmailPanel({
+  emails,
+  loading,
+  saving,
+  error,
+  onAdd,
+  onRemove,
+}: {
+  emails: OperatorPilotEmail[];
+  loading: boolean;
+  saving: boolean;
+  error: string | null;
+  onAdd: (email: string) => Promise<boolean>;
+  onRemove: (email: string) => Promise<void>;
+}) {
+  const [email, setEmail] = useState("");
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const normalized = email.trim();
+    if (!normalized) return;
+    if (await onAdd(normalized)) setEmail("");
+  }
+
+  return (
+    <section
+      className="rounded-card border border-border bg-surface p-5 sm:p-6"
+      data-testid="operator-pilot-email-panel"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold text-text-primary">Pilot billing emails</h3>
+            <PilotListBadge />
+          </div>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-text-secondary">
+            These emails bypass checkout for pilots. Removing one only revokes this shortcut;
+            it does not change the learner&apos;s billing entitlement.
+          </p>
+        </div>
+        <span className="font-mono text-xs text-text-muted">{emails.length} listed</span>
+      </div>
+
+      <form className="mt-4 flex max-w-2xl gap-2" onSubmit={submit}>
+        <label className="sr-only" htmlFor="operator-pilot-email">
+          Pilot email
+        </label>
+        <input
+          id="operator-pilot-email"
+          type="email"
+          value={email}
+          disabled={saving}
+          autoComplete="off"
+          data-testid="operator-pilot-email-input"
+          className="min-w-0 flex-1 rounded-md border border-border bg-bg px-3 py-2.5 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-accent-mint"
+          placeholder="pilot@example.com"
+          onChange={(event) => setEmail(event.target.value)}
+        />
+        <Button type="submit" disabled={saving || !email.trim()} data-testid="operator-pilot-email-add">
+          <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />
+          Add email
+        </Button>
+      </form>
+
+      {error ? (
+        <p
+          className="mt-3 max-w-2xl rounded-md border border-red-900 bg-red-950 px-3 py-2 text-sm text-red-200"
+          role="alert"
+          data-testid="operator-pilot-email-error"
+        >
+          {error}
+        </p>
+      ) : null}
+
+      {loading ? (
+        <div
+          className="mt-4 h-16 animate-pulse rounded-md border border-border-soft bg-bg"
+          data-testid="operator-pilot-email-loading"
+        />
+      ) : emails.length ? (
+        <ul className="mt-4 divide-y divide-border-soft border-y border-border-soft">
+          {emails.map((item) => (
+            <li
+              key={item.email}
+              className="flex flex-wrap items-center justify-between gap-3 py-3"
+              data-testid={`operator-pilot-email-${item.email}`}
+            >
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-sm text-text-primary">{item.email}</span>
+                <PilotListBadge testId={`operator-pilot-badge-${item.email}`} />
+              </div>
+              <button
+                type="button"
+                disabled={saving}
+                className="inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium text-red-400 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                data-testid={`operator-pilot-email-remove-${item.email}`}
+                onClick={() => void onRemove(item.email)}
+              >
+                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-4 text-sm text-text-muted" data-testid="operator-pilot-email-empty">
+          No pilot billing emails listed.
+        </p>
+      )}
+    </section>
+  );
+}
+
 function AccessCard({
   learner,
   audit,
@@ -111,6 +239,7 @@ function AccessCard({
   const effectivelyEntitled =
     learner.membership_entitled ||
     learner.billing_entitled ||
+    learner.pilot_email_listed ||
     learner.stripe_billing_locked;
   const membershipOptions: Array<{
     label: string;
@@ -132,9 +261,12 @@ function AccessCard({
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent-mint">
             Access card
           </p>
-          <h3 className="mt-1 break-all text-lg font-semibold text-text-primary">
-            {learner.email}
-          </h3>
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            <h3 className="break-all text-lg font-semibold text-text-primary">{learner.email}</h3>
+            {learner.pilot_email_listed ? (
+              <PilotListBadge testId="operator-access-pilot-badge" />
+            ) : null}
+          </div>
         </div>
         <span
           className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
@@ -271,6 +403,10 @@ export function AccessDesk() {
   const [pool, setPool] = useState<OperatorCostPool | null>(null);
   const [poolError, setPoolError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [pilotEmails, setPilotEmails] = useState<OperatorPilotEmail[]>([]);
+  const [pilotLoading, setPilotLoading] = useState(true);
+  const [pilotSaving, setPilotSaving] = useState(false);
+  const [pilotError, setPilotError] = useState<string | null>(null);
   const [learner, setLearner] = useState<OperatorLearnerAccess | null>(null);
   const [audit, setAudit] = useState<OperatorAccessAuditEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -286,6 +422,54 @@ export function AccessDesk() {
         ),
       );
   }, []);
+
+  useEffect(() => {
+    getOperatorPilotEmails()
+      .then(setPilotEmails)
+      .catch((cause) =>
+        setPilotError(
+          cause instanceof Error ? cause.message : "Could not load pilot billing emails.",
+        ),
+      )
+      .finally(() => setPilotLoading(false));
+  }, []);
+
+  async function addPilotEmail(email: string) {
+    setPilotSaving(true);
+    setPilotError(null);
+    try {
+      const added = await addOperatorPilotEmail(email);
+      setPilotEmails((current) => [
+        ...current.filter((item) => item.email !== added.email),
+        added,
+      ]);
+      setLearner((current) =>
+        current?.email === added.email ? { ...current, pilot_email_listed: true } : current,
+      );
+      return true;
+    } catch (cause) {
+      setPilotError(cause instanceof Error ? cause.message : "Could not add pilot email.");
+      return false;
+    } finally {
+      setPilotSaving(false);
+    }
+  }
+
+  async function removePilotEmail(email: string) {
+    setPilotSaving(true);
+    setPilotError(null);
+    try {
+      await removeOperatorPilotEmail(email);
+      setPilotEmails((current) => current.filter((item) => item.email !== email));
+      setLearner((current) =>
+        current?.email === email ? { ...current, pilot_email_listed: false } : current,
+      );
+    } catch (cause) {
+      setPilotError(cause instanceof Error ? cause.message : "Could not remove pilot email.");
+    } finally {
+      setPilotSaving(false);
+    }
+  }
 
   async function lookup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -342,6 +526,17 @@ export function AccessDesk() {
 
       <div className="mt-6">
         <CostStrip pool={pool} error={poolError} />
+      </div>
+
+      <div className="mt-6 max-w-4xl">
+        <PilotEmailPanel
+          emails={pilotEmails}
+          loading={pilotLoading}
+          saving={pilotSaving}
+          error={pilotError}
+          onAdd={addPilotEmail}
+          onRemove={removePilotEmail}
+        />
       </div>
 
       <form className="mt-6 flex max-w-2xl gap-2" onSubmit={lookup}>
