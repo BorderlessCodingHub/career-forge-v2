@@ -1,6 +1,6 @@
 "use client";
 
-import { Flame } from 'lucide-react';
+import { BrandMark } from "@/components/ui/BrandMark";
 
 interface FooterProps {
   onOpenApplyModal: () => void;
@@ -20,9 +20,7 @@ export function Footer({
           {/* Brand Info */}
           <div className="col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/30 flex items-center justify-center">
-                <Flame className="w-4 h-4 text-orange-400 fill-orange-400/20" />
-              </div>
+              <BrandMark size={32} />
               <span className="font-extrabold text-lg text-white font-mono">
                 CAREER<span className="text-orange-400">FORGE</span>
               </span>
