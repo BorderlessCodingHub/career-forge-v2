@@ -103,8 +103,9 @@ describe("welcome honesty — hero, proof, pricing", () => {
     render(<Mentors />);
 
     expect(screen.getByText("Yuri Pereira")).toBeTruthy();
-    expect(screen.getByText("Thiago Dantas")).toBeTruthy();
-    expect(screen.getByText("Matheus Avi")).toBeTruthy();
+    expect(screen.getByText("Pedro Alano")).toBeTruthy();
+    expect(screen.queryByText("Thiago Dantas")).toBeNull();
+    expect(screen.queryByText("Matheus Avi")).toBeNull();
     expect(screen.queryByText("Dr. Marcus Vance")).toBeNull();
     expect(screen.queryByText(/EX-TOP LABS/)).toBeNull();
     expect(screen.queryByText(/GitHub Profile/)).toBeNull();
@@ -113,16 +114,16 @@ describe("welcome honesty — hero, proof, pricing", () => {
   it("pricing is BASE/PSP included and External $10–15/mo", () => {
     render(<Pricing />);
 
-    expect(screen.getByText("BASE")).toBeTruthy();
-    expect(screen.getByText("PSP")).toBeTruthy();
+    expect(screen.getByText("BASE · PSP")).toBeTruthy();
     expect(screen.getByText("External")).toBeTruthy();
+    expect(screen.getByText(/Most common path/i)).toBeTruthy();
     expect(screen.getAllByText("$10–15").length).toBeGreaterThan(0);
     expect(screen.queryByText("$2,999")).toBeNull();
     expect(screen.queryByText(/SAVE \$500/i)).toBeNull();
     expect(screen.queryByText(/GPU/i)).toBeNull();
 
     const ctas = screen.getAllByRole("link", { name: /Start diagnosis/i });
-    expect(ctas.length).toBe(3);
+    expect(ctas.length).toBe(2);
     for (const cta of ctas) {
       expect(isProductEntryHref(cta.getAttribute("href"))).toBe(true);
     }

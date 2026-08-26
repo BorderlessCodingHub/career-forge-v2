@@ -22,7 +22,7 @@ export function Pricing() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
           {PRICING_PLANS.map((plan) => {
             const isPopular = plan.popular;
             return (

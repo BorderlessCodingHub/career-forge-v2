@@ -17,11 +17,12 @@ export function Mentors() {
             The ecosystem team behind <span className="gradient-text-cyan">Career Forge</span>
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
-            Founder, Head of AI, and Algorithms mentor — public Borderless titles, not invented faculty.
+            Built so you can see your starting point, watch a live roadmap take shape, and prove
+            what you can do.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
           {MENTORS.map((mentor) => (
             <div
               key={mentor.name}

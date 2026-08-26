@@ -141,7 +141,7 @@ _Avoid_: CMS author, admin
 ### Marketing surface
 
 **Welcome** (`/welcome`):
-Commercial Premium B landpage: convert with **Start diagnosis** into the product loop. BASE/PSP included; unpaid `external` sees USD $10–15/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are the real Borderless team. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
+Commercial Premium B landpage: convert with **Start diagnosis** into the product loop. BASE/PSP included; unpaid `external` sees USD $10–15/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are Yuri Pereira and Pedro Alano. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
 _Avoid_: treating Welcome as the identity gate or the Paywall; treating $10–15 as live checkout on the landpage; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen
 
 **Welcome PLG** (`/welcome/plg`):
