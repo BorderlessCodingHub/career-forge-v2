@@ -6,6 +6,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from career_forge.schemas.canonical import CanonicalRef
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 
 
@@ -41,6 +42,7 @@ class RoadmapNode(BaseModel):
     references: list[dict[str, str | bool]] = Field(default_factory=list)
     checklist_completed: int = Field(ge=0, default=0)
     checklist_total: int = Field(ge=0, default=0)
+    canonical: CanonicalRef | None = None
 
 
 class ChecklistToggleRequest(BaseModel):

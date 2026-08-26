@@ -12,7 +12,11 @@ Last updated: **2026-07-21** (Career Forge v2 docs sync).
 │   ├── backend/          # FastAPI — package: career_forge
 │   └── frontend/         # Next.js 14 App Router
 ├── data/
-│   └── roadmap.json      # Skill catalog seed (repo root)
+│   ├── catalog/          # per-track skill catalogs
+│   ├── canonical/        # git-owned canonical skill bodies (ADR-004 / CAR-94)
+│   ├── must-haves/
+│   ├── golden_cases/
+│   └── roadmap.json      # legacy single-file fallback
 ├── docs/
 ├── claude-design-docs/
 ├── scripts/
@@ -136,6 +140,7 @@ apps/frontend/
     │   │       └── complete/
     │   └── (artifact)/
     │       ├── roadmap/
+    │       ├── learn/           # CAR-94 Canonical skill content
     │       ├── reference/       # CAR-85 Node Reference viewer
     │       ├── validate/
     │       └── report/

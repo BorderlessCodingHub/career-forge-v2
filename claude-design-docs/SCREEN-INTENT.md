@@ -221,6 +221,20 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
+## 6c. Canonical skill content (`/learn/{skill_id}`) — MUST match (CAR-94)
+
+| Constraint | Detail |
+|------------|--------|
+| Identity | ProductEntryGate; in-app, not a public blog |
+| Address | `/learn/{skill_id}` — one piece per catalog skill (ADR-004) |
+| Attach | Drawer link only when the trail DTO has `canonical` (focus + published body). No placeholder |
+| Body | Git-owned markdown; title/URL resolved live from the Content sidecar |
+| Invalid | Unpublished or missing body → `/roadmap`; no empty viewer |
+| Forbidden | Generating posts from forge; unifying with `/reference`; indexing per-run URLs |
+| Hooks | `canonical-learn`, `open-canonical-learn`, `learn-return-to-roadmap` |
+
+---
+
 ## 7. Mastery validation — MUST match
 
 | Constraint | Detail |

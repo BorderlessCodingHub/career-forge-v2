@@ -76,6 +76,9 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    # Last added = outermost. CORS must wrap Bearer 401s or the browser
+    # reports TypeError: Failed to fetch instead of the 401 body.
+    app.add_middleware(BearerAuthMiddleware)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
@@ -83,8 +86,6 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    # Added after CORS so it runs first on the request (Starlette reverse order).
-    app.add_middleware(BearerAuthMiddleware)
 
     app.include_router(api_router)
     app.add_exception_handler(DomainError, _domain_error_handler)

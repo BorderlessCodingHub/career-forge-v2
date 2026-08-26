@@ -215,6 +215,8 @@ At the start of a session involving implementation work, read in order:
 | `/validation/questions`, `/validation` | Mastery validation |
 | `/mentor/context`, `/mentor` | Contextual mentor |
 | `/mentor-report` | Evidence report |
+| `/learn/{skill_id}` | Canonical skill content (ADR-004); unpublished → 404 silence |
+| `/reference/embed-hosts` | Learner embed allowlist GET |
 | `/mock-interview/questions`, `/mock-interview` | Mock interview + recalibration |
 
 ## Frontend routes
@@ -231,6 +233,7 @@ At the start of a session involving implementation work, read in order:
 | `(setup)/forge` | Live forge timeline SSE |
 | `(setup)/forge/complete` | Post-forge transition |
 | `(artifact)/roadmap` | Vertical roadmap |
+| `(artifact)/learn/[skillId]` | CAR-94 Canonical skill content (ADR-004) |
 | `(artifact)/reference` | CAR-85 in-product Node Reference viewer |
 | `(artifact)/validate` | Mastery validation |
 | `(artifact)/report` | Mentor report |

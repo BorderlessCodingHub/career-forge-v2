@@ -72,6 +72,11 @@ const nextConfig = {
           source: "/reference/embed-hosts",
           destination: `${internal}/reference/embed-hosts`,
         },
+        // `/learn/[skillId]` is an App Router page; proxy only the content child.
+        {
+          source: "/learn/:skillId/content",
+          destination: `${internal}/learn/:skillId/content`,
+        },
         // Exact prefix roots first — POST /forge, POST /validation, etc. do not match /:path*
         ...API_PREFIXES.flatMap((prefix) => [
           {

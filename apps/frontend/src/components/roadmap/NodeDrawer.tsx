@@ -7,6 +7,7 @@ import { ChecklistProgress, getChecklistProgress } from "@/components/roadmap/Ch
 import { Button } from "@/components/ui";
 import { getKnowledgeGaps } from "@/lib/api-client";
 import { buildReferenceViewerHref } from "@/lib/reference-viewer";
+import { buildLearnHref } from "@/lib/canonical-content";
 import type { KnowledgeGapItem, RoadmapCategory, RoadmapChecklistItem, RoadmapNode } from "@/types/contracts";
 
 type NodeDrawerProps = {
@@ -196,6 +197,24 @@ export function NodeDrawer({
           {gaps.length === 0 && node.description && (
             <div className="rounded-md border border-accent/30 bg-surface px-3 py-2 text-sm text-text-primary">
               {node.description}
+            </div>
+          )}
+
+          {node.canonical && (
+            <div
+              className="rounded-md border border-accent/30 bg-surface px-3 py-3"
+              data-testid="canonical-skill-content"
+            >
+              <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
+                Canonical skill content
+              </p>
+              <Link
+                href={buildLearnHref(node.canonical.skill_id)}
+                className="mt-2 inline-block font-medium text-text-primary underline-offset-2 hover:underline"
+                data-testid="open-canonical-learn"
+              >
+                {node.canonical.title}
+              </Link>
             </div>
           )}
 

@@ -101,10 +101,11 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 
 **F3c complete:** CAR-75 → CAR-76 → (CAR-77 ∥ CAR-79) → CAR-78 → CAR-80.
 
-### Product loop — Node References
+### Product loop — Canonical skill content + Node References
 
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
+| [CAR-94](https://linear.app/career-forge-v2/issue/CAR-94) | Canonical skill content (`/learn/{skill_id}`) | [P] | **This branch** — ADR-004 inventory lookup + deterministic attach |
 | [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) | In-product Reference viewer (`/reference`) | [P] | **Done** — PR #62 · [ADR-007](./decisions/ADR-007-reference-viewer.md) |
 | [CAR-86](https://linear.app/career-forge-v2/issue/CAR-86) | Reference source card (blocked iframe fallback) | [P] | **Done** — PR #64 · ADR-007 amend |
 | [CAR-89](https://linear.app/career-forge-v2/issue/CAR-89) | Embed allowlist: persist proven hosts (API + learner GET) | [P] | **Done** — PR #67 · ADR-007 amend |

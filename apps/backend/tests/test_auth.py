@@ -31,6 +31,20 @@ def test_protected_route_rejects_invalid_bearer(raw_client: TestClient) -> None:
     assert res.status_code == 401
 
 
+def test_auth_401_includes_cors_allow_origin(raw_client: TestClient) -> None:
+    """Bearer 401 must still expose ACAO — otherwise the browser reports Failed to fetch."""
+    origin = settings.cors_origin_list[0]
+    res = raw_client.get(
+        "/me/forges",
+        headers={
+            "Origin": origin,
+            "Authorization": "Bearer not-a-jwt",
+        },
+    )
+    assert res.status_code == 401
+    assert res.headers.get("access-control-allow-origin") == origin
+
+
 def test_anon_mint_creates_user_and_token(raw_client: TestClient) -> None:
     res = raw_client.post("/auth/anon/mint", json={"external_id": "user-car23aa"})
     assert res.status_code == 200

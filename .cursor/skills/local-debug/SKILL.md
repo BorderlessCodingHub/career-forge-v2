@@ -154,5 +154,6 @@ docker compose exec backend pytest
 | `make smoke` hangs / CI fails frontend probe | Wrong probe URL (`:3000` default, or ignored CI `:13000`) | Source `.env`; `WEB_URL` override → else `http://localhost:${WEB_HOST_PORT:-3300}/career-forge`; CI sets `WEB_URL` + `WEB_HOST_PORT=13000` |
 | Operator console shows `Failed to fetch` while learner API works | Cookie client used `NEXT_PUBLIC_BACKEND_URL` and crossed origins instead of the path-scoped Labs route | Operator client must call `${NEXT_PUBLIC_BASE_PATH}/operator/*`; Next same-origin rewrite forwards to backend |
 | OTP never emails in Docker even with `RESEND_API_KEY` in `.env` | Compose only injects keys listed in `backend.environment`; default `MAILER_BACKEND=log` | Add `MAILER_BACKEND` / `RESEND_API_KEY` / `MAIL_FROM` to compose; recreate backend; confirm `/proc/1/environ` |
+| `Cannot reach API …/me/forges: Failed to fetch` while `GET /health` and OPTIONS 200, `CORS_ORIGINS` already has `:3300` | `BearerAuthMiddleware` was outermost; 401 JSONResponse skipped CORS so the browser hid `Invalid or expired Bearer token` | CORS must be added last (outermost). After rebuild: if still 401, wipe `career-forge.access-token` and sign in again (stale JWT / `JWT_SECRET` change) |
 
 **When you find a new local-only trick, append it to section 8 of this skill.**
