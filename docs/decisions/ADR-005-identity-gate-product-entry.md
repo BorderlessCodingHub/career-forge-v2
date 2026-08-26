@@ -42,7 +42,7 @@ It also meant we paid for nameless diagnosis and forge, the OTP wall was **UI-on
 | Unpaid `external` | **402** on **start diagnosis** and **start forge**. No free forge. No unpaid diagnosis. |
 | Goal picker | Allowed without billing (no LLM). |
 | Existing Roadmap | **Not ransomed** — Continue / validate / report stay usable. Paywall does not lock `/` for someone who already has an artifact. |
-| Welcome | Pricing remains **scenery** until a later honesty pass (CAR-53). Runtime checkout is **not** on Welcome. Dissonance accepted. |
+| Welcome | Pricing chrome is honest copy (CAR-92): BASE/PSP included · External **$10–15/mo** billed in-loop. Runtime checkout is **not** on Welcome. |
 | Pilot grant | **Amended by CAR-87:** `billing_pilot_emails` is the runtime source. Migration 018 imports `ENTITLEMENT_BILLING_ALLOWLIST` once; runtime then ignores the env. |
 
 Identity and Paywall remain **two gates**. Early identity does not mean BASE/PSP pay. It does mean `external` pays before we run diagnosis.

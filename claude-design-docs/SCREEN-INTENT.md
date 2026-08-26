@@ -9,7 +9,7 @@
 
 - Product UI copy: **English** (CAR-16). Marketing `/welcome` ships EN (CAR-56 Premium B); **pt-BR marketing + chrome** = CAR-37
 - Status enum: `bloqueado | recomendado | em_estudo | validar | aprovado | revisar` — never rename without CHECKPOINT + API
-- No gamification (confetti, XP, streaks) on **product** UI. Welcome ApplicationModal may use confetti (Welcome-scoped only). Premium A HTML preview remains theater.
+- No gamification (confetti, XP, streaks) on **product** UI. Welcome has no confetti (CAR-92). Premium A HTML preview remains theater.
 - P0 wow moments must survive: **Forge stream**, **Animation reveal**, **Validation**, **Adaptive roadmap**
 
 ---
@@ -24,16 +24,16 @@ Supersedes CAR-35 screen-intent for this route. Spec lock: CAR-54.
 | Look | Commercial Premium B (slate/orange Vite chrome) via `components/marketing/welcome/` — **not** CAR-34 product tokens / BrandMark on first cutover |
 | Language | EN; pt-BR → CAR-37 |
 | Conversion | Nav / hero / final primary → Next `Link` `/` · **Start diagnosis** · `data-testid="welcome-cta-start"` (desktop + mobile nav variants). Local B-styled links — do **not** reuse `StartDiagnosisCta` |
-| Scenery | Claim Scholarship, Syllabus, Strategy, other Apply → modals (Apply + Strategy + Syllabus). Pricing/apply theater is scenery |
-| Proof | Fake social proof / testimonials allowed until CAR-53 honesty pass |
+| Scenery | No Apply / Strategy / Syllabus modals. Former Apply/Strategy → Start diagnosis `/`. Download Syllabus → `#curriculum` |
+| Proof | Logo wall = Borderless employer set (local assets). Mentors = Yuri / Thiago / Matheus. Testimonials stay Unsplash until CAR-93. Pricing: BASE/PSP included · External **$10–15/mo** in-loop (copy, not checkout) |
 | Font | `Plus_Jakarta_Sans` via `next/font` on Welcome shell only. Product stays Inter |
-| CSS | `welcome/welcome.css` imported only from Welcome shell. Welcome-scoped confetti OK in ApplicationModal only |
-| Out | Real Stripe / waitlist / email · Google Fonts `<link>` · restyling to BrandMark on cutover |
+| CSS | `welcome/welcome.css` imported only from Welcome shell. No Welcome confetti |
+| Out | Real Stripe / waitlist / email on Welcome · Google Fonts `<link>` |
 | Product `/` | Unchanged — `LandingRecoveryGate` / GoalPicker |
 | Hook | `data-screen="marketing-welcome"` · `data-testid="welcome-cta-start"` |
 | Redirect | `/welcome/premium-b` → `/welcome` (permanent) |
 
-**Can evolve:** pt-BR (CAR-37); CAR-53 honesty pass; BrandMark polish
+**Can evolve:** pt-BR (CAR-37); CAR-93 pilot testimonial quotes
 
 ---
 

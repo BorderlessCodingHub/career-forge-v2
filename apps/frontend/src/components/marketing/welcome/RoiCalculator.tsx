@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Calculator, TrendingUp, ArrowRight } from 'lucide-react';
 
-interface RoiCalculatorProps {
-  onOpenApplyModal: () => void;
-}
+const MONTHLY_SUBSCRIPTION_USD = 15;
 
-export function RoiCalculator({ onOpenApplyModal }: RoiCalculatorProps) {
+export function RoiCalculator() {
   const [currentRole, setCurrentRole] = useState<'junior' | 'mid' | 'senior' | 'staff' | 'data'>('senior');
   const [region, setRegion] = useState<'us-hub' | 'us-remote' | 'eu' | 'apac'>('us-hub');
   const [yoe, setYoe] = useState(5);
@@ -32,9 +31,11 @@ export function RoiCalculator({ onOpenApplyModal }: RoiCalculatorProps) {
   const projectedSalary = Math.round(currentSalary * BOOST_MULTIPLIER[currentRole]);
   const salaryIncrease = projectedSalary - currentSalary;
   
-  // Payback period in days (Tuition $2,999 / daily increase)
+  // Payback in days: $15/mo subscription / daily salary lift (toy math, not placement data)
   const dailyIncrease = salaryIncrease / 365;
-  const paybackDays = Math.round(2999 / dailyIncrease);
+  const rawPaybackDays = MONTHLY_SUBSCRIPTION_USD / dailyIncrease;
+  const paybackLabel =
+    rawPaybackDays < 1 ? "< 1 day of work" : `${Math.round(rawPaybackDays)} days of work`;
 
   return (
     <section id="calculator" className="py-24 bg-slate-950 border-t border-slate-900 relative">
@@ -50,7 +51,8 @@ export function RoiCalculator({ onOpenApplyModal }: RoiCalculatorProps) {
             Calculate Your AI Engineering <span className="gradient-text-purple">Compensation Lift</span>
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
-            See expected market value gains based on real Career Forge cohort salary placement data across 640+ graduates.
+            Toy payback math against a <strong className="text-slate-200">$15/mo</strong> monthly
+            subscription (top of the Labs band). Invented salary lift — not Career Forge placement data.
           </p>
         </div>
 
@@ -156,22 +158,19 @@ export function RoiCalculator({ onOpenApplyModal }: RoiCalculatorProps) {
                   <span className="font-bold text-slate-200">${currentSalary.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-slate-300">
-                  <span className="text-slate-400">Program Payback Period:</span>
-                  <span className="font-bold text-emerald-400">{paybackDays} Days of Work</span>
-                </div>
-                <div className="flex justify-between text-slate-300">
-                  <span className="text-slate-400">Interview Callback Rate:</span>
-                  <span className="font-bold text-purple-300">+340% Higher</span>
+                  <span className="text-slate-400">$15/mo subscription payback:</span>
+                  <span className="font-bold text-emerald-400">{paybackLabel}</span>
                 </div>
               </div>
 
-              <button
-                onClick={onOpenApplyModal}
+              <Link
+                href="/"
+                data-testid="welcome-cta-start"
                 className="w-full py-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-orange-500 rounded-xl text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:shadow-purple-500/30 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>Claim Scholarship & Lock Your Rate</span>
+                <span>Start diagnosis</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </Link>
 
             </div>
 

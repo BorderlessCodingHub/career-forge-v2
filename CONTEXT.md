@@ -101,8 +101,8 @@ The right to start diagnosis and to forge. Entitled BASE/PSP membership grants i
 _Avoid_: authentication, one free forge, ransoming artifacts
 
 **Paywall**:
-The billing gate for an external learner without entitlement. It blocks **starting** diagnosis and **starting** a forge. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have.
-_Avoid_: OTP, login, calling the identity gate “the paywall”; blocking `/` Continue on an existing artifact; blocking the goal picker
+The billing gate for an external learner without entitlement. It blocks **starting** diagnosis and **starting** a forge. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have. Public Labs price for unpaid `external` (Welcome copy): USD $10–15/mo, billed in-loop after Email identity — not on `/welcome`. BASE/PSP remain included (no Stripe).
+_Avoid_: OTP, login, calling the identity gate “the paywall”; blocking `/` Continue on an existing artifact; blocking the goal picker; putting Stripe on Welcome
 
 ### Operator console
 
@@ -141,8 +141,8 @@ _Avoid_: CMS author, admin
 ### Marketing surface
 
 **Welcome** (`/welcome`):
-Commercial Premium B landpage (CAR-56): convert with **Start diagnosis** into the product loop; pricing / apply / syllabus / strategy = scenery modals; fake proof until CAR-53; waitlist/checkout still not runtime on Welcome. Welcome-scoped confetti allowed in ApplicationModal; product UI still none. Does not require Email identity. Runtime Paywall lives in the product loop; Welcome may contradict it until the landpage is made honest — that dissonance is accepted.
-_Avoid_: treating Welcome as the identity gate or the Paywall; treating pricing theater as live checkout; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen
+Commercial Premium B landpage: convert with **Start diagnosis** into the product loop. BASE/PSP included; unpaid `external` sees USD $10–15/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are the real Borderless team. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
+_Avoid_: treating Welcome as the identity gate or the Paywall; treating $10–15 as live checkout on the landpage; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen
 
 **Welcome PLG** (`/welcome/plg`):
 EN product-led exploration (Granola rhythm). Same CTA → `/`. Direct URL only — do not replace `/welcome`.

@@ -299,23 +299,18 @@ class VLLMDeployment:
   }
 ];
 
-export const HIRING_COMPANIES = [
-  { name: 'OpenAI', logo: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=120&q=80' },
-  { name: 'Anthropic', logo: '' },
-  { name: 'Stripe', logo: '' },
-  { name: 'Databricks', logo: '' },
-  { name: 'Meta AI', logo: '' },
-  { name: 'Scale AI', logo: '' },
-  { name: 'Snowflake', logo: '' },
-  { name: 'Palantir', logo: '' }
-];
-
-export const STATS = [
-  { value: '+$84,500', label: 'Avg Salary Increase Post-Cohort', highlight: true },
-  { value: '94.8%', label: 'Placement / Promo Rate in 90 Days', highlight: false },
-  { value: '640+', label: 'Senior Engineers Graduated', highlight: false },
-  { value: '4.96/5', label: 'Verified Alumni Rating (12 Cohorts)', highlight: false }
-];
+export const EMPLOYERS = [
+  { name: 'Coca-Cola', logo: 'coca-cola.png' },
+  { name: 'Apple', logo: 'apple.png' },
+  { name: 'Beehiiv', logo: 'beehiiv.png' },
+  { name: 'Strike', logo: 'strike.png' },
+  { name: 'PayPal', logo: 'paypal.png' },
+  { name: 'X-Team', logo: 'x-team.png' },
+  { name: 'Pizza Hut', logo: 'pizza-hut.png' },
+  { name: 'Accenture', logo: 'accenture.png' },
+  { name: 'Nubank', logo: 'nubank.png' },
+  { name: 'BTG Pactual', logo: 'btg-pactual.png' },
+] as const;
 
 export const TESTIMONIALS = [
   {
@@ -366,32 +361,26 @@ export const TESTIMONIALS = [
 
 export const MENTORS = [
   {
-    name: 'Dr. Marcus Vance',
-    role: 'Former Lead AI Infra Specialist @ OpenAI & Anthropic',
-    bio: 'Built distributed training pipelines and evaluation harnesses for 100B+ parameter models. 12+ years in HPC & Machine Learning Systems.',
-    github: 'https://github.com',
-    linkedin: 'https://linkedin.com',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
-    specialty: 'vLLM, TensorRT & Model Alignment'
+    name: 'Yuri Pereira',
+    role: 'Founder and Strategic Tech Advisor',
+    bio: 'Founded Borderless Coding in 2023. Strategic tech advisor for the BASE and PSP ecosystem that Career Forge sits in.',
+    avatar: 'yuri.webp',
+    specialty: 'Founder',
   },
   {
-    name: 'Maya Lin',
-    role: 'Principal RAG Architect @ Qdrant & Ex-Meta AI',
-    bio: 'Co-creator of open-source vector search algorithms. Author of "Production RAG Systems at Scale" (O\'Reilly).',
-    github: 'https://github.com',
-    linkedin: 'https://linkedin.com',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-    specialty: 'Agentic RAG, GraphRAG & Vector DBs'
+    name: 'Thiago Dantas',
+    role: 'Mentor/Head AI',
+    bio: 'Head of AI at Borderless. Mentors learners on production AI work across the ecosystem.',
+    avatar: 'thiago.webp',
+    specialty: 'Head AI',
   },
   {
-    name: 'David K. O\'Connor',
-    role: 'Head of Fine-Tuning @ Unsloth AI Contributor',
-    bio: 'Pioneered memory-efficient QLoRA kernel patches. Trained over 40+ domain-specific open weights models for Fortune 500 companies.',
-    github: 'https://github.com',
-    linkedin: 'https://linkedin.com',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80',
-    specialty: 'SFT, DPO, Unsloth & Dataset Curation'
-  }
+    name: 'Matheus Avi',
+    role: 'Algorithms & Data Structures Mentor',
+    bio: 'Algorithms and data structures mentor at Borderless — the foundations seat on this page.',
+    avatar: 'matheus.webp',
+    specialty: 'Algorithms & Data Structures',
+  },
 ];
 
 export const ROADMAP_WEEKS = [
@@ -431,94 +420,91 @@ export const ROADMAP_WEEKS = [
 
 export const PRICING_PLANS = [
   {
-    id: 'self-paced',
-    name: 'Self-Paced Engineering Track',
-    badge: 'Flexibility & Lifetime Access',
-    price: '$1,499',
-    period: 'one-time investment',
-    description: 'Perfect for disciplined developers who want complete video modules, code repositories, and self-study projects at their own pace.',
+    id: 'base',
+    name: 'BASE',
+    badge: 'Members',
+    price: 'Included',
+    period: 'with your member email',
+    description: 'Career Forge is included for BASE learners. Start diagnosis with your member email.',
     popular: false,
     features: [
-      'Full 12-Week Video & Lab Curriculum (120+ hrs)',
-      'Production Repository Access with 20+ Real-World Repos',
-      'Community Discord Access with Peer Support',
-      'All 4 Pillar Capstone Starter Kits & Codebases',
-      'Lifetime Access to Course Updates & DeepSeek/Llama Upgrades',
-      'Certificate of Completion (LinkedIn Sharable)'
+      'Diagnosis before any roadmap',
+      'Live Roadmap Forge for your track',
+      'Mastery validation on the trail',
+      'Four LLM tracks: RAG, Fine-Tuning, Evals, OpsLLM',
+      'No Stripe for BASE members',
     ],
-    ctaText: 'Enroll Self-Paced',
-    guarantee: '14-Day 100% Money-Back Guarantee'
+    ctaText: 'Start diagnosis',
   },
   {
-    id: 'live-cohort',
-    name: 'Live Cohort Accelerator',
-    badge: '🔥 MOST POPULAR - 8 SEATS LEFT',
-    price: '$2,999',
-    period: 'or 3 monthly payments of $1,050',
-    description: 'The complete immersion experience with live workshops, 1-on-1 mentor code reviews, $500 GPU credits, and guaranteed career placement support.',
+    id: 'psp',
+    name: 'PSP',
+    badge: 'Most common path',
+    price: 'Included',
+    period: 'with your member email',
+    description: 'Career Forge is included for PSP learners. Start diagnosis with your member email.',
     popular: true,
     features: [
-      'Everything in Self-Paced Track PLUS:',
-      '⚡ 12 Weeks of Live Interactive Engineering Workshops (2x/wk)',
-      '🔥 1-on-1 PR Code Reviews by Senior AI Engineers',
-      '💻 $500 Free Cloud GPU Credits (Nvidia A100 / H100 access)',
-      '🎯 Live Capstone Demo Day with hiring leads (OpenAI, Databricks, Scale AI)',
-      '💼 Career Acceleration Package: Resume overhaul, AI System Design mock interviews',
-      '💬 Private 1:1 VIP Slack channel with instructors'
+      'Everything BASE learners get',
+      'Diagnosis, Live Forge, and validate mastery',
+      'Same four production-AI tracks',
+      'No Stripe for PSP members',
     ],
-    ctaText: 'Apply For Cohort 12',
-    guarantee: '100% Career Placement & Satisfaction Guarantee'
+    ctaText: 'Start diagnosis',
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise / Team Accelerator',
-    badge: 'For Engineering Teams',
-    price: '$4,999',
-    period: 'per engineer (custom volume discounts)',
-    description: 'Upskill your entire software engineering organization in RAG, fine-tuning, evals, and on-premise LLM infrastructure.',
+    id: 'external',
+    name: 'External',
+    badge: 'After Email identity',
+    price: '$10–15',
+    period: 'per month, billed in-product',
+    description: 'Unpaid external learners see USD $10–15/mo after Email identity. Billing stays in the product — not on this page.',
     popular: false,
     features: [
-      'Everything in Live Cohort PLUS:',
-      'Custom Internal Security & Architecture Consultation',
-      'Private Dedicated Team Cohort & Dedicated Slack Channel',
-      'On-Premise / Hybrid Cloud Deployment Guidance',
-      'Custom Synthetic Dataset & Internal RAG Pipeline Blueprint',
-      'Dedicated Account Manager & Invoicing / PO support'
+      'Same product loop after Email identity',
+      'USD $10–15/mo Labs band (no fake point price here)',
+      'Billed in-loop after OTP — not Stripe on Welcome',
+      'BASE and PSP remain included',
     ],
-    ctaText: 'Schedule Team Demo',
-    guarantee: 'Custom SLA & Invoicing Available'
-  }
+    ctaText: 'Start diagnosis',
+  },
 ];
 
 export const FAQS = [
   {
-    category: 'Prerequisites & Target Audience',
-    question: 'What background do I need to enroll in Career Forge?',
-    answer: 'Career Forge is built specifically for Software Engineers, Senior Developers, Backend/Full-Stack Engineers, or Data Engineers with at least 1-2 years of programming experience (Python or TypeScript). You DO NOT need a PhD in Machine Learning or advanced linear algebra. We teach you production AI engineering—how to chain, evaluate, fine-tune, and scale LLM infrastructure using modern software principles.'
+    category: 'Membership',
+    question: 'Who is Career Forge for?',
+    answer:
+      'BASE and PSP members: Career Forge is included. Start diagnosis with your member email. Others (unpaid external) see USD $10–15/mo after Email identity, billed in the product — not as checkout on this page.',
   },
   {
-    category: 'Prerequisites & Target Audience',
-    question: 'Is this just prompt engineering, or actual AI systems engineering?',
-    answer: 'This is 0% generic prompt engineering and 100% heavy systems engineering. You will write Python code, configure vector databases, train LoRA adapters with Unsloth, write CI/CD evaluation assertion tests with DeepEval, and deploy multi-GPU vLLM clusters with continuous batching.'
+    category: 'Product',
+    question: 'Why is this not a prompt course?',
+    answer:
+      'No. It is not a prompt course. Career Forge diagnoses your starting point, forges a live roadmap for a production-AI track (RAG, Fine-Tuning, Evals, or OpsLLM), and validates mastery before you move on.',
   },
   {
-    category: 'Cohort & Hardware',
-    question: 'Do I need expensive GPUs or special hardware?',
-    answer: 'No! Students in the Live Cohort receive $500 in cloud GPU credits (Nvidia A100 / H100) provided through our cloud partners. You can complete all fine-tuning and inference scaling labs in the cloud from any laptop.'
+    category: 'Start',
+    question: 'How do I start?',
+    answer:
+      'Click Start diagnosis. You confirm Email identity (OTP) at product entry, then the loop is goal → diagnosis → Live Forge → roadmap → validate mastery.',
   },
   {
-    category: 'Cohort & Hardware',
-    question: 'What is the weekly time commitment?',
-    answer: 'Expect approximately 8–12 hours per week. This includes 2 hours of live interactive lab lectures (recorded if you miss live), 3-4 hours of hands-on repo coding, and capstone project building.'
+    category: 'Product',
+    question: 'What does the product do?',
+    answer:
+      'Diagnosis maps where you are before any roadmap exists. Live Forge lets you watch that roadmap take shape. Validate mastery checks what you can actually do; the trail reacts to evidence.',
   },
   {
-    category: 'Career & Guarantees',
-    question: 'How does the Career & Hiring Support work?',
-    answer: 'Live Cohort students receive full career acceleration: AI system design mock interviews, direct introductions to our 40+ partner tech companies, resume optimization highlighting your 4 capstone projects, and salary negotiation strategy. We stand behind our placement rate.'
+    category: 'Hardware',
+    question: 'Do I need a GPU or NVIDIA credits?',
+    answer:
+      'No. You work from your laptop. Career Forge does not include NVIDIA or cloud GPU credits.',
   },
   {
-    category: 'Career & Guarantees',
-    question: 'What if I am not satisfied with the program?',
-    answer: 'We offer a 14-day no-questions-asked money-back guarantee. If you complete the first two weeks of assignments and feel Career Forge isn’t right for you, simply email us for a full refund.'
-  }
+    category: 'Guarantees',
+    question: 'Is there a job or refund guarantee?',
+    answer:
+      'No. Career Forge does not guarantee a job, a salary lift, or a refund.',
+  },
 ];
