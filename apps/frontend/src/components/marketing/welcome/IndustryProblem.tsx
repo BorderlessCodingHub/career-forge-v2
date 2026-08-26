@@ -1,12 +1,9 @@
 "use client";
 
 import { XCircle, CheckCircle2, AlertTriangle, ArrowRight, Flame, ShieldAlert } from 'lucide-react';
+import Link from "next/link";
 
-interface IndustryProblemProps {
-  onOpenApplyModal: () => void;
-}
-
-export function IndustryProblem({ onOpenApplyModal }: IndustryProblemProps) {
+export function IndustryProblem() {
   return (
     <section className="py-20 bg-slate-950 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -127,13 +124,14 @@ export function IndustryProblem({ onOpenApplyModal }: IndustryProblemProps) {
 
         {/* Bottom Action Line */}
         <div className="text-center">
-          <button
-            onClick={onOpenApplyModal}
+          <Link
+            href="/"
+            data-testid="welcome-cta-start"
             className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-orange-500 via-amber-500 to-indigo-600 rounded-xl text-white font-extrabold text-sm shadow-xl hover:shadow-orange-500/25 transition-all cursor-pointer"
           >
-            <span>Bridge the Gap — Apply for Cohort 12</span>
+            <span>Start diagnosis</span>
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
         </div>
 
       </div>

@@ -1,18 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { PILLARS } from './data/curriculumData';
 import { Database, Cpu, ShieldCheck, Server, ArrowRight, Layers, Sparkles, BookOpen } from 'lucide-react';
 
-interface PillarsOverviewProps {
-  onOpenApplyModal: () => void;
-  onOpenSyllabusModal: () => void;
-}
-
-export function PillarsOverview({
-  onOpenApplyModal,
-  onOpenSyllabusModal
-}: PillarsOverviewProps) {
+export function PillarsOverview() {
   const [selectedPillarId, setSelectedPillarId] = useState<'rag' | 'finetuner' | 'evals' | 'opsllm'>('rag');
 
   const activePillar = PILLARS.find(p => p.id === selectedPillarId) || PILLARS[0];
@@ -41,7 +34,8 @@ export function PillarsOverview({
             What You Will Master at <span className="gradient-text-hero">Career Forge</span>
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
-            A comprehensive curriculum engineered alongside AI platform leads from ex-OpenAI, Anthropic, and Databricks.
+            Four production-AI tracks: RAG, Fine-Tuning, Evals, and OpsLLM — diagnose, forge, then
+            validate mastery.
           </p>
         </div>
 
@@ -186,19 +180,20 @@ export function PillarsOverview({
 
               {/* Actions */}
               <div className="pt-2 flex flex-col gap-2.5">
-                <button
-                  onClick={onOpenApplyModal}
+                <Link
+                  href="/"
+                  data-testid="welcome-cta-start"
                   className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-indigo-600 rounded-xl text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Enroll for {activePillar.title}</span>
+                  <span>Start diagnosis</span>
                   <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={onOpenSyllabusModal}
+                </Link>
+                <a
+                  href="#curriculum"
                   className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold border border-slate-700 transition-colors cursor-pointer text-center"
                 >
-                  Download {activePillar.title} Lab Guide
-                </button>
+                  See the 12-week map
+                </a>
               </div>
 
             </div>

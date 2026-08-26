@@ -1,18 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ROADMAP_WEEKS } from './data/curriculumData';
-import { Calendar, CheckCircle2, ChevronDown, ChevronUp, Terminal, GitPullRequest, ArrowRight, Download } from 'lucide-react';
+import { Calendar, CheckCircle2, ChevronDown, ChevronUp, Terminal, GitPullRequest, ArrowRight } from 'lucide-react';
 
-interface CurriculumRoadmapProps {
-  onOpenApplyModal: () => void;
-  onOpenSyllabusModal: () => void;
-}
-
-export function CurriculumRoadmap({
-  onOpenApplyModal,
-  onOpenSyllabusModal
-}: CurriculumRoadmapProps) {
+export function CurriculumRoadmap() {
   const [expandedIndex, setExpandedIndex] = useState<number>(0);
 
   return (
@@ -29,7 +22,8 @@ export function CurriculumRoadmap({
             Structured for Production Mastery, <span className="gradient-text-orange">Not Toy Demos</span>
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
-            From Day 1, you write code in real Git repositories with 1-on-1 pull request reviews from ex-OpenAI and Anthropic engineers.
+            A 12-week, four-phase map of production AI work — RAG, Fine-Tuning, Evals, and OpsLLM.
+            Chrome only: not a live cohort calendar.
           </p>
         </div>
 
@@ -41,23 +35,13 @@ export function CurriculumRoadmap({
             </div>
             <div>
               <div className="text-sm font-bold text-white flex items-center gap-2">
-                1-on-1 GitHub PR Reviews on Every Lab
-                <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono px-2 py-0.5 rounded font-bold">
-                  GUARANTEED
-                </span>
+                Four phases of production AI work
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                No multiple-choice quizzes. Instructors inspect your vector chunking algorithms, LoRA adapter configs, and vLLM Ray deployments line by line.
+                RAG, fine-tuning, evals, and OpsLLM — a 12-week map, not a live enrollment window.
               </p>
             </div>
           </div>
-          <button
-            onClick={onOpenSyllabusModal}
-            className="text-xs font-mono font-bold px-4 py-2 rounded-lg bg-indigo-600/90 hover:bg-indigo-500 text-white transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
-          >
-            <Download className="w-3.5 h-3.5" />
-            Full Syllabus PDF
-          </button>
         </div>
 
         {/* Timeline List Accordion */}
@@ -139,13 +123,13 @@ export function CurriculumRoadmap({
                           </span>
                         ))}
                       </div>
-                      <button
-                        onClick={onOpenApplyModal}
+                      <Link
+                        href="/"
                         className="text-xs font-mono font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1 cursor-pointer"
                       >
-                        <span>Enroll for this Phase</span>
+                        <span>Start diagnosis</span>
                         <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 )}
@@ -156,13 +140,14 @@ export function CurriculumRoadmap({
 
         {/* Bottom CTA */}
         <div className="text-center mt-12">
-          <button
-            onClick={onOpenApplyModal}
+          <Link
+            href="/"
+            data-testid="welcome-cta-start"
             className="px-8 py-4 bg-gradient-to-r from-orange-500 via-amber-500 to-indigo-600 rounded-xl text-white font-extrabold text-sm shadow-xl hover:shadow-orange-500/25 transition-all cursor-pointer inline-flex items-center gap-2"
           >
-            <span>Start Phase 1 in Cohort 12</span>
+            <span>Start diagnosis</span>
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
         </div>
 
       </div>

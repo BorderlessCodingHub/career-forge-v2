@@ -112,7 +112,7 @@ Full spec: [UI-PRINCIPLES](./UI-PRINCIPLES.md) · Theming: [BORDERLESS-THEMING](
 - **Borderless shell** + **canvas roadmap** (Code Breakers reference) + adaptive skill graph (status, mastery %)
 - Flat dark aesthetic (`#121212`) — tokens in [design-tokens.md](./design-tokens.md)
 - Portuguese (Brazil) for all user-facing copy
-- Premium dev-tool feel — no LMS chrome, no confetti/gamification on **product** UI (Welcome ApplicationModal may use confetti)
+- Premium dev-tool feel — no LMS chrome, no confetti/gamification on product or Welcome UI
 - Hero moments: **Forge timeline stream**, **Animation reveal**, **Validation interview + score**
 - Steady state: canvas nodes + **optional** AI sidebar (Explain / Test / Chat)
 
@@ -127,7 +127,7 @@ Full table: [SCREEN-INTENT-MAP.md](./SCREEN-INTENT-MAP.md) · Must-match: [SCREE
 | Route | Must match | Can evolve in code |
 |-------|------------|-------------------|
 | `/operator` | Separate Operator OTP; Access/Content tabs filtered by `GET /operator/me`; seat emails without role labels; no learner/Mentor chrome | Access/Content desk bodies in CAR-77/78/79 |
-| `/welcome` Marketing (CAR-56) | Premium B commercial chrome in `marketing/welcome/`; Start diagnosis→`/`; scenery modals; fake proof until CAR-53; indexed; Plus Jakarta Sans on shell only | pt-BR CAR-37; BrandMark polish |
+| `/welcome` Marketing (CAR-56→92) | Premium B chrome in `marketing/welcome/`; Start diagnosis→`/`; BASE/PSP included + External $10–15/mo copy (no Stripe on Welcome); no apply/strategy/syllabus modals; Borderless employer logos + real mentors; Unsplash testimonials until CAR-93; indexed; Plus Jakarta Sans on shell only | pt-BR CAR-37; CAR-93 quotes |
 | `/welcome/plg` | Product-led (EN); first fold stays on screen; trail/phases/features slide into the remaining viewport; forge HTML mock in hero; split-flap plaque as section titles; before/during/after; dark tokens; not linked from `/welcome` | Visual polish |
 | `/welcome/premium-a` | Vite clone A via rewrite; commercial sections intact; `noindex`; not linked; CTAs do not enter `/`. `/welcome/premium-b` → `/welcome` | Retire A later |
 | `/` Goal picker / recovery | Hero + **4** LLM track cards + motivation; if ≥1 forge artifact → **Continue** / **View all** / **New forge**; if saved diagnosis → **Forge again from last diagnosis** (`landing-recovery`) | Animation library, form validation UX |
@@ -197,6 +197,7 @@ Prototype entry: [`prototype/index.html`](./prototype/index.html) or [`prototype
 | Soft gate warning (CAR-15) | Not in prototype | N/A | **`SoftGateWarningBanner`** — copy + status only (`soft_gated` / `soft_gate_warning` from API); shown on `/onboarding/edit` (`soft-gate-warning`) and `/forge` entry (`soft-gate-warning-forge`); **does not block** Generate roadmap / forge stream; lean prune is BE-only (same GraphExecutor path). No new layout/tokens/routes | **Code wins** — F2 soft gate; cutoff retune CAR-18 | 2026-08-03 |
 | Rebrand tokens + logo (CAR-34) | Lucide `Axe` + purple-black `#0D0B14` / `#7C3AED` / `#2DD4BF` | N/A | Global tokens `#121212` / `#5316CC` / `#2DEBB1` (official site logo mint; `#44D5AD` retired); `public/brand/` + **`BrandMark`** on artifact topbar; favicon via `metadata.icons`; no layout rewrite; marketing chrome = CAR-35 | **Code + brand kit win** | 2026-08-12 |
 | Marketing `/welcome` (CAR-35→56) | Not in prototype | Vite Premium B | Route **`/welcome`**: commercial B via `marketing/welcome/` (CAR-56); Start diagnosis→`/`; pricing/apply scenery; fake proof until CAR-53; waitlist/checkout not runtime; `/welcome/premium-b` redirects → `/welcome`; pt-BR → CAR-37; intent [waitlist-checkout-intent.md](../docs/product/waitlist-checkout-intent.md) | **Grill + code win (CAR-56)** | 2026-08-22 |
+| Welcome honesty (CAR-92) | Not in prototype | Vite B fakes | Next `marketing/welcome/` only: bar BASE/PSP included (CAR-91); Hero/SocialProof/Mentors/Pricing/ROI/CTA/Footer/FAQ honest; modals+confetti removed; testimonials Unsplash until CAR-93; $10–15/mo copy not checkout | **Grill lock CAR-53 + code win (CAR-92)** | 2026-08-25 |
 | `/welcome` motion (CAR-38) | Not in prototype | N/A | Historical lean CSS motion on prior WelcomeLanding; PLG keeps `ScrollReveal` / `welcome-motion`. Canonical Welcome now uses B CSS motion (no ScrollReveal) | **Superseded for `/welcome` by CAR-56** | 2026-08-14 |
 | `/welcome/plg` | Not in prototype | N/A | EN product-led exploration; default `/welcome` unchanged and unlinked; same CTA → `/`; no price/email/fake proof; hero HTML/CSS forge mock (`ForgeProductMock`); **first fold stays in the viewport**; trail / phases / features **slide into** the remaining viewport (`PlgStackScroll` wheel lock); split-flap plaque (`PlgScrollPlaque`) follows active step; wheel releases to final CTA. Editorial + offer explorations discarded. | **Grill + code win** | 2026-08-18 |
 | Premium landings A/B (CAR-41→52) | Not in prototype | Vite `premium-landings/{a,b}/` | A remains rewrite HTML `noindex` preview. B ported to `/welcome` (CAR-56); `b.html` deleted; Vite `b/` frozen; `make premium-landings` builds A only | **CAR-56 cutover** | 2026-08-22 |

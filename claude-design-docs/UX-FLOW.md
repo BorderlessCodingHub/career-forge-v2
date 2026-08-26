@@ -12,7 +12,7 @@
 
 Return visit (CAR-27/29): if ≥1 forge artifact → Continue last / View all (/forges) / New forge; if saved diagnosis → Forge again from last diagnosis
 Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner) · /reference?node=&item= (one Node Reference)
-Marketing: /welcome (CAR-56 Premium B) — CTA Start diagnosis → `/` product; pricing/apply scenery; no auto-redirect from `/`. Exploration (direct URL only): `/welcome/plg`. Bake-off A (CAR-41, `noindex`): `/welcome/premium-a`. Legacy `/welcome/premium-b` redirects → `/welcome`.
+Marketing: /welcome (CAR-56 Premium B, CAR-92 honesty) — CTA Start diagnosis → `/` product; BASE/PSP included + External $10–15/mo copy (no Stripe/email on Welcome); no apply/strategy/syllabus modals; no auto-redirect from `/`. Exploration (direct URL only): `/welcome/plg`. Bake-off A (CAR-41, `noindex`): `/welcome/premium-a`. Legacy `/welcome/premium-b` redirects → `/welcome`.
 
 Operator (separate identity): /operator → Operator OTP → Access | Content desk rooms. Desks outside the seat grant are hidden; no learner or Mentor chrome.
 ```
