@@ -12,7 +12,14 @@ from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNod
 from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.errors import ChecklistItemNotFoundError, NodeNotFoundError
 from career_forge.schemas.common import SkillStatus, UserSkillNode
-from career_forge.schemas.roadmap import RoadmapCategory, RoadmapResponse, RoadmapTrack
+from career_forge.schemas.profile_diagnosis import parse_profile_diagnosis
+from career_forge.schemas.roadmap import RoadmapCategory, RoadmapNode, RoadmapResponse, RoadmapTrack
+from career_forge.services.canonical_content import (
+    focus_skill_ids,
+    published_canonical_refs,
+    resolve_canonical_ref,
+)
+from career_forge.services.lean_forge import load_must_have_ids
 from career_forge.services.roadmap.assembler import (
     _catalog_node_from_generated_row,
     _evidence_from_node,
@@ -29,17 +36,48 @@ from career_forge.services.roadmap.repository import (
 )
 
 
-def _profile_track_id(session: Session, user) -> str | None:
+def _load_profile(session: Session, user) -> Profile | None:
     if user is None:
         return None
-    profile = session.scalar(select(Profile).where(Profile.user_id == user.id))
-    return profile.track_id if profile is not None else None
+    return session.scalar(select(Profile).where(Profile.user_id == user.id))
+
+
+def _with_canonical_refs(
+    session: Session,
+    nodes: list[RoadmapNode],
+    *,
+    catalog_nodes: list,
+    profile: Profile | None,
+) -> list[RoadmapNode]:
+    if profile is None:
+        return nodes
+    record = parse_profile_diagnosis(profile.diagnosis)
+    focus = focus_skill_ids(
+        must_have_ids=load_must_have_ids(profile.goal or ""),
+        gaps=list(record.diagnosis.gaps) if record else [],
+        starting_priorities=list(record.diagnosis.starting_priorities) if record else [],
+        catalog_nodes=catalog_nodes,
+    )
+    published = published_canonical_refs(session)
+    return [
+        node.model_copy(
+            update={
+                "canonical": resolve_canonical_ref(
+                    skill_id=node.node_id,
+                    focus_ids=focus,
+                    published=published,
+                )
+            }
+        )
+        for node in nodes
+    ]
 
 
 def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResponse:
     """Join skill catalog with per-user state from Postgres."""
     user = get_by_external_id(session, user_id)
-    track_id = _profile_track_id(session, user)
+    profile = _load_profile(session, user)
+    track_id = profile.track_id if profile is not None else None
     catalog = load_roadmap_catalog(track_id)
     if user is None:
         return build_roadmap_from_catalog(track_id=track_id)
@@ -59,12 +97,14 @@ def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResp
         for row in sorted(generated_rows, key=_generated_row_sort_order)
     ]
     if generated_nodes:
+        source_nodes = generated_nodes
         nodes = [
             _merge_node(node, state_by_node.get(node["id"]), None)
             for node in generated_nodes
         ]
         categories = [RoadmapCategory(id="ai_generated", label="Plano gerado por IA")]
     else:
+        source_nodes = catalog_nodes
         nodes = [
             _merge_node(node, state_by_node.get(node["id"]), None)
             for node in catalog_nodes
@@ -73,7 +113,9 @@ def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResp
     return RoadmapResponse(
         track=RoadmapTrack.model_validate(track),
         categories=categories,
-        nodes=nodes,
+        nodes=_with_canonical_refs(
+            session, nodes, catalog_nodes=source_nodes, profile=profile
+        ),
     )
 
 

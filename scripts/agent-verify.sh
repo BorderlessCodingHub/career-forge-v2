@@ -74,6 +74,13 @@ check test -f apps/backend/src/career_forge/services/operator_content.py
 check test -f apps/backend/src/career_forge/db/models/skill_content.py
 check test -f apps/backend/alembic/versions/017_skill_content.py
 check grep -q '"/content/skills"' apps/backend/src/career_forge/api/operator.py
+check test -f apps/backend/src/career_forge/services/canonical_content.py
+check test -f apps/backend/src/career_forge/api/learn.py
+check test -f apps/frontend/src/app/\(artifact\)/learn/\[skillId\]/page.tsx
+check grep -q '"/{skill_id}/content"' apps/backend/src/career_forge/api/learn.py
+check grep -q 'open-canonical-learn' apps/frontend/src/components/roadmap/NodeDrawer.tsx
+check grep -q '/learn/:skillId/content' apps/frontend/next.config.mjs
+check test -d data/canonical
 check test -f apps/backend/src/career_forge/services/embed_allowlist.py
 check test -f apps/backend/src/career_forge/db/models/embed_allowlist.py
 check test -f apps/backend/alembic/versions/019_embed_allowlist.py

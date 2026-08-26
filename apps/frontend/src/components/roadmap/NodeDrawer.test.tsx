@@ -55,4 +55,31 @@ describe("NodeDrawer References", () => {
     );
     expect(link.getAttribute("target")).toBeNull();
   });
+
+  it("links Canonical skill content only when a live ref is attached", () => {
+    const { rerender } = render(
+      <NodeDrawer
+        node={node}
+        onClose={() => undefined}
+        onOpenMentor={() => undefined}
+      />,
+    );
+
+    expect(screen.queryByTestId("canonical-skill-content")).toBeNull();
+
+    rerender(
+      <NodeDrawer
+        node={{
+          ...node,
+          canonical: { skill_id: "http-basics", title: "HTTP deep-dive" },
+        }}
+        onClose={() => undefined}
+        onOpenMentor={() => undefined}
+      />,
+    );
+
+    const learn = screen.getByTestId("open-canonical-learn");
+    expect(learn.getAttribute("href")).toBe("/learn/http-basics");
+    expect(learn.textContent).toBe("HTTP deep-dive");
+  });
 });

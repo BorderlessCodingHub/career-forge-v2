@@ -11,7 +11,7 @@
 [/welcome marketing — optional] → Goal → Onboarding pill rounds → Editable diagnosis → [Generate roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
 
 Return visit (CAR-27/29): if ≥1 forge artifact → Continue last / View all (/forges) / New forge; if saved diagnosis → Forge again from last diagnosis
-Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner) · /reference?node=&item= (one Node Reference)
+Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner) · /reference?node=&item= (one Node Reference) · /learn/{skill_id} (Canonical skill content when attached)
 Marketing: /welcome (CAR-56 Premium B, CAR-92 honesty) — CTA Start diagnosis → `/` product; BASE/PSP included + External $10–15/mo copy (no Stripe/email on Welcome); no apply/strategy/syllabus modals; no auto-redirect from `/`. Exploration (direct URL only): `/welcome/plg`. Bake-off A (CAR-41, `noindex`): `/welcome/premium-a`. Legacy `/welcome/premium-b` redirects → `/welcome`.
 
 Operator (separate identity): /operator → Operator OTP → Access | Content desk rooms. Desks outside the seat grant are hidden; no learner or Mentor chrome.
@@ -208,6 +208,7 @@ After the animation → navigates to steady state (`/roadmap`).
 - **Description** callout in the drawer when there are no knowledge gaps; a gaps block replaces the callout after a failed validation
 - Collapsible sections — **Expected outcomes**, **Practical tasks**, and **References** open by default (user can collapse); fixed validate CTA in the footer
 - **Practical tasks** section when the graph comes from `StudyPlan` — checkbox per item (optional, does not block mastery)
+- **Canonical skill content** — only when the trail attached a live ref (focus node + published canônico). Opens `/learn/{skill_id}`. Missing content is silence (no placeholder).
 - **References** section (real links when they come from web search) — opens `/reference?node=&item=` inside Career Forge; mark as studied remains a separate act
 - **Study progress** bar (`x/y` completed) when there are items; copy makes clear this does not replace AI validation
 - **Chapter tutor** (`open-tutor-drawer`) — optional technical Q&A; no inline mentor chat in the drawer
@@ -229,6 +230,20 @@ After the animation → navigates to steady state (`/roadmap`).
 | **Out** | Backend URL probes, proxy/scrape/extract/RAG ingest, `/learn`, tutor/mentor links, Live Forge sources, persisted “opened” event |
 
 Opening a Reference never marks it done. The viewer uses the existing checklist command.
+
+---
+
+### 6c. Canonical skill content (`/learn/{skill_id}`) — CAR-94
+
+**User job:** Read the one Borderless deep-dive for this catalog skill.
+
+| | |
+|---|---|
+| **Address** | `/learn/{skill_id}` — catalog skill, not forge run |
+| **When** | Node is focus (must-have or diagnosis gap) **and** a published git body exists |
+| **Chrome** | Live sidecar title, git markdown body, CTA back to Roadmap |
+| **Missing** | Silence in the Node drawer; unknown/unpublished URL returns to `/roadmap` |
+| **Out** | Per-forge posts, LLM attach, mixing with `/reference`, public blog index |
 
 ---
 

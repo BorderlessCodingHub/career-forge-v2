@@ -84,7 +84,7 @@ Unconstrained “generate a post per forge run” would explode cost, QA, and UR
 
 ### Implementation note
 
-This ADR is a **product/architecture lock**. Shipping inventory + attach is a **separate scheduled issue**, not an F2 gate and not required for current synthetic cost/must-have work.
+Shipped inventory + attach as [CAR-94](https://linear.app/career-forge-v2/issue/CAR-94) (not an F2 gate): git bodies `data/canonical/{skill_id}.md`, sidecar `published`/`title`/`url`, deterministic trail attach, in-app `/learn/{skill_id}`. Student forge does not create content. Missing = silence.
 
 ---
 

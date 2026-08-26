@@ -174,6 +174,7 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Six
 | Content sidecar + desk (F3c) | ✅ Done | CAR-79 — PR #61 · annotate 40 catalog `skill_id`s; title/URL/`published`; git owns body (ADR-004) |
 | F3c docs amend | ✅ Done | CAR-80 — PR #63 · V2-PLAN F3c after identity/paywall; kitchen-sink OPS stays out |
 | In-product Reference viewer | ✅ Done | CAR-85 — PR #62 · `/reference?node=&item=`; CAR-86 — PR #64 source card default; CAR-89 — PR #67 operational embed allowlist (`embed_hosts`); CAR-90 — PR #68 desk queue + live learner allowlist + `allow-same-origin` ([ADR-007](./decisions/ADR-007-reference-viewer.md)) |
+| Canonical skill content (`/learn`) | ⬜ this branch | CAR-94 — ADR-004 N:1 inventory lookup; focus attach; unpublished = silence |
 | Rebrand tokens + logo/favicon | ✅ Done | CAR-34 — `#121212` / `#5316CC` / `#2DEBB1`; `BrandMark` + favicon; PR #29 copies `public/` into standalone (Labs `/brand/*`) |
 | Product chrome brand lockup | ✅ Done | CAR-70 — PR #51 · `BrandLockup` on `SetupHeader` + `ArtifactShell`; in-card on IdentityGate/resume; route rules hide duplicate topbar |
 | Marketing landing `/welcome` | ✅ Done | CAR-35 — EN `/welcome`; CTA → `/`; no pricing/email; pt-BR → CAR-37 |

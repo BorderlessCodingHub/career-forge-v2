@@ -107,6 +107,19 @@ export type RoadmapNode = {
   references: RoadmapChecklistItem[];
   checklist_completed: number;
   checklist_total: number;
+  canonical?: CanonicalRef | null;
+};
+
+export type CanonicalRef = {
+  skill_id: string;
+  title: string;
+};
+
+export type CanonicalPage = {
+  skill_id: string;
+  title: string;
+  url: string | null;
+  body_markdown: string;
 };
 
 export type ChecklistToggleRequest = {
