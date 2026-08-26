@@ -42,7 +42,7 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026
 
 ### F3a — Welcome is Premium B ([CAR-48](https://linear.app/career-forge-v2/issue/CAR-48) map)
 
-Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54)). Honesty pass [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) is after the cutover, not a blocker.
+Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54)). Honesty grill [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) **Done**; implementation [CAR-92](https://linear.app/career-forge-v2/issue/CAR-92) PR #70.
 
 | Issue | Title | Class | Status |
 |-------|-------|-------|--------|
@@ -53,9 +53,11 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 | [CAR-54](https://linear.app/career-forge-v2/issue/CAR-54) | Welcome cutover spec lock | — | **Done** |
 | [CAR-55](https://linear.app/career-forge-v2/issue/CAR-55) | Upgrade `apps/frontend` Tailwind 3 → 4 | [S] | **Done** — PR #45 |
 | [CAR-56](https://linear.app/career-forge-v2/issue/CAR-56) | Welcome cutover: Premium B as `/welcome` | [S] | **Done** — PR #46 |
-| [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) | Real Welcome proof | — | Backlog — after CAR-56 |
+| [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) | Real Welcome proof | — | **Done** — grill 2026-08-25 |
+| [CAR-91](https://linear.app/career-forge-v2/issue/CAR-91) | Welcome top bar: BASE/PSP included | [P] | **Done** — PR #70 |
+| [CAR-92](https://linear.app/career-forge-v2/issue/CAR-92) | Welcome honesty pass | [S] | **Done** — PR #70 |
 
-**Start order:** CAR-53 next. CAR-37 pt-BR and real Welcome checkout stay unspecified.
+**Start order:** CAR-36 pilots · CAR-37 pt-BR · CAR-93 quotes. CAR-53/91/92 **Done**.
 
 ### F3b — email OTP auth + membership **[S]**
 

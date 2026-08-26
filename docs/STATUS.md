@@ -2,12 +2,12 @@
 
 > **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **Roadmap:** [ROADMAP.md](./ROADMAP.md) · **Checkpoint:** [CHECKPOINT.md](./CHECKPOINT.md)
 
-Last updated: **2026-08-25** · Last merge: **PR #68** CAR-90 embed queue (`fa82a77`) · prior **PR #67** CAR-89 · **PR #66** CAR-88 · **PR #65** CAR-87 · **PR #64** CAR-86 · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
+Last updated: **2026-08-25** · Last merge: **PR #70** CAR-92 Welcome honesty (`3194a61`) · prior **PR #68** CAR-90 · **PR #67** CAR-89 · **PR #66** CAR-88 · **PR #65** CAR-87 · **PR #64** CAR-86 · Epic **CAR-28** F3b **complete** · Epic **CAR-22** closed  
 Linear: [Career Forge V2](https://linear.app/career-forge-v2) · F1: [Phase 1 — Infra + cost gate](https://linear.app/career-forge-v2/project/phase-1-infra-cost-gate-7ea0a33e6ef7) · F2: [Phase 2 — Goals LLM + prompts + english-first](https://linear.app/career-forge-v2/project/phase-2-goals-llm-prompts-english-first-40c6a783a3b3) **Completed** · **F3a:** [Phase 3a — Rebrand + landing + pilots](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · **F3b:** [Email OTP auth + membership](https://linear.app/career-forge-v2/project/f3b-email-otp-auth-membership-53040eae6cbf) **Completed** · **F3c:** [Operator console spec](https://linear.app/career-forge-v2/issue/CAR-58) **Completed** (CAR-75…80)
 
-**Next eng:** **F3a** — [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) Real Welcome proof · [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR.
+**Next eng:** **F3a** — [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) pilots · [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR · [CAR-93](https://linear.app/career-forge-v2/issue/CAR-93) Welcome pilot quotes.
 
-**Deploy:** Auto-deploy on `main` (CAR-13). **CAR-90 Done** — PR #68 Operator pending/liberated embed queue from live evidence + `/reference` live allowlist; sandbox `allow-same-origin` + self-origin guard. **CAR-89 Done** — PR #67 `embed_hosts` + Content desk CRUD + learner `GET /reference/embed-hosts`; run Alembic 019. **CAR-88 Done** — PR #66 Access desk list/add/remove for `billing_pilot_emails` + `pilot list` badges. **CAR-87 Done** — PR #65 `billing_pilot_emails` + operator APIs; run Alembic 018 with legacy env populated, then clear `ENTITLEMENT_BILLING_ALLOWLIST`. **CAR-86 Done** — PR #64 Reference source card (allowlist-only iframe). **CAR-80 Done** — PR #63 F3c docs amend. **CAR-85 Done** — PR #62 in-product Reference viewer (`/reference`). **CAR-79 Done** — PR #61 Content sidecar + desk. **CAR-78 Done** — PR #60 Access card UI. **CAR-77 Done** — PR #59 Access desk writes + audit. **CAR-84 Done** — PR #58 Resend `User-Agent` (Cloudflare 1010). **CAR-83 Done** — PR #57 injects `JWT_SECRET`. **CAR-81 Done** — PR #54 injects mailer env; deploy `git pull --ff-only origin main` before `compose up`. VPS `APP_DIR` must be owned by `VPS_USER` (no `sudo git`). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
+**Deploy:** Auto-deploy on `main` (CAR-13). **CAR-92 Done** — PR #70 Welcome honesty pass (CAR-91 bar included): BASE·PSP included + External $10–15/mo copy; no scenery modals; Yuri + Pedro mentors; Unsplash testimonials until CAR-93. **CAR-90 Done** — PR #68 Operator pending/liberated embed queue from live evidence + `/reference` live allowlist; sandbox `allow-same-origin` + self-origin guard. **CAR-89 Done** — PR #67 `embed_hosts` + Content desk CRUD + learner `GET /reference/embed-hosts`; run Alembic 019. **CAR-88 Done** — PR #66 Access desk list/add/remove for `billing_pilot_emails` + `pilot list` badges. **CAR-87 Done** — PR #65 `billing_pilot_emails` + operator APIs; run Alembic 018 with legacy env populated, then clear `ENTITLEMENT_BILLING_ALLOWLIST`. **CAR-86 Done** — PR #64 Reference source card (allowlist-only iframe). **CAR-80 Done** — PR #63 F3c docs amend. **CAR-85 Done** — PR #62 in-product Reference viewer (`/reference`). **CAR-79 Done** — PR #61 Content sidecar + desk. **CAR-78 Done** — PR #60 Access card UI. **CAR-77 Done** — PR #59 Access desk writes + audit. **CAR-84 Done** — PR #58 Resend `User-Agent` (Cloudflare 1010). **CAR-83 Done** — PR #57 injects `JWT_SECRET`. **CAR-81 Done** — PR #54 injects mailer env; deploy `git pull --ff-only origin main` before `compose up`. VPS `APP_DIR` must be owned by `VPS_USER` (no `sudo git`). Bake `API_INTERNAL_URL` at frontend build (CAR-19). Forge enqueue via `POST /forge/runs` (CAR-20). Trail fetch via `GET /roadmap/current` to avoid App Router page HTML (CAR-30).
 
 ---
 
@@ -89,7 +89,9 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | [CAR-54](https://linear.app/career-forge-v2/issue/CAR-54) | Welcome cutover spec lock | — | **Done** — grill 2026-08-22; Linear-only |
 | [CAR-55](https://linear.app/career-forge-v2/issue/CAR-55) | Upgrade `apps/frontend` Tailwind 3 → 4 | [S] | **Done** — PR #45 · hand `@theme` path; `@tailwindcss/postcss` |
 | [CAR-56](https://linear.app/career-forge-v2/issue/CAR-56) | Welcome cutover: Premium B as `/welcome` | [S] | **Done** — PR #46 · `marketing/welcome/`; premium-b → `/welcome`; A-only bake-off |
-| [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) | Real Welcome proof | — | Backlog — honesty pass after CAR-56 |
+| [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) | Real Welcome proof | — | **Done** — grill 2026-08-25; implementation [CAR-92](https://linear.app/career-forge-v2/issue/CAR-92) PR #70 |
+| [CAR-91](https://linear.app/career-forge-v2/issue/CAR-91) | Welcome top bar BASE/PSP included | [P] | **Done** — PR #70 (same as CAR-92) |
+| [CAR-92](https://linear.app/career-forge-v2/issue/CAR-92) | Welcome honesty pass | [S] | **Done** — PR #70 · Next `marketing/welcome/` only |
 | [CAR-36](https://linear.app/career-forge-v2/issue/CAR-36) | 2 BASE/PSP pilots + F3a closeout note | [S] | **Next** — CAR-57 Done |
 | [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) | Epic: Email OTP + membership (F3b) | — | **Done** — CAR-44…47 + **CAR-57** |
 | [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44) | Email OTP + post-forge upgrade | [S] | **Done** — promote/chooser · gate **location → CAR-57 Done** |
@@ -100,7 +102,7 @@ MVP + Slice 2 shipped. **F3b auth pivot (grill 2026-08-20):** epic [CAR-28](http
 | [CAR-69](https://linear.app/career-forge-v2/issue/CAR-69) | Sign out + JWT jti revocation | [S] | **Done** — PR #50 · [ADR-006](./decisions/ADR-006-sign-out-jti-revocation.md) |
 | [CAR-70](https://linear.app/career-forge-v2/issue/CAR-70) | Product chrome brand lockup | [P] | **Done** — PR #51 · `BrandLockup` on setup/artifact/IdentityGate/resume |
 
-**Start order:** CAR-36 pilots · CAR-53 honesty pass · CAR-37 pt-BR. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done** · **CAR-54 Done** · **CAR-55 Done** · **CAR-56 Done** · **CAR-57 Done** · **CAR-70 Done.**
+**Start order:** CAR-36 pilots · CAR-37 pt-BR · CAR-93 pilot quotes. **CAR-33–35 Done** · **CAR-38 Done** · **CAR-39 Done** · **CAR-40 Done** · **CAR-41 Done** · **CAR-34 Done** · **CAR-54 Done** · **CAR-55 Done** · **CAR-56 Done** · **CAR-57 Done** · **CAR-70 Done** · **CAR-53 Done** · **CAR-91 Done** · **CAR-92 Done.**
 
 ---
 
@@ -179,7 +181,8 @@ Spec map [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Six
 | `/welcome` marketing copy | ✅ Done | CAR-39 — outcome hero + `Start diagnosis` + roadmap glossary (`CONTEXT.md`); PR #34 |
 | Marketing `/welcome/plg` | ✅ Done | CAR-40 — EN product-led exploration; first fold pinned; CTA → `/`; not linked from `/welcome`; PR #35 |
 | Preview premium A/B | ✅ Done | CAR-41 — PR #36 · `/welcome/premium-a` + `/welcome/premium-b`; Vite clones, rewrite to static HTML, `noindex`; not the funnel; not linked from `/welcome` |
-| Welcome-as-B cutover | ✅ Done | CAR-56 — PR #46 · `/welcome` is Premium B (`marketing/welcome/`); `/welcome/premium-b` → `/welcome`; Vite `b/` frozen; honesty pass = CAR-53 |
+| Welcome-as-B cutover | ✅ Done | CAR-56 — PR #46 · `/welcome` is Premium B (`marketing/welcome/`); `/welcome/premium-b` → `/welcome`; Vite `b/` frozen |
+| Welcome honesty pass | ✅ Done | CAR-92 — PR #70 · CAR-91 bar included; BASE·PSP included + External $10–15/mo; no scenery modals; Yuri + Pedro; Unsplash until CAR-93 |
 | BASE/PSP pilots (×2 E2E) | ⬜ F3a | **Next** — CAR-57 Done; Email identity + DB list (CAR-87) + Access UI (CAR-88) |
 
 ---
