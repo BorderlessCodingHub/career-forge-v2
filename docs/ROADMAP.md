@@ -55,7 +55,7 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 | [CAR-56](https://linear.app/career-forge-v2/issue/CAR-56) | Welcome cutover: Premium B as `/welcome` | [S] | **Done** — PR #46 |
 | [CAR-53](https://linear.app/career-forge-v2/issue/CAR-53) | Real Welcome proof | — | **Done** — grill 2026-08-25 |
 | [CAR-91](https://linear.app/career-forge-v2/issue/CAR-91) | Welcome top bar: BASE/PSP included | [P] | **Done** — PR #70 |
-| [CAR-92](https://linear.app/career-forge-v2/issue/CAR-92) | Welcome honesty pass | [S] | **Done** — PR #70 |
+| [CAR-92](https://linear.app/career-forge-v2/issue/CAR-92) | Welcome honesty pass | [S] | **Done** — PR #70 · follow-up PR #75 (`640+` gone, $15/mo) |
 | [CAR-96](https://linear.app/career-forge-v2/issue/CAR-96) | Welcome Marketing week map unmounted | [P] | **Done** — PR #74 |
 
 **Start order:** CAR-36 pilots · CAR-37 pt-BR · CAR-93 quotes. CAR-53/91/92/96 **Done**.
