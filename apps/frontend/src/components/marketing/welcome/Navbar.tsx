@@ -93,12 +93,6 @@ export function Navbar() {
               Live AI Sandbox
             </button>
             <button
-              onClick={() => scrollToSection("curriculum")}
-              className="hover:text-orange-400 transition-colors cursor-pointer"
-            >
-              12-Week Syllabus
-            </button>
-            <button
               onClick={() => scrollToSection("calculator")}
               className="hover:text-purple-400 transition-colors cursor-pointer"
             >
@@ -170,12 +164,6 @@ export function Navbar() {
             >
               <Sparkles className="w-4 h-4 text-cyan-400" />
               Live AI Sandbox Demo
-            </button>
-            <button
-              onClick={() => scrollToSection("curriculum")}
-              className="block w-full text-left py-2 text-sm text-slate-200 hover:text-orange-400 font-medium"
-            >
-              12-Week Syllabus
             </button>
             <button
               onClick={() => scrollToSection("calculator")}

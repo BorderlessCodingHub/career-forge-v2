@@ -1,7 +1,6 @@
 "use client";
 
 import { CtaSection } from "./CtaSection";
-import { CurriculumRoadmap } from "./CurriculumRoadmap";
 import { FaqSection } from "./FaqSection";
 import { Footer } from "./Footer";
 import { Hero } from "./Hero";
@@ -35,7 +34,6 @@ export function WelcomeShell({ className }: WelcomeShellProps) {
         <IndustryProblem />
         <PillarsOverview />
         <InteractiveSandbox />
-        <CurriculumRoadmap />
         <RoiCalculator />
         <Mentors />
         <Testimonials />

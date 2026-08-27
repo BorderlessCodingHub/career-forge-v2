@@ -62,11 +62,6 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-slate-400">
               <li>
-                <a href="#curriculum" className="hover:text-white transition-colors">
-                  2026 AI Curriculum
-                </a>
-              </li>
-              <li>
                 <a href="#sandbox" className="hover:text-white transition-colors">
                   Interactive AI Sandbox
                 </a>
