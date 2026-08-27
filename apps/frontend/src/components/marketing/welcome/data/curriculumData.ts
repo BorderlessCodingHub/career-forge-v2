@@ -434,14 +434,14 @@ export const PRICING_PLANS = [
     id: 'external',
     name: 'External',
     badge: 'Most common path',
-    price: '$10–15',
+    price: '$15',
     period: 'per month, billed in-product after Email identity',
     description:
-      'Unpaid external learners see USD $10–15/mo after Email identity. Billing stays in the product — not on this page.',
+      'Unpaid external learners see USD $15/mo after Email identity. Billing stays in the product — not on this page.',
     popular: true,
     features: [
       'Same product loop after Email identity',
-      'USD $10–15/mo Labs band (no fake point price here)',
+      'USD $15/mo billed in-loop (not Stripe on Welcome)',
       'Billed in-loop after OTP — not Stripe on Welcome',
       'BASE and PSP stay included if you are a member',
     ],
@@ -454,7 +454,7 @@ export const FAQS = [
     category: 'Membership',
     question: 'Who is Career Forge for?',
     answer:
-      'BASE and PSP members: Career Forge is included. Start diagnosis with your member email. Others (unpaid external) see USD $10–15/mo after Email identity, billed in the product — not as checkout on this page.',
+      'BASE and PSP members: Career Forge is included. Start diagnosis with your member email. Others (unpaid external) see USD $15/mo after Email identity, billed in the product — not as checkout on this page.',
   },
   {
     category: 'Product',

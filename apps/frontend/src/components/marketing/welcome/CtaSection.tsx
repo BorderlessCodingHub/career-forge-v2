@@ -33,7 +33,7 @@ export function CtaSection() {
             </div>
             <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
               <span>
-                <strong>$10–15/mo</strong> for others
+                <strong>$15/mo</strong> for others
               </span>
             </div>
             <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">

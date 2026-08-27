@@ -14,11 +14,11 @@ export function Pricing() {
             ACCESS
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-            Included for members. <span className="gradient-text-orange">$10–15/mo</span> otherwise.
+            Included for members. <span className="gradient-text-orange">$15/mo</span> otherwise.
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
             BASE and PSP learners start with their member email. Unpaid external learners see USD
-            $10–15/mo after Email identity, billed in the product.
+            $15/mo after Email identity, billed in the product.
           </p>
         </div>
 

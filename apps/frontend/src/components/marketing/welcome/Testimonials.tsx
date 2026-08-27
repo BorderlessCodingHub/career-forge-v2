@@ -22,7 +22,7 @@ export function Testimonials() {
             VERIFIED ALUMNI TRANSFORMATIONS
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-            See How 640+ Engineers <span className="gradient-text-orange">Transformed Their Careers</span>
+            See How Engineers <span className="gradient-text-orange">Transformed Their Careers</span>
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
             Real software developers who used the RAG, fine-tuning, and vLLM capstones to land lead AI roles at Scale AI, Databricks, Stripe, and high-growth startups.

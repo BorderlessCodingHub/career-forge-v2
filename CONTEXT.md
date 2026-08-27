@@ -101,7 +101,7 @@ The right to start diagnosis and to forge. Entitled BASE/PSP membership grants i
 _Avoid_: authentication, one free forge, ransoming artifacts
 
 **Paywall**:
-The billing gate for an external learner without entitlement. It blocks **starting** diagnosis and **starting** a forge. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have. Public Labs price for unpaid `external` (Welcome copy): USD $10–15/mo, billed in-loop after Email identity — not on `/welcome`. BASE/PSP remain included (no Stripe).
+The billing gate for an external learner without entitlement. It blocks **starting** diagnosis and **starting** a forge. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have. Public Labs price for unpaid `external` (Welcome copy): USD $15/mo, billed in-loop after Email identity — not on `/welcome`. BASE/PSP remain included (no Stripe).
 _Avoid_: OTP, login, calling the identity gate “the paywall”; blocking `/` Continue on an existing artifact; blocking the goal picker; putting Stripe on Welcome
 
 ### Operator console
@@ -141,8 +141,8 @@ _Avoid_: CMS author, admin
 ### Marketing surface
 
 **Welcome** (`/welcome`):
-Commercial Premium B landpage: convert with **Start here** (accessible name: Start diagnosis) into the product loop. BASE/PSP included; unpaid `external` sees USD $10–15/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Does not mount the Marketing week map; no `#curriculum` hashes. Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are Yuri Pereira and Pedro Alano. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
-_Avoid_: treating Welcome as the identity gate or the Paywall; treating $10–15 as live checkout on the landpage; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen; selling a static syllabus as the Roadmap
+Commercial Premium B landpage: convert with **Start here** (accessible name: Start diagnosis) into the product loop. BASE/PSP included; unpaid `external` sees USD $15/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Does not mount the Marketing week map; no `#curriculum` hashes. Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are Yuri Pereira and Pedro Alano. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
+_Avoid_: treating Welcome as the identity gate or the Paywall; treating $15 as live checkout on the landpage; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen; selling a static syllabus as the Roadmap
 
 **Marketing week map**:
 A static four-phase outline of RAG, Fine-Tuning, Evals, and OpsLLM. Chrome for Welcome only — not a Roadmap and not Live Roadmap Forge. Currently unmounted from Welcome until an explicit product decision brings it back.

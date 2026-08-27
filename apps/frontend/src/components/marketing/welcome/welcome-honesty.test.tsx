@@ -12,6 +12,7 @@ import { Navbar } from "./Navbar";
 import { Pricing } from "./Pricing";
 import { RoiCalculator } from "./RoiCalculator";
 import { SocialProof } from "./SocialProof";
+import { Testimonials } from "./Testimonials";
 import { WelcomeShell } from "./WelcomeShell";
 
 afterEach(cleanup);
@@ -126,13 +127,14 @@ describe("welcome honesty — hero, proof, pricing", () => {
     expect(screen.queryByText(/GitHub Profile/)).toBeNull();
   });
 
-  it("pricing is BASE/PSP included and External $10–15/mo", () => {
+  it("pricing is BASE/PSP included and External $15/mo", () => {
     render(<Pricing />);
 
     expect(screen.getByText("BASE · PSP")).toBeTruthy();
     expect(screen.getByText("External")).toBeTruthy();
     expect(screen.getByText(/Most common path/i)).toBeTruthy();
-    expect(screen.getAllByText("$10–15").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("$15").length).toBeGreaterThan(0);
+    expect(screen.queryByText("$10–15")).toBeNull();
     expect(screen.queryByText("$2,999")).toBeNull();
     expect(screen.queryByText(/SAVE \$500/i)).toBeNull();
     expect(screen.queryByText(/GPU/i)).toBeNull();
@@ -150,7 +152,8 @@ describe("welcome honesty — CTA, FAQ, ROI, shell", () => {
     render(<CtaSection />);
 
     expect(screen.getByText(/BASE · PSP included/i)).toBeTruthy();
-    expect(screen.getByText(/\$10–15\/mo/)).toBeTruthy();
+    expect(screen.getByText(/\$15\/mo/)).toBeTruthy();
+    expect(screen.queryByText(/\$10–15/)).toBeNull();
     expect(screen.queryByText(/April 14/)).toBeNull();
     expect(screen.queryByText(/8 Seats/i)).toBeNull();
     expect(screen.queryByText(/Strategy Call/i)).toBeNull();
@@ -165,8 +168,21 @@ describe("welcome honesty — CTA, FAQ, ROI, shell", () => {
     expect(screen.getByText(/What does the product do/i)).toBeTruthy();
     expect(screen.getByText(/Do I need a GPU/i)).toBeTruthy();
     expect(screen.getByText(/job or refund guarantee/i)).toBeTruthy();
+    expect(screen.getByText(/USD \$15\/mo/i)).toBeTruthy();
+    expect(screen.queryByText(/\$10–15/)).toBeNull();
     expect(screen.queryByText(/\$500 in cloud GPU/i)).toBeNull();
     expect(screen.queryByText(/14-day no-questions-asked/i)).toBeNull();
+  });
+
+  it("testimonials heading drops 640+", () => {
+    render(<Testimonials />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: /See How Engineers Transformed Their Careers/i,
+      }),
+    ).toBeTruthy();
+    expect(screen.queryByText(/640\+/)).toBeNull();
   });
 
   it("ROI payback uses $15/mo and drops 640+", () => {
@@ -181,7 +197,8 @@ describe("welcome honesty — CTA, FAQ, ROI, shell", () => {
   it("footer chip and conversion links are honest", () => {
     render(<Footer />);
 
-    expect(screen.getByText(/\$10–15/)).toBeTruthy();
+    expect(screen.getByText(/\$15\/mo/)).toBeTruthy();
+    expect(screen.queryByText(/\$10–15/)).toBeNull();
     expect(screen.queryByText(/Cohort 12/i)).toBeNull();
     expect(screen.getByRole("heading", { name: "Get started" })).toBeTruthy();
     const diagnosis = screen.getByRole("link", { name: /Start diagnosis/i });
