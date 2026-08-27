@@ -12,6 +12,7 @@ import { Navbar } from "./Navbar";
 import { Pricing } from "./Pricing";
 import { RoiCalculator } from "./RoiCalculator";
 import { SocialProof } from "./SocialProof";
+import { Testimonials } from "./Testimonials";
 import { WelcomeShell } from "./WelcomeShell";
 
 afterEach(cleanup);
@@ -167,6 +168,17 @@ describe("welcome honesty — CTA, FAQ, ROI, shell", () => {
     expect(screen.getByText(/job or refund guarantee/i)).toBeTruthy();
     expect(screen.queryByText(/\$500 in cloud GPU/i)).toBeNull();
     expect(screen.queryByText(/14-day no-questions-asked/i)).toBeNull();
+  });
+
+  it("testimonials heading drops 640+", () => {
+    render(<Testimonials />);
+
+    expect(
+      screen.getByRole("heading", {
+        name: /See How Engineers Transformed Their Careers/i,
+      }),
+    ).toBeTruthy();
+    expect(screen.queryByText(/640\+/)).toBeNull();
   });
 
   it("ROI payback uses $15/mo and drops 640+", () => {
