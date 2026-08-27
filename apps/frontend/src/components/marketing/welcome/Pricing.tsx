@@ -85,6 +85,7 @@ export function Pricing() {
                   <Link
                     href="/"
                     data-testid="welcome-cta-start"
+                    aria-label="Start diagnosis"
                     className={`w-full py-4 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       isPopular
                         ? "bg-gradient-to-r from-orange-500 via-amber-500 to-indigo-600 text-white hover:shadow-orange-500/30"

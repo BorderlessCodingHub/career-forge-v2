@@ -428,7 +428,7 @@ export const PRICING_PLANS = [
       'Four LLM tracks: RAG, Fine-Tuning, Evals, OpsLLM',
       'No Stripe for BASE and PSP members',
     ],
-    ctaText: 'Start diagnosis',
+    ctaText: 'Start here',
   },
   {
     id: 'external',
@@ -445,7 +445,7 @@ export const PRICING_PLANS = [
       'Billed in-loop after OTP — not Stripe on Welcome',
       'BASE and PSP stay included if you are a member',
     ],
-    ctaText: 'Start diagnosis',
+    ctaText: 'Start here',
   },
 ];
 
@@ -466,7 +466,7 @@ export const FAQS = [
     category: 'Start',
     question: 'How do I start?',
     answer:
-      'Click Start diagnosis. You confirm Email identity (OTP) at product entry, then the loop is goal → diagnosis → Live Forge → roadmap → validate mastery.',
+      'Click Start here. You confirm Email identity (OTP) at product entry, then the loop is goal → diagnosis → Live Forge → roadmap → validate mastery.',
   },
   {
     category: 'Product',

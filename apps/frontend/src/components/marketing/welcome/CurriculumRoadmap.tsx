@@ -125,9 +125,10 @@ export function CurriculumRoadmap() {
                       </div>
                       <Link
                         href="/"
+                        aria-label="Start diagnosis"
                         className="text-xs font-mono font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1 cursor-pointer"
                       >
-                        <span>Start diagnosis</span>
+                        <span>Start here</span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
                     </div>
@@ -143,9 +144,10 @@ export function CurriculumRoadmap() {
           <Link
             href="/"
             data-testid="welcome-cta-start"
+            aria-label="Start diagnosis"
             className="px-8 py-4 bg-gradient-to-r from-orange-500 via-amber-500 to-indigo-600 rounded-xl text-white font-extrabold text-sm shadow-xl hover:shadow-orange-500/25 transition-all cursor-pointer inline-flex items-center gap-2"
           >
-            <span>Start diagnosis</span>
+            <span>Start here</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

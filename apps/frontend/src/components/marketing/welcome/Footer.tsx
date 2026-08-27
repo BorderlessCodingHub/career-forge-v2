@@ -92,9 +92,10 @@ export function Footer() {
               <li>
                 <Link
                   href="/"
+                  aria-label="Start diagnosis"
                   className="hover:text-orange-400 font-bold transition-colors cursor-pointer text-left"
                 >
-                  Start diagnosis
+                  Start here
                 </Link>
               </li>
               <li>

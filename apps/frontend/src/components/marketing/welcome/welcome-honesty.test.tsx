@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { CtaSection } from "./CtaSection";
@@ -32,7 +32,8 @@ describe("welcome honesty — navbar bar (CAR-91)", () => {
     ).toBeTruthy();
 
     const barCta = screen.getByTestId("welcome-bar-cta");
-    expect(barCta.textContent).toMatch(/Start diagnosis/);
+    expect(barCta.getAttribute("aria-label")).toBe("Start diagnosis");
+    expect(barCta.textContent).toMatch(/^Start/);
     expect(isProductEntryHref(barCta.getAttribute("href"))).toBe(true);
 
     expect(screen.queryByText(/COHORT 12/i)).toBeNull();
@@ -40,7 +41,7 @@ describe("welcome honesty — navbar bar (CAR-91)", () => {
     expect(screen.queryByText(/Early Bird/i)).toBeNull();
   });
 
-  it("uses Stories and Access nav labels and Download Syllabus to #curriculum", () => {
+  it("uses Stories and Access nav labels and has no download CTAs", () => {
     render(<Navbar />);
 
     expect(screen.getAllByText("Stories").length).toBeGreaterThan(0);
@@ -48,8 +49,24 @@ describe("welcome honesty — navbar bar (CAR-91)", () => {
     expect(screen.queryByText("Alumni Success")).toBeNull();
     expect(screen.queryByText("Tuition & Plans")).toBeNull();
 
-    const download = screen.getByRole("link", { name: "Download Syllabus" });
-    expect(download.getAttribute("href")).toBe("#curriculum");
+    expect(screen.queryByText(/Download/i)).toBeNull();
+    expect(screen.getAllByText("12-Week Syllabus").length).toBeGreaterThan(0);
+  });
+
+  it("header CTAs do not overlap: shimmer is lg-only and drawer has no Start", () => {
+    render(<Navbar />);
+
+    const headerStarts = screen.getAllByTestId("welcome-cta-start");
+    expect(headerStarts).toHaveLength(2);
+    expect(headerStarts[0].parentElement?.className).toContain("lg:flex");
+    expect(headerStarts[0].parentElement?.className).not.toContain("md:flex");
+    expect(headerStarts[1].parentElement?.className).toContain("lg:hidden");
+    expect(headerStarts[1].textContent?.trim()).toBe("Start here");
+    expect(headerStarts[1].getAttribute("aria-label")).toBe("Start diagnosis");
+
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+    expect(screen.getByText("Live AI Sandbox Demo")).toBeTruthy();
+    expect(screen.getAllByTestId("welcome-cta-start")).toHaveLength(2);
   });
 });
 
@@ -66,8 +83,9 @@ describe("welcome honesty — hero, proof, pricing", () => {
     expect(screen.queryByText(/SAVE \$500/i)).toBeNull();
     expect(screen.queryByText(/640\+/)).toBeNull();
 
+    expect(screen.queryByText(/Download/i)).toBeNull();
     const curriculum = screen.getByRole("link", {
-      name: /Download 2026 AI Curriculum/i,
+      name: /See 12-week syllabus/i,
     });
     expect(curriculum.getAttribute("href")).toBe("#curriculum");
     expect(screen.queryByText(/Strategy Call/i)).toBeNull();

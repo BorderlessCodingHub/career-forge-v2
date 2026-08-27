@@ -183,9 +183,10 @@ export function PillarsOverview() {
                 <Link
                   href="/"
                   data-testid="welcome-cta-start"
+                  aria-label="Start diagnosis"
                   className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-indigo-600 rounded-xl text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Start diagnosis</span>
+                  <span>Start here</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <a

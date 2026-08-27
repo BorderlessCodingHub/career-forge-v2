@@ -94,9 +94,10 @@ export function FaqSection() {
           <Link
             href="/"
             data-testid="welcome-cta-start"
+            aria-label="Start diagnosis"
             className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono font-bold text-xs rounded-xl border border-slate-700 transition-colors cursor-pointer"
           >
-            Start diagnosis
+            Start here
           </Link>
         </div>
       </div>
