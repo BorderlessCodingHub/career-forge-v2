@@ -24,7 +24,7 @@ export function Footer() {
 
             <div className="inline-flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono text-emerald-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>BASE · PSP included · $10–15/mo for others</span>
+              <span>BASE · PSP included · $15/mo for others</span>
             </div>
           </div>
 

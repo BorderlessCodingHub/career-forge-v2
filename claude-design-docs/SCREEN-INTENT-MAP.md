@@ -22,7 +22,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 
 | # | App route | Prototype hash (legacy) | `data-screen` | Wow? | Must match | Can evolve |
 |---|-----------|-------------------------|---------------|------|------------|------------|
-| 0 | `/welcome` | `marketing` | `marketing-welcome` | — | CAR-92 honesty: Start diagnosis→`/`; BASE/PSP included + External $10–15/mo copy; no apply/strategy/syllabus modals; Borderless logo wall + mentors; Unsplash testimonials until CAR-93 | pt-BR CAR-37; CAR-93 quotes |
+| 0 | `/welcome` | `marketing` | `marketing-welcome` | — | CAR-92 honesty: Start diagnosis→`/`; BASE/PSP included + External $15/mo copy; no apply/strategy/syllabus modals; Borderless logo wall + mentors; Unsplash testimonials until CAR-93 | pt-BR CAR-37; CAR-93 quotes |
 | 0p | `/welcome/plg` | — | `marketing-welcome-plg` | — | EN product-led; first fold stays put; trail/phases/features slide in; forge mock in hero; split-flap plaque; not linked from `/welcome` | Visual polish |
 | 0q | `/welcome/premium-a` | — | — (static HTML) | — | CAR-41 bake-off A only; rewrite to `public/premium-landings/a.html`; `noindex`; not linked; **not** the funnel. `/welcome/premium-b` → redirect `/welcome` | Retire A later |
 | 0o | `/operator` | — | `operator-login` / `operator-console` | — | Separate Operator OTP; role-filtered desks; Access card + pilot billing email CRUD/badges; Content annotations plus live Reference host proof queue (preview-confirm-liberate/revoke); no learner/Mentor chrome | Desk polish |

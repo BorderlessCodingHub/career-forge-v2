@@ -25,7 +25,7 @@ Supersedes CAR-35 screen-intent for this route. Spec lock: CAR-54.
 | Language | EN; pt-BR → CAR-37 |
 | Conversion | Nav / hero / final primary → Next `Link` `/` · **Start diagnosis** · `data-testid="welcome-cta-start"` (desktop + mobile nav variants). Local B-styled links — do **not** reuse `StartDiagnosisCta` |
 | Scenery | No Apply / Strategy / Syllabus modals. Former Apply/Strategy → Start diagnosis `/`. Download Syllabus → `#curriculum` |
-| Proof | Logo wall = Borderless employer set (local assets). Mentors = Yuri Pereira / Pedro Alano. Testimonials stay Unsplash until CAR-93. Pricing: one **BASE · PSP included** card + External **$10–15/mo** (popular slot, in-loop copy, not checkout) |
+| Proof | Logo wall = Borderless employer set (local assets). Mentors = Yuri Pereira / Pedro Alano. Testimonials stay Unsplash until CAR-93. Pricing: one **BASE · PSP included** card + External **$15/mo** (popular slot, in-loop copy, not checkout) |
 | Font | `Plus_Jakarta_Sans` via `next/font` on Welcome shell only. Product stays Inter |
 | CSS | `welcome/welcome.css` imported only from Welcome shell. No Welcome confetti |
 | Out | Real Stripe / waitlist / email on Welcome · Google Fonts `<link>` |
