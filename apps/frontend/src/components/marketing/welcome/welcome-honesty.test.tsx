@@ -50,7 +50,7 @@ describe("welcome honesty — navbar bar (CAR-91)", () => {
     expect(screen.queryByText("Tuition & Plans")).toBeNull();
 
     expect(screen.queryByText(/Download/i)).toBeNull();
-    expect(screen.getAllByText("12-Week Syllabus").length).toBeGreaterThan(0);
+    expect(screen.queryByText("12-Week Syllabus")).toBeNull();
   });
 
   it("header CTAs do not overlap: shimmer is lg-only and drawer has no Start", () => {
@@ -84,10 +84,7 @@ describe("welcome honesty — hero, proof, pricing", () => {
     expect(screen.queryByText(/640\+/)).toBeNull();
 
     expect(screen.queryByText(/Download/i)).toBeNull();
-    const curriculum = screen.getByRole("link", {
-      name: /See 12-week syllabus/i,
-    });
-    expect(curriculum.getAttribute("href")).toBe("#curriculum");
+    expect(screen.queryByRole("link", { name: /12-week syllabus/i })).toBeNull();
     expect(screen.queryByText(/Strategy Call/i)).toBeNull();
   });
 
@@ -195,6 +192,8 @@ describe("welcome honesty — CTA, FAQ, ROI, shell", () => {
     expect(screen.getByRole("link", { name: "Stories" }).getAttribute("href")).toBe(
       "#testimonials",
     );
+    expect(screen.queryByText(/2026 AI Curriculum/i)).toBeNull();
+    expect(document.querySelector('a[href="#curriculum"]')).toBeNull();
   });
 
   it("Welcome shell has no apply, strategy, or syllabus modals", () => {
@@ -204,5 +203,7 @@ describe("welcome honesty — CTA, FAQ, ROI, shell", () => {
     expect(screen.queryByText(/Book 1-on-1 Strategy Call/i)).toBeNull();
     expect(document.querySelector("[data-screen='marketing-welcome']")).toBeTruthy();
     expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.querySelector("#curriculum")).toBeNull();
+    expect(screen.queryByText(/12-WEEK IMMERSIVE ROADMAP/i)).toBeNull();
   });
 });

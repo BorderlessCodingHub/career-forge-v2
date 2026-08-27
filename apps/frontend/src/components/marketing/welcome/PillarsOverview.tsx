@@ -189,12 +189,6 @@ export function PillarsOverview() {
                   <span>Start here</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <a
-                  href="#curriculum"
-                  className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold border border-slate-700 transition-colors cursor-pointer text-center"
-                >
-                  See the 12-week map
-                </a>
               </div>
 
             </div>

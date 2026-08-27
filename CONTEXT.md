@@ -141,8 +141,12 @@ _Avoid_: CMS author, admin
 ### Marketing surface
 
 **Welcome** (`/welcome`):
-Commercial Premium B landpage: convert with **Start diagnosis** into the product loop. BASE/PSP included; unpaid `external` sees USD $10–15/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are Yuri Pereira and Pedro Alano. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
-_Avoid_: treating Welcome as the identity gate or the Paywall; treating $10–15 as live checkout on the landpage; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen
+Commercial Premium B landpage: convert with **Start here** (accessible name: Start diagnosis) into the product loop. BASE/PSP included; unpaid `external` sees USD $10–15/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Does not mount the Marketing week map; no `#curriculum` hashes. Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are Yuri Pereira and Pedro Alano. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
+_Avoid_: treating Welcome as the identity gate or the Paywall; treating $10–15 as live checkout on the landpage; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen; selling a static syllabus as the Roadmap
+
+**Marketing week map**:
+A static four-phase outline of RAG, Fine-Tuning, Evals, and OpsLLM. Chrome for Welcome only — not a Roadmap and not Live Roadmap Forge. Currently unmounted from Welcome until an explicit product decision brings it back.
+_Avoid_: syllabus, AI curriculum, 12-week immersive roadmap, cohort calendar
 
 **Welcome PLG** (`/welcome/plg`):
 EN product-led exploration (Granola rhythm). Same CTA → `/`. Direct URL only — do not replace `/welcome`.
