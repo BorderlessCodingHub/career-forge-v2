@@ -127,9 +127,10 @@ export function IndustryProblem() {
           <Link
             href="/"
             data-testid="welcome-cta-start"
+            aria-label="Start diagnosis"
             className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-orange-500 via-amber-500 to-indigo-600 rounded-xl text-white font-extrabold text-sm shadow-xl hover:shadow-orange-500/25 transition-all cursor-pointer"
           >
-            <span>Start diagnosis</span>
+            <span>Start here</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

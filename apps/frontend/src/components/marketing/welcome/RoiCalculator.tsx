@@ -166,9 +166,10 @@ export function RoiCalculator() {
               <Link
                 href="/"
                 data-testid="welcome-cta-start"
+                aria-label="Start diagnosis"
                 className="w-full py-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-orange-500 rounded-xl text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:shadow-purple-500/30 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>Start diagnosis</span>
+                <span>Start here</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
 

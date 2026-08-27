@@ -40,9 +40,10 @@ export function Navbar() {
         <Link
           href="/"
           data-testid="welcome-bar-cta"
+          aria-label="Start diagnosis"
           className="underline hover:text-white font-semibold text-orange-300 ml-1 transition-colors flex items-center gap-0.5 cursor-pointer"
         >
-          Start diagnosis <ChevronRight className="w-3 h-3 inline" />
+          Start here <ChevronRight className="w-3 h-3 inline" />
         </Link>
       </div>
 
@@ -123,20 +124,14 @@ export function Navbar() {
             </button>
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
-            <a
-              href="#curriculum"
-              className="text-xs font-semibold px-3.5 py-2 text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 rounded-lg transition-all cursor-pointer"
-            >
-              Download Syllabus
-            </a>
-
+          <div className="hidden lg:flex items-center gap-3">
             <Link
               href="/"
               data-testid="welcome-cta-start"
+              aria-label="Start diagnosis"
               className="relative group text-xs font-bold px-4 py-2.5 rounded-lg text-white shimmer-button shadow-lg shadow-indigo-500/20 hover:shadow-orange-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <span>Start diagnosis</span>
+              <span>Start here</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
@@ -145,11 +140,14 @@ export function Navbar() {
             <Link
               href="/"
               data-testid="welcome-cta-start"
+              aria-label="Start diagnosis"
               className="text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-orange-500 to-indigo-600 rounded-md text-white cursor-pointer"
             >
-              Start diagnosis
+              Start here
             </Link>
             <button
+              type="button"
+              aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-slate-300 hover:text-white rounded-lg bg-slate-900 border border-slate-800 focus:outline-none cursor-pointer"
             >
@@ -203,24 +201,6 @@ export function Navbar() {
             >
               FAQ
             </button>
-
-            <div className="pt-3 border-t border-slate-800 flex flex-col gap-2">
-              <a
-                href="#curriculum"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center py-2.5 text-xs font-semibold text-slate-200 bg-slate-800 rounded-lg"
-              >
-                Download Syllabus
-              </a>
-              <Link
-                href="/"
-                data-testid="welcome-cta-start"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center py-2.5 text-xs font-bold text-white bg-gradient-to-r from-orange-500 via-amber-500 to-indigo-600 rounded-lg shadow-lg"
-              >
-                Start diagnosis
-              </Link>
-            </div>
           </div>
         )}
       </header>

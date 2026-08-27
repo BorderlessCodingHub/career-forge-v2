@@ -45,9 +45,10 @@ export function CtaSection() {
             <Link
               href="/"
               data-testid="welcome-cta-start"
+              aria-label="Start diagnosis"
               className="w-full relative group px-8 py-4 rounded-xl font-extrabold text-base text-white shimmer-button shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Start diagnosis</span>
+              <span>Start here</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
