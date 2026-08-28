@@ -228,7 +228,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Identity | ProductEntryGate; in-app, not a public blog |
 | Address | `/learn/{skill_id}` — one piece per catalog skill (ADR-004) |
 | Attach | Drawer link only when the trail DTO has `canonical` (focus + published body). No placeholder |
-| Body | Git-owned markdown; title/URL resolved live from the Content sidecar |
+| Body | Git-owned markdown; title/URL resolved live from the Content sidecar. Additive blocks: `![alt](/path)` figure (same-origin `/` only), `>` callout, fenced `quiz` (client MCQ). Heading / paragraph / `-` / code unchanged |
 | Invalid | Unpublished or missing body → `/roadmap`; no empty viewer |
 | Forbidden | Generating posts from forge; unifying with `/reference`; indexing per-run URLs |
 | Hooks | `canonical-learn`, `open-canonical-learn`, `learn-return-to-roadmap` |
