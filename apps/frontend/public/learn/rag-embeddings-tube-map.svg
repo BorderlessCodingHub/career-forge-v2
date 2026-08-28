@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
+  <title id="title">Embedding tube map</title>
+  <desc id="desc">A conceptual transit map where paraphrases share a semantic line, an exact error code sits on a lexical line, and vectors from another model occupy an incompatible map.</desc>
+  <rect width="960" height="520" rx="28" fill="#121212"/>
+  <text x="64" y="68" fill="#f7f5ff" font-family="system-ui, sans-serif" font-size="28" font-weight="700">One model defines one map</text>
+  <text x="64" y="102" fill="#aaa3b8" font-family="system-ui, sans-serif" font-size="17">Nearness is learned; the metric is the ruler.</text>
+
+  <path d="M92 210 H300 L390 300 H690 L792 198 H876" fill="none" stroke="#5316CC" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M92 378 H330 L408 300 H690 L792 402 H876" fill="none" stroke="#2DEBB1" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g fill="#121212" stroke="#f7f5ff" stroke-width="6">
+    <circle cx="164" cy="210" r="16"/>
+    <circle cx="300" cy="210" r="16"/>
+    <circle cx="488" cy="300" r="16"/>
+    <circle cx="690" cy="300" r="16"/>
+    <circle cx="820" cy="198" r="16"/>
+    <circle cx="232" cy="378" r="16"/>
+    <circle cx="820" cy="402" r="16"/>
+  </g>
+
+  <g fill="#f7f5ff" font-family="system-ui, sans-serif" font-size="16">
+    <text x="112" y="176">forgotten password</text>
+    <text x="236" y="252">login secret</text>
+    <text x="432" y="270">shared meaning</text>
+    <text x="636" y="344">same model</text>
+    <text x="770" y="164">FAQ answer</text>
+    <text x="160" y="424">ERR_AUTH_1047</text>
+    <text x="754" y="448">exact token</text>
+  </g>
+
+  <g font-family="system-ui, sans-serif" font-size="15" font-weight="700">
+    <rect x="64" y="466" width="20" height="8" rx="4" fill="#5316CC"/>
+    <text x="96" y="476" fill="#cfc8db">dense semantic line</text>
+    <rect x="300" y="466" width="20" height="8" rx="4" fill="#2DEBB1"/>
+    <text x="332" y="476" fill="#cfc8db">lexical signal line</text>
+    <text x="610" y="476" fill="#ffcf66">Different model = different map</text>
+  </g>
+</svg>

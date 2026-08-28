@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
@@ -116,5 +116,32 @@ describe("canonical content", () => {
     expect(blocks.some((block) => block.type === "heading")).toBe(true);
     expect(blocks.some((block) => block.type === "list")).toBe(true);
     expect(blocks.some((block) => block.type === "paragraph")).toBe(true);
+  });
+
+  it("keeps the embeddings lesson figure, callout, quizzes, and cosine check renderable", () => {
+    const raw = readFileSync(
+      resolve(__dirname, "../../../../data/canonical/rag-embeddings.md"),
+      "utf8",
+    );
+    const body = stripFrontmatter(raw);
+    const blocks = parseCanonicalMarkdown(body);
+    const figures = blocks.filter((block) => block.type === "figure");
+    const quizzes = blocks.filter((block) => block.type === "quiz");
+
+    expect(figures).toEqual([
+      {
+        type: "figure",
+        alt: "A tube map showing how one embedding model places text by learned meaning",
+        src: "/learn/rag-embeddings-tube-map.svg",
+      },
+    ]);
+    expect(existsSync(resolve(__dirname, "../../public/learn/rag-embeddings-tube-map.svg"))).toBe(true);
+    expect(blocks.some((block) => block.type === "callout")).toBe(true);
+    expect(quizzes).toHaveLength(2);
+    expect(body).toContain("Case A");
+    expect(body).toContain("Case B");
+    expect(body).toContain("cosine(A, B) = 0.80");
+    expect(body).toContain("cosine(A, C) = 0.20");
+    expect(body.indexOf("## Check")).toBeLessThan(body.indexOf("cosine(A, B) = 0.80"));
   });
 });
