@@ -83,6 +83,25 @@ describe("LearnContent", () => {
     expect(screen.getByText(/The vector is a position, not a compression of the text/)).toBeTruthy();
   });
 
+  it("serves the figure under the deployed basePath", async () => {
+    process.env.NEXT_PUBLIC_BASE_PATH = "/career-forge";
+    vi.mocked(getCanonicalContent).mockResolvedValue({
+      skill_id: "rag-embeddings",
+      title: "Embeddings fundamentals",
+      url: null,
+      body_markdown: "![Tube map](/learn/rag-embeddings-tube-map.svg)\n",
+    });
+
+    render(<LearnContent />);
+
+    const figure = await screen.findByRole("img", { name: "Tube map" });
+    expect(figure.getAttribute("src")).toBe(
+      "/career-forge/learn/rag-embeddings-tube-map.svg",
+    );
+
+    delete process.env.NEXT_PUBLIC_BASE_PATH;
+  });
+
   it("marks a wrong quiz pick as incorrect and still shows why", async () => {
     vi.mocked(getCanonicalContent).mockResolvedValue({
       skill_id: "rag-embeddings",

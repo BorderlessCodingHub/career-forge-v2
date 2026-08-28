@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getCanonicalContent } from "@/lib/api-client";
 import type { CanonicalBlock } from "@/lib/canonical-content";
 import { parseCanonicalMarkdown } from "@/lib/canonical-content";
+import { learnAssetSrc } from "@/lib/learn-assets";
 import type { CanonicalPage } from "@/types/contracts";
 
 function CanonicalQuiz({
@@ -83,7 +84,7 @@ function CanonicalBlockView({ block }: { block: CanonicalBlock }) {
     return (
       <figure>
         <img
-          src={block.src}
+          src={learnAssetSrc(block.src)}
           alt={block.alt}
           className="w-full rounded-md border border-border bg-surface"
         />
