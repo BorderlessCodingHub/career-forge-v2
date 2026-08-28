@@ -109,7 +109,7 @@ Spec [CAR-58](https://linear.app/career-forge-v2/issue/CAR-58) **Done**. Identit
 | [CAR-94](https://linear.app/career-forge-v2/issue/CAR-94) | Canonical skill content (`/learn/{skill_id}`) | [P] | **Done** — PR #71 · ADR-004 inventory lookup + deterministic attach |
 | [CAR-95](https://linear.app/career-forge-v2/issue/CAR-95) | Pilot RAG canonical bodies (5 must-haves) | [P] | **Done** — PR #72 · git bodies; Operator `published` still required |
 | [CAR-97](https://linear.app/career-forge-v2/issue/CAR-97) | `/learn` additive blocks (figure, callout, quiz) | [S] | **Done** — PR #76 · parser + LearnContent; no body rewrite |
-| [CAR-98](https://linear.app/career-forge-v2/issue/CAR-98) | Replace `rag-embeddings` canonical body | [S] | **Next** — blocked by CAR-97 (now Done) |
+| [CAR-98](https://linear.app/career-forge-v2/issue/CAR-98) | Replace `rag-embeddings` canonical body | [S] | **Done** — PR #77 · embeddings fundamentals + figure `basePath` |
 | [CAR-85](https://linear.app/career-forge-v2/issue/CAR-85) | In-product Reference viewer (`/reference`) | [P] | **Done** — PR #62 · [ADR-007](./decisions/ADR-007-reference-viewer.md) |
 | [CAR-86](https://linear.app/career-forge-v2/issue/CAR-86) | Reference source card (blocked iframe fallback) | [P] | **Done** — PR #64 · ADR-007 amend |
 | [CAR-89](https://linear.app/career-forge-v2/issue/CAR-89) | Embed allowlist: persist proven hosts (API + learner GET) | [P] | **Done** — PR #67 · ADR-007 amend |
