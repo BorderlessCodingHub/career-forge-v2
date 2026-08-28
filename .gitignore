@@ -42,5 +42,8 @@ logs/
 # Claude Code
 .claude/settings.local.json
 
+# Canonical authoring workspace (ADR-004: outside the runtime)
+.teach/
+
 # Docker
 postgres-data/
