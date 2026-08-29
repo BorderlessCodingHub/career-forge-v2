@@ -90,7 +90,9 @@ function ForgePageContent() {
         });
 
         if (collected.length > 0 && !collected.some((event) => event.type === "graph_ready")) {
-          finishForge(collected);
+          setError("O forge encerrou antes de gerar o grafo. Tente novamente.");
+          setStatus("error");
+          if (timerRef.current) clearInterval(timerRef.current);
         }
       } catch (err) {
         // SSE abort after a typed error event often surfaces as a generic

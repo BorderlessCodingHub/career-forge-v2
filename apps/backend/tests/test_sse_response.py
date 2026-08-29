@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import AsyncIterator
 
 import pytest
@@ -9,6 +10,7 @@ import pytest
 from career_forge.ai.streaming.sse import (
     SSE_CONNECTED_COMMENT,
     SSE_HEADERS,
+    SSE_KEEPALIVE_COMMENT,
     sse_connected_body,
     sse_response,
 )
@@ -27,6 +29,25 @@ async def test_sse_connected_body_yields_connected_comment_first() -> None:
 
     assert chunks[0] == SSE_CONNECTED_COMMENT
     assert chunks[1] == "event: ping\n\n"
+
+
+@pytest.mark.asyncio
+async def test_sse_connected_body_emits_keepalive_while_upstream_is_idle(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("career_forge.ai.streaming.sse.SSE_KEEPALIVE_SEC", 0.02)
+
+    async def _delayed() -> AsyncIterator[str]:
+        await asyncio.sleep(0.05)
+        yield "event: ping\n\n"
+
+    chunks: list[str] = []
+    async for line in sse_connected_body(_delayed()):
+        chunks.append(line)
+
+    assert chunks[0] == SSE_CONNECTED_COMMENT
+    assert SSE_KEEPALIVE_COMMENT in chunks
+    assert chunks[-1] == "event: ping\n\n"
 
 
 def test_sse_response_sets_anti_buffer_headers() -> None:

@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from collections.abc import AsyncIterator
+from contextlib import suppress
 from typing import Any
 
 from fastapi.responses import StreamingResponse
@@ -17,6 +19,9 @@ SSE_HEADERS: dict[str, str] = {
 }
 
 SSE_CONNECTED_COMMENT = ": connected\n\n"
+SSE_KEEPALIVE_COMMENT = ": keepalive\n\n"
+# Next.js rewrite proxy defaults to 30s; Cloudflare idle is often ~100s.
+SSE_KEEPALIVE_SEC = 15.0
 
 
 def format_sse(event: StreamEvent | dict[str, Any]) -> str:
@@ -38,10 +43,36 @@ async def events_to_sse(
 async def sse_connected_body(
     events: AsyncIterator[str],
 ) -> AsyncIterator[str]:
-    """Yield an immediate SSE comment so proxies flush before slow upstream work."""
+    """Immediate comment + periodic keepalive so proxies do not idle-close SSE."""
     yield SSE_CONNECTED_COMMENT
-    async for chunk in events:
-        yield chunk
+    queue: asyncio.Queue[str | BaseException | None] = asyncio.Queue()
+
+    async def _pump() -> None:
+        try:
+            async for chunk in events:
+                await queue.put(chunk)
+            await queue.put(None)
+        except BaseException as exc:
+            await queue.put(exc)
+
+    task = asyncio.create_task(_pump())
+    try:
+        while True:
+            try:
+                item = await asyncio.wait_for(queue.get(), timeout=SSE_KEEPALIVE_SEC)
+            except TimeoutError:
+                yield SSE_KEEPALIVE_COMMENT
+                continue
+            if item is None:
+                break
+            if isinstance(item, BaseException):
+                raise item
+            yield item
+    finally:
+        if not task.done():
+            task.cancel()
+            with suppress(asyncio.CancelledError, Exception):
+                await task
 
 
 def sse_response(body: AsyncIterator[str]) -> StreamingResponse:

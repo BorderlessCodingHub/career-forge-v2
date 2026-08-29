@@ -15,4 +15,8 @@ describe("parseSseBlock", () => {
     const block = 'data: {"type":"graph_complete"}';
     expect(parseSseBlock(block)?.event).toBe("message");
   });
+
+  it("ignores SSE comment keepalive blocks", () => {
+    expect(parseSseBlock(": keepalive")).toBeNull();
+  });
 });

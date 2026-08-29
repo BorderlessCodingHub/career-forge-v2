@@ -399,6 +399,18 @@ class RoadmapForgeGraphRunnable:
                 {"forge_event": payload},
             )
 
+        yield emit_chain_stream(
+            "plan_study_graph",
+            run_id,
+            {
+                "forge_event": {
+                    "type": "reasoning_delta",
+                    "step": "accumulate_graph",
+                    "text": "Consolidating study plan from research…",
+                },
+            },
+        )
+
         planner = self._planner or build_study_plan_planner_from_env()
         evaluator = self._evaluator or build_study_plan_evaluator_from_env()
         trace = require_trace_from_input(input_data, graph_name=self.graph_name)
