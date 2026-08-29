@@ -16,6 +16,7 @@ from career_forge.services.roadmap.assembler import (
     _generated_row_sort_order,
     _merge_node,
     _stable_item_id,
+    assemble_trail_source,
     build_roadmap_from_catalog,
     merge_validation_evidence,
 )
@@ -41,6 +42,7 @@ from career_forge.services.roadmap.repository import (
 __all__ = [
     "DEFAULT_DEMO_STATE",
     "ROADMAP_PATH",
+    "assemble_trail_source",
     "build_roadmap_from_catalog",
     "get_user_roadmap",
     "load_roadmap_catalog",

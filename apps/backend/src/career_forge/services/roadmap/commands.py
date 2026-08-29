@@ -7,13 +7,14 @@ from typing import Literal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from career_forge.db.models.forge_artifact import ForgeArtifact
 from career_forge.db.models.profile import Profile
 from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
 from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.errors import ChecklistItemNotFoundError, NodeNotFoundError
 from career_forge.schemas.common import SkillStatus, UserSkillNode
 from career_forge.schemas.profile_diagnosis import parse_profile_diagnosis
-from career_forge.schemas.roadmap import RoadmapCategory, RoadmapNode, RoadmapResponse, RoadmapTrack
+from career_forge.schemas.roadmap import RoadmapNode, RoadmapResponse, RoadmapTrack
 from career_forge.services.canonical_content import (
     focus_skill_ids,
     published_canonical_refs,
@@ -25,6 +26,7 @@ from career_forge.services.roadmap.assembler import (
     _evidence_from_node,
     _generated_row_sort_order,
     _merge_node,
+    assemble_trail_source,
     build_roadmap_from_catalog,
 )
 from career_forge.services.roadmap.catalog import load_roadmap_catalog
@@ -74,7 +76,11 @@ def _with_canonical_refs(
 
 
 def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResponse:
-    """Join skill catalog with per-user state from Postgres."""
+    """Join skill catalog with per-user state from Postgres.
+
+    When an active forge artifact exists, its snapshot is the trail
+    (leftover ``ai-generated`` rows must not hide a later catalog-id forge).
+    """
     user = get_by_external_id(session, user_id)
     profile = _load_profile(session, user)
     track_id = profile.track_id if profile is not None else None
@@ -96,20 +102,28 @@ def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResp
         _catalog_node_from_generated_row(row)
         for row in sorted(generated_rows, key=_generated_row_sort_order)
     ]
-    if generated_nodes:
-        source_nodes = generated_nodes
-        nodes = [
-            _merge_node(node, state_by_node.get(node["id"]), None)
-            for node in generated_nodes
-        ]
-        categories = [RoadmapCategory(id="ai_generated", label="Plano gerado por IA")]
-    else:
-        source_nodes = catalog_nodes
-        nodes = [
-            _merge_node(node, state_by_node.get(node["id"]), None)
-            for node in catalog_nodes
-        ]
-        categories = [RoadmapCategory.model_validate(c) for c in catalog["categories"]]
+    active_artifact = session.scalar(
+        select(ForgeArtifact).where(
+            ForgeArtifact.user_id == user.id,
+            ForgeArtifact.is_active.is_(True),
+        ),
+    )
+    snapshot_ids = [
+        str(raw.get("node_id"))
+        for raw in (active_artifact.snapshot or [])
+        if isinstance(raw, dict) and raw.get("node_id")
+    ] if active_artifact is not None else []
+    source_nodes, categories = assemble_trail_source(
+        catalog=catalog,
+        catalog_nodes=catalog_nodes,
+        state_by_node=state_by_node,
+        generated_nodes=generated_nodes,
+        snapshot_ids=snapshot_ids,
+    )
+    nodes = [
+        _merge_node(node, state_by_node.get(node["id"]), None)
+        for node in source_nodes
+    ]
     return RoadmapResponse(
         track=RoadmapTrack.model_validate(track),
         categories=categories,

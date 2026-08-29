@@ -158,6 +158,46 @@ def _evidence_from_node(node: UserSkillNode, *, sort_order: int) -> dict[str, An
     return envelope.to_storage()
 
 
+def assemble_trail_source(
+    *,
+    catalog: dict[str, Any],
+    catalog_nodes: list[dict[str, Any]],
+    state_by_node: dict[str, UserSkillNodeRow],
+    generated_nodes: list[dict[str, Any]],
+    snapshot_ids: list[str],
+) -> tuple[list[dict[str, Any]], list[RoadmapCategory]]:
+    """Pick the learner-facing trail.
+
+    An active forge snapshot is the product trail (CAR-24). A leftover
+    ``ai-generated`` row must not hide catalog nodes from a later catalog-id forge.
+    """
+    catalog_ids = {node["id"] for node in catalog_nodes}
+    catalog_by_id = {node["id"]: node for node in catalog_nodes}
+    catalog_categories = [RoadmapCategory.model_validate(c) for c in catalog["categories"]]
+    generated_category = [RoadmapCategory(id="ai_generated", label="Plano gerado por IA")]
+
+    if snapshot_ids:
+        source: list[dict[str, Any]] = []
+        for node_id in snapshot_ids:
+            catalog_node = catalog_by_id.get(node_id)
+            if catalog_node is not None:
+                source.append(catalog_node)
+            elif node_id in state_by_node:
+                source.append(_catalog_node_from_generated_row(state_by_node[node_id]))
+        if source:
+            has_catalog = any(node["id"] in catalog_ids for node in source)
+            has_generated = any(node["id"] not in catalog_ids for node in source)
+            if has_catalog and has_generated:
+                return source, [*catalog_categories, *generated_category]
+            if has_generated:
+                return source, generated_category
+            return source, catalog_categories
+
+    if generated_nodes:
+        return generated_nodes, generated_category
+    return catalog_nodes, catalog_categories
+
+
 def _catalog_node_from_generated_row(
     row: UserSkillNodeRow,
 ) -> dict[str, Any]:
