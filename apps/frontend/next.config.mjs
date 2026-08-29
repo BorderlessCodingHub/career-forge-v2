@@ -31,6 +31,11 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_PATH: BASE_PATH,
   },
   output: "standalone",
+  experimental: {
+    // Labs same-origin `/forge/:id/stream` is rewritten through Next's http-proxy
+    // (default 30s). Planner/eval can be idle longer than that between SSE events.
+    proxyTimeout: 60 * 60 * 1000,
+  },
   async redirects() {
     // CAR-56 / CAR-52: Premium B is now App Router `/welcome`; old bake-off URL → canonical.
     return [

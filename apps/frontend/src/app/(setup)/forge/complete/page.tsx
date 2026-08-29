@@ -9,13 +9,15 @@ import { Button } from "@/components/ui";
 import {
   absoluteAppUrl,
   emailResumeLink,
+  getRoadmap,
   listForges,
   mintResumeLink,
 } from "@/lib/api-client";
-import { getForgeGraph, type ForgeGraphNode } from "@/lib/forge-session";
+import { getForgeGraph, setForgeGraph, type ForgeGraphNode } from "@/lib/forge-session";
 
 function ForgeCompleteContent() {
   const [graph, setGraph] = useState<ForgeGraphNode[] | null>(null);
+  const [graphChecked, setGraphChecked] = useState(false);
   const [revealed, setRevealed] = useState(0);
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
@@ -39,7 +41,41 @@ function ForgeCompleteContent() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    setGraph(getForgeGraph());
+    const loaded = getForgeGraph();
+    if (loaded?.length) {
+      setGraph(loaded);
+      setGraphChecked(true);
+      return;
+    }
+    let cancelled = false;
+    void getRoadmap()
+      .then((roadmap) => {
+        if (cancelled) return;
+        const nodes: ForgeGraphNode[] = roadmap.nodes.map((node) => ({
+          node_id: node.node_id,
+          title: node.title,
+          status: node.status,
+          mastery_score: node.mastery_score,
+          priority: node.priority,
+          rationale: node.rationale,
+          prerequisites: node.prerequisites,
+        }));
+        if (nodes.length) {
+          setForgeGraph(nodes);
+          setGraph(nodes);
+        } else {
+          setGraph(null);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setGraph(null);
+      })
+      .finally(() => {
+        if (!cancelled) setGraphChecked(true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -91,6 +127,14 @@ function ForgeCompleteContent() {
       cancelled = true;
     };
   }, [graph]);
+
+  if (!graphChecked) {
+    return (
+      <main className="min-h-screen grid-dots p-8">
+        <p className="text-text-secondary">Loading your trail…</p>
+      </main>
+    );
+  }
 
   if (!graph?.length) {
     return (
