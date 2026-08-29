@@ -13,6 +13,7 @@ from career_forge.services.roadmap import (
     _delete_stale_generated_rows,
     _enrich_checklist_items,
     _generated_row_sort_order,
+    assemble_trail_source,
     build_roadmap_from_catalog,
 )
 
@@ -55,6 +56,77 @@ def test_get_roadmap_current_api(client) -> None:
     assert payload["track"]["id"] == "rag-engineer-beginner"
     assert len(payload["nodes"]) >= 6
     assert payload["nodes"][0]["node_id"]
+
+
+def test_assemble_trail_source_prefers_snapshot_over_stale_generated() -> None:
+    catalog = {
+        "categories": [{"id": "core", "label": "Core"}],
+        "nodes": [
+            {"id": "rag-embeddings", "title": "Embeddings", "category": "core"},
+            {"id": "rag-chunking", "title": "Chunking", "category": "core"},
+        ],
+    }
+    leftover = SimpleNamespace(skill_node_id="rag-foundations")
+    source, categories = assemble_trail_source(
+        catalog=catalog,
+        catalog_nodes=catalog["nodes"],
+        state_by_node={"rag-foundations": leftover, "rag-embeddings": leftover},
+        generated_nodes=[{"id": "rag-foundations", "title": "Leftover"}],
+        snapshot_ids=["rag-embeddings", "rag-chunking"],
+    )
+    assert [node["id"] for node in source] == ["rag-embeddings", "rag-chunking"]
+    assert [category.id for category in categories] == ["core"]
+
+
+def test_get_roadmap_current_uses_active_snapshot_not_stale_generated(client) -> None:
+    from career_forge.services.forge_persistence import persist_graph_ready
+
+    user_id = "stale-generated-roadmap-user"
+    catalog_graph = [
+        UserSkillNode(
+            node_id="rag-embeddings",
+            title="Embeddings",
+            status=SkillStatus.BLOQUEADO,
+            mastery_score=0,
+        ),
+        UserSkillNode(
+            node_id="rag-chunking",
+            title="Chunking",
+            status=SkillStatus.BLOQUEADO,
+            mastery_score=0,
+        ),
+    ]
+    leftover = UserSkillNode(
+        node_id="stale-rag-foundations",
+        title="Leftover foundations",
+        status=SkillStatus.RECOMENDADO,
+        mastery_score=0,
+        priority=Priority.HIGH,
+        rationale="stale leftover from a prior forge",
+        tasks=[{"title": "t", "outcome": "o", "evidence_prompt": "e"}],
+    )
+    client.post(
+        "/roadmap/sync",
+        json={"user_id": user_id, "nodes": [n.model_dump() for n in catalog_graph]},
+    )
+    client.post(
+        "/roadmap/sync",
+        json={"user_id": user_id, "nodes": [leftover.model_dump()]},
+    )
+    persist_graph_ready(
+        user_id,
+        {"type": "graph_ready", "graph": [n.model_dump() for n in catalog_graph]},
+        graph_run_id="run-stale-generated-trail",
+        goal_id="rag-engineer",
+    )
+    response = client.get("/roadmap/current", params={"user_id": user_id})
+    assert response.status_code == 200
+    payload = response.json()
+    assert [node["node_id"] for node in payload["nodes"]] == [
+        "rag-embeddings",
+        "rag-chunking",
+    ]
+    assert "stale-rag-foundations" not in {node["node_id"] for node in payload["nodes"]}
 
 
 def test_sync_roadmap_api(client) -> None:
