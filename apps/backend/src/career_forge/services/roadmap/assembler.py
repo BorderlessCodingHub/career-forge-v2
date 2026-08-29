@@ -158,44 +158,84 @@ def _evidence_from_node(node: UserSkillNode, *, sort_order: int) -> dict[str, An
     return envelope.to_storage()
 
 
+def _source_node_from_snapshot(
+    raw: dict[str, Any],
+    *,
+    index: int,
+    state_by_node: dict[str, UserSkillNodeRow],
+) -> dict[str, Any] | None:
+    """Build a spine source dict from one forge snapshot entry (share-view contract)."""
+    node_id = raw.get("node_id")
+    if not node_id:
+        return None
+    node_id = str(node_id)
+    row = state_by_node.get(node_id)
+    skill = getattr(row, "skill_node", None) if row is not None else None
+    title = raw.get("title") or (skill.title if skill is not None else None) or node_id
+    rationale = raw.get("rationale")
+    if rationale is None and row is not None:
+        rationale = getattr(row, "rationale", None)
+    prerequisites = list(raw.get("prerequisites") or [])
+    if not prerequisites and skill is not None:
+        prerequisites = list(getattr(skill, "prerequisites", None) or [])
+    tasks = raw.get("tasks") or []
+    return {
+        "id": node_id,
+        "title": str(title),
+        "category": "ai_generated",
+        "description": str(rationale or ""),
+        "icon": "sparkles",
+        "side": "left" if index % 2 == 0 else "right",
+        "sort_order": index,
+        "prerequisites": prerequisites,
+        "outcomes": [
+            str(task.get("outcome", ""))
+            for task in tasks
+            if isinstance(task, dict) and task.get("outcome")
+        ],
+        "rubric": [
+            str(task.get("evidence_prompt", ""))
+            for task in tasks
+            if isinstance(task, dict) and task.get("evidence_prompt")
+        ],
+    }
+
+
 def assemble_trail_source(
     *,
     catalog: dict[str, Any],
     catalog_nodes: list[dict[str, Any]],
     state_by_node: dict[str, UserSkillNodeRow],
     generated_nodes: list[dict[str, Any]],
-    snapshot_ids: list[str],
+    snapshot: list[dict[str, Any]] | None = None,
 ) -> tuple[list[dict[str, Any]], list[RoadmapCategory]]:
     """Pick the learner-facing trail.
 
-    An active forge snapshot is the product trail (CAR-24). A leftover
-    ``ai-generated`` row must not hide catalog nodes from a later catalog-id forge.
+    An active forge snapshot is the product trail (CAR-24). Walk it in
+    stored order as one ``ai_generated`` sequence (share-view contract) so
+    VerticalSpine does not regroup catalog IDs by static category. Leftover
+    ``ai-generated`` rows not in the snapshot must not hide or reorder the trail.
     """
-    catalog_ids = {node["id"] for node in catalog_nodes}
-    catalog_by_id = {node["id"]: node for node in catalog_nodes}
-    catalog_categories = [RoadmapCategory.model_validate(c) for c in catalog["categories"]]
     generated_category = [RoadmapCategory(id="ai_generated", label="Plano gerado por IA")]
 
-    if snapshot_ids:
+    if snapshot:
         source: list[dict[str, Any]] = []
-        for node_id in snapshot_ids:
-            catalog_node = catalog_by_id.get(node_id)
-            if catalog_node is not None:
-                source.append(catalog_node)
-            elif node_id in state_by_node:
-                source.append(_catalog_node_from_generated_row(state_by_node[node_id]))
+        for index, raw in enumerate(snapshot):
+            if not isinstance(raw, dict):
+                continue
+            node = _source_node_from_snapshot(
+                raw, index=index, state_by_node=state_by_node
+            )
+            if node is not None:
+                source.append(node)
         if source:
-            has_catalog = any(node["id"] in catalog_ids for node in source)
-            has_generated = any(node["id"] not in catalog_ids for node in source)
-            if has_catalog and has_generated:
-                return source, [*catalog_categories, *generated_category]
-            if has_generated:
-                return source, generated_category
-            return source, catalog_categories
+            return source, generated_category
 
     if generated_nodes:
         return generated_nodes, generated_category
-    return catalog_nodes, catalog_categories
+    return catalog_nodes, [
+        RoadmapCategory.model_validate(c) for c in catalog.get("categories", [])
+    ]
 
 
 def _catalog_node_from_generated_row(

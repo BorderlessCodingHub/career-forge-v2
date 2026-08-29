@@ -108,8 +108,8 @@ def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResp
             ForgeArtifact.is_active.is_(True),
         ),
     )
-    snapshot_ids = [
-        str(raw.get("node_id"))
+    snapshot = [
+        raw
         for raw in (active_artifact.snapshot or [])
         if isinstance(raw, dict) and raw.get("node_id")
     ] if active_artifact is not None else []
@@ -118,7 +118,7 @@ def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResp
         catalog_nodes=catalog_nodes,
         state_by_node=state_by_node,
         generated_nodes=generated_nodes,
-        snapshot_ids=snapshot_ids,
+        snapshot=snapshot or None,
     )
     nodes = [
         _merge_node(node, state_by_node.get(node["id"]), None)

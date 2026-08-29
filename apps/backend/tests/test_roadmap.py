@@ -72,10 +72,83 @@ def test_assemble_trail_source_prefers_snapshot_over_stale_generated() -> None:
         catalog_nodes=catalog["nodes"],
         state_by_node={"rag-foundations": leftover, "rag-embeddings": leftover},
         generated_nodes=[{"id": "rag-foundations", "title": "Leftover"}],
-        snapshot_ids=["rag-embeddings", "rag-chunking"],
+        snapshot=[
+            {
+                "node_id": "rag-embeddings",
+                "title": "Forge Embeddings",
+                "rationale": "why embeddings",
+            },
+            {"node_id": "rag-chunking", "title": "Forge Chunking"},
+        ],
     )
     assert [node["id"] for node in source] == ["rag-embeddings", "rag-chunking"]
-    assert [category.id for category in categories] == ["core"]
+    assert all(node["category"] == "ai_generated" for node in source)
+    assert source[0]["sort_order"] == 0
+    assert source[0]["title"] == "Forge Embeddings"
+    assert source[0]["description"] == "why embeddings"
+    assert [category.id for category in categories] == ["ai_generated"]
+
+
+def test_assemble_trail_source_mixed_snapshot_keeps_forge_order() -> None:
+    catalog = {
+        "categories": [
+            {"id": "fundamentos", "label": "Foundations"},
+            {"id": "core", "label": "Core"},
+        ],
+        "nodes": [
+            {
+                "id": "agent-tool-use",
+                "title": "Tool use patterns",
+                "category": "fundamentos",
+                "sort_order": 1,
+            },
+            {
+                "id": "agent-mcp",
+                "title": "MCP and connectors",
+                "category": "fundamentos",
+                "sort_order": 2,
+            },
+        ],
+    }
+    source, categories = assemble_trail_source(
+        catalog=catalog,
+        catalog_nodes=catalog["nodes"],
+        state_by_node={},
+        generated_nodes=[
+            {"id": "agent-engineering-basics", "title": "Leftover"},
+        ],
+        snapshot=[
+            {
+                "node_id": "agent-engineering-basics",
+                "title": "Agent Engineering Basics",
+                "rationale": "start here",
+                "tasks": [
+                    {
+                        "title": "checkpoint",
+                        "outcome": "verify skills",
+                        "evidence_prompt": "show repo",
+                    }
+                ],
+            },
+            {
+                "node_id": "agent-tool-use",
+                "title": "Build a tool loop",
+                "rationale": "first must-have",
+            },
+            {"node_id": "agent-mcp", "title": "Wire MCP"},
+        ],
+    )
+    assert [node["id"] for node in source] == [
+        "agent-engineering-basics",
+        "agent-tool-use",
+        "agent-mcp",
+    ]
+    assert [node["sort_order"] for node in source] == [0, 1, 2]
+    assert all(node["category"] == "ai_generated" for node in source)
+    assert source[0]["title"] == "Agent Engineering Basics"
+    assert source[1]["title"] == "Build a tool loop"
+    assert source[0]["outcomes"] == ["verify skills"]
+    assert [category.id for category in categories] == ["ai_generated"]
 
 
 def test_get_roadmap_current_uses_active_snapshot_not_stale_generated(client) -> None:
@@ -127,6 +200,78 @@ def test_get_roadmap_current_uses_active_snapshot_not_stale_generated(client) ->
         "rag-chunking",
     ]
     assert "stale-rag-foundations" not in {node["node_id"] for node in payload["nodes"]}
+    assert all(node["category"] == "ai_generated" for node in payload["nodes"])
+    assert [c["id"] for c in payload["categories"]] == ["ai_generated"]
+    assert payload["nodes"][0]["sort_order"] == 0
+
+
+def test_get_roadmap_current_mixed_snapshot_preserves_order(client) -> None:
+    from career_forge.services.forge_persistence import persist_graph_ready
+
+    user_id = "mixed-snapshot-roadmap-user"
+    graph = [
+        UserSkillNode(
+            node_id="agent-engineering-basics",
+            title="Agent Engineering Basics",
+            status=SkillStatus.RECOMENDADO,
+            mastery_score=0,
+            priority=Priority.HIGH,
+            rationale="start here",
+            tasks=[
+                {
+                    "title": "checkpoint",
+                    "outcome": "verify skills",
+                    "evidence_prompt": "show repo",
+                }
+            ],
+        ),
+        UserSkillNode(
+            node_id="agent-tool-use",
+            title="Build a tool loop",
+            status=SkillStatus.BLOQUEADO,
+            mastery_score=0,
+            rationale="first must-have",
+            tasks=[{"title": "tool loop", "outcome": "call tools", "evidence_prompt": "log"}],
+        ),
+        UserSkillNode(
+            node_id="agent-mcp",
+            title="Wire MCP",
+            status=SkillStatus.BLOQUEADO,
+            mastery_score=0,
+        ),
+    ]
+    leftover = UserSkillNode(
+        node_id="stale-agent-intro",
+        title="Stale intro",
+        status=SkillStatus.RECOMENDADO,
+        mastery_score=0,
+        tasks=[{"title": "t", "outcome": "o", "evidence_prompt": "e"}],
+    )
+    client.post(
+        "/roadmap/sync",
+        json={"user_id": user_id, "nodes": [leftover.model_dump()]},
+    )
+    persist_graph_ready(
+        user_id,
+        {"type": "graph_ready", "graph": [n.model_dump() for n in graph]},
+        graph_run_id="run-mixed-snapshot-trail",
+        goal_id="agent-engineer",
+    )
+    response = client.get("/roadmap/current", params={"user_id": user_id})
+    assert response.status_code == 200
+    payload = response.json()
+    assert [node["node_id"] for node in payload["nodes"]] == [
+        "agent-engineering-basics",
+        "agent-tool-use",
+        "agent-mcp",
+    ]
+    assert "stale-agent-intro" not in {node["node_id"] for node in payload["nodes"]}
+    assert all(node["category"] == "ai_generated" for node in payload["nodes"])
+    assert payload["nodes"][0]["sort_order"] == 0
+    assert payload["nodes"][0]["title"] == "Agent Engineering Basics"
+    assert payload["nodes"][1]["title"] == "Build a tool loop"
+    assert payload["nodes"][0]["status"] == "recomendado"
+    assert [c["id"] for c in payload["categories"]] == ["ai_generated"]
 
 
 def test_sync_roadmap_api(client) -> None:
