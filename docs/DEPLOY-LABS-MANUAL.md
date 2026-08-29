@@ -177,6 +177,7 @@ FORGE_EVALUATOR_MODEL=gpt-5.4-mini
 FORGE_STREAM_DELAY_SEC=1.5
 LANGSMITH_API_KEY=<your-key>                   # CHANGE (or leave empty)
 LANGSMITH_PROJECT=career-forge
+LANGCHAIN_TRACING_V2=true                       # must reach the backend container (compose.prod)
 
 # --- GHCR images ---
 GHCR_IMAGE_NAMESPACE=ghcr.io/borderlesscodinghub
