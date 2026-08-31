@@ -7,7 +7,7 @@
 
 Marketing CTA on `/welcome` → product `/`. `/welcome` does **not** require Email identity. The product loop does ([ADR-005](../decisions/ADR-005-identity-gate-product-entry.md) / [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)): OTP at product entry, then Paywall before diagnosis for unpaid `external`.
 
-`/welcome` is commercial Premium B: **Start diagnosis** → `/`. Pricing chrome shows BASE/PSP included and **USD $15/mo** for unpaid `external` (CAR-53); Apply / Strategy / Syllabus modals are gone. Waitlist and Stripe checkout are **not** runtime on Welcome — the $15 number is copy; billing stays in-loop (ADR-005). Unsplash testimonials remain until [CAR-93](https://linear.app/career-forge-v2/issue/CAR-93).
+`/welcome` is commercial Premium B: **Start diagnosis** → `/`. Pricing chrome shows BASE/PSP included and **USD $15/mo** for unpaid `external` (CAR-53); Apply / Strategy / Syllabus modals are gone. Waitlist and Stripe checkout are **not** runtime on Welcome — the $15 number is copy; billing stays in-loop (ADR-005). Testimonials are named Borderless BASE/PSP stories ([CAR-99](https://linear.app/career-forge-v2/issue/CAR-99)); [CAR-93](https://linear.app/career-forge-v2/issue/CAR-93) is still for Career Forge pilot quotes.
 
 [CAR-41](https://linear.app/career-forge-v2/issue/CAR-41) `/welcome/premium-a` remains an **unlinked** HTML bake-off clone. `/welcome/premium-b` redirects to `/welcome` (CAR-52). Neither is waitlist/checkout runtime.
 
