@@ -179,10 +179,31 @@ describe("welcome honesty — CTA, FAQ, ROI, shell", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: /See How Engineers Transformed Their Careers/i,
+        name: /See How Engineers Transformed Their Careers with Borderless/i,
       }),
     ).toBeTruthy();
     expect(screen.queryByText(/640\+/)).toBeNull();
+  });
+
+  it("testimonials are named Borderless BASE/PSP stories, not invented Career Forge alumni", () => {
+    render(<Testimonials />);
+
+    expect(screen.getByText("Arthur Duarte")).toBeTruthy();
+    expect(screen.getByText("Eduardo Chaves")).toBeTruthy();
+    expect(screen.getByText("Gelson Rodrigues")).toBeTruthy();
+    expect(screen.getByText("Thiago Valverde")).toBeTruthy();
+    expect(screen.getAllByText("BASE").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("PSP").length).toBeGreaterThan(0);
+
+    expect(screen.queryByText(/Alexandre Chen/)).toBeNull();
+    expect(screen.queryByText(/Sarah Jenkins/)).toBeNull();
+    expect(screen.queryByText(/Scale AI/)).toBeNull();
+    expect(screen.queryByText(/Databricks/)).toBeNull();
+    expect(screen.queryByText(/Stripe/)).toBeNull();
+    expect(screen.queryByText(/Compensation Boost/i)).toBeNull();
+    expect(screen.queryByText(/Payback/i)).toBeNull();
+    expect(screen.queryByText(/All Graduates/i)).toBeNull();
+    expect(screen.queryByText(/vLLM/)).toBeNull();
   });
 
   it("ROI payback uses $15/mo and drops 640+", () => {

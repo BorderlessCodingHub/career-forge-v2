@@ -312,52 +312,49 @@ export const EMPLOYERS = [
   { name: 'BTG Pactual', logo: 'btg-pactual.png' },
 ] as const;
 
+/** Named BASE/PSP stories published on borderlesscoding.com/en — ecosystem proof, not Career Forge alumni. */
 export const TESTIMONIALS = [
   {
-    name: 'Alexandre Chen',
-    role: 'Senior AI Systems Engineer @ Scale AI',
-    formerRole: 'Senior Backend Developer (Ex-Fintech)',
-    increase: '+$95,000 / yr',
-    company: 'Scale AI',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-    quote: 'Career Forge bridges the gap between basic API wrapper tutorials and real high-scale AI engineering. The vLLM continuous batching and DPO fine-tuning labs directly helped me clear my senior staff loop at Scale AI.',
-    verifiedBadge: 'Cohort 9 Graduate',
-    metrics: { beforeSalary: '$165,000', afterSalary: '$260,000', paybackDays: '34 days' }
+    name: 'Arthur Duarte',
+    program: 'BASE',
+    role: 'AI Specialist',
+    formerRole: 'Bartender (Canada)',
+    avatar: 'arthur.png',
+    story:
+      'Arthur used to work as a bartender in Canada before entering the Base Mentorship Program. He currently works with Artificial Intelligence remotely. He went from a salary of R$5,000 as a bartender to a salary of R$15,000 working remotely.',
+    metrics: { beforeSalary: 'R$5,000', afterSalary: 'R$15,000' },
   },
   {
-    name: 'Sarah Jenkins',
-    role: 'Staff LLM Platform Lead @ Databricks',
-    formerRole: 'Full-Stack Software Engineer',
-    increase: '+$110,000 / yr',
-    company: 'Databricks',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80',
-    quote: 'I went from writing basic OpenAI prompts to architecting multi-GPU vLLM clusters with automated DeepEval regression suites. The code reviews from ex-OpenAI engineers were brutal in the best possible way!',
-    verifiedBadge: 'Cohort 10 Graduate',
-    metrics: { beforeSalary: '$180,000', afterSalary: '$290,000', paybackDays: '28 days' }
+    name: 'Eduardo Chaves',
+    program: 'BASE',
+    role: 'AI/LLM Developer (Low-Code)',
+    formerRole: 'Lead Developer (Low-Code)',
+    avatar: 'eduardo.png',
+    story:
+      'Eduardo moved from Lead Developer (Low-Code) at about US$7.50/hr (~US$1,300) to AI/LLM Developer (Low-Code) at US$18/hr (~US$2,900) over about six months in Base mentorship.',
+    metrics: { beforeSalary: '~US$7.50/hr', afterSalary: 'US$18/hr' },
   },
   {
-    name: 'Dimitri Rostov',
-    role: 'Lead AI Engineer @ Series B AI Startup',
-    formerRole: 'Data Engineer @ Enterprise Tech',
-    increase: '+$78,000 / yr',
-    company: 'Nexus AI',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
-    quote: 'The GraphRAG capstone project alone got me 4 job offers. Showing hiring managers a live vector DB with RRF reranking and latency under 150ms instantly proved I was in the top 1% of applicants.',
-    verifiedBadge: 'Cohort 11 Graduate',
-    metrics: { beforeSalary: '$142,000', afterSalary: '$220,000', paybackDays: '42 days' }
+    name: 'Gelson Rodrigues',
+    program: 'PSP',
+    role: 'Front End · US$9,000/month',
+    formerRole: 'Unemployed after outsourcing layoff',
+    avatar: 'gelson.png',
+    story:
+      'Gelson was unemployed after a layoff in outsourcing, where he was making R$20K in Brazil. Currently he receives US$9,000/month after internationalizing his career with one month of mentorship, applying the Go Global method taught in the Programmers Without a Country Mentorship Program.',
+    metrics: { beforeSalary: 'R$20K', afterSalary: 'US$9,000/mo' },
   },
   {
-    name: 'Elena Rostova',
-    role: 'Founding AI Engineer @ Stealth AI',
-    formerRole: 'Frontend Lead turned AI Specialist',
-    increase: '+$88,000 / yr',
-    company: 'Stealth AI',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80',
-    quote: 'Understanding quantizations (AWQ vs GGUF) and DPO dataset curation allowed us to drop our monthly cloud LLM API bill from $40k to $6k while speeding up response times 3x.',
-    verifiedBadge: 'Cohort 8 Graduate',
-    metrics: { beforeSalary: '$155,000', afterSalary: '$243,000', paybackDays: '38 days' }
-  }
-];
+    name: 'Thiago Valverde',
+    program: 'PSP',
+    role: 'Web3 / Backend Developer',
+    formerRole: 'Backend Developer',
+    avatar: 'thiago.png',
+    story:
+      'In one month of PSP mentorship, Thiago went from Backend Developer (USD 13k) to Web3 / Backend Developer ($22k). He passed initial screening in 19 processes and declined 3 offers that were below his rate or were web2.',
+    metrics: { beforeSalary: 'USD 13k', afterSalary: '$22k' },
+  },
+] as const;
 
 export const MENTORS = [
   {
