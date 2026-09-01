@@ -77,6 +77,36 @@ def test_pilot_enter_creates_user_when_listed(
         assert row.email == "first@example.com"
 
 
+def test_pilot_enter_does_not_overwrite_another_users_email(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_email_otp", False)
+    victim_id = "pilot-victim"
+    victim_email = "victim@example.com"
+    listed = "pedro-new@example.com"
+    _list_pilot(listed)
+    with SessionLocal() as session:
+        victim = ensure_user(session, victim_id)
+        victim.email = victim_email
+        victim.billing_entitled = True
+        session.commit()
+
+    res = raw_client.post(
+        "/auth/pilot/enter",
+        json={"email": listed, "external_id": victim_id},
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()
+    assert body["external_id"] != victim_id
+    with SessionLocal() as session:
+        victim = ensure_user(session, victim_id)
+        newcomer = ensure_user(session, body["external_id"])
+        assert victim.email == victim_email
+        assert victim.billing_entitled is True
+        assert newcomer.email == listed
+
+
 def test_pilot_enter_adopts_existing_owner(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,

@@ -2,22 +2,55 @@
 
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from career_forge.config import settings
 from career_forge.db.models.user import User
-from career_forge.db.repositories.user import ensure_user
+from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.errors import (
     NOT_ALLOWED_CODE,
     NOT_ALLOWED_MESSAGE,
     ForbiddenError,
     NotFoundError,
 )
-from career_forge.schemas.otp import _normalize_otp_email
+from career_forge.schemas.otp import _DEMO_EMAIL_SUFFIX, _normalize_otp_email
 from career_forge.services.billing_pilot_emails import pilot_email_is_listed
 from career_forge.services.membership import MembershipClient, apply_membership_label
 from career_forge.services.otp import OtpPromoteResult, _check_rate_limit, _token_payload
+
+
+def _fresh_external_id() -> str:
+    return f"user-{uuid.uuid4().hex[:8]}"
+
+
+def _is_placeholder_email(email: str | None) -> bool:
+    return email is None or email.endswith(_DEMO_EMAIL_SUFFIX)
+
+
+def _token_for(user: User) -> OtpPromoteResult:
+    if not user.external_id:
+        raise ForbiddenError(NOT_ALLOWED_MESSAGE, code=NOT_ALLOWED_CODE)
+    payload = _token_payload(user.external_id)
+    return {
+        "status": "promoted",
+        "access_token": payload["access_token"],
+        "token_type": payload["token_type"],
+        "external_id": payload["external_id"],
+        "provider": payload["provider"],
+        "expires_in": payload["expires_in"],
+    }
+
+
+def _bindable_session_user(session: Session, external_id: str) -> User:
+    existing = get_by_external_id(session, external_id)
+    if existing is None:
+        return ensure_user(session, external_id)
+    if _is_placeholder_email(existing.email):
+        return existing
+    return ensure_user(session, _fresh_external_id())
 
 
 def enter_pilot(
@@ -42,34 +75,14 @@ def enter_pilot(
     if not pilot_email_is_listed(session, normalized):
         raise ForbiddenError(NOT_ALLOWED_MESSAGE, code=NOT_ALLOWED_CODE)
 
-    current = ensure_user(session, external_id)
-    owner = session.scalar(
-        select(User).where(User.email == normalized, User.id != current.id),
-    )
+    owner = session.scalar(select(User).where(User.email == normalized))
     if owner is not None:
-        if not owner.external_id:
-            raise ForbiddenError(NOT_ALLOWED_MESSAGE, code=NOT_ALLOWED_CODE)
         apply_membership_label(owner, normalized, membership)
         session.commit()
-        payload = _token_payload(owner.external_id)
-        return {
-            "status": "promoted",
-            "access_token": payload["access_token"],
-            "token_type": payload["token_type"],
-            "external_id": payload["external_id"],
-            "provider": payload["provider"],
-            "expires_in": payload["expires_in"],
-        }
+        return _token_for(owner)
 
+    current = _bindable_session_user(session, external_id)
     current.email = normalized
     apply_membership_label(current, normalized, membership)
     session.commit()
-    payload = _token_payload(external_id)
-    return {
-        "status": "promoted",
-        "access_token": payload["access_token"],
-        "token_type": payload["token_type"],
-        "external_id": payload["external_id"],
-        "provider": payload["provider"],
-        "expires_in": payload["expires_in"],
-    }
+    return _token_for(current)
