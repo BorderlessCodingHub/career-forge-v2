@@ -26,6 +26,26 @@ def _list_pilot(email: str) -> None:
         session.commit()
 
 
+def test_main_imports_without_preloading_cost_guard() -> None:
+    """Uvicorn loads main first; conftest pre-imports cost_guard and hid this cycle."""
+    import os
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    src = str(Path(__file__).resolve().parents[1] / "src")
+    env = os.environ.copy()
+    env["PYTHONPATH"] = src
+    result = subprocess.run(
+        [sys.executable, "-c", "from career_forge.main import app"],
+        capture_output=True,
+        text=True,
+        env=env,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+
+
 def test_identity_mode_default_requires_otp(raw_client: TestClient) -> None:
     res = raw_client.get("/auth/identity-mode")
     assert res.status_code == 200, res.text

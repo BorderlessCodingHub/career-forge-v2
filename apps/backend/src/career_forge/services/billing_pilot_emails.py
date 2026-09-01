@@ -11,7 +11,6 @@ from career_forge.db.models.billing_pilot_email import (
     BillingPilotEmail,
     BillingPilotEmailAudit,
 )
-from career_forge.services.operator_access import require_access_role
 
 
 def normalize_pilot_email(email: str) -> str:
@@ -42,6 +41,8 @@ def list_pilot_emails(
     *,
     principal: OperatorPrincipal,
 ) -> list[BillingPilotEmail]:
+    from career_forge.services.operator_access import require_access_role
+
     require_access_role(principal)
     return list(
         session.scalars(
@@ -59,6 +60,8 @@ def add_pilot_email(
     principal: OperatorPrincipal,
     email: str,
 ) -> BillingPilotEmail:
+    from career_forge.services.operator_access import require_access_role
+
     require_access_role(principal)
     normalized = normalize_pilot_email(email)
     inserted_email = session.scalar(
@@ -92,6 +95,8 @@ def remove_pilot_email(
     principal: OperatorPrincipal,
     email: str,
 ) -> None:
+    from career_forge.services.operator_access import require_access_role
+
     require_access_role(principal)
     normalized = normalize_pilot_email(email)
     removed = session.scalar(
