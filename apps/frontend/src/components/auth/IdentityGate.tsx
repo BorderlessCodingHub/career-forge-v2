@@ -6,6 +6,7 @@ import { Button } from "@/components/ui";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 import {
   OtpEmailOwnedError,
+  enterPilot,
   requestOtp,
   verifyOtp,
 } from "@/lib/api-client";
@@ -25,19 +26,47 @@ type OtpPhase =
 type IdentityGateProps = {
   title?: string;
   description?: string;
+  emailOtpRequired?: boolean;
   onVerified: () => void;
 };
 
 export function IdentityGate({
-  title = "Sign in with email",
-  description = "Enter your email to continue. We send a 6-digit code (check backend logs in local dev).",
+  title,
+  description,
+  emailOtpRequired = true,
   onVerified,
 }: IdentityGateProps) {
+  const resolvedTitle =
+    title ?? (emailOtpRequired ? "Sign in with email" : "Enter your pilot email");
+  const resolvedDescription =
+    description ??
+    (emailOtpRequired
+      ? "Enter your email to continue. We send a 6-digit code (check backend logs in local dev)."
+      : "Enter the email on the pilot list to continue.");
+
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [otpPhase, setOtpPhase] = useState<OtpPhase>({ status: "idle" });
   const [otpBusy, setOtpBusy] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
+
+  async function handleContinue() {
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setOtpError("Enter your email first.");
+      return;
+    }
+    setOtpBusy(true);
+    setOtpError(null);
+    try {
+      await enterPilot(trimmed);
+      onVerified();
+    } catch (err) {
+      setOtpError(err instanceof Error ? err.message : "Failed to enter.");
+    } finally {
+      setOtpBusy(false);
+    }
+  }
 
   async function handleRequestCode() {
     const trimmed = email.trim();
@@ -99,8 +128,8 @@ export function IdentityGate({
     >
       <div className="mx-auto max-w-md rounded-md border border-border bg-surface px-6 py-8">
         <BrandLockup className="mb-6" />
-        <h1 className="text-2xl font-semibold text-text-primary">{title}</h1>
-        <p className="mt-2 text-sm text-text-secondary">{description}</p>
+        <h1 className="text-2xl font-semibold text-text-primary">{resolvedTitle}</h1>
+        <p className="mt-2 text-sm text-text-secondary">{resolvedDescription}</p>
 
         {otpPhase.status === "conflict" ? (
           <div className="mt-6 space-y-3" data-testid="identity-gate-conflict">
@@ -133,21 +162,32 @@ export function IdentityGate({
                 data-testid="identity-gate-email"
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <Button
-                variant="ghost"
-                data-testid="identity-gate-request"
-                disabled={otpBusy}
-                onClick={() => void handleRequestCode()}
-              >
-                {otpBusy && otpPhase.status === "idle"
-                  ? "Sending…"
-                  : otpPhase.status === "code_sent"
-                    ? "Resend code"
-                    : "Send code"}
-              </Button>
+              {emailOtpRequired ? (
+                <Button
+                  variant="ghost"
+                  data-testid="identity-gate-request"
+                  disabled={otpBusy}
+                  onClick={() => void handleRequestCode()}
+                >
+                  {otpBusy && otpPhase.status === "idle"
+                    ? "Sending…"
+                    : otpPhase.status === "code_sent"
+                      ? "Resend code"
+                      : "Send code"}
+                </Button>
+              ) : (
+                <Button
+                  data-testid="identity-gate-continue"
+                  disabled={otpBusy}
+                  onClick={() => void handleContinue()}
+                >
+                  {otpBusy ? "Checking…" : "Continue"}
+                </Button>
+              )}
             </div>
-            {(otpPhase.status === "code_sent" ||
-              otpPhase.status === "verifying") && (
+            {emailOtpRequired &&
+              (otpPhase.status === "code_sent" ||
+                otpPhase.status === "verifying") && (
               <div className="space-y-2">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <input

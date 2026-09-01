@@ -56,6 +56,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     settings.stripe_webhook_secret = ""
     settings.stripe_price_id = ""
     settings.operator_allowlist = ""
+    settings.identity_email_otp = True
     reset_otp_rate_limiter()
     reset_operator_otp_rate_limiter()
     yield
@@ -136,6 +137,8 @@ def client(raw_client: TestClient):
             path.rstrip("/").endswith("/health")
             or path.endswith("/auth/anon/mint")
             or path.rstrip("/").endswith("/auth/otp/verify")
+            or path.rstrip("/").endswith("/auth/identity-mode")
+            or path.rstrip("/").endswith("/auth/pilot/enter")
             or path.rstrip("/").endswith("/billing/stripe/webhook")
             or path.rstrip("/").endswith("/openapi.json")
         )

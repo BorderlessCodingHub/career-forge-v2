@@ -25,6 +25,7 @@ import type {
   ForgeShareRevokeResponse,
   MeEmailUpdateResponse,
   MeProfileResponse,
+  IdentityModeResponse,
   OtpEmailOwnedConflict,
   OtpRequestResponse,
   OtpVerifyResponse,
@@ -548,6 +549,51 @@ export async function requestOtp(email: string): Promise<OtpRequestResponse> {
     throw await readApiError(res);
   }
   return res.json() as Promise<OtpRequestResponse>;
+}
+
+/** Public: OTP vs pilot-list enter (CAR-100). */
+export async function getIdentityMode(): Promise<IdentityModeResponse> {
+  const res = await fetch(`${backendUrl}/auth/identity-mode`);
+  if (!res.ok) {
+    throw await readApiError(res);
+  }
+  return res.json() as Promise<IdentityModeResponse>;
+}
+
+/** Product-loop session check — false when freeze list rejects the JWT. */
+export async function checkAuthSession(): Promise<boolean> {
+  const token = getAccessToken();
+  if (!token) return false;
+  const res = await fetch(`${backendUrl}/auth/session`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status === 401 || res.status === 403) {
+    clearAccessToken();
+    return false;
+  }
+  return res.ok;
+}
+
+/** Mint email JWT when the address is on billing_pilot_emails (CAR-100 freeze). */
+export async function enterPilot(email: string): Promise<OtpVerifyResponse> {
+  const token = getAccessToken();
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${backendUrl}/auth/pilot/enter`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ email, external_id: getUserId() }),
+  });
+  if (res.status === 401) {
+    clearAccessToken();
+  }
+  if (!res.ok) {
+    throw await readApiError(res);
+  }
+  const data = (await res.json()) as OtpVerifyResponse;
+  setSessionFromOtp(data.access_token, data.external_id);
+  return data;
 }
 
 export class OtpEmailOwnedError extends Error {

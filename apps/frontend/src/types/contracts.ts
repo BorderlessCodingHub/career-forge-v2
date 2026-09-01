@@ -170,6 +170,10 @@ export type ResumeEmailResponse = {
   path: string;
 };
 
+export type IdentityModeResponse = {
+  email_otp_required: boolean;
+};
+
 export type OtpRequestResponse = {
   ok: boolean;
   email: string;

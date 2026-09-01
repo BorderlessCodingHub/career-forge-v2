@@ -77,7 +77,7 @@ def _token_payload(external_id: str) -> OtpTokenPayload:
     }
 
 
-def _check_rate_limit(*, email: str, client_ip: str) -> None:
+def _check_rate_limit(*, email: str, client_ip: str, key_prefix: str = "") -> None:
     now = time.monotonic()
     window = float(settings.otp_rate_limit_window_seconds)
 
@@ -90,8 +90,8 @@ def _check_rate_limit(*, email: str, client_ip: str) -> None:
             raise RateLimitedError("too many OTP requests — try again later")
         kept.append(now)
 
-    _hit(f"email:{email}", settings.otp_rate_limit_per_email)
-    _hit(f"ip:{client_ip}", settings.otp_rate_limit_per_ip)
+    _hit(f"{key_prefix}email:{email}", settings.otp_rate_limit_per_email)
+    _hit(f"{key_prefix}ip:{client_ip}", settings.otp_rate_limit_per_ip)
 
 
 def request_otp(

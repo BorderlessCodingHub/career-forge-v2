@@ -12,18 +12,21 @@ from sqlalchemy.orm import Session
 from career_forge.auth.jwt_tokens import ANON_PROVIDER
 from career_forge.auth.providers import get_auth_provider
 from career_forge.auth.token_revocation import revoke_token
-from career_forge.api.deps import get_principal
+from career_forge.api.deps import get_principal, require_email_provider
 from career_forge.auth.principal import AuthPrincipal
 from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import get_db
 from career_forge.schemas.otp import (
+    IdentityModeResponse,
     OtpRequestBody,
     OtpRequestResponse,
     OtpVerifyBody,
     OtpVerifyResponse,
+    PilotEnterBody,
 )
 from career_forge.services.otp import request_otp, verify_otp
+from career_forge.services.pilot_enter import enter_pilot
 
 router = APIRouter()
 
@@ -77,6 +80,51 @@ def mint_anonymous_token(
         external_id=external_id,
         expires_in=settings.jwt_anon_ttl_days * 24 * 3600,
     )
+
+
+@router.get("/identity-mode", response_model=IdentityModeResponse)
+def identity_mode() -> IdentityModeResponse:
+    """Public: whether learner entry requires OTP (CAR-100)."""
+    return IdentityModeResponse(email_otp_required=settings.identity_email_otp)
+
+
+def _resolve_enter_external_id(request: Request, body: PilotEnterBody) -> str:
+    """Bearer, body ``external_id``, or a fresh id — enter does not require prior mint."""
+    header = request.headers.get("authorization") or request.headers.get("Authorization")
+    if header and header.lower().startswith("bearer "):
+        token = header[7:].strip()
+        if token:
+            try:
+                return get_auth_provider().verify(token).external_id
+            except ValueError:
+                pass
+    if body.external_id:
+        return _normalize_external_id(body.external_id)
+    return _normalize_external_id(None)
+
+
+@router.post("/pilot/enter", response_model=OtpVerifyResponse)
+def pilot_enter(
+    body: PilotEnterBody,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> OtpVerifyResponse:
+    """Mint email JWT when the address is on the pilot list (CAR-100 freeze)."""
+    result = enter_pilot(
+        db,
+        email=body.email,
+        client_ip=_client_ip(request),
+        external_id=_resolve_enter_external_id(request, body),
+    )
+    return OtpVerifyResponse(**result)
+
+
+@router.get("/session", status_code=204)
+def auth_session(
+    _principal: AuthPrincipal = Depends(require_email_provider),
+) -> Response:
+    """Product-loop session check — 204 when email identity (and freeze list) pass."""
+    return Response(status_code=204)
 
 
 @router.post("/otp/request", response_model=OtpRequestResponse)

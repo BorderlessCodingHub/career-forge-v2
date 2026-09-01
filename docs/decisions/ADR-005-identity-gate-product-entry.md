@@ -51,6 +51,19 @@ Identity and Paywall remain **two gates**. Early identity does not mean BASE/PSP
 
 CAR-36 / V2-PLAN F3.7 (E2E on anon scaffold) is **dead**. Pilots use Email identity + the database pilot billing list (and real membership when the API exists). No secret anon bypass.
 
+### 4. Temporary freeze — skip OTP (CAR-100, 2026-09-01)
+
+While Resend cannot deliver to arbitrary inboxes (`onboarding@resend.dev`), Labs may set `IDENTITY_EMAIL_OTP=false`:
+
+| Concern | Freeze behavior |
+|---------|-----------------|
+| Learner entry | Email + Continue. `POST /auth/pilot/enter` mints `provider=email` if the address is on `billing_pilot_emails`. No 6-digit code. |
+| Exclusive door | Product-loop APIs require the session user's email on that list. BASE/PSP, Stripe, and prior OTP JWTs are blocked unless listed. |
+| Operator | Unchanged (still OTP). |
+| Restore | `IDENTITY_EMAIL_OTP=true` (code default) restores this ADR's OTP + billing split. OTP implementation is not deleted. |
+
+Impersonation (typing a listed email) is accepted for the closed cohort.
+
 ---
 
 ## Considered options (rejected)
@@ -79,3 +92,4 @@ CAR-36 / V2-PLAN F3.7 (E2E on anon scaffold) is **dead**. Pilots use Email ident
 - [ENTITLEMENT.md](../engineering/ENTITLEMENT.md)
 - [V2-PLAN.md](../V2-PLAN.md) — Decision #1 amend 2026-08-22; F3.6 / F3.7
 - Grill session 2026-08-22
+- Grill session 2026-09-01 (CAR-100 freeze)
