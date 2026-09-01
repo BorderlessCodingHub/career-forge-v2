@@ -62,3 +62,12 @@ class OtpVerifyResponse(BaseModel):
     external_id: str
     provider: str
     expires_in: int
+
+
+class IdentityModeResponse(BaseModel):
+    email_otp_required: bool
+
+
+class PilotEnterBody(BaseModel):
+    email: str = Field(min_length=1, max_length=255)
+    external_id: str | None = Field(default=None, max_length=64)

@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     jwt_stream_ticket_ttl_seconds: int = 300
     # CAR-27 — resume deep-link TTL (single-use + expiry)
     jwt_resume_ttl_days: int = 7
+    # CAR-100 — learner OTP at product entry (ADR-005). false = pilot-list enter only.
+    identity_email_otp: bool = True
     # CAR-44 — email OTP (6-digit); mailer=log for local, resend|ses for prod
     otp_ttl_seconds: int = 600
     otp_rate_limit_per_email: int = 5

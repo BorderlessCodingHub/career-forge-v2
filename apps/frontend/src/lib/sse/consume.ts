@@ -42,7 +42,7 @@ export async function consumeFetchEventStream<T>(
     } catch {
       // ignore parse errors
     }
-    if (response.status === 429 || isQuotaExhaustedMessage(detail)) {
+    if (isQuotaExhaustedMessage(detail)) {
       throw new Error(QUOTA_EXHAUSTED_COPY);
     }
     throw new Error(`SSE request failed: ${detail}`);

@@ -76,6 +76,10 @@ class RateLimitedError(DomainError):
     status_code = 429
 
 
+NOT_ALLOWED_CODE = "not_allowed"
+NOT_ALLOWED_MESSAGE = "not allowed"
+
+
 class ForbiddenError(DomainError):
     """Authenticated or identified client lacks permission (CAR-75 Operator allowlist)."""
 

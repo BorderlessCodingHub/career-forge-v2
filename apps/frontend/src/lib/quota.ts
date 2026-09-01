@@ -10,8 +10,11 @@ export function toUserFacingApiError(status: number, detail: string): string {
   if (status === 402) {
     return "Subscribe to start diagnosis and forge your roadmap";
   }
-  if (status === 429 || isQuotaExhaustedMessage(detail)) {
+  if (isQuotaExhaustedMessage(detail)) {
     return QUOTA_EXHAUSTED_COPY;
+  }
+  if (status === 429) {
+    return detail;
   }
   return `API request failed: ${detail}`;
 }

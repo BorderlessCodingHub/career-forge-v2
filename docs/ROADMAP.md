@@ -74,6 +74,7 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 | [CAR-46](https://linear.app/career-forge-v2/issue/CAR-46) | Entitlement paywall (Stripe for external) | [S] | **Done** — PR #42 · **free forge superseded** by CAR-57 |
 | [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) | Identity gate at product entry + paywall before diagnosis | [S] | **Done** — PR #49 |
 | [CAR-69](https://linear.app/career-forge-v2/issue/CAR-69) | Sign out + JWT jti revocation | [S] | **Done** — PR #50 · [ADR-006](./decisions/ADR-006-sign-out-jti-revocation.md) |
+| [CAR-100](https://linear.app/career-forge-v2/issue/CAR-100) | Pilot enter without OTP — exclusive `billing_pilot_emails` | [P] | **In Progress** — `IDENTITY_EMAIL_OTP=false` freeze |
 
 **Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
 
