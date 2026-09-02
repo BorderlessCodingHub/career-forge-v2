@@ -341,7 +341,7 @@ export const TESTIMONIALS = [
     formerRole: 'Unemployed after outsourcing layoff',
     avatar: 'gelson.png',
     story:
-      'Gelson was unemployed after a layoff in outsourcing, where he was making R$20K in Brazil. Currently he receives US$9,000/month after internationalizing his career with one month of mentorship, applying the Go Global method taught in the Programmers Without a Country Mentorship Program.',
+      'Gelson was unemployed after a layoff in outsourcing, where he was making R$20K in Brazil. Currently he receives US$9,000/month after internationalizing his career with one month of mentorship, applying the Go Global method taught in the PSP Mentorship Program.',
     metrics: { beforeSalary: 'R$20K', afterSalary: 'US$9,000/mo' },
   },
   {
