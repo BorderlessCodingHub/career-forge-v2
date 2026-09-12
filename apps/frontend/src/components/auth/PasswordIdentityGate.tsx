@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
+import { IdentityGateShell } from "@/components/auth/IdentityGateShell";
 import { Button } from "@/components/ui";
-import { BrandLockup } from "@/components/ui/BrandLockup";
 import { signInWithPassword } from "@/lib/api-client";
 
 type PasswordIdentityGateProps = {
@@ -47,22 +46,7 @@ export function PasswordIdentityGate({
   }
 
   return (
-    <main
-      className="min-h-screen grid-dots px-4 py-6"
-      data-testid="identity-gate"
-      data-screen="identity-gate-password"
-    >
-      <header className="mx-auto flex max-w-lg items-center justify-between gap-4 pb-8">
-        <BrandLockup />
-        <Link
-          href="/welcome"
-          className="text-sm text-text-secondary underline-offset-2 hover:underline"
-          data-testid="identity-gate-back-welcome"
-        >
-          Back to Welcome
-        </Link>
-      </header>
-
+    <IdentityGateShell screen="identity-gate-password">
       <div className="mx-auto max-w-md rounded-md border border-border bg-surface px-6 py-8">
         <h1 className="text-2xl font-semibold text-text-primary">Sign in</h1>
         <p className="mt-2 text-sm text-text-secondary">
@@ -205,6 +189,6 @@ export function PasswordIdentityGate({
           </div>
         </div>
       ) : null}
-    </main>
+    </IdentityGateShell>
   );
 }

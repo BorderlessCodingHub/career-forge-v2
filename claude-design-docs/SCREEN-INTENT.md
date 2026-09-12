@@ -92,7 +92,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 |------------|--------|
 | Surface | `ProductEntryGate` overlay — **no** `/sign-in` route; Welcome public |
 | Password layout | Email, Password, Sign in, Forgot, Don’t have an account? Sign up. CF tokens. No GitHub/Google. No EN/PT radio. English |
-| Chrome | `BrandLockup` once in the top bar + Back to Welcome → `/welcome`. Logo not repeated in the card |
+| Chrome | Product topbar (same chrome as `/roadmap` artifact bar): `BrandLockup` once + Back to Welcome → `/welcome`. Logo not in the card. Backdrop = Welcome hero (`bg-slate-950` + indigo dots + soft blobs). Shared by OTP/pilot and password |
 | Forgot | `forgot_password_url` from identity-mode, new tab; hide if empty |
 | Sign up | Modal (does not navigate immediately); primary opens Borderless signup `_blank`; secondary closes modal |
 | API | Browser calls CF `POST /auth/signin` only |

@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
-import { BrandLockup } from "@/components/ui/BrandLockup";
+import { IdentityGateShell } from "@/components/auth/IdentityGateShell";
 import { PasswordIdentityGate } from "@/components/auth/PasswordIdentityGate";
 import {
   OtpEmailOwnedError,
@@ -141,12 +141,8 @@ export function IdentityGate({
   }
 
   return (
-    <main
-      className="min-h-screen grid-dots px-4 py-10"
-      data-testid="identity-gate"
-    >
+    <IdentityGateShell>
       <div className="mx-auto max-w-md rounded-md border border-border bg-surface px-6 py-8">
-        <BrandLockup className="mb-6" />
         <h1 className="text-2xl font-semibold text-text-primary">{resolvedTitle}</h1>
         <p className="mt-2 text-sm text-text-secondary">{resolvedDescription}</p>
 
@@ -254,6 +250,6 @@ export function IdentityGate({
           </p>
         ) : null}
       </div>
-    </main>
+    </IdentityGateShell>
   );
 }
