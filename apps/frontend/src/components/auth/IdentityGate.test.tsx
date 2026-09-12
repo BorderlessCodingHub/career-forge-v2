@@ -51,6 +51,12 @@ describe("IdentityGate freeze", () => {
     const onVerified = vi.fn();
     render(<IdentityGate emailOtpRequired={false} onVerified={onVerified} />);
 
+    expect(screen.getByTestId("identity-gate-topbar")).toBeTruthy();
+    expect(screen.getByTestId("brand-lockup")).toBeTruthy();
+    expect(screen.getByTestId("identity-gate-back-welcome").getAttribute("href")).toBe(
+      "/welcome",
+    );
+
     fireEvent.change(screen.getByTestId("identity-gate-email"), {
       target: { value: "pilot@example.com" },
     });
@@ -106,6 +112,8 @@ describe("IdentityGate password", () => {
     expect(requestOtp).not.toHaveBeenCalled();
     expect(enterPilot).not.toHaveBeenCalled();
     expect(screen.queryByTestId("identity-gate-request")).toBeNull();
+    expect(screen.getByTestId("identity-gate-topbar")).toBeTruthy();
+    expect(screen.getByTestId("brand-lockup")).toBeTruthy();
     expect(screen.getByTestId("identity-gate-back-welcome").getAttribute("href")).toBe(
       "/welcome",
     );

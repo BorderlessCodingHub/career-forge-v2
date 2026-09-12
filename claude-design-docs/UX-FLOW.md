@@ -67,8 +67,8 @@ Operator session gates the route; learner sessions never open it.
 
 | | |
 |---|---|
-| **OTP / pilot** | Email code or pilot-list enter (unchanged) |
-| **Password** | When `GET /auth/identity-mode` `method=borderless_password`: email + password card; `POST /auth/signin` on Career Forge only; CF JWT via `adoptSession`. Top bar: `BrandLockup` + Back to Welcome. Forgot/Sign up URLs from identity-mode (empty hides). Sign up opens a modal, then Borderless `/sign-up` in a new tab |
+| **OTP / pilot** | Email code or pilot-list enter; same product topbar + Welcome-hero backdrop as password |
+| **Password** | When `GET /auth/identity-mode` `method=borderless_password`: email + password card; `POST /auth/signin` on Career Forge only; CF JWT via `adoptSession`. Top bar = product chrome (`BrandLockup` + Back to Welcome) over Welcome-hero backdrop. Forgot/Sign up URLs from identity-mode (empty hides). Sign up opens a modal, then Borderless `/sign-up` in a new tab |
 | **Out** | Browser POST to `api.borderlesscoding.com`; OAuth buttons; EN/PT radio; Welcome login |
 
 ---

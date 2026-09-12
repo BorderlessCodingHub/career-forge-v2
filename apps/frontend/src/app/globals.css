@@ -106,6 +106,15 @@ body {
   background-size: 24px 24px;
 }
 
+/* IdentityGate backdrop — matches Welcome hero dots without importing welcome.css */
+.hero-dots {
+  background-image: radial-gradient(
+    rgba(99, 102, 241, 0.15) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+}
+
 /* CAR-38 — /welcome motion (lean; prefers-reduced-motion → still).
    Duration/translate vars set on [data-screen=marketing-welcome] from welcome-motion.ts */
 @keyframes welcome-fade-up {
