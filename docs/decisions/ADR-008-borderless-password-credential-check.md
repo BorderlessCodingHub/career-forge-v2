@@ -51,7 +51,7 @@ Career Forge **remains the IdP**. Borderless signin is a **server-side credentia
 | `method` | `email_otp` \| `pilot_enter` \| `borderless_password` |
 | `email_otp_required` | **Legacy.** `true` unless `method=pilot_enter`. Password mode stays `true` so old IdentityGate does not fall through to pilot enter before CAR-105/106 |
 
-Do not set `IDENTITY_METHOD=borderless_password` in Labs until CAR-105 + CAR-106 are on `main`.
+Do not set `IDENTITY_METHOD=borderless_password` in Labs until CAR-105 + CAR-106 are on `main`. Cutover is ops-only: [DEPLOY-LABS-MANUAL §2.5](../DEPLOY-LABS-MANUAL.md) (CAR-107). Repo examples keep `IDENTITY_METHOD` empty.
 
 ---
 
