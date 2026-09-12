@@ -184,6 +184,34 @@ GHCR_IMAGE_NAMESPACE=ghcr.io/borderlesscodinghub
 IMAGE_TAG=latest
 ```
 
+### 2.5 Learner identity cutover (CAR-107)
+
+Repo defaults stay **non-breaking**: empty `IDENTITY_METHOD` (Labs today: `IDENTITY_EMAIL_OTP=false` → `pilot_enter`). Never treat IDENTITY_EMAIL_OTP=false as password.
+
+Flip Labs to Borderless password **only after** CAR-105 + CAR-106 are on `main`. Then on the VPS `.env`:
+
+```env
+# Wins over IDENTITY_EMAIL_OTP. Recreate backend after change.
+IDENTITY_METHOD=borderless_password
+BORDERLESS_SIGNIN_URL=https://api.borderlesscoding.com/api/auth/signin
+# Membership still required (402 for unpaid external).
+MEMBERSHIP_BACKEND=http
+BORDERLESS_MEMBERS_URL=<existing members URL>
+BORDERLESS_MEMBERS_TOKEN=<existing token>
+BORDERLESS_SIGNUP_URL=https://platform.borderlesscoding.com/sign-up
+BORDERLESS_FORGOT_PASSWORD_URL=https://platform.borderlesscoding.com/forgot-password
+```
+
+Do not set BORDERLESS_ACCOUNT_URL — signup and forgot are different pages; identity-mode exposes `signup_url` / `forgot_password_url` from the two vars above.
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --force-recreate --no-deps backend
+curl -fsS http://127.0.0.1:18000/auth/identity-mode
+# expect method=borderless_password
+```
+
+Rollback: `IDENTITY_METHOD=` (empty) and recreate backend — freeze returns to `pilot_enter`.
+
 ---
 
 ## 3. VPS — nginx config
@@ -373,3 +401,4 @@ docker compose -f docker-compose.prod.yml up -d --no-build
 | Forge routes return 404 from API | nginx stripping prefix wrong | Check trailing slash on `proxy_pass http://127.0.0.1:18000/;` in API block |
 | `manifest unknown` on docker pull | `IMAGE_TAG` mismatch or images not pushed yet | Check GitHub Actions — wait for push job to succeed |
 | Seed fails: no skill_nodes | `data/roadmap.json` missing on VPS | `ls data/roadmap.json` in deploy dir — must exist after `git clone` |
+| IdentityGate still OTP / `POST /auth/otp` → 410 | `IDENTITY_METHOD` empty (pilot) or password mode after cutover | Password: set `IDENTITY_METHOD=borderless_password` and recreate backend (§2.5). Do not use `IDENTITY_EMAIL_OTP=false` as the password switch |

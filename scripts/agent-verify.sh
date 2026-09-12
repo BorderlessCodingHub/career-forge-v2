@@ -118,6 +118,10 @@ check grep -q 'raise_if_learner_otp_gone' apps/backend/src/career_forge/services
 check grep -q 'raise_if_learner_otp_gone' apps/backend/src/career_forge/services/pilot_enter.py
 check grep -q 'signInWithPassword' apps/frontend/src/lib/api-client.ts
 check grep -q 'identity-gate-password' apps/frontend/src/components/auth/PasswordIdentityGate.tsx
+check grep -q 'IDENTITY_METHOD=borderless_password' docs/DEPLOY-LABS-MANUAL.md
+check grep -q 'Do not set BORDERLESS_ACCOUNT_URL' docs/DEPLOY-LABS-MANUAL.md
+check grep -q 'BORDERLESS_SIGNIN_URL' .env.example
+check grep -q 'BORDERLESS_SIGNUP_URL' .env.example
 check test -f apps/backend/src/career_forge/services/entitlement.py
 check test -f apps/backend/src/career_forge/services/stripe_billing.py
 check test -f apps/backend/src/career_forge/api/billing.py

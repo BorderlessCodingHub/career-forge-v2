@@ -97,7 +97,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Sign up | Modal (does not navigate immediately); primary opens Borderless signup `_blank`; secondary closes modal |
 | API | Browser calls CF `POST /auth/signin` only |
 
-**Can evolve:** Labs `IDENTITY_METHOD=borderless_password` (CAR-107)
+**Can evolve:** Labs ops sets `IDENTITY_METHOD=borderless_password` ([DEPLOY-LABS-MANUAL §2.5](../docs/DEPLOY-LABS-MANUAL.md) · CAR-107). Repo default stays empty.
 
 ---
 

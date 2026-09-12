@@ -56,6 +56,8 @@ When `IDENTITY_EMAIL_OTP=false` (CAR-100 freeze) **and** `IDENTITY_METHOD` is em
 **only product-loop door**: `require_email_provider` rejects sessions whose
 `users.email` is not listed. Restore `true` to return to OTP + billing-as-grant.
 
+`IDENTITY_METHOD=borderless_password` (CAR-107 Labs cutover) does **not** use this flag as a stand-in: set the method explicitly. Membership `BORDERLESS_MEMBERS_URL` still applies after password sign-in.
+
 ---
 
 ## HTTP
