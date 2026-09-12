@@ -48,6 +48,10 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     from career_forge.config import settings
     from career_forge.services.otp import reset_otp_rate_limiter
+    from career_forge.services.borderless_signin import (
+        reset_signin_rate_limiter,
+        set_borderless_signin_client,
+    )
     from career_forge.services.operator_otp import reset_operator_otp_rate_limiter
 
     settings.jwt_secret = _TEST_JWT_SECRET
@@ -59,6 +63,8 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     settings.identity_email_otp = True
     settings.identity_method = ""
     reset_otp_rate_limiter()
+    reset_signin_rate_limiter()
+    set_borderless_signin_client(None)
     reset_operator_otp_rate_limiter()
     yield
     reset_mock_interview_sessions()
@@ -68,6 +74,8 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     set_stripe_client(None)
     set_diagnosis_session_store(None)
     reset_otp_rate_limiter()
+    reset_signin_rate_limiter()
+    set_borderless_signin_client(None)
     reset_operator_otp_rate_limiter()
 
 
@@ -140,6 +148,7 @@ def client(raw_client: TestClient):
             or path.rstrip("/").endswith("/auth/otp/verify")
             or path.rstrip("/").endswith("/auth/identity-mode")
             or path.rstrip("/").endswith("/auth/pilot/enter")
+            or path.rstrip("/").endswith("/auth/signin")
             or path.rstrip("/").endswith("/billing/stripe/webhook")
             or path.rstrip("/").endswith("/openapi.json")
         )

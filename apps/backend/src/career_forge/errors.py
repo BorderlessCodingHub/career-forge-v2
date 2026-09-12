@@ -76,6 +76,42 @@ class RateLimitedError(DomainError):
     status_code = 429
 
 
+class InvalidBorderlessCredentialsError(DomainError):
+    status_code = 401
+
+    def __init__(self) -> None:
+        super().__init__("Invalid email or password")
+
+
+class BorderlessEmailUnverifiedError(DomainError):
+    status_code = 403
+
+    def __init__(self) -> None:
+        super().__init__("Borderless email must be verified")
+
+
+class BorderlessIdentityMismatchError(DomainError):
+    status_code = 409
+
+    def __init__(self) -> None:
+        super().__init__("Borderless account identity mismatch")
+
+
+class BorderlessSigninUnavailableError(DomainError):
+    status_code = 503
+
+    def __init__(self) -> None:
+        super().__init__("Borderless signin temporarily unavailable")
+
+
+class BorderlessRateLimitedError(DomainError):
+    status_code = 429
+
+    def __init__(self, *, retry_after: str | None) -> None:
+        self.retry_after = retry_after
+        super().__init__("Too many signin attempts — try again later")
+
+
 NOT_ALLOWED_CODE = "not_allowed"
 NOT_ALLOWED_MESSAGE = "not allowed"
 

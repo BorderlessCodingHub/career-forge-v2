@@ -1,4 +1,4 @@
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from career_forge.identity_method import (
@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     identity_email_otp: bool = True
     # CAR-102 / ADR-008 — empty derives from identity_email_otp (never password).
     identity_method: str = ""
+    # CAR-104 — server-side Borderless password credential check (CF still mints JWT).
+    borderless_signin_url: str = (
+        "https://api.borderlesscoding.com/api/auth/signin"
+    )
+    borderless_signin_timeout_seconds: float = Field(default=2.5, ge=2.0, le=3.0)
     # CAR-44 — email OTP (6-digit); mailer=log for local, resend|ses for prod
     otp_ttl_seconds: int = 600
     otp_rate_limit_per_email: int = 5

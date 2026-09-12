@@ -25,7 +25,10 @@ from career_forge.schemas.otp import (
     OtpVerifyBody,
     OtpVerifyResponse,
     PilotEnterBody,
+    SigninBody,
+    SigninResponse,
 )
+from career_forge.services.borderless_signin import signin
 from career_forge.services.otp import request_otp, verify_otp
 from career_forge.services.pilot_enter import enter_pilot
 
@@ -91,6 +94,22 @@ def identity_mode() -> IdentityModeResponse:
         email_otp_required=email_otp_required_for_legacy_clients(method),
         method=method,
     )
+
+
+@router.post("/signin", response_model=SigninResponse)
+def borderless_password_signin(
+    body: SigninBody,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> SigninResponse:
+    """Check Borderless credentials server-side and mint a Career Forge JWT."""
+    result = signin(
+        db,
+        email=body.email,
+        password=body.password,
+        client_ip=_client_ip(request),
+    )
+    return SigninResponse(**result)
 
 
 def _resolve_enter_external_id(request: Request, body: PilotEnterBody) -> str:
