@@ -85,6 +85,8 @@ class SigninResponse(BaseModel):
 class IdentityModeResponse(BaseModel):
     email_otp_required: bool
     method: Literal["email_otp", "pilot_enter", "borderless_password"]
+    signup_url: str = ""
+    forgot_password_url: str = ""
 
 
 class PilotEnterBody(BaseModel):

@@ -46,6 +46,10 @@ class Settings(BaseSettings):
         "https://api.borderlesscoding.com/api/auth/signin"
     )
     borderless_signin_timeout_seconds: float = Field(default=2.5, ge=2.0, le=3.0)
+    borderless_signup_url: str = "https://platform.borderlesscoding.com/sign-up"
+    borderless_forgot_password_url: str = (
+        "https://platform.borderlesscoding.com/forgot-password"
+    )
     # CAR-44 — email OTP (6-digit); mailer=log for local, resend|ses for prod
     otp_ttl_seconds: int = 600
     otp_rate_limit_per_email: int = 5

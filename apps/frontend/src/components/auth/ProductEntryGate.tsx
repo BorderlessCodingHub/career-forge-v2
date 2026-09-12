@@ -6,6 +6,7 @@ import { IdentityGate } from "@/components/auth/IdentityGate";
 import { checkAuthSession, getIdentityMode } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/user-session";
 import { hasEmailProvider } from "@/lib/jwt";
+import type { IdentityMethod } from "@/types/contracts";
 
 type ProductEntryGateProps = {
   children: ReactNode;
@@ -14,7 +15,13 @@ type ProductEntryGateProps = {
 type GateState =
   | { status: "loading" }
   | { status: "error"; message: string }
-  | { status: "gate"; emailOtpRequired: boolean }
+  | {
+      status: "gate";
+      method: IdentityMethod;
+      emailOtpRequired: boolean;
+      signupUrl: string;
+      forgotPasswordUrl: string;
+    }
   | { status: "in" };
 
 export function ProductEntryGate({ children }: ProductEntryGateProps) {
@@ -23,8 +30,16 @@ export function ProductEntryGate({ children }: ProductEntryGateProps) {
   const resolveGate = useCallback(async () => {
     try {
       const mode = await getIdentityMode();
+      const signupUrl = mode.signup_url ?? "";
+      const forgotPasswordUrl = mode.forgot_password_url ?? "";
       if (!hasEmailProvider(getAccessToken())) {
-        setState({ status: "gate", emailOtpRequired: mode.email_otp_required });
+        setState({
+          status: "gate",
+          method: mode.method,
+          emailOtpRequired: mode.email_otp_required,
+          signupUrl,
+          forgotPasswordUrl,
+        });
         return;
       }
       if (mode.email_otp_required) {
@@ -33,7 +48,13 @@ export function ProductEntryGate({ children }: ProductEntryGateProps) {
       }
       const allowed = await checkAuthSession();
       if (!allowed) {
-        setState({ status: "gate", emailOtpRequired: false });
+        setState({
+          status: "gate",
+          method: mode.method,
+          emailOtpRequired: false,
+          signupUrl,
+          forgotPasswordUrl,
+        });
         return;
       }
       setState({ status: "in" });
@@ -75,7 +96,10 @@ export function ProductEntryGate({ children }: ProductEntryGateProps) {
   if (state.status === "gate") {
     return (
       <IdentityGate
+        method={state.method}
         emailOtpRequired={state.emailOtpRequired}
+        signupUrl={state.signupUrl}
+        forgotPasswordUrl={state.forgotPasswordUrl}
         onVerified={handleVerified}
       />
     );
