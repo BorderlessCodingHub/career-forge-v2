@@ -175,6 +175,16 @@ export type IdentityMethod = "email_otp" | "pilot_enter" | "borderless_password"
 export type IdentityModeResponse = {
   email_otp_required: boolean;
   method: IdentityMethod;
+  signup_url?: string;
+  forgot_password_url?: string;
+};
+
+export type SigninResponse = {
+  access_token: string;
+  token_type: string;
+  external_id: string;
+  provider: string;
+  expires_in: number;
 };
 
 export type OtpRequestResponse = {

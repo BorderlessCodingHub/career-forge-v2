@@ -96,6 +96,8 @@ def identity_mode() -> IdentityModeResponse:
     return IdentityModeResponse(
         email_otp_required=email_otp_required_for_legacy_clients(method),
         method=method,
+        signup_url=settings.borderless_signup_url.strip(),
+        forgot_password_url=settings.borderless_forgot_password_url.strip(),
     )
 
 

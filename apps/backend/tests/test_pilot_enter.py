@@ -49,7 +49,8 @@ def test_main_imports_without_preloading_cost_guard() -> None:
 def test_identity_mode_default_requires_otp(raw_client: TestClient) -> None:
     res = raw_client.get("/auth/identity-mode")
     assert res.status_code == 200, res.text
-    assert res.json() == {"email_otp_required": True, "method": "email_otp"}
+    assert res.json()["email_otp_required"] is True
+    assert res.json()["method"] == "email_otp"
 
 
 def test_pilot_enter_404_when_otp_required(raw_client: TestClient) -> None:

@@ -63,6 +63,12 @@ def test_legacy_email_otp_required_hides_password_from_old_clients() -> None:
     assert email_otp_required_for_legacy_clients(PILOT_ENTER) is False
 
 
+_DEFAULT_ACCOUNT_URLS = {
+    "signup_url": "https://platform.borderlesscoding.com/sign-up",
+    "forgot_password_url": "https://platform.borderlesscoding.com/forgot-password",
+}
+
+
 @pytest.mark.parametrize(
     ("method", "otp_flag", "expected"),
     [
@@ -96,4 +102,17 @@ def test_identity_mode_three_methods(
     monkeypatch.setattr(settings, "identity_email_otp", otp_flag)
     res = raw_client.get("/auth/identity-mode")
     assert res.status_code == 200, res.text
-    assert res.json() == expected
+    assert res.json() == {**expected, **_DEFAULT_ACCOUNT_URLS}
+
+
+def test_identity_mode_hides_empty_account_urls(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "borderless_signup_url", "  ")
+    monkeypatch.setattr(settings, "borderless_forgot_password_url", "")
+    res = raw_client.get("/auth/identity-mode")
+    assert res.status_code == 200, res.text
+    body = res.json()
+    assert body["signup_url"] == ""
+    assert body["forgot_password_url"] == ""

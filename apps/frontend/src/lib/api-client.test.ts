@@ -84,7 +84,7 @@ describe("verifyOtp", () => {
 
   it("loads the authenticated live Reference embed allowlist", async () => {
     const learnerToken = `header.${Buffer.from(
-      JSON.stringify({ provider: "email" }),
+      JSON.stringify({ provider: "email", exp: Math.floor(Date.now() / 1000) + 3600 }),
     ).toString("base64url")}.signature`;
     localStorage.setItem("career-forge.access-token", learnerToken);
     localStorage.setItem("career-forge.user-id", "learner-id");
@@ -104,6 +104,89 @@ describe("verifyOtp", () => {
       expect.objectContaining({
         headers: expect.objectContaining({ Authorization: `Bearer ${learnerToken}` }),
       }),
+    );
+  });
+});
+
+describe("signInWithPassword", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    const localStorage = createMemoryStorage();
+    const sessionStorage = createMemoryStorage();
+    vi.stubGlobal("window", { localStorage, sessionStorage });
+    vi.stubGlobal("localStorage", localStorage);
+    vi.stubGlobal("sessionStorage", sessionStorage);
+  });
+
+  it("stores the Career Forge JWT from POST /auth/signin", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          access_token: "cf-jwt",
+          token_type: "bearer",
+          external_id: "user-signin",
+          provider: "email",
+          expires_in: 3600,
+        }),
+      }),
+    );
+
+    const { signInWithPassword } = await import("./api-client");
+    await signInWithPassword("ada@example.com", "secret-pass");
+
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/auth/signin"),
+      expect.objectContaining({
+        body: JSON.stringify({
+          email: "ada@example.com",
+          password: "secret-pass",
+        }),
+      }),
+    );
+    const calledUrl = String(vi.mocked(fetch).mock.calls[0]?.[0]);
+    expect(calledUrl).not.toContain("api.borderlesscoding.com");
+    expect(localStorage.getItem("career-forge.access-token")).toBe("cf-jwt");
+    expect(localStorage.getItem("career-forge.user-id")).toBe("user-signin");
+  });
+
+  it("maps signin 401 429 and 503 to distinct copy", async () => {
+    const cases: Array<[number, string]> = [
+      [401, "Invalid email or password"],
+      [429, "Too many sign-in attempts. Try again later."],
+      [503, "Sign-in is temporarily unavailable. Try again in a moment."],
+    ];
+    for (const [status, copy] of cases) {
+      vi.resetModules();
+      vi.stubGlobal(
+        "fetch",
+        vi.fn().mockResolvedValue({
+          ok: false,
+          status,
+          statusText: "Error",
+          json: async () => ({ detail: "upstream leak" }),
+        }),
+      );
+      const { signInWithPassword } = await import("./api-client");
+      await expect(signInWithPassword("ada@example.com", "x")).rejects.toThrow(copy);
+    }
+  });
+
+  it("maps unexpected signin status to generic 401 copy without leaking detail", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        statusText: "Forbidden",
+        json: async () => ({ detail: "upstream leak" }),
+      }),
+    );
+    const { signInWithPassword } = await import("./api-client");
+    await expect(signInWithPassword("ada@example.com", "x")).rejects.toThrow(
+      "Invalid email or password",
     );
   });
 });
