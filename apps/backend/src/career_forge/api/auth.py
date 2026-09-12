@@ -9,7 +9,10 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from career_forge.identity_method import email_otp_required_for_legacy_clients
+from career_forge.identity_method import (
+    email_otp_required_for_legacy_clients,
+    raise_if_learner_otp_gone,
+)
 from career_forge.auth.jwt_tokens import ANON_PROVIDER
 from career_forge.auth.providers import get_auth_provider
 from career_forge.auth.token_revocation import revoke_token
@@ -192,6 +195,7 @@ def otp_verify(
     db: Session = Depends(get_db),
 ) -> OtpVerifyResponse:
     """Verify OTP → promote anon or 409 conflict payload for chooser."""
+    raise_if_learner_otp_gone(settings.resolved_identity_method())
     external_id = _resolve_verify_external_id(request, body)
     result = verify_otp(
         db,

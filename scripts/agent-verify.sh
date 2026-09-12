@@ -114,6 +114,8 @@ check test -f apps/backend/src/career_forge/services/membership.py
 check test -f apps/backend/src/career_forge/services/borderless_signin.py
 check grep -q '"/signin"' apps/backend/src/career_forge/api/auth.py
 check grep -q '"/auth/signin"' apps/backend/src/career_forge/auth/middleware.py
+check grep -q 'raise_if_learner_otp_gone' apps/backend/src/career_forge/services/otp.py
+check grep -q 'raise_if_learner_otp_gone' apps/backend/src/career_forge/services/pilot_enter.py
 check test -f apps/backend/src/career_forge/services/entitlement.py
 check test -f apps/backend/src/career_forge/services/stripe_billing.py
 check test -f apps/backend/src/career_forge/api/billing.py

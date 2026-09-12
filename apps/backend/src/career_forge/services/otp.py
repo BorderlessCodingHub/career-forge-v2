@@ -18,6 +18,7 @@ from career_forge.config import settings
 from career_forge.db.models.email_otp import EMAIL_OTP_PROVIDER, EmailOtp
 from career_forge.db.models.user import User
 from career_forge.db.repositories.user import ensure_user
+from career_forge.identity_method import raise_if_learner_otp_gone
 from career_forge.errors import (
     BadRequestError,
     EmailOwnedConflictError,
@@ -102,6 +103,7 @@ def request_otp(
     mailer: Mailer | None = None,
 ) -> int:
     """Store a hashed OTP for ``email`` and deliver via mailer. Returns TTL seconds."""
+    raise_if_learner_otp_gone(settings.resolved_identity_method())
     _check_rate_limit(email=email, client_ip=client_ip)
 
     code = _generate_otp_code()
@@ -144,6 +146,7 @@ def verify_otp(
 
     Successful verify (promote or owned-email chooser) re-resolves membership.
     """
+    raise_if_learner_otp_gone(settings.resolved_identity_method())
     now = datetime.now(UTC)
     row = session.scalar(
         select(EmailOtp)
