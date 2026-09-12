@@ -17,7 +17,7 @@ from career_forge.errors import (
     ForbiddenError,
     NotFoundError,
 )
-from career_forge.schemas.otp import _DEMO_EMAIL_SUFFIX, _normalize_otp_email
+from career_forge.schemas.otp import _DEMO_EMAIL_SUFFIX, _normalize_identity_email
 from career_forge.services.billing_pilot_emails import pilot_email_is_listed
 from career_forge.services.membership import MembershipClient, apply_membership_label
 from career_forge.services.otp import OtpPromoteResult, _check_rate_limit, _token_payload
@@ -70,7 +70,7 @@ def enter_pilot(
     _check_rate_limit(email=rate_key, client_ip=client_ip, key_prefix="pilot:")
 
     try:
-        normalized = _normalize_otp_email(email)
+        normalized = _normalize_identity_email(email)
     except ValueError as exc:
         raise ForbiddenError(NOT_ALLOWED_MESSAGE, code=NOT_ALLOWED_CODE) from exc
     if not pilot_email_is_listed(session, normalized):
