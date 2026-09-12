@@ -76,7 +76,8 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 | [CAR-69](https://linear.app/career-forge-v2/issue/CAR-69) | Sign out + JWT jti revocation | [S] | **Done** — PR #50 · [ADR-006](./decisions/ADR-006-sign-out-jti-revocation.md) |
 | [CAR-100](https://linear.app/career-forge-v2/issue/CAR-100) | Pilot enter without OTP — exclusive `billing_pilot_emails` | [P] | **Done** — PR #83 · `IDENTITY_EMAIL_OTP=false` freeze |
 | [CAR-101](https://linear.app/career-forge-v2/issue/CAR-101) | Epic: Borderless password login — CF stays IdP | — | **Backlog** — grill 2026-09-11 · [ADR-008](./decisions/ADR-008-borderless-password-credential-check.md) |
-| [CAR-102](https://linear.app/career-forge-v2/issue/CAR-102) | ADR-008 + `IDENTITY_METHOD` on identity-mode | [B] | **In progress** — do not mark epic Done |
+| [CAR-102](https://linear.app/career-forge-v2/issue/CAR-102) | ADR-008 + `IDENTITY_METHOD` on identity-mode | [B] | **On epic branch** — `CAR-101-borderless-password-idp` |
+| [CAR-103](https://linear.app/career-forge-v2/issue/CAR-103) | `users.borderless_user_id` column | [P] | **In progress** |
 
 **Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
 
