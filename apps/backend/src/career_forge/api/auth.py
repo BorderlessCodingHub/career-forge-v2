@@ -9,6 +9,10 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from career_forge.identity_method import (
+    email_otp_required_for_legacy_clients,
+    raise_if_learner_otp_gone,
+)
 from career_forge.auth.jwt_tokens import ANON_PROVIDER
 from career_forge.auth.providers import get_auth_provider
 from career_forge.auth.token_revocation import revoke_token
@@ -24,7 +28,10 @@ from career_forge.schemas.otp import (
     OtpVerifyBody,
     OtpVerifyResponse,
     PilotEnterBody,
+    SigninBody,
+    SigninResponse,
 )
+from career_forge.services.borderless_signin import signin
 from career_forge.services.otp import request_otp, verify_otp
 from career_forge.services.pilot_enter import enter_pilot
 
@@ -84,8 +91,30 @@ def mint_anonymous_token(
 
 @router.get("/identity-mode", response_model=IdentityModeResponse)
 def identity_mode() -> IdentityModeResponse:
-    """Public: whether learner entry requires OTP (CAR-100)."""
-    return IdentityModeResponse(email_otp_required=settings.identity_email_otp)
+    """Public: learner entry method (CAR-100 / CAR-102)."""
+    method = settings.resolved_identity_method()
+    return IdentityModeResponse(
+        email_otp_required=email_otp_required_for_legacy_clients(method),
+        method=method,
+        signup_url=settings.borderless_signup_url.strip(),
+        forgot_password_url=settings.borderless_forgot_password_url.strip(),
+    )
+
+
+@router.post("/signin", response_model=SigninResponse)
+def borderless_password_signin(
+    body: SigninBody,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> SigninResponse:
+    """Check Borderless credentials server-side and mint a Career Forge JWT."""
+    result = signin(
+        db,
+        email=body.email,
+        password=body.password,
+        client_ip=_client_ip(request),
+    )
+    return SigninResponse(**result)
 
 
 def _resolve_enter_external_id(request: Request, body: PilotEnterBody) -> str:
@@ -168,6 +197,7 @@ def otp_verify(
     db: Session = Depends(get_db),
 ) -> OtpVerifyResponse:
     """Verify OTP → promote anon or 409 conflict payload for chooser."""
+    raise_if_learner_otp_gone(settings.resolved_identity_method())
     external_id = _resolve_verify_external_id(request, body)
     result = verify_otp(
         db,

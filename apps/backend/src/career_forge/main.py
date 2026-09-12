@@ -10,6 +10,7 @@ from career_forge.api.router import api_router
 from career_forge.auth.middleware import BearerAuthMiddleware
 from career_forge.config import assert_production_jwt_secret, settings
 from career_forge.errors import (
+    BorderlessRateLimitedError,
     DomainError,
     EmailOwnedConflictError,
     ForbiddenError,
@@ -28,6 +29,13 @@ async def lifespan(_app: FastAPI):
 
 async def _domain_error_handler(_request: Request, exc: DomainError) -> JSONResponse:
     """Map transport-agnostic domain errors to HTTP, preserving status codes."""
+    if isinstance(exc, BorderlessRateLimitedError):
+        headers = {"Retry-After": exc.retry_after} if exc.retry_after else None
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": str(exc)},
+            headers=headers,
+        )
     if isinstance(exc, QuotaExhaustedError):
         return JSONResponse(
             status_code=exc.status_code,

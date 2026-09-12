@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, String, func
+from sqlalchemy import Boolean, DateTime, Index, String, func, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -10,6 +10,14 @@ from career_forge.db.base import Base
 
 class User(Base):
     __tablename__ = "users"
+    __table_args__ = (
+        Index(
+            "uq_users_borderless_user_id",
+            "borderless_user_id",
+            unique=True,
+            postgresql_where=text("borderless_user_id IS NOT NULL"),
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
@@ -19,6 +27,9 @@ class User(Base):
     )
     display_name: Mapped[str] = mapped_column(String(120), nullable=False)
     email: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
+    borderless_user_id: Mapped[str | None] = mapped_column(
+        String(255), nullable=True
+    )
     membership_label: Mapped[str] = mapped_column(
         String(16), nullable=False, default="external", server_default="external"
     )

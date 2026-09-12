@@ -27,6 +27,7 @@ _PUBLIC_EXACT = frozenset(
         "/auth/otp/verify",
         "/auth/identity-mode",
         "/auth/pilot/enter",
+        "/auth/signin",
         "/billing/stripe/webhook",
         "/operator/auth/otp/request",
         "/operator/auth/otp/verify",

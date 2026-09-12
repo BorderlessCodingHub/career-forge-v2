@@ -6,7 +6,7 @@ import re
 
 from pydantic import BaseModel, Field, field_validator
 
-from career_forge.schemas.otp import _normalize_otp_email
+from career_forge.schemas.otp import _normalize_identity_email
 
 _OTP_CODE_RE = re.compile(r"^\d{6}$")
 
@@ -17,7 +17,7 @@ class OperatorOtpRequestBody(BaseModel):
     @field_validator("email")
     @classmethod
     def normalize_email(cls, value: str) -> str:
-        return _normalize_otp_email(value)
+        return _normalize_identity_email(value)
 
 
 class OperatorOtpRequestResponse(BaseModel):
@@ -32,7 +32,7 @@ class OperatorOtpVerifyBody(BaseModel):
     @field_validator("email")
     @classmethod
     def normalize_email(cls, value: str) -> str:
-        return _normalize_otp_email(value)
+        return _normalize_identity_email(value)
 
     @field_validator("code")
     @classmethod

@@ -29,6 +29,7 @@ import type {
   OtpEmailOwnedConflict,
   OtpRequestResponse,
   OtpVerifyResponse,
+  SigninResponse,
   ResumeConsumeResponse,
   ResumeEmailResponse,
   RoadmapResponse,
@@ -558,6 +559,36 @@ export async function getIdentityMode(): Promise<IdentityModeResponse> {
     throw await readApiError(res);
   }
   return res.json() as Promise<IdentityModeResponse>;
+}
+
+const SIGNIN_COPY: Record<number, string> = {
+  401: "Invalid email or password",
+  429: "Too many sign-in attempts. Try again later.",
+  503: "Sign-in is temporarily unavailable. Try again in a moment.",
+};
+
+function signInUserMessage(status: number): string {
+  if (SIGNIN_COPY[status]) return SIGNIN_COPY[status];
+  if (status === 403 || status === 409) return SIGNIN_COPY[401];
+  return SIGNIN_COPY[503];
+}
+
+/** Public: Borderless password check via Career Forge (CAR-106). CF JWT only. */
+export async function signInWithPassword(
+  email: string,
+  password: string,
+): Promise<SigninResponse> {
+  const res = await fetch(`${backendUrl}/auth/signin`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) {
+    throw new Error(signInUserMessage(res.status));
+  }
+  const data = (await res.json()) as SigninResponse;
+  setSessionFromOtp(data.access_token, data.external_id);
+  return data;
 }
 
 /** Product-loop session check — false when freeze list rejects the JWT. */

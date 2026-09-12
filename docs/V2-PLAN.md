@@ -3,7 +3,7 @@
 > Borderless · labs.borderlesscoding.com/career-forge  
 > Executor: Pedro Alano  
 > Prazo estimado: 4–5 semanas ·  
-> **Atualizado:** 2026-08-24 — F3c Operator console shipped after identity/paywall (CAR-75…80) · prior 2026-08-22 ADR-005 identity gate at product entry · 2026-08-20 F3b auth pivot · 2026-08-13 CAR-35 grill
+> **Atualizado:** 2026-09-12 — CAR-102 `IDENTITY_METHOD` + ADR-008 (Borderless password = credential check) · prior 2026-08-24 F3c Operator console · 2026-08-22 ADR-005 · 2026-08-20 F3b auth pivot
 
 ---
 
@@ -21,7 +21,7 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 
 | # | Decisão |
 |---|--------|
-| 1 | Auth = **Career Forge IdP** — passwordless **email OTP**. Borderless API = **membership soft label** only (`base\|psp\|external`). **Amend 2026-08-22:** identity gate at **product entry** (server-side Email identity); no anonymous diagnosis/forge; unpaid `external` Paywall **before diagnosis** ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) · [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)). **Amend 2026-07-30:** scaffold (`AuthProvider` + Bearer JWT) ships before F3 per [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md). **Amend 2026-08-20:** abandons Borderless JWT **issuer**; magic **link** still fora; OTP codes **in**. Epic [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) · [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44)…[CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) · follow-on [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57). |
+| 1 | Auth = **Career Forge IdP**. Default learner entry = passwordless **email OTP**. Borderless API = **membership soft label** (`base\|psp\|external`) **and**, when `IDENTITY_METHOD=borderless_password`, **server-side password credential check** — CF still mints the JWT ([ADR-008](./decisions/ADR-008-borderless-password-credential-check.md) · [CAR-101](https://linear.app/career-forge-v2/issue/CAR-101) · [CAR-102](https://linear.app/career-forge-v2/issue/CAR-102)). **Amend 2026-08-22:** identity gate at **product entry** (server-side Email identity); no anonymous diagnosis/forge; unpaid `external` Paywall **before diagnosis** ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) · [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)). **Amend 2026-07-30:** scaffold (`AuthProvider` + Bearer JWT) ships before F3 per [ADR-003](./decisions/ADR-003-forge-recovery-auth-scaffold.md). **Amend 2026-08-20:** abandons Borderless JWT **issuer**; magic **link** still fora; OTP codes **in**. Epic [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) · [CAR-44](https://linear.app/career-forge-v2/issue/CAR-44)…[CAR-47](https://linear.app/career-forge-v2/issue/CAR-47) · follow-on [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57). |
 | 2 | Hard stop API: **R$500/mês** (pool global). **R$700** = teto de *aprovação* do gate F1 (não o kill-switch). |
 | 3 | Throttle: **pool global R$500** + **cap por usuário** — F3.2 lock: **`FORGE_CAP_PER_USER_MONTH=2`**; kill-switch P95 **`COST_P95_BRL_PER_RUN=1.3639`** (F2 re-cost). |
 | 4 | Funil único (4 goals); barra de passagem por **evidência CTRR**, não por anos de XP. |

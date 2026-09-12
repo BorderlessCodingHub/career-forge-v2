@@ -12,7 +12,7 @@ _DEMO_EMAIL_SUFFIX = "@demo.careerforge.local"
 _OTP_CODE_RE = re.compile(r"^\d{6}$")
 
 
-def _normalize_otp_email(value: str) -> str:
+def _normalize_identity_email(value: str) -> str:
     cleaned = value.strip().lower()
     if not _EMAIL_RE.match(cleaned):
         raise ValueError("invalid email address")
@@ -27,7 +27,7 @@ class OtpRequestBody(BaseModel):
     @field_validator("email")
     @classmethod
     def normalize_email(cls, value: str) -> str:
-        return _normalize_otp_email(value)
+        return _normalize_identity_email(value)
 
 
 class OtpRequestResponse(BaseModel):
@@ -44,7 +44,7 @@ class OtpVerifyBody(BaseModel):
     @field_validator("email")
     @classmethod
     def normalize_email(cls, value: str) -> str:
-        return _normalize_otp_email(value)
+        return _normalize_identity_email(value)
 
     @field_validator("code")
     @classmethod
@@ -64,8 +64,29 @@ class OtpVerifyResponse(BaseModel):
     expires_in: int
 
 
+class SigninBody(BaseModel):
+    email: str = Field(min_length=3, max_length=255)
+    password: str = Field(min_length=1, max_length=1024, repr=False)
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        return _normalize_identity_email(value)
+
+
+class SigninResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    external_id: str
+    provider: Literal["email"] = "email"
+    expires_in: int
+
+
 class IdentityModeResponse(BaseModel):
     email_otp_required: bool
+    method: Literal["email_otp", "pilot_enter", "borderless_password"]
+    signup_url: str = ""
+    forgot_password_url: str = ""
 
 
 class PilotEnterBody(BaseModel):

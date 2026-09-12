@@ -49,13 +49,40 @@ def test_main_imports_without_preloading_cost_guard() -> None:
 def test_identity_mode_default_requires_otp(raw_client: TestClient) -> None:
     res = raw_client.get("/auth/identity-mode")
     assert res.status_code == 200, res.text
-    assert res.json() == {"email_otp_required": True}
+    assert res.json()["email_otp_required"] is True
+    assert res.json()["method"] == "email_otp"
 
 
 def test_pilot_enter_404_when_otp_required(raw_client: TestClient) -> None:
     _list_pilot("listed@example.com")
     res = raw_client.post("/auth/pilot/enter", json={"email": "listed@example.com"})
     assert res.status_code == 404, res.text
+
+
+def test_pilot_enter_410_when_method_is_borderless_password(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "borderless_password")
+    monkeypatch.setattr(settings, "identity_email_otp", False)
+    _list_pilot("listed@example.com")
+    res = raw_client.post("/auth/pilot/enter", json={"email": "listed@example.com"})
+    assert res.status_code == 410, res.text
+
+
+def test_pilot_enter_when_identity_method_overrides_otp_true(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "pilot_enter")
+    monkeypatch.setattr(settings, "identity_email_otp", True)
+    _list_pilot("method-wins@example.com")
+    res = raw_client.post(
+        "/auth/pilot/enter",
+        json={"email": "method-wins@example.com", "external_id": "pilot-method"},
+    )
+    assert res.status_code == 200, res.text
+    assert res.json()["external_id"] == "pilot-method"
 
 
 def test_pilot_enter_creates_user_when_listed(

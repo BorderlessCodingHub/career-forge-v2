@@ -7,6 +7,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from career_forge.identity_method import PILOT_ENTER, raise_if_learner_otp_gone
 from career_forge.config import settings
 from career_forge.db.models.user import User
 from career_forge.db.repositories.user import ensure_user, get_by_external_id
@@ -16,7 +17,7 @@ from career_forge.errors import (
     ForbiddenError,
     NotFoundError,
 )
-from career_forge.schemas.otp import _DEMO_EMAIL_SUFFIX, _normalize_otp_email
+from career_forge.schemas.otp import _DEMO_EMAIL_SUFFIX, _normalize_identity_email
 from career_forge.services.billing_pilot_emails import pilot_email_is_listed
 from career_forge.services.membership import MembershipClient, apply_membership_label
 from career_forge.services.otp import OtpPromoteResult, _check_rate_limit, _token_payload
@@ -62,14 +63,16 @@ def enter_pilot(
     membership: MembershipClient | None = None,
 ) -> OtpPromoteResult:
     """Mint ``provider=email`` when the address is on ``billing_pilot_emails``."""
-    if settings.identity_email_otp:
+    method = settings.resolved_identity_method()
+    raise_if_learner_otp_gone(method)
+    if method != PILOT_ENTER:
         raise NotFoundError("not found")
 
     rate_key = email.strip().lower()[:255]
     _check_rate_limit(email=rate_key, client_ip=client_ip, key_prefix="pilot:")
 
     try:
-        normalized = _normalize_otp_email(email)
+        normalized = _normalize_identity_email(email)
     except ValueError as exc:
         raise ForbiddenError(NOT_ALLOWED_MESSAGE, code=NOT_ALLOWED_CODE) from exc
     if not pilot_email_is_listed(session, normalized):

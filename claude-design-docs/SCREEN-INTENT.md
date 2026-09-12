@@ -86,6 +86,21 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
+## 0e. Product identity overlay — MUST match (CAR-106)
+
+| Constraint | Detail |
+|------------|--------|
+| Surface | `ProductEntryGate` overlay — **no** `/sign-in` route; Welcome public |
+| Password layout | Email, Password, Sign in, Forgot, Don’t have an account? Sign up. CF tokens. No GitHub/Google. No EN/PT radio. English |
+| Chrome | Product topbar (same chrome as `/roadmap` artifact bar): `BrandLockup` once + Back to Welcome → `/welcome`. Logo not in the card. Backdrop = Welcome hero (`bg-slate-950` + indigo dots + soft blobs). Shared by OTP/pilot and password |
+| Forgot | `forgot_password_url` from identity-mode, new tab; hide if empty |
+| Sign up | Modal (does not navigate immediately); primary opens Borderless signup `_blank`; secondary closes modal |
+| API | Browser calls CF `POST /auth/signin` only |
+
+**Can evolve:** Labs ops sets `IDENTITY_METHOD=borderless_password` ([DEPLOY-LABS-MANUAL §2.5](../docs/DEPLOY-LABS-MANUAL.md) · CAR-107). Repo default stays empty.
+
+---
+
 ## 1. Goal Picker — MUST match
 
 | Constraint | Detail |

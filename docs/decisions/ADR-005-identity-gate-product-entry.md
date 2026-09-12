@@ -4,7 +4,7 @@ The product loop requires **Email identity** before any step. Unpaid `external` 
 
 | Field | Value |
 |-------|-------|
-| **Status** | **Accepted** — grill 2026-08-22 (Founder Engineer) |
+| **Status** | **Accepted** — grill 2026-08-22 (Founder Engineer) · **Amend 2026-09-12:** password entry = Borderless credential check, CF still IdP ([ADR-008](./ADR-008-borderless-password-credential-check.md)) |
 | **Date** | 2026-08-22 |
 | **Deciders** | Pedro Alano |
 | **Linear (v2)** | [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) · project F3b — Email OTP auth + membership |
@@ -63,6 +63,10 @@ While Resend cannot deliver to arbitrary inboxes (`onboarding@resend.dev`), Labs
 | Restore | `IDENTITY_EMAIL_OTP=true` (code default) restores this ADR's OTP + billing split. OTP implementation is not deleted. |
 
 Impersonation (typing a listed email) is accepted for the closed cohort.
+
+### 5. Learner entry method (CAR-102 / ADR-008)
+
+`IDENTITY_METHOD` (`email_otp` \| `pilot_enter` \| `borderless_password`) is the explicit switch. Empty → derive from `IDENTITY_EMAIL_OTP` (`true` → OTP, `false` → pilot enter). **`IDENTITY_EMAIL_OTP=false` is never password mode.** Borderless password does not replace Career Forge as JWT issuer — see [ADR-008](./ADR-008-borderless-password-credential-check.md).
 
 ---
 

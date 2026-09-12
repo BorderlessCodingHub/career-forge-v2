@@ -17,7 +17,7 @@ Marketing: /welcome (CAR-56 Premium B, CAR-92 honesty) — CTA Start diagnosis �
 Operator (separate identity): /operator → Operator OTP → Access | Content desk rooms. Desks outside the seat grant are hidden; no learner or Mentor chrome.
 ```
 
-**Mental breadcrumb:** (Welcome) → Goal → Diagnosis → Review diagnosis → Forge roadmap → Explore roadmap · Recovery: Continue / forges / share / resume / re-forge from profile
+**Mental breadcrumb:** (Welcome) → Identity overlay (OTP / pilot / Borderless password) → Goal → Diagnosis → Review diagnosis → Forge roadmap → Explore roadmap · Recovery: Continue / forges / share / resume / re-forge from profile
 
 5-min demo: [CHECKPOINT](../docs/CHECKPOINT.md#demo-script-5-min)
 
@@ -58,6 +58,18 @@ Operator session gates the route; learner sessions never open it.
 | **Content room** | Searchable 40-ID catalog inventory; inline title/URL/published annotations; read-only git body status; plus live Reference host proof queue: pending host groups show one recent sample + distinct URL count, sandbox preview + explicit confirmation gates Liberate, and liberated hosts can be revoked |
 | **Route** | `/operator` under `basePath=/career-forge` · `data-screen="operator-console"` |
 | **Forbidden** | Learner product chrome, Mentor chrome, Welcome scenery, third Cost desk, role labels in seat list, impersonation |
+
+---
+
+### 0e. Product identity overlay (CAR-57 / CAR-106)
+
+`ProductEntryGate` wraps product routes. **No** `/sign-in` route. Welcome stays public.
+
+| | |
+|---|---|
+| **OTP / pilot** | Email code or pilot-list enter; same product topbar + Welcome-hero backdrop as password |
+| **Password** | When `GET /auth/identity-mode` `method=borderless_password`: email + password card; `POST /auth/signin` on Career Forge only; CF JWT via `adoptSession`. Top bar = product chrome (`BrandLockup` + Back to Welcome) over Welcome-hero backdrop. Forgot/Sign up URLs from identity-mode (empty hides). Sign up opens a modal, then Borderless `/sign-up` in a new tab |
+| **Out** | Browser POST to `api.borderlesscoding.com`; OAuth buttons; EN/PT radio; Welcome login |
 
 ---
 

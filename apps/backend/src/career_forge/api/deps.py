@@ -7,6 +7,7 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
+from career_forge.identity_method import PILOT_ENTER
 from career_forge.auth.jwt_tokens import EMAIL_PROVIDER
 from career_forge.auth.principal import AuthPrincipal
 from career_forge.config import settings
@@ -42,7 +43,7 @@ def require_email_provider(
                 "message": "Email identity required for this action",
             },
         )
-    if settings.identity_email_otp:
+    if settings.resolved_identity_method() != PILOT_ENTER:
         return principal
     user = get_by_external_id(db, principal.external_id)
     if user is None or not pilot_email_is_listed(db, user.email):

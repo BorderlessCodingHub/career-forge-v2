@@ -3,7 +3,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
-import { BrandLockup } from "@/components/ui/BrandLockup";
+import { IdentityGateShell } from "@/components/auth/IdentityGateShell";
+import { PasswordIdentityGate } from "@/components/auth/PasswordIdentityGate";
 import {
   OtpEmailOwnedError,
   enterPilot,
@@ -11,7 +12,7 @@ import {
   verifyOtp,
 } from "@/lib/api-client";
 import { adoptSession } from "@/lib/user-session";
-import type { OtpEmailOwnedConflict } from "@/types/contracts";
+import type { IdentityMethod, OtpEmailOwnedConflict } from "@/types/contracts";
 
 type OtpPhase =
   | { status: "idle" }
@@ -26,16 +27,40 @@ type OtpPhase =
 type IdentityGateProps = {
   title?: string;
   description?: string;
+  method?: IdentityMethod;
   emailOtpRequired?: boolean;
+  forgotPasswordUrl?: string;
+  signupUrl?: string;
   onVerified: () => void;
 };
 
 export function IdentityGate({
   title,
   description,
+  method,
   emailOtpRequired = true,
+  forgotPasswordUrl = "",
+  signupUrl = "",
   onVerified,
 }: IdentityGateProps) {
+  const resolvedMethod =
+    method ?? (emailOtpRequired ? "email_otp" : "pilot_enter");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [otpPhase, setOtpPhase] = useState<OtpPhase>({ status: "idle" });
+  const [otpBusy, setOtpBusy] = useState(false);
+  const [otpError, setOtpError] = useState<string | null>(null);
+
+  if (resolvedMethod === "borderless_password") {
+    return (
+      <PasswordIdentityGate
+        forgotPasswordUrl={forgotPasswordUrl}
+        signupUrl={signupUrl}
+        onVerified={onVerified}
+      />
+    );
+  }
+
   const resolvedTitle =
     title ?? (emailOtpRequired ? "Sign in with email" : "Enter your pilot email");
   const resolvedDescription =
@@ -43,12 +68,6 @@ export function IdentityGate({
     (emailOtpRequired
       ? "Enter your email to continue. We send a 6-digit code (check backend logs in local dev)."
       : "Enter the email on the pilot list to continue.");
-
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [otpPhase, setOtpPhase] = useState<OtpPhase>({ status: "idle" });
-  const [otpBusy, setOtpBusy] = useState(false);
-  const [otpError, setOtpError] = useState<string | null>(null);
 
   async function handleContinue() {
     const trimmed = email.trim();
@@ -122,12 +141,8 @@ export function IdentityGate({
   }
 
   return (
-    <main
-      className="min-h-screen grid-dots px-4 py-10"
-      data-testid="identity-gate"
-    >
+    <IdentityGateShell>
       <div className="mx-auto max-w-md rounded-md border border-border bg-surface px-6 py-8">
-        <BrandLockup className="mb-6" />
         <h1 className="text-2xl font-semibold text-text-primary">{resolvedTitle}</h1>
         <p className="mt-2 text-sm text-text-secondary">{resolvedDescription}</p>
 
@@ -235,6 +250,6 @@ export function IdentityGate({
           </p>
         ) : null}
       </div>
-    </main>
+    </IdentityGateShell>
   );
 }
