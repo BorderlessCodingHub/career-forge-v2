@@ -58,7 +58,7 @@ def test_pilot_enter_404_when_otp_required(raw_client: TestClient) -> None:
     assert res.status_code == 404, res.text
 
 
-def test_pilot_enter_404_when_method_is_borderless_password(
+def test_pilot_enter_410_when_method_is_borderless_password(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -66,7 +66,7 @@ def test_pilot_enter_404_when_method_is_borderless_password(
     monkeypatch.setattr(settings, "identity_email_otp", False)
     _list_pilot("listed@example.com")
     res = raw_client.post("/auth/pilot/enter", json={"email": "listed@example.com"})
-    assert res.status_code == 404, res.text
+    assert res.status_code == 410, res.text
 
 
 def test_pilot_enter_when_identity_method_overrides_otp_true(

@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Literal
 
+from career_forge.errors import GoneError
+
 IdentityMethod = Literal["email_otp", "pilot_enter", "borderless_password"]
 
 EMAIL_OTP: IdentityMethod = "email_otp"
@@ -36,10 +38,19 @@ def resolve_identity_method(
     return EMAIL_OTP if identity_email_otp else PILOT_ENTER
 
 
+LEARNER_OTP_GONE_MESSAGE = "Learner OTP is gone — use password signin"
+
+
+def raise_if_learner_otp_gone(method: IdentityMethod) -> None:
+    """CAR-105 — learner OTP/pilot are unavailable in Borderless password mode."""
+    if method == BORDERLESS_PASSWORD:
+        raise GoneError(LEARNER_OTP_GONE_MESSAGE)
+
+
 def email_otp_required_for_legacy_clients(method: IdentityMethod) -> bool:
     """CAR-100 ``email_otp_required``: OTP UI unless pilot-enter freeze.
 
-    ``borderless_password`` stays true so old IdentityGate does not fall
-    through to ``pilot/enter`` before CAR-105/106.
+    ``borderless_password`` stays true so old IdentityGate shows OTP (now 410)
+    instead of falling through to ``pilot/enter`` until CAR-106.
     """
     return method != PILOT_ENTER
