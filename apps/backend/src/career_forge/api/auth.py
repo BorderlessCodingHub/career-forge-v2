@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from career_forge.identity_method import email_otp_required_for_legacy_clients
 from career_forge.auth.jwt_tokens import ANON_PROVIDER
 from career_forge.auth.providers import get_auth_provider
 from career_forge.auth.token_revocation import revoke_token
@@ -84,8 +85,12 @@ def mint_anonymous_token(
 
 @router.get("/identity-mode", response_model=IdentityModeResponse)
 def identity_mode() -> IdentityModeResponse:
-    """Public: whether learner entry requires OTP (CAR-100)."""
-    return IdentityModeResponse(email_otp_required=settings.identity_email_otp)
+    """Public: learner entry method (CAR-100 / CAR-102)."""
+    method = settings.resolved_identity_method()
+    return IdentityModeResponse(
+        email_otp_required=email_otp_required_for_legacy_clients(method),
+        method=method,
+    )
 
 
 def _resolve_enter_external_id(request: Request, body: PilotEnterBody) -> str:

@@ -66,6 +66,7 @@ class OtpVerifyResponse(BaseModel):
 
 class IdentityModeResponse(BaseModel):
     email_otp_required: bool
+    method: Literal["email_otp", "pilot_enter", "borderless_password"]
 
 
 class PilotEnterBody(BaseModel):

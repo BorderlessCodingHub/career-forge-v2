@@ -170,8 +170,11 @@ export type ResumeEmailResponse = {
   path: string;
 };
 
+export type IdentityMethod = "email_otp" | "pilot_enter" | "borderless_password";
+
 export type IdentityModeResponse = {
   email_otp_required: boolean;
+  method: IdentityMethod;
 };
 
 export type OtpRequestResponse = {

@@ -12,7 +12,7 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Prerequisite:** F2 golden cases + Yuri GO (#1/#2/#3) — **met 2026-08-08**.  
 **F3a humans after:** hard caps (P95 bump) + rebrand + marketing `/welcome`. **Product loop** requires Email identity ([ADR-005](./decisions/ADR-005-identity-gate-product-entry.md) / [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57)) — not anon scaffold.  
-**F3b:** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) epic — email OTP IdP + Borderless membership (grill 2026-08-20; **not** issuer JWT). Gate **timing** + no free forge = [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57).
+**F3b:** [CAR-28](https://linear.app/career-forge-v2/issue/CAR-28) epic — email OTP IdP + Borderless membership (grill 2026-08-20; **not** issuer JWT). Gate **timing** + no free forge = [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57). Follow-on [CAR-101](https://linear.app/career-forge-v2/issue/CAR-101): Borderless **password credential check**, CF still issuer ([ADR-008](./decisions/ADR-008-borderless-password-credential-check.md)).
 
 Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026-08-13: `/welcome` EN · pt-BR → CAR-37 · motion → CAR-38. Amend 2026-08-14: `/welcome` copy → CAR-39. Amend 2026-08-20: F3b OTP pivot.
 
@@ -75,6 +75,8 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 | [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) | Identity gate at product entry + paywall before diagnosis | [S] | **Done** — PR #49 |
 | [CAR-69](https://linear.app/career-forge-v2/issue/CAR-69) | Sign out + JWT jti revocation | [S] | **Done** — PR #50 · [ADR-006](./decisions/ADR-006-sign-out-jti-revocation.md) |
 | [CAR-100](https://linear.app/career-forge-v2/issue/CAR-100) | Pilot enter without OTP — exclusive `billing_pilot_emails` | [P] | **Done** — PR #83 · `IDENTITY_EMAIL_OTP=false` freeze |
+| [CAR-101](https://linear.app/career-forge-v2/issue/CAR-101) | Epic: Borderless password login — CF stays IdP | — | **Backlog** — grill 2026-09-11 · [ADR-008](./decisions/ADR-008-borderless-password-credential-check.md) |
+| [CAR-102](https://linear.app/career-forge-v2/issue/CAR-102) | ADR-008 + `IDENTITY_METHOD` on identity-mode | [B] | **In progress** — do not mark epic Done |
 
 **Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
 

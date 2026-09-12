@@ -7,6 +7,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from career_forge.identity_method import PILOT_ENTER
 from career_forge.config import settings
 from career_forge.db.models.user import User
 from career_forge.db.repositories.user import ensure_user, get_by_external_id
@@ -62,7 +63,7 @@ def enter_pilot(
     membership: MembershipClient | None = None,
 ) -> OtpPromoteResult:
     """Mint ``provider=email`` when the address is on ``billing_pilot_emails``."""
-    if settings.identity_email_otp:
+    if settings.resolved_identity_method() != PILOT_ENTER:
         raise NotFoundError("not found")
 
     rate_key = email.strip().lower()[:255]

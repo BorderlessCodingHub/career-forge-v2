@@ -52,7 +52,7 @@ SQL.
 Stripe is **off** until all three `STRIPE_*` values are set. Database pilot grants
 still work.
 
-When `IDENTITY_EMAIL_OTP=false` (CAR-100 freeze), the same table is also the
+When `IDENTITY_EMAIL_OTP=false` (CAR-100 freeze) **and** `IDENTITY_METHOD` is empty (ADR-008), the same table is also the
 **only product-loop door**: `require_email_provider` rejects sessions whose
 `users.email` is not listed. Restore `true` to return to OTP + billing-as-grant.
 

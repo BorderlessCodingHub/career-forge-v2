@@ -57,6 +57,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     settings.stripe_price_id = ""
     settings.operator_allowlist = ""
     settings.identity_email_otp = True
+    settings.identity_method = ""
     reset_otp_rate_limiter()
     reset_operator_otp_rate_limiter()
     yield

@@ -1,4 +1,10 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from career_forge.identity_method import (
+    IdentityMethod,
+    resolve_identity_method,
+)
 
 # Source-controlled local default — never valid when ENV=production (CAR-83).
 DEV_JWT_SECRET = "career-forge-dev-jwt-secret-change-me-32b+"
@@ -33,6 +39,8 @@ class Settings(BaseSettings):
     jwt_resume_ttl_days: int = 7
     # CAR-100 — learner OTP at product entry (ADR-005). false = pilot-list enter only.
     identity_email_otp: bool = True
+    # CAR-102 / ADR-008 — empty derives from identity_email_otp (never password).
+    identity_method: str = ""
     # CAR-44 — email OTP (6-digit); mailer=log for local, resend|ses for prod
     otp_ttl_seconds: int = 600
     otp_rate_limit_per_email: int = 5
@@ -64,6 +72,21 @@ class Settings(BaseSettings):
         if self.env.lower() in {"local", "test"}:
             return "/"
         return self.operator_cookie_path
+
+    @field_validator("identity_method")
+    @classmethod
+    def _normalize_identity_method(cls, value: str) -> str:
+        raw = (value or "").strip().lower()
+        if not raw:
+            return ""
+        resolve_identity_method(identity_method=raw, identity_email_otp=True)
+        return raw
+
+    def resolved_identity_method(self) -> IdentityMethod:
+        return resolve_identity_method(
+            identity_method=self.identity_method,
+            identity_email_otp=self.identity_email_otp,
+        )
 
     @property
     def cors_origin_list(self) -> list[str]:
