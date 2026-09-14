@@ -109,7 +109,7 @@ export function Footer() {
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono">
           <div>
-            © 2026 Career Forge Inc. All rights reserved. Master RAG, Fine-Tuning, Evals & OpsLLM.
+            © 2026 Borderless Coding LLC. All rights reserved. Master RAG, Fine-Tuning, Evals & OpsLLM.
           </div>
 
           <div className="flex items-center gap-4">
