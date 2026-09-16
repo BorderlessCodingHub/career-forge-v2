@@ -82,8 +82,9 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 | [CAR-105](https://linear.app/career-forge-v2/issue/CAR-105) | 410 learner OTP/pilot in password mode | [S] | **Done** — PR #85 |
 | [CAR-106](https://linear.app/career-forge-v2/issue/CAR-106) | IdentityGate email+password | [S] | **Done** — PR #85 |
 | [CAR-107](https://linear.app/career-forge-v2/issue/CAR-107) | Env + Labs cutover (docs; repo default empty) | [S] | **Done** — PR #85 · flip Labs via DEPLOY-LABS-MANUAL §2.5 |
+| [CAR-108](https://linear.app/career-forge-v2/issue/CAR-108) | Password mode: Borderless sign-in entitles | [P] | **Done** — PR #87 · drop members HTTP; ADR-008 amend |
 
-**Ask Yuri:** `GET …/members?email=` → `{ active, program }` + staging token — **not** issuer JWT/JWKS.
+**Ask Yuri:** password mode does **not** need `GET members?email=` (CAR-108). OTP / `pilot_enter` still use membership HTTP when those modes are on.
 
 ### F3c — Operator console — ✅ Completed
 
