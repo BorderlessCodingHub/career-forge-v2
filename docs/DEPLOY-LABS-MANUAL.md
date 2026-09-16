@@ -194,10 +194,9 @@ Flip Labs to Borderless password **only after** CAR-105 + CAR-106 are on `main`.
 # Wins over IDENTITY_EMAIL_OTP. Recreate backend after change.
 IDENTITY_METHOD=borderless_password
 BORDERLESS_SIGNIN_URL=https://api.borderlesscoding.com/api/auth/signin
-# Membership still required (402 for unpaid external).
-MEMBERSHIP_BACKEND=http
-BORDERLESS_MEMBERS_URL=<existing members URL>
-BORDERLESS_MEMBERS_TOKEN=<existing token>
+# CAR-108 — Borderless account entitles. Members HTTP is unused.
+# BORDERLESS_MEMBERS_* is not a cutover requirement.
+MEMBERSHIP_BACKEND=stub
 BORDERLESS_SIGNUP_URL=https://platform.borderlesscoding.com/sign-up
 BORDERLESS_FORGOT_PASSWORD_URL=https://platform.borderlesscoding.com/forgot-password
 ```

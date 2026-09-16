@@ -60,7 +60,7 @@ import {
   isQuotaExhaustedMessage,
   toUserFacingApiError,
 } from "@/lib/quota";
-import { paywallErrorFromResponse } from "@/lib/paywall";
+import { isPaywallError, paywallErrorFromResponse } from "@/lib/paywall";
 
 export { QUOTA_EXHAUSTED_COPY, isQuotaExhaustedMessage };
 
@@ -194,6 +194,7 @@ async function consumeDiagnosisInterviewStream(
       (raw) => parseDiagnosisStreamEvent(raw as Record<string, unknown>),
     );
   } catch (cause) {
+    if (isPaywallError(cause)) throw cause;
     const message =
       cause instanceof Error ? cause.message : "Network request failed";
     throw new Error(`Cannot reach API ${backendUrl}${path}: ${message}.`);

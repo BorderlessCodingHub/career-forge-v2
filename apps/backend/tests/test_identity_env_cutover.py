@@ -32,6 +32,7 @@ def test_example_env_keeps_identity_method_empty() -> None:
         assert assigned["BORDERLESS_FORGOT_PASSWORD_URL"] == (
             "https://platform.borderlesscoding.com/forgot-password"
         )
+        assert assigned["MEMBERSHIP_BACKEND"] == "stub"
         assert "BORDERLESS_MEMBERS_URL" in assigned
 
 
@@ -40,5 +41,6 @@ def test_deploy_labs_cutover_checklist() -> None:
     assert "IDENTITY_METHOD=borderless_password" in text
     assert "Never treat IDENTITY_EMAIL_OTP=false as password" in text
     assert "BORDERLESS_SIGNIN_URL" in text
-    assert "BORDERLESS_MEMBERS_URL" in text
+    assert "MEMBERSHIP_BACKEND=stub" in text
+    assert "not a cutover requirement" in text
     assert "Do not set BORDERLESS_ACCOUNT_URL" in text

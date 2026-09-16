@@ -64,7 +64,7 @@ def _identity(
     )
 
 
-def test_signin_mints_cf_jwt_discards_borderless_token_and_applies_membership(
+def test_signin_mints_cf_jwt_discards_borderless_token_without_membership_lookup(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
@@ -73,6 +73,7 @@ def test_signin_mints_cf_jwt_discards_borderless_token_and_applies_membership(
     password = "never-log-this-password"
     upstream_token = "never-return-this-borderless-token"
     seen_payloads: list[dict[str, str]] = []
+    membership_lookups: list[str] = []
 
     def fetch(
         url: str,
@@ -108,10 +109,15 @@ def test_signin_mints_cf_jwt_discards_borderless_token_and_applies_membership(
             fetch=fetch,
         )
     )
+
+    class _SpyMembership:
+        def lookup(self, lookup_email: str):
+            membership_lookups.append(lookup_email)
+            raise AssertionError("password sign-in must not call membership HTTP")
+
     monkeypatch.setattr(
-        settings,
-        "membership_stub_allowlist",
-        f"{email}:base",
+        "career_forge.services.membership.get_membership_client",
+        lambda: _SpyMembership(),
     )
 
     with caplog.at_level(logging.DEBUG):
@@ -130,6 +136,7 @@ def test_signin_mints_cf_jwt_discards_borderless_token_and_applies_membership(
     assert upstream_token not in caplog.text
     assert password not in caplog.text
     assert seen_payloads == [{"email": email, "password": password}]
+    assert membership_lookups == []
 
     claims = jwt.decode(body["access_token"], settings.jwt_secret, algorithms=["HS256"])
     assert claims["sub"] == body["external_id"]
@@ -140,8 +147,8 @@ def test_signin_mints_cf_jwt_discards_borderless_token_and_applies_membership(
         assert user is not None
         assert user.borderless_user_id == "borderless-happy-104"
         assert user.display_name == "Ada Lovelace"
-        assert user.membership_label == "base"
-        assert user.membership_entitled is True
+        assert user.membership_label == "external"
+        assert user.membership_entitled is False
 
 
 def test_signin_refuses_unverified_borderless_email(raw_client: TestClient) -> None:

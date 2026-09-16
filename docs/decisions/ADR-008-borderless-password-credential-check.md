@@ -8,8 +8,8 @@ Linear [CAR-102](https://linear.app/career-forge-v2/issue/CAR-102) asked for “
 | **Date** | 2026-09-12 |
 | **Deciders** | Pedro Alano |
 | **Linear (v2)** | Epic [CAR-101](https://linear.app/career-forge-v2/issue/CAR-101) · first slice [CAR-102](https://linear.app/career-forge-v2/issue/CAR-102) |
-| **Amends** | [ADR-003](./ADR-003-forge-recovery-auth-scaffold.md) · [ADR-005](./ADR-005-identity-gate-product-entry.md) — issuer remains Career Forge; learner *entry method* may be Borderless email+password when flagged |
-| **Does not supersede** | Bearer JWT, `jti` / sign-out (ADR-006), membership `GET members?email=`, paywall 402, Operator OTP |
+| **Amends** | [ADR-003](./ADR-003-forge-recovery-auth-scaffold.md) · [ADR-005](./ADR-005-identity-gate-product-entry.md) — issuer remains Career Forge; learner *entry method* may be Borderless email+password when flagged. **Amend 2026-09-16 ([CAR-108](https://linear.app/career-forge-v2/issue/CAR-108)):** in password mode a Borderless platform account **is** Career Forge included; do not call `GET members?email=` after sign-in. |
+| **Does not supersede** | Bearer JWT, `jti` / sign-out (ADR-006), OTP/pilot membership lookup, Operator OTP. Password-mode paywall is `users.borderless_user_id`, not membership HTTP. |
 
 ---
 
@@ -34,7 +34,7 @@ Career Forge **remains the IdP**. Borderless signin is a **server-side credentia
 | Identity | Lookup `users.email`. Reuse `external_id`. New users: CF `user-{uuid}`, never Borderless `user.id` as `sub` (**CAR-103/104**) |
 | `borderless_user_id` | Persist if NULL; mismatch → refuse |
 | `emailVerified: false` | Refuse |
-| Membership | Still `GET members?email=` after login. `external` still 402 |
+| Membership | **OTP / `pilot_enter`:** still `GET members?email=` after login; unpaid `external` still 402. **`borderless_password` (CAR-108):** do **not** call membership HTTP on sign-in; do not persist a fake `base` label. Entitled when `users.borderless_user_id` is set (plus demo/cost-guard exclude). Pilot list, Stripe, `billing_entitled`, and BASE/PSP label do **not** bypass the password-mode gate. Old OTP/pilot JWTs without `borderless_user_id` → 402 until `POST /auth/signin`. Paid Career Forge plan is a later phase. |
 | Profile | Copy `name` → placeholder `display_name` only. Ignore `username` / `careerStage` |
 | Borderless down | Timeout 2–3s, 1 retry, then 503. No OTP fallback |
 | 401 | Generic “Invalid email or password” |
@@ -57,8 +57,9 @@ Do not set `IDENTITY_METHOD=borderless_password` in Labs until CAR-105 + CAR-106
 
 ## Consequences
 
-- Proxy + password UI + 410 OTP ship in later CAR-101 children.
+- Proxy + password UI + 410 OTP shipped in CAR-101 children.
 - Labs freeze (`IDENTITY_EMAIL_OTP=false`, empty `IDENTITY_METHOD`) is unchanged: `pilot_enter`.
+- **CAR-108:** password-mode Labs cutover uses `MEMBERSHIP_BACKEND=stub`. `BORDERLESS_MEMBERS_*` is **not** a cutover requirement. Access desk membership may stay stale (`Not entitled`) this slice. Cost caps still apply. No operator deny/ban flag.
 
 ## Related
 

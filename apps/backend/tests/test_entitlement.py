@@ -276,3 +276,135 @@ def test_paywall_error_shape() -> None:
     assert err.code == "paywall"
     assert err.checkout_available is True
     assert str(err) == PAYWALL_MESSAGE
+
+
+def test_password_mode_borderless_user_id_is_entitled() -> None:
+    decision = evaluate_entitlement(
+        user_id="pw-1",
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=False,
+        email="pw@example.com",
+        forge_count=0,
+        identity_method="borderless_password",
+        borderless_user_id="bl-user-1",
+    )
+    assert decision.allowed is True
+    assert decision.reason == "borderless"
+
+
+def test_password_mode_without_borderless_user_id_is_paywalled() -> None:
+    decision = evaluate_entitlement(
+        user_id="pw-stale",
+        membership_label="base",
+        membership_entitled=True,
+        billing_entitled=True,
+        stripe_subscription_status="active",
+        email="stale@example.com",
+        forge_count=0,
+        pilot_email_listed=True,
+        identity_method="borderless_password",
+        borderless_user_id=None,
+    )
+    assert decision.allowed is False
+    assert decision.reason == "paywall"
+
+
+def test_password_mode_still_excludes_demo_ana() -> None:
+    decision = evaluate_entitlement(
+        user_id=DEMO_ANA_EXTERNAL_ID,
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=False,
+        email=None,
+        forge_count=9,
+        run_input={},
+        identity_method="borderless_password",
+        borderless_user_id=None,
+    )
+    assert decision.allowed is True
+    assert decision.reason == "excluded"
+
+
+def test_otp_mode_unpaid_external_stays_paywalled_with_borderless_id() -> None:
+    decision = evaluate_entitlement(
+        user_id="otp-1",
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=False,
+        email="otp@example.com",
+        forge_count=0,
+        identity_method="email_otp",
+        borderless_user_id="bl-user-otp",
+    )
+    assert decision.allowed is False
+    assert decision.reason == "paywall"
+
+
+def test_password_mode_signed_in_user_skips_http_paywall(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "borderless_password")
+    user = "pw-entitled-http"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.email = "pw-entitled@example.com"
+        row.borderless_user_id = "bl-entitled-108"
+        row.membership_label = "external"
+        row.membership_entitled = False
+        session.commit()
+
+    first = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert first.status_code == 202, first.text
+
+
+def test_password_mode_stale_jwt_without_borderless_id_is_paywalled(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "borderless_password")
+    user = "pw-stale-http"
+    email = "pw-stale@example.com"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.email = email
+        row.membership_label = "base"
+        row.membership_entitled = True
+        row.billing_entitled = True
+        row.stripe_subscription_status = "active"
+        session.merge(BillingPilotEmail(email=email))
+        session.commit()
+
+    first = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert first.status_code == 402, first.text
+    assert first.json()["detail"]["code"] == "paywall"
+
+
+def test_password_mode_cost_cap_still_applies(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "borderless_password")
+    user = "pw-cap-http"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.borderless_user_id = "bl-cap-108"
+        row.membership_label = "external"
+        row.membership_entitled = False
+        session.commit()
+
+    store = InMemoryUsageStore()
+    store.increment(current_year_month(), user, forge_runs=2)
+    set_cost_guard(CostGuard(store=store, cfg=settings))
+
+    blocked = raw_client.post(
+        "/forge/runs",
+        json=_diagnosis_payload(user),
+        headers=headers,
+    )
+    assert blocked.status_code == 429, blocked.text
+    assert blocked.json()["detail"]["code"] == "per_user_cap"
