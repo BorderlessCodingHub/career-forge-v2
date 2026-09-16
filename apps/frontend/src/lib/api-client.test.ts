@@ -190,3 +190,54 @@ describe("signInWithPassword", () => {
     );
   });
 });
+
+describe("streamDiagnosisInterviewStart", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    const localStorage = createMemoryStorage();
+    const sessionStorage = createMemoryStorage();
+    vi.stubGlobal("window", { localStorage, sessionStorage });
+    vi.stubGlobal("localStorage", localStorage);
+    vi.stubGlobal("sessionStorage", sessionStorage);
+  });
+
+  it("rethrows PaywallError on HTTP 402 instead of wrapping as cannot-reach", async () => {
+    const learnerToken = `header.${Buffer.from(
+      JSON.stringify({
+        provider: "email",
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      }),
+    ).toString("base64url")}.signature`;
+    localStorage.setItem("career-forge.access-token", learnerToken);
+    localStorage.setItem("career-forge.user-id", "learner-id");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            detail: {
+              code: "paywall",
+              message: "Subscribe to start diagnosis and forge your roadmap",
+              checkout_available: false,
+            },
+          }),
+          {
+            status: 402,
+            statusText: "Payment Required",
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      ),
+    );
+
+    const { streamDiagnosisInterviewStart } = await import("./api-client");
+    const { PaywallError } = await import("./paywall");
+    await expect(
+      streamDiagnosisInterviewStart({
+        goal_id: "rag-engineer",
+        motivation: "I want to build production RAG systems with evals.",
+        years_xp: "0-1",
+      }),
+    ).rejects.toBeInstanceOf(PaywallError);
+  });
+});

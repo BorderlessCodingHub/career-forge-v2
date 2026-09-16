@@ -27,7 +27,6 @@ from career_forge.errors import (
     InvalidBorderlessCredentialsError,
     RateLimitedError,
 )
-from career_forge.services.membership import MembershipClient, apply_membership_label
 
 
 @dataclass(frozen=True)
@@ -218,9 +217,12 @@ def signin(
     email: str,
     password: str,
     client_ip: str,
-    membership: MembershipClient | None = None,
 ) -> SigninTokenPayload:
-    """Check Borderless credentials, bind identity, and mint a CF email JWT."""
+    """Check Borderless credentials, bind identity, and mint a CF email JWT.
+
+    Password mode does not look up membership HTTP (CAR-108). Entitlement is
+    ``users.borderless_user_id`` plus cost-guard exclude.
+    """
     _check_rate_limit(email=email, client_ip=client_ip)
     identity = get_borderless_signin_client().authenticate(email, password)
     if not identity.email_verified:
@@ -241,6 +243,5 @@ def signin(
     user.borderless_user_id = identity.user_id
     if identity.name and (is_new or _is_placeholder_name(user)):
         user.display_name = identity.name
-    apply_membership_label(user, email, membership)
     session.commit()
     return _token_payload(user.external_id)

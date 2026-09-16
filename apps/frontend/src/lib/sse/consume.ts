@@ -1,3 +1,4 @@
+import { paywallErrorFromResponse } from "@/lib/paywall";
 import { parseSseBlock } from "@/lib/sse/parse";
 import {
   QUOTA_EXHAUSTED_COPY,
@@ -36,11 +37,16 @@ export async function consumeFetchEventStream<T>(
 
   if (!response.ok || !response.body) {
     let detail = `${response.status} ${response.statusText}`;
+    let body: { detail?: unknown } = {};
     try {
-      const body = (await response.json()) as { detail?: unknown };
+      body = (await response.json()) as { detail?: unknown };
       detail = detailFromErrorBody(body) ?? detail;
     } catch {
       // ignore parse errors
+    }
+    const paywall = paywallErrorFromResponse(response.status, body);
+    if (paywall) {
+      throw paywall;
     }
     if (isQuotaExhaustedMessage(detail)) {
       throw new Error(QUOTA_EXHAUSTED_COPY);

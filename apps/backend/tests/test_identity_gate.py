@@ -6,6 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from career_forge.auth.providers import get_auth_provider
+from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
 from career_forge.errors import PAYWALL_MESSAGE
@@ -91,6 +92,61 @@ def test_base_member_diagnosis_start_allowed(
         headers=headers,
     )
     assert res.status_code == 200, res.text
+
+
+def test_password_mode_diagnosis_allows_borderless_id(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "borderless_password")
+    user = "diag-pw-ok"
+    headers = _email_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.email = "diag-pw@example.com"
+        row.borderless_user_id = "bl-diag-108"
+        row.membership_label = "external"
+        row.membership_entitled = False
+        session.commit()
+
+    res = raw_client.post(
+        "/diagnosis/interview/start",
+        json={
+            "user_id": user,
+            "goal_id": "rag-engineer",
+            "motivation": "I want to build production RAG systems with evals.",
+            "years_xp": "0-1",
+        },
+        headers=headers,
+    )
+    assert res.status_code == 200, res.text
+
+
+def test_password_mode_diagnosis_paywalls_without_borderless_id(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "borderless_password")
+    user = "diag-pw-stale"
+    headers = _email_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "base"
+        row.membership_entitled = True
+        session.commit()
+
+    res = raw_client.post(
+        "/diagnosis/interview/start",
+        json={
+            "user_id": user,
+            "goal_id": "rag-engineer",
+            "motivation": "I want to build production RAG systems with evals.",
+            "years_xp": "0-1",
+        },
+        headers=headers,
+    )
+    assert res.status_code == 402, res.text
+    assert res.json()["detail"]["code"] == "paywall"
 
 
 def test_otp_verify_without_bearer_uses_external_id(
