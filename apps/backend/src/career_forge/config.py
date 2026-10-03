@@ -74,6 +74,10 @@ class Settings(BaseSettings):
     operator_session_ttl_hours: int = 8
     operator_cookie_name: str = "cf_operator_session"
     operator_cookie_path: str = "/career-forge/operator"
+    # Sentry — empty DSN disables the SDK. DSNs stay in env, not git.
+    sentry_dsn: str = ""
+    sentry_environment: str = ""
+    sentry_release: str = ""
 
     @property
     def operator_cookie_path_resolved(self) -> str:

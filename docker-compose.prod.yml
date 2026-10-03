@@ -63,6 +63,9 @@ services:
       OPERATOR_SESSION_TTL_HOURS: ${OPERATOR_SESSION_TTL_HOURS:-8}
       OPERATOR_COOKIE_NAME: ${OPERATOR_COOKIE_NAME:-cf_operator_session}
       OPERATOR_COOKIE_PATH: ${OPERATOR_COOKIE_PATH:-/career-forge/operator}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-labs}
+      SENTRY_RELEASE: ${BUILD_SHA:-}
     volumes:
       - ./data:/data:ro
       - ./logs:/app/logs
@@ -88,6 +91,10 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
         NEXT_PUBLIC_BUILD_SHA: ${BUILD_SHA:-local}
         NEXT_PUBLIC_BUILD_TIME: ${BUILD_TIME:-}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+        NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-labs}
+        NEXT_PUBLIC_SENTRY_RELEASE: ${BUILD_SHA:-local}
+        SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN:-}
         API_INTERNAL_URL: ${API_INTERNAL_URL:-http://backend:8000}
     image: ${GHCR_IMAGE_NAMESPACE:-ghcr.io/local}/career-forge-frontend:${IMAGE_TAG:-local}
     environment:

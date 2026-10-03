@@ -1,3 +1,7 @@
+import { createRequire } from "node:module";
+
+const { withSentryConfig } = createRequire(import.meta.url)("@sentry/nextjs/config");
+
 /** Public path when served behind labs.borderlesscoding.com (or similar). */
 const BASE_PATH = "/career-forge";
 
@@ -32,6 +36,8 @@ const nextConfig = {
   },
   output: "standalone",
   experimental: {
+    // Next 14 loads src/instrumentation.ts only when this hook is on.
+    instrumentationHook: true,
     // Labs same-origin `/forge/:id/stream` is rewritten through Next's http-proxy
     // (default 30s). Planner/eval can be idle longer than that between SSE events.
     proxyTimeout: 60 * 60 * 1000,
@@ -103,4 +109,15 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "borderless-ct",
+  project: "career-forge-frontend",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+  // Ad-blocker tunnel. basePath prefixes this to /career-forge/sentry-tunnel.
+  tunnelRoute: "/sentry-tunnel",
+});
