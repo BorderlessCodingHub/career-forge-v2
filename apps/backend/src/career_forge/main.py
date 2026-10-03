@@ -18,6 +18,7 @@ from career_forge.errors import (
     QuotaExhaustedError,
 )
 from career_forge.logging_config import configure_logging
+from career_forge.sentry_setup import init_sentry
 
 
 @asynccontextmanager
@@ -77,6 +78,7 @@ async def _domain_error_handler(_request: Request, exc: DomainError) -> JSONResp
 
 
 def create_app() -> FastAPI:
+    init_sentry()
     app = FastAPI(
         title="Career Forge API",
         description="Adaptive skill graph — diagnosis, forge, and mastery validation.",
@@ -97,6 +99,7 @@ def create_app() -> FastAPI:
 
     app.include_router(api_router)
     app.add_exception_handler(DomainError, _domain_error_handler)
+
     return app
 
 
