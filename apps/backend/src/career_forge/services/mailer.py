@@ -31,6 +31,8 @@ class Mailer(Protocol):
 
     def send_resume_link(self, *, to_email: str, resume_url: str) -> None: ...
 
+    def send_continuity(self, *, to_email: str, subject: str, text: str) -> None: ...
+
 
 class LogMailer:
     """Dev/test mailer — prints payloads so local stacks need no SMTP."""
@@ -56,6 +58,14 @@ class LogMailer:
             "Resume link for %s: %s — mailer_backend=log",
             to_email,
             resume_url,
+        )
+
+    def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
+        logger.info(
+            "Continuity email for %s: %s — mailer_backend=log\n%s",
+            to_email,
+            subject,
+            text,
         )
 
 
@@ -95,6 +105,9 @@ class ResendMailer:
                 f"{resume_url}\n"
             ),
         )
+
+    def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
+        self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:
         api_key = settings.resend_api_key.strip()
@@ -163,6 +176,9 @@ class SesMailer:
                 f"{resume_url}\n"
             ),
         )
+
+    def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
+        self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:
         region = settings.aws_ses_region.strip()

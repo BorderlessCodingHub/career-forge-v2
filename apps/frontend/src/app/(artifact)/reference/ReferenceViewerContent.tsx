@@ -9,6 +9,7 @@ import {
   getReferenceEmbedHosts,
   getRoadmap,
   patchRoadmapChecklist,
+  recordRoadmapPresence,
 } from "@/lib/api-client";
 import {
   buildReferenceViewerHref,
@@ -59,6 +60,7 @@ export default function ReferenceViewerContent() {
         }
         setRoadmap(data);
         setAllowedDomains(liveAllowedDomains);
+        void recordRoadmapPresence();
       })
       .catch((cause) => {
         if (!cancelled) {

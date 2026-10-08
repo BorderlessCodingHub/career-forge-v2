@@ -14,7 +14,13 @@ import {
 } from "@/components/roadmap";
 import { TrailProgressRing } from "@/components/ui/TrailProgressRing";
 import { clearAdaptiveSession, getAdaptiveSession } from "@/lib/adaptive-session";
-import { getRoadmap, patchRoadmapChecklist, syncRoadmap } from "@/lib/api-client";
+import { continuityOpenNodeId } from "@/lib/continuity-landing";
+import {
+  getRoadmap,
+  patchRoadmapChecklist,
+  recordRoadmapPresence,
+  syncRoadmap,
+} from "@/lib/api-client";
 import { clearForgeGraph, getForgeGraph } from "@/lib/forge-session";
 import type {
   ForgeGraphNode,
@@ -34,7 +40,9 @@ export default function RoadmapArtifactPageContent() {
   const searchParams = useSearchParams();
   const adaptiveMode = searchParams.get("adaptive") === "1";
   const nodeFromQuery = searchParams.get("node");
+  const fromContinuity = searchParams.get("from") === "continuity";
   const prevAdaptiveMode = useRef<boolean | null>(null);
+  const presenceSent = useRef(false);
 
   const [roadmap, setRoadmap] = useState<RoadmapResponse | null>(null);
   const [highlightNodeId, setHighlightNodeId] = useState<string | null>(null);
@@ -93,15 +101,25 @@ export default function RoadmapArtifactPageContent() {
       // the highlighted node. HAC-72.
       const data = await getRoadmap();
       setRoadmap(data);
+      if (!presenceSent.current) {
+        presenceSent.current = true;
+        void recordRoadmapPresence();
+      }
 
+      const openNodeId = continuityOpenNodeId(
+        data.nodes,
+        nodeFromQuery,
+        fromContinuity,
+      );
       if (adaptiveSession) {
         setHighlightNodeId(adaptiveSession.nodeId);
         setSelectedNodeId(adaptiveSession.nodeId);
-      } else if (nodeFromQuery) {
-        setHighlightNodeId(nodeFromQuery);
-        setSelectedNodeId(nodeFromQuery);
+      } else if (openNodeId) {
+        setHighlightNodeId(openNodeId);
+        setSelectedNodeId(openNodeId);
       } else {
         setHighlightNodeId(null);
+        setSelectedNodeId(null);
       }
     } catch (err) {
       if (adaptiveSession) {
@@ -115,7 +133,7 @@ export default function RoadmapArtifactPageContent() {
     } finally {
       setLoading(false);
     }
-  }, [adaptiveMode, nodeFromQuery]);
+  }, [adaptiveMode, fromContinuity, nodeFromQuery]);
 
   useEffect(() => {
     void loadRoadmap();

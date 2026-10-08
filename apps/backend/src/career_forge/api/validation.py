@@ -39,9 +39,13 @@ async def run_validation(
 ) -> ValidationRunResponse:
     """Run mastery interview evaluation — orchestrated by assessment_flow."""
     try:
-        return await assessment_flow.run_validation(
+        result = await assessment_flow.run_validation(
             db,
             body.model_copy(update={"user_id": external_id}),
         )
+        from career_forge.services.continuity import record_roadmap_presence
+
+        record_roadmap_presence(db, external_id)
+        return result
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
