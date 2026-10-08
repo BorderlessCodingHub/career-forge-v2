@@ -33,6 +33,8 @@ class Mailer(Protocol):
 
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None: ...
 
+    def send_billing(self, *, to_email: str, subject: str, text: str) -> None: ...
+
 
 class LogMailer:
     """Dev/test mailer — prints payloads so local stacks need no SMTP."""
@@ -63,6 +65,14 @@ class LogMailer:
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
         logger.info(
             "Continuity email for %s: %s — mailer_backend=log\n%s",
+            to_email,
+            subject,
+            text,
+        )
+
+    def send_billing(self, *, to_email: str, subject: str, text: str) -> None:
+        logger.info(
+            "Billing email for %s: %s — mailer_backend=log\n%s",
             to_email,
             subject,
             text,
@@ -107,6 +117,9 @@ class ResendMailer:
         )
 
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_billing(self, *, to_email: str, subject: str, text: str) -> None:
         self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:
@@ -178,6 +191,9 @@ class SesMailer:
         )
 
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_billing(self, *, to_email: str, subject: str, text: str) -> None:
         self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:

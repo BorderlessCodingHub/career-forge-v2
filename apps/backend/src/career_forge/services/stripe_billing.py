@@ -46,6 +46,8 @@ class StripeBillingClient(Protocol):
 
     def retrieve_checkout_session(self, session_id: str) -> dict[str, Any]: ...
 
+    def create_portal_session(self, *, customer_id: str, return_url: str) -> str: ...
+
 
 def _stripe_form_post(path: str, secret: str, fields: dict[str, str], timeout: float) -> str:
     body = parse.urlencode(fields).encode("utf-8")
@@ -125,6 +127,20 @@ class HttpStripeBillingClient:
         if not isinstance(payload, dict):
             raise OSError("stripe checkout session invalid")
         return payload
+
+    def create_portal_session(self, *, customer_id: str, return_url: str) -> str:
+        fields = {
+            "customer": customer_id,
+            "return_url": return_url,
+            "flow_data[type]": "payment_method_update",
+        }
+        payload = json.loads(
+            self._post("/billing_portal/sessions", self._secret, fields, self._timeout)
+        )
+        url = payload.get("url")
+        if not isinstance(url, str) or not url:
+            raise OSError("stripe portal session missing url")
+        return url
 
 
 _client: StripeBillingClient | None = None

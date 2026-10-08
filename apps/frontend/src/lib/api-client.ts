@@ -521,6 +521,13 @@ export async function getMyProfile(): Promise<MeProfileResponse> {
   return apiFetch<MeProfileResponse>("/me/profile");
 }
 
+export async function startBillingPortal(): Promise<string> {
+  const body = await apiFetch<{ portal_url: string }>("/billing/portal", {
+    method: "POST",
+  });
+  return body.portal_url;
+}
+
 export async function startBillingCheckout(): Promise<string> {
   const body = await apiFetch<{ checkout_url: string }>("/billing/checkout", {
     method: "POST",
