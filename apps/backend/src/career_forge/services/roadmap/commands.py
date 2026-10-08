@@ -215,7 +215,8 @@ def toggle_checklist_item(
     progress[bucket_key] = bucket
     row.checklist_progress = progress
     session.commit()
-    from career_forge.services.continuity import record_roadmap_presence
+    if done:
+        from career_forge.services.continuity import record_roadmap_presence
 
-    record_roadmap_presence(session, user_id)
+        record_roadmap_presence(session, user_id)
     return get_user_roadmap(session, user_id)
