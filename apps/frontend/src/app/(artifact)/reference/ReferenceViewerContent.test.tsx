@@ -30,6 +30,7 @@ vi.mock("@/lib/api-client", () => ({
   getReferenceEmbedHosts: vi.fn(),
   getRoadmap: vi.fn(),
   patchRoadmapChecklist: vi.fn(),
+  recordRoadmapPresence: vi.fn(),
 }));
 
 const roadmap: RoadmapResponse = {

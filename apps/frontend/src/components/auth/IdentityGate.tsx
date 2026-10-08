@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui";
 import { IdentityGateShell } from "@/components/auth/IdentityGateShell";
@@ -43,6 +44,7 @@ export function IdentityGate({
   signupUrl = "",
   onVerified,
 }: IdentityGateProps) {
+  const t = useTranslations("identity");
   const resolvedMethod =
     method ?? (emailOtpRequired ? "email_otp" : "pilot_enter");
   const [email, setEmail] = useState("");
@@ -62,17 +64,15 @@ export function IdentityGate({
   }
 
   const resolvedTitle =
-    title ?? (emailOtpRequired ? "Sign in with email" : "Enter your pilot email");
+    title ?? (emailOtpRequired ? t("signInWithEmail") : t("pilotEmail"));
   const resolvedDescription =
     description ??
-    (emailOtpRequired
-      ? "Enter your email to continue. We send a 6-digit code (check backend logs in local dev)."
-      : "Enter the email on the pilot list to continue.");
+    (emailOtpRequired ? t("otpDescription") : t("pilotDescription"));
 
   async function handleContinue() {
     const trimmed = email.trim();
     if (!trimmed) {
-      setOtpError("Enter your email first.");
+      setOtpError(t("enterEmailFirst"));
       return;
     }
     setOtpBusy(true);
@@ -81,7 +81,7 @@ export function IdentityGate({
       await enterPilot(trimmed);
       onVerified();
     } catch (err) {
-      setOtpError(err instanceof Error ? err.message : "Failed to enter.");
+      setOtpError(err instanceof Error ? err.message : t("failedToEnter"));
     } finally {
       setOtpBusy(false);
     }
@@ -90,7 +90,7 @@ export function IdentityGate({
   async function handleRequestCode() {
     const trimmed = email.trim();
     if (!trimmed) {
-      setOtpError("Enter your email first.");
+      setOtpError(t("enterEmailFirst"));
       return;
     }
     setOtpBusy(true);
@@ -99,7 +99,7 @@ export function IdentityGate({
       await requestOtp(trimmed);
       setOtpPhase({ status: "code_sent", email: trimmed });
     } catch (err) {
-      setOtpError(err instanceof Error ? err.message : "Failed to send code.");
+      setOtpError(err instanceof Error ? err.message : t("failedToSend"));
     } finally {
       setOtpBusy(false);
     }
@@ -124,7 +124,7 @@ export function IdentityGate({
         return;
       }
       setOtpPhase({ status: "code_sent", email: currentEmail });
-      setOtpError(err instanceof Error ? err.message : "Verification failed.");
+      setOtpError(err instanceof Error ? err.message : t("verificationFailed"));
     } finally {
       setOtpBusy(false);
     }
@@ -149,19 +149,19 @@ export function IdentityGate({
         {otpPhase.status === "conflict" ? (
           <div className="mt-6 space-y-3" data-testid="identity-gate-conflict">
             <p className="text-sm text-text-secondary">
-              <span className="text-text-primary">{otpPhase.email}</span> already
-              has an account. Keep this device or switch to that account.
+              <span className="text-text-primary">{otpPhase.email}</span>{" "}
+              {t("alreadyHasAccount")}
             </p>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button data-testid="identity-gate-keep-local" onClick={handleKeepLocal}>
-                Keep this session
+                {t("keepSession")}
               </Button>
               <Button
                 variant="ghost"
                 data-testid="identity-gate-switch"
                 onClick={() => handleSwitchToExisting(otpPhase.existing)}
               >
-                Switch to existing account
+                {t("switchAccount")}
               </Button>
             </div>
           </div>
@@ -185,10 +185,10 @@ export function IdentityGate({
                   onClick={() => void handleRequestCode()}
                 >
                   {otpBusy && otpPhase.status === "idle"
-                    ? "Sending…"
+                    ? t("sending")
                     : otpPhase.status === "code_sent"
-                      ? "Resend code"
-                      : "Send code"}
+                      ? t("resendCode")
+                      : t("sendCode")}
                 </Button>
               ) : (
                 <Button
@@ -196,7 +196,7 @@ export function IdentityGate({
                   disabled={otpBusy}
                   onClick={() => void handleContinue()}
                 >
-                  {otpBusy ? "Checking…" : "Continue"}
+                  {otpBusy ? t("checking") : t("continue")}
                 </Button>
               )}
             </div>
@@ -211,7 +211,7 @@ export function IdentityGate({
                     autoComplete="one-time-code"
                     maxLength={6}
                     className="min-w-0 flex-1 rounded-md border border-border bg-bg px-3 py-2 text-sm tracking-widest text-text-primary"
-                    placeholder="6-digit code"
+                    placeholder={t("codePlaceholder")}
                     value={code}
                     disabled={otpBusy}
                     data-testid="identity-gate-code"
@@ -224,7 +224,7 @@ export function IdentityGate({
                     disabled={otpBusy || code.trim().length !== 6}
                     onClick={() => void handleVerifyCode()}
                   >
-                    {otpBusy ? "Verifying…" : "Verify"}
+                    {otpBusy ? t("verifying") : t("verify")}
                   </Button>
                 </div>
                 <button
@@ -237,7 +237,7 @@ export function IdentityGate({
                     setOtpError(null);
                   }}
                 >
-                  Use a different email
+                  {t("differentEmail")}
                 </button>
               </div>
             )}

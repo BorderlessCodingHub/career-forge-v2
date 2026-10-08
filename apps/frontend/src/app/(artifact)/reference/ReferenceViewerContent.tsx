@@ -3,6 +3,7 @@
 import { ExternalLink, Link2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import {
@@ -22,6 +23,7 @@ import {
 import type { RoadmapResponse } from "@/types/contracts";
 
 export default function ReferenceViewerContent() {
+  const t = useTranslations("reference");
   const router = useRouter();
   const searchParams = useSearchParams();
   const nodeId = searchParams.get("node");
@@ -31,7 +33,7 @@ export default function ReferenceViewerContent() {
   const [allowedDomains, setAllowedDomains] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<"load" | "update" | null>(null);
 
   const resolved = useMemo(
     () => (roadmap ? resolveReferenceViewer(roadmap, nodeId, itemId) : null),
@@ -62,9 +64,9 @@ export default function ReferenceViewerContent() {
         setAllowedDomains(liveAllowedDomains);
         void recordRoadmapPresence();
       })
-      .catch((cause) => {
+      .catch(() => {
         if (!cancelled) {
-          setError(cause instanceof Error ? cause.message : "Failed to load Reference");
+          setError("load");
         }
       })
       .finally(() => {
@@ -87,8 +89,8 @@ export default function ReferenceViewerContent() {
         done,
       });
       setRoadmap(updated);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Failed to update Reference");
+    } catch {
+      setError("update");
     } finally {
       setPending(false);
     }
@@ -97,7 +99,7 @@ export default function ReferenceViewerContent() {
   if (loading || (!resolved && !error)) {
     return (
       <main className="min-h-screen px-4 py-20 text-center" data-screen="reference-viewer">
-        <p className="text-sm text-text-muted animate-pulse">Loading Reference…</p>
+        <p className="text-sm text-text-muted animate-pulse">{t("loading")}</p>
       </main>
     );
   }
@@ -110,14 +112,20 @@ export default function ReferenceViewerContent() {
       >
         <div className="rounded-xl border border-danger/30 bg-danger/10 p-6">
           <h1 className="text-lg font-semibold text-text-primary">
-            Reference unavailable
+            {t("unavailable")}
           </h1>
-          <p className="mt-2 text-sm text-danger">{error}</p>
+          <p className="mt-2 text-sm text-danger">
+            {error === "load"
+              ? t("failedToLoad")
+              : error === "update"
+                ? t("failedToUpdate")
+                : null}
+          </p>
           <Link
             href={nodeId ? `/roadmap?node=${encodeURIComponent(nodeId)}` : "/roadmap"}
             className="mt-5 inline-flex rounded-md bg-accent px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
           >
-            Return to roadmap
+            {t("returnToRoadmapAction")}
           </Link>
         </div>
       </main>
@@ -128,8 +136,7 @@ export default function ReferenceViewerContent() {
   const canEmbed = isEmbeddableReferenceUrl(reference.url, allowedDomains);
   const sourceHostname = getReferenceHostname(reference.url);
   const cardBody =
-    reference.outcome?.trim() ||
-    "Preview isn't available for this source. Open the original to continue studying.";
+    reference.outcome?.trim() || t("previewUnavailable");
 
   return (
     <main
@@ -144,13 +151,13 @@ export default function ReferenceViewerContent() {
             className="text-xs font-semibold uppercase tracking-widest text-accent-mint hover:underline"
             data-testid="reference-return-to-node"
           >
-            ← Return to roadmap
+            {t("returnToRoadmap")}
           </Link>
           <p className="mt-4 text-xs uppercase tracking-widest text-text-muted">
             {node.title}
           </p>
           <h1 className="mt-1 text-2xl font-semibold text-text-primary">
-            {reference.title ?? "Reference"}
+            {reference.title ?? t("fallbackTitle")}
           </h1>
         </div>
 
@@ -163,7 +170,7 @@ export default function ReferenceViewerContent() {
             onChange={(event) => void toggleDone(event.target.checked)}
             data-testid={`reference-viewer-done-${reference.id}`}
           />
-          Mark as studied
+          {t("markStudied")}
         </label>
       </div>
 
@@ -173,7 +180,7 @@ export default function ReferenceViewerContent() {
             <>
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
                 <p className="text-xs text-text-secondary">
-                  Preview provided by the source site.
+                  {t("previewBySource")}
                 </p>
                 <a
                   href={reference.url}
@@ -182,13 +189,13 @@ export default function ReferenceViewerContent() {
                   className="text-sm font-medium text-accent-mint hover:underline"
                   data-testid="reference-escape-hatch"
                 >
-                  Open original ↗
+                  {t("openOriginal")}
                 </a>
               </div>
               <iframe
                 key={reference.id}
                 src={reference.url}
-                title={reference.title ?? "Reference preview"}
+                title={reference.title ?? t("previewTitle")}
                 className="h-[70vh] min-h-[32rem] w-full bg-white"
                 sandbox={REFERENCE_PREVIEW_SANDBOX}
                 referrerPolicy={REFERENCE_PREVIEW_REFERRER_POLICY}
@@ -205,13 +212,13 @@ export default function ReferenceViewerContent() {
                   <Link2 aria-hidden="true" className="h-5 w-5" />
                 </div>
                 <h2 className="mt-5 text-xl font-semibold text-text-primary">
-                  {reference.title ?? "Reference"}
+                  {reference.title ?? t("fallbackTitle")}
                 </h2>
                 <p
                   className="mt-2 text-sm text-text-muted"
                   data-testid="reference-source-host"
                 >
-                  Source: {sourceHostname}
+                  {t("source", { host: sourceHostname ?? "" })}
                 </p>
                 <div className="my-6 h-px bg-border" />
                 <p className="text-sm leading-7 text-text-secondary">{cardBody}</p>
@@ -222,7 +229,7 @@ export default function ReferenceViewerContent() {
                   className="mt-7 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent-mint"
                   data-testid="reference-escape-hatch"
                 >
-                  Open original
+                  {t("openOriginalPlain")}
                   <ExternalLink aria-hidden="true" className="h-4 w-4" />
                 </a>
               </article>
@@ -232,7 +239,7 @@ export default function ReferenceViewerContent() {
 
         <aside className="rounded-xl border border-border bg-surface p-4">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-            More References in this Node
+            {t("moreInNode")}
           </h2>
           <ul className="mt-3 space-y-2">
             {references.map((candidate) => {
@@ -251,17 +258,17 @@ export default function ReferenceViewerContent() {
                       data-testid={`reference-sibling-${candidate.id}`}
                     >
                       <span className="font-medium">
-                        {candidate.title ?? "Reference"}
+                        {candidate.title ?? t("fallbackTitle")}
                       </span>
                       {candidate.done && (
                         <span className="mt-1 block text-xs text-accent-mint">
-                          Studied
+                          {t("studied")}
                         </span>
                       )}
                     </Link>
                   ) : (
                     <span className="block rounded-lg border border-border px-3 py-3 text-sm text-text-muted">
-                      {candidate.title ?? "Reference"}
+                      {candidate.title ?? t("fallbackTitle")}
                     </span>
                   )}
                 </li>

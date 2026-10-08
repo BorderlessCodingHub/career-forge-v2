@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
+import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 
 type IdentityGateShellProps = {
@@ -12,6 +14,7 @@ type IdentityGateShellProps = {
 };
 
 export function IdentityGateShell({ children, screen }: IdentityGateShellProps) {
+  const t = useTranslations("chrome");
   return (
     <main
       className="relative min-h-screen overflow-hidden bg-slate-950"
@@ -27,13 +30,16 @@ export function IdentityGateShell({ children, screen }: IdentityGateShellProps) 
         data-testid="identity-gate-topbar"
       >
         <BrandLockup />
-        <Link
-          href="/welcome"
-          className="text-sm text-text-secondary underline-offset-2 hover:underline"
-          data-testid="identity-gate-back-welcome"
-        >
-          Back to Welcome
-        </Link>
+        <div className="flex items-center gap-3">
+          <LocaleSwitch />
+          <Link
+            href="/welcome"
+            className="text-sm text-text-secondary underline-offset-2 hover:underline"
+            data-testid="identity-gate-back-welcome"
+          >
+            {t("backToWelcome")}
+          </Link>
+        </div>
       </header>
 
       <div className="relative z-10 px-4 py-10">{children}</div>

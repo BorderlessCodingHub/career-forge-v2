@@ -3,8 +3,10 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
 import { FileText } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { SignOutButton } from "@/components/auth/SignOutButton";
+import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 
 const topbarActionClass =
@@ -24,6 +26,7 @@ export function ArtifactShell({
   children,
   ...props
 }: ArtifactShellProps) {
+  const t = useTranslations("chrome");
   return (
     <div className={`flex min-h-screen flex-col bg-bg ${className}`} data-mode="artifact" {...props}>
       <header
@@ -33,17 +36,18 @@ export function ArtifactShell({
         <BrandLockup />
 
         <div className="flex flex-wrap items-end justify-end gap-2 sm:gap-3">
+          <LocaleSwitch />
           <SignOutButton />
           <Link href="/report" className={topbarActionClass} data-testid="mentor-report-link">
             <span className={topbarActionIconSlotClass} aria-hidden>
               <FileText className="h-4 w-4" />
             </span>
-            <span>Mentor report</span>
+            <span>{t("mentorReport")}</span>
           </Link>
           <div className="text-right">
-            <p className="text-[10px] uppercase tracking-widest text-text-muted">Your trail</p>
+            <p className="text-[10px] uppercase tracking-widest text-text-muted">{t("yourTrail")}</p>
             <p className="text-sm font-medium text-text-primary">
-              {trackName ?? "Loading trail…"}
+              {trackName ?? t("loadingTrail")}
             </p>
           </div>
         </div>

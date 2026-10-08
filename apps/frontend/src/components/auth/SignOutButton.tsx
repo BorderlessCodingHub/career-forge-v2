@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 
 import { hasEmailIdentity, signOut } from "@/lib/user-session";
 
@@ -13,6 +14,7 @@ type SignOutButtonProps = {
 };
 
 export function SignOutButton({ className = "" }: SignOutButtonProps) {
+  const t = useTranslations("chrome");
   const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -38,7 +40,7 @@ export function SignOutButton({ className = "" }: SignOutButtonProps) {
       }}
     >
       <LogOut className="h-4 w-4" aria-hidden />
-      <span>Sign out</span>
+      <span>{t("signOut")}</span>
     </button>
   );
 }

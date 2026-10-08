@@ -7,6 +7,10 @@ import type { ReactNode } from "react";
 import { IdentityGate } from "./IdentityGate";
 import { enterPilot, requestOtp, signInWithPassword } from "@/lib/api-client";
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
+}));
+
 vi.mock("next/link", () => ({
   default: ({
     children,

@@ -10,6 +10,8 @@ from career_forge.db.session import get_db
 from career_forge.schemas.me_profile import (
     MeEmailUpdateRequest,
     MeEmailUpdateResponse,
+    MeLocaleUpdateRequest,
+    MeLocaleUpdateResponse,
     MeProfileResponse,
 )
 from career_forge.services import me_profile as me_profile_service
@@ -33,3 +35,13 @@ def update_my_email(
 ) -> MeEmailUpdateResponse:
     email = me_profile_service.update_me_email(db, external_id, body.email)
     return MeEmailUpdateResponse(email=email)
+
+
+@router.patch("/locale", response_model=MeLocaleUpdateResponse)
+def update_my_locale(
+    body: MeLocaleUpdateRequest,
+    external_id: ExternalId,
+    db: Session = Depends(get_db),
+) -> MeLocaleUpdateResponse:
+    me_profile_service.update_me_locale(db, external_id, body.locale)
+    return MeLocaleUpdateResponse(locale=body.locale)

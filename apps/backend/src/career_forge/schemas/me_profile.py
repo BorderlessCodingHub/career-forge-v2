@@ -34,6 +34,16 @@ class MeEmailUpdateResponse(BaseModel):
     email: str
 
 
+class MeLocaleUpdateRequest(BaseModel):
+    """PATCH /me/locale — explicit learner catalog choice."""
+
+    locale: Literal["en", "pt-BR"]
+
+
+class MeLocaleUpdateResponse(BaseModel):
+    locale: Literal["en", "pt-BR"]
+
+
 class MeProfileResponse(BaseModel):
     """Bearer principal profile + confirmed diagnosis for re-forge (CAR-29)."""
 
@@ -46,3 +56,4 @@ class MeProfileResponse(BaseModel):
     has_diagnosis: bool = False
     diagnosis: DiagnosisResponse | None = None
     intake: DiagnosisMotorIntake | None = None
+    ui_locale: Literal["en", "pt-BR"] | None = None

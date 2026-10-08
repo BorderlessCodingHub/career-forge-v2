@@ -3,10 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, Menu, X, ArrowRight, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
+import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
 import { BrandMark } from "@/components/ui/BrandMark";
 
 export function Navbar() {
+  const t = useTranslations("welcome");
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -35,15 +38,15 @@ export function Navbar() {
         </span>
         <span className="hidden sm:inline text-slate-400">•</span>
         <span className="text-slate-300">
-          Members: Career Forge is included. Start diagnosis with your member email.
+          {t("membersIncluded")}
         </span>
         <Link
           href="/"
           data-testid="welcome-bar-cta"
-          aria-label="Start diagnosis"
+          aria-label={t("startDiagnosis")}
           className="underline hover:text-white font-semibold text-orange-300 ml-1 transition-colors flex items-center gap-0.5 cursor-pointer"
         >
-          Start here <ChevronRight className="w-3 h-3 inline" />
+          {t("startHere")} <ChevronRight className="w-3 h-3 inline" />
         </Link>
       </div>
 
@@ -83,65 +86,67 @@ export function Navbar() {
               onClick={() => scrollToSection("pillars")}
               className="hover:text-orange-400 transition-colors cursor-pointer"
             >
-              4 Core Pillars
+              {t("pillars")}
             </button>
             <button
               onClick={() => scrollToSection("sandbox")}
               className="hover:text-cyan-400 transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              Live AI Sandbox
+              {t("sandbox")}
             </button>
             <button
               onClick={() => scrollToSection("calculator")}
               className="hover:text-purple-400 transition-colors cursor-pointer"
             >
-              ROI Calculator
+              {t("calculator")}
             </button>
             <button
               onClick={() => scrollToSection("testimonials")}
               className="hover:text-orange-400 transition-colors cursor-pointer"
             >
-              Stories
+              {t("stories")}
             </button>
             <button
               onClick={() => scrollToSection("pricing")}
               className="hover:text-orange-400 transition-colors cursor-pointer"
             >
-              Access
+              {t("access")}
             </button>
             <button
               onClick={() => scrollToSection("faq")}
               className="hover:text-orange-400 transition-colors cursor-pointer"
             >
-              FAQ
+              {t("faq")}
             </button>
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
+            <LocaleSwitch tone="dark" />
             <Link
               href="/"
               data-testid="welcome-cta-start"
-              aria-label="Start diagnosis"
+              aria-label={t("startDiagnosis")}
               className="relative group text-xs font-bold px-4 py-2.5 rounded-lg text-white shimmer-button shadow-lg shadow-indigo-500/20 hover:shadow-orange-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <span>Start here</span>
+              <span>{t("startHere")}</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
 
           <div className="flex lg:hidden items-center gap-2">
+            <LocaleSwitch tone="dark" />
             <Link
               href="/"
               data-testid="welcome-cta-start"
-              aria-label="Start diagnosis"
+              aria-label={t("startDiagnosis")}
               className="text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-orange-500 to-indigo-600 rounded-md text-white cursor-pointer"
             >
-              Start here
+              {t("startHere")}
             </Link>
             <button
               type="button"
-              aria-label={mobileMenuOpen ? "Close navigation" : "Open navigation"}
+              aria-label={mobileMenuOpen ? t("closeNavigation") : t("openNavigation")}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-slate-300 hover:text-white rounded-lg bg-slate-900 border border-slate-800 focus:outline-none cursor-pointer"
             >
@@ -156,38 +161,38 @@ export function Navbar() {
               onClick={() => scrollToSection("pillars")}
               className="block w-full text-left py-2 text-sm text-slate-200 hover:text-orange-400 font-medium"
             >
-              4 Core Pillars
+              {t("pillars")}
             </button>
             <button
               onClick={() => scrollToSection("sandbox")}
               className="block w-full text-left py-2 text-sm text-slate-200 hover:text-cyan-400 font-medium flex items-center gap-1.5"
             >
               <Sparkles className="w-4 h-4 text-cyan-400" />
-              Live AI Sandbox Demo
+              {t("sandboxDemo")}
             </button>
             <button
               onClick={() => scrollToSection("calculator")}
               className="block w-full text-left py-2 text-sm text-slate-200 hover:text-purple-400 font-medium"
             >
-              Salary & ROI Calculator
+              {t("calculatorFull")}
             </button>
             <button
               onClick={() => scrollToSection("testimonials")}
               className="block w-full text-left py-2 text-sm text-slate-200 hover:text-orange-400 font-medium"
             >
-              Stories
+              {t("stories")}
             </button>
             <button
               onClick={() => scrollToSection("pricing")}
               className="block w-full text-left py-2 text-sm text-slate-200 hover:text-orange-400 font-medium"
             >
-              Access
+              {t("access")}
             </button>
             <button
               onClick={() => scrollToSection("faq")}
               className="block w-full text-left py-2 text-sm text-slate-200 hover:text-orange-400 font-medium"
             >
-              FAQ
+              {t("faq")}
             </button>
           </div>
         )}

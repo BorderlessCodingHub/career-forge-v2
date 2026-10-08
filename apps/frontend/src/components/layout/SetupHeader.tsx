@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { SignOutButton } from "@/components/auth/SignOutButton";
+import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 import { shouldShowSetupHeader } from "@/lib/product-chrome";
 import { hasEmailIdentity } from "@/lib/user-session";
@@ -24,7 +25,10 @@ export function SetupHeader() {
       data-testid="setup-topbar"
     >
       <BrandLockup />
-      <SignOutButton />
+      <div className="flex items-center gap-2">
+        <LocaleSwitch />
+        <SignOutButton />
+      </div>
     </header>
   );
 }

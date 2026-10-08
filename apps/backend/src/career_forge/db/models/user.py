@@ -50,6 +50,7 @@ class User(Base):
     billing_email_spell_open: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False, server_default="false"
     )
+    ui_locale: Mapped[str | None] = mapped_column(String(8), nullable=True)
     roadmap_presence_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
