@@ -229,6 +229,7 @@ export type MeProfileResponse = {
   checkout_available: boolean;
   has_diagnosis: boolean;
   diagnosis: DiagnosisResponse | null;
+  ui_locale: "en" | "pt-BR" | null;
   intake: {
     goal_id: string;
     motivation: string;

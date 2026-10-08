@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import { getCanonicalContent } from "@/lib/api-client";
@@ -15,6 +16,7 @@ function CanonicalQuiz({
 }: {
   block: Extract<CanonicalBlock, { type: "quiz" }>;
 }) {
+  const t = useTranslations("learn");
   const [picked, setPicked] = useState<string | null>(null);
 
   return (
@@ -51,7 +53,7 @@ function CanonicalQuiz({
       </div>
       {picked ? (
         <p className="text-sm leading-6 text-text-secondary">
-          {picked === block.correct ? "Correct. " : "Incorrect. "}
+          {picked === block.correct ? t("correct") : t("incorrect")}
           {block.why}
         </p>
       ) : null}
@@ -110,6 +112,7 @@ function CanonicalBlockView({ block }: { block: CanonicalBlock }) {
 }
 
 export default function LearnContent() {
+  const t = useTranslations("learn");
   const router = useRouter();
   const params = useParams<{ skillId: string }>();
   const skillId = typeof params.skillId === "string" ? params.skillId : "";
@@ -149,7 +152,7 @@ export default function LearnContent() {
   if (loading) {
     return (
       <main className="min-h-screen px-4 py-20 text-center" data-screen="canonical-learn">
-        <p className="text-sm text-text-muted animate-pulse">Loading…</p>
+        <p className="text-sm text-text-muted animate-pulse">{t("loading")}</p>
       </main>
     );
   }
@@ -169,7 +172,7 @@ export default function LearnContent() {
         className="text-xs font-semibold uppercase tracking-widest text-accent-mint hover:underline"
         data-testid="learn-return-to-roadmap"
       >
-        ← Return to roadmap
+        {t("returnToRoadmap")}
       </Link>
       <h1 className="mt-4 text-2xl font-semibold leading-snug text-text-primary">{page.title}</h1>
       <article className="mt-6 space-y-5 text-text-secondary">

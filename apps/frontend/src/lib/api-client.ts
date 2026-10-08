@@ -521,6 +521,13 @@ export async function getMyProfile(): Promise<MeProfileResponse> {
   return apiFetch<MeProfileResponse>("/me/profile");
 }
 
+export async function updateMyLocale(locale: "en" | "pt-BR"): Promise<void> {
+  await apiFetch("/me/locale", {
+    method: "PATCH",
+    body: JSON.stringify({ locale }),
+  });
+}
+
 export async function startBillingPortal(): Promise<string> {
   const body = await apiFetch<{ portal_url: string }>("/billing/portal", {
     method: "POST",

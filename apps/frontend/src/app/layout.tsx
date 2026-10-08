@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 
+import { LocaleHydrator } from "@/components/i18n/LocaleHydrator";
 import { DeployBadge } from "@/components/layout";
 import { brandAssetPath, BRAND_FAVICON } from "@/lib/brand-assets";
 import "./globals.css";
@@ -26,16 +29,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={`${inter.variable} ${jetbrains.variable} font-sans pb-8`}>
-        {children}
-        <DeployBadge />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <LocaleHydrator />
+          {children}
+          <DeployBadge />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

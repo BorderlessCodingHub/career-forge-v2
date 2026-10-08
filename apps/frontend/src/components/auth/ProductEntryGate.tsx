@@ -1,8 +1,10 @@
 "use client";
 
 import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 import { IdentityGate } from "@/components/auth/IdentityGate";
+import { useSyncStoredLocale } from "@/components/i18n/useSyncStoredLocale";
 import { checkAuthSession, getIdentityMode } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/user-session";
 import { hasEmailProvider } from "@/lib/jwt";
@@ -25,7 +27,9 @@ type GateState =
   | { status: "in" };
 
 export function ProductEntryGate({ children }: ProductEntryGateProps) {
+  const t = useTranslations("product");
   const [state, setState] = useState<GateState>({ status: "loading" });
+  useSyncStoredLocale(state.status === "in");
 
   const resolveGate = useCallback(async () => {
     try {
@@ -60,10 +64,10 @@ export function ProductEntryGate({ children }: ProductEntryGateProps) {
       setState({ status: "in" });
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Cannot reach identity service.";
+        err instanceof Error ? err.message : t("identityUnreachable");
       setState({ status: "error", message });
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void resolveGate();
@@ -77,7 +81,7 @@ export function ProductEntryGate({ children }: ProductEntryGateProps) {
     return (
       <main className="min-h-screen grid-dots flex items-center justify-center p-8">
         <p className="text-text-secondary" data-testid="product-entry-hydrating">
-          Loading…
+          {t("loading")}
         </p>
       </main>
     );

@@ -45,6 +45,7 @@ def test_get_profile_empty(raw_client: TestClient) -> None:
     assert body["diagnosis"] is None
     assert body["membership_label"] == "external"
     assert body["membership_entitled"] is False
+    assert body["ui_locale"] is None
 
 
 def test_get_profile_with_diagnosis(
@@ -103,3 +104,25 @@ def test_patch_email_store_and_conflict(raw_client: TestClient) -> None:
         json={"email": "not-an-email"},
     )
     assert bad.status_code == 422
+
+
+def test_patch_locale_stores_choice_and_rejects_unknown(raw_client: TestClient) -> None:
+    headers = _auth_headers(raw_client, "me-locale")
+
+    before = raw_client.get("/me/profile", headers=headers)
+    assert before.status_code == 200, before.text
+    assert before.json()["ui_locale"] is None
+
+    chosen = raw_client.patch("/me/locale", headers=headers, json={"locale": "pt-BR"})
+    assert chosen.status_code == 200, chosen.text
+    assert chosen.json()["locale"] == "pt-BR"
+
+    profile = raw_client.get("/me/profile", headers=headers)
+    assert profile.json()["ui_locale"] == "pt-BR"
+
+    english = raw_client.patch("/me/locale", headers=headers, json={"locale": "en"})
+    assert english.status_code == 200, english.text
+    assert raw_client.get("/me/profile", headers=headers).json()["ui_locale"] == "en"
+
+    rejected = raw_client.patch("/me/locale", headers=headers, json={"locale": "fr"})
+    assert rejected.status_code == 422

@@ -1,6 +1,8 @@
 import { createRequire } from "node:module";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const { withSentryConfig } = createRequire(import.meta.url)("@sentry/nextjs/config");
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /** Public path when served behind labs.borderlesscoding.com (or similar). */
 const BASE_PATH = "/career-forge";
@@ -109,7 +111,7 @@ const nextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
+export default withSentryConfig(withNextIntl(nextConfig), {
   org: "borderless-ct",
   project: "career-forge-frontend",
   authToken: process.env.SENTRY_AUTH_TOKEN,

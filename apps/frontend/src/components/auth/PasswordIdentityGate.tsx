@@ -1,6 +1,7 @@
 "use client";
 
 import { Eye, EyeOff } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { IdentityGateShell } from "@/components/auth/IdentityGateShell";
@@ -18,6 +19,7 @@ export function PasswordIdentityGate({
   signupUrl = "",
   onVerified,
 }: PasswordIdentityGateProps) {
+  const t = useTranslations("identity");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +32,7 @@ export function PasswordIdentityGate({
   async function handleSignIn() {
     const trimmedEmail = email.trim();
     if (!trimmedEmail || !password) {
-      setError("Enter your email and password.");
+      setError(t("enterEmailPassword"));
       return;
     }
     setBusy(true);
@@ -39,7 +41,7 @@ export function PasswordIdentityGate({
       await signInWithPassword(trimmedEmail, password);
       onVerified();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid email or password");
+      setError(err instanceof Error ? err.message : t("invalidPassword"));
     } finally {
       setBusy(false);
     }
@@ -48,9 +50,9 @@ export function PasswordIdentityGate({
   return (
     <IdentityGateShell screen="identity-gate-password">
       <div className="mx-auto max-w-md rounded-md border border-border bg-surface px-6 py-8">
-        <h1 className="text-2xl font-semibold text-text-primary">Sign in</h1>
+        <h1 className="text-2xl font-semibold text-text-primary">{t("signIn")}</h1>
         <p className="mt-2 text-sm text-text-secondary">
-          Use your Borderless Platform email and password.
+          {t("passwordDescription")}
         </p>
 
         <form
@@ -61,7 +63,7 @@ export function PasswordIdentityGate({
           }}
         >
           <label className="block space-y-1">
-            <span className="text-sm text-text-secondary">Email</span>
+            <span className="text-sm text-text-secondary">{t("email")}</span>
             <input
               type="email"
               autoComplete="email"
@@ -75,7 +77,7 @@ export function PasswordIdentityGate({
           </label>
 
           <label className="block space-y-1">
-            <span className="text-sm text-text-secondary">Password</span>
+            <span className="text-sm text-text-secondary">{t("password")}</span>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -90,7 +92,7 @@ export function PasswordIdentityGate({
                 type="button"
                 className="absolute inset-y-0 right-2 flex items-center text-text-muted"
                 data-testid="identity-gate-toggle-password"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? t("hidePassword") : t("showPassword")}
                 onClick={() => setShowPassword((open) => !open)}
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -106,7 +108,7 @@ export function PasswordIdentityGate({
               className="inline-block text-sm text-accent underline-offset-2 hover:underline"
               data-testid="identity-gate-forgot"
             >
-              Forgot password?
+              {t("forgotPassword")}
             </a>
           ) : null}
 
@@ -116,20 +118,20 @@ export function PasswordIdentityGate({
             disabled={busy}
             data-testid="identity-gate-signin"
           >
-            {busy ? "Signing in…" : "Sign in"}
+            {busy ? t("signingIn") : t("signIn")}
           </Button>
         </form>
 
         {signup ? (
           <p className="mt-4 text-sm text-text-secondary">
-            Don&apos;t have an account?{" "}
+            {t("noAccount")}{" "}
             <button
               type="button"
               className="text-accent underline-offset-2 hover:underline"
               data-testid="identity-gate-signup"
               onClick={() => setSignupOpen(true)}
             >
-              Sign up
+              {t("signUp")}
             </button>
           </p>
         ) : null}
@@ -154,18 +156,12 @@ export function PasswordIdentityGate({
               id="identity-gate-signup-title"
               className="text-lg font-semibold text-text-primary"
             >
-              Create a Borderless account
+              {t("createAccountTitle")}
             </h2>
             <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-text-secondary">
-              <li>
-                Career Forge uses your <strong>Borderless Platform</strong> account.
-                You don&apos;t create a password here.
-              </li>
-              <li>Open Borderless, complete sign up, verify email if they ask.</li>
-              <li>
-                Return to <strong>this tab</strong> and sign in with the same email
-                and password.
-              </li>
+              <li>{t("signupStep1")}</li>
+              <li>{t("signupStep2")}</li>
+              <li>{t("signupStep3")}</li>
             </ol>
             <div className="mt-6 flex flex-col gap-2">
               <a
@@ -175,7 +171,7 @@ export function PasswordIdentityGate({
                 className="rounded-md bg-accent px-4 py-2 text-center text-sm font-medium text-white hover:opacity-90"
                 data-testid="identity-gate-signup-open-borderless"
               >
-                Create account on Borderless Platform
+                {t("createOnBorderless")}
               </a>
               <Button
                 type="button"
@@ -183,7 +179,7 @@ export function PasswordIdentityGate({
                 data-testid="identity-gate-signup-already"
                 onClick={() => setSignupOpen(false)}
               >
-                I already have an account
+                {t("alreadyHaveAccount")}
               </Button>
             </div>
           </div>

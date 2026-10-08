@@ -40,6 +40,7 @@ def get_me_profile(session: Session, external_id: str) -> MeProfileResponse:
         has_diagnosis=record is not None,
         diagnosis=diagnosis,
         intake=record.intake if record else None,
+        ui_locale=_public_locale(user.ui_locale),
     )
 
 
@@ -57,6 +58,21 @@ def update_me_email(session: Session, external_id: str, email: str) -> str:
     session.commit()
     session.refresh(user)
     return email
+
+
+def update_me_locale(session: Session, external_id: str, locale: str) -> str:
+    """Store the learner's explicit catalog choice. Null stays English."""
+    user = ensure_user(session, external_id)
+    user.ui_locale = locale
+    session.commit()
+    session.refresh(user)
+    return locale
+
+
+def _public_locale(value: str | None) -> str | None:
+    if value in ("en", "pt-BR"):
+        return value
+    return None
 
 
 def _public_email(email: str | None) -> str | None:
