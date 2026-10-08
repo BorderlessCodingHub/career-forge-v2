@@ -162,6 +162,18 @@ check grep -q 'COPY --from=builder /app/public ./public' apps/frontend/Dockerfil
 check grep -q '#5316cc\|#5316CC' apps/frontend/src/app/globals.css
 check grep -q '#2debb1\|#2DEBB1' apps/frontend/src/app/globals.css
 check test -f docker-compose.yml
+check test -f apps/backend/src/career_forge/services/billing_email.py
+check test -f apps/backend/alembic/versions/022_billing_email_spell.py
+check grep -q 'billing_email_spell_open' apps/backend/src/career_forge/db/models/user.py
+check grep -q 'create_portal_session' apps/backend/src/career_forge/services/stripe_billing.py
+check grep -q '"/portal"' apps/backend/src/career_forge/api/billing.py
+check grep -q 'payment_method_update' apps/backend/src/career_forge/services/stripe_billing.py
+check grep -q 'def send_billing' apps/backend/src/career_forge/services/mailer.py
+check test -f apps/frontend/src/app/billing/card/page.tsx
+check grep -q 'ProductEntryGate' apps/frontend/src/app/billing/card/page.tsx
+check grep -q 'startBillingPortal' apps/frontend/src/lib/api-client.ts
+check file_lacks 'recordRoadmapPresence' apps/frontend/src/app/billing/card/BillingCardRedirect.tsx
+check file_lacks 'recordRoadmapPresence' apps/frontend/src/lib/billing-card.ts
 
 # No legacy app paths (exclude harness docs that mention the ban)
 LEGACY_EXCLUDE='(REPO-STRUCTURE|end-task-workflow|AGENT-LIFECYCLE|AGENT-DELIVERY|agent-verify\.sh)'

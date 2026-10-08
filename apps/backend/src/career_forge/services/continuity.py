@@ -178,11 +178,11 @@ def _stretch_for(session: Session, user: User) -> Stretch:
         presence_at=user.roadmap_presence_at,
         accepted_presence_at=user.continuity_accepted_presence_at,
         email=user.email,
-        has_roadmap=_has_roadmap(session, user),
+        has_roadmap=user_has_roadmap(session, user),
     )
 
 
-def _has_roadmap(session: Session, user: User) -> bool:
+def user_has_roadmap(session: Session, user: User) -> bool:
     node = session.scalar(
         select(UserSkillNode.id).where(UserSkillNode.user_id == user.id).limit(1)
     )

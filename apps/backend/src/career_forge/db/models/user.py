@@ -47,6 +47,9 @@ class User(Base):
     stripe_subscription_status: Mapped[str | None] = mapped_column(
         String(32), nullable=True
     )
+    billing_email_spell_open: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
     roadmap_presence_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )

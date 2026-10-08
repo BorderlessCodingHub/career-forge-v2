@@ -72,12 +72,15 @@ When `IDENTITY_EMAIL_OTP=false` (CAR-100 freeze) **and** `IDENTITY_METHOD` is em
 |--------|------|------|
 | `POST` | `/billing/checkout` | Bearer |
 | `POST` | `/billing/sync` | Bearer — polling after success_url |
+| `POST` | `/billing/portal` | Bearer — fresh Customer Portal session (`payment_method_update`). Not Roadmap presence. No Stripe action in the Operator console. |
 | `POST` | `/billing/stripe/webhook` | Public + `Stripe-Signature` |
 | `GET` | `/operator/access/pilot-emails` | Operator `access` / `both` |
 | `POST` | `/operator/access/pilot-emails` | Operator `access` / `both` |
 | `DELETE` | `/operator/access/pilot-emails/{email}` | Operator `access` / `both` |
 
-Webhook events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`.
+Webhook events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`.
+
+`past_due` stays entitled. Entering `past_due` sends one Billing email for that failed-charge spell. The link is `{FRONTEND_URL}/billing/card` (Identity gate, then `POST /billing/portal`). A later `invoice.paid`, or a status that leaves `past_due`, closes the spell. Stripe Dashboard failed-payment emails stay off — Career Forge sends this letter. `invoice.payment_failed` does not send mail.
 
 `GET /me/profile` includes `billing_entitled` and `checkout_available`.
 `GET /operator/access/learners/{email}` also includes `pilot_email_listed`.

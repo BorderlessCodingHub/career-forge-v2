@@ -14,7 +14,10 @@ from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import get_db
 from career_forge.errors import BadRequestError
+from career_forge.services.billing_email import apply_billing_email, portal_return_url
+from career_forge.services.continuity import user_has_roadmap
 from career_forge.services.entitlement import stripe_configured
+from career_forge.services.mailer import get_mailer
 from career_forge.services.stripe_billing import (
     apply_checkout_session,
     apply_stripe_event,
@@ -38,6 +41,10 @@ class BillingSyncRequest(BaseModel):
 
 class BillingSyncResponse(BaseModel):
     billing_entitled: bool
+
+
+class BillingPortalResponse(BaseModel):
+    portal_url: str
 
 
 def _checkout_email(email: str | None) -> str | None:
@@ -101,6 +108,47 @@ def sync_billing_session(
     return BillingSyncResponse(billing_entitled=bool(user.billing_entitled))
 
 
+@router.post("/portal", response_model=BillingPortalResponse)
+def create_billing_portal(
+    external_id: ExternalId,
+    db: Session = Depends(get_db),
+) -> BillingPortalResponse:
+    """Fresh Customer Portal session for the payment-method update.
+
+    Opening this route is not Roadmap presence. Stripe actions stay out of
+    the Operator console.
+    """
+    if not stripe_configured():
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "code": "stripe_not_configured",
+                "message": "Stripe checkout is not configured",
+            },
+        )
+    user = ensure_user(db, external_id)
+    if not user.stripe_customer_id:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "no_stripe_customer",
+                "message": "No Career Forge subscription to update",
+            },
+        )
+    return_url = portal_return_url(
+        has_roadmap=user_has_roadmap(db, user),
+        frontend_url=settings.frontend_url,
+    )
+    try:
+        url = get_stripe_client().create_portal_session(
+            customer_id=user.stripe_customer_id,
+            return_url=return_url,
+        )
+    except OSError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return BillingPortalResponse(portal_url=url)
+
+
 @router.post("/stripe/webhook")
 async def stripe_webhook(
     request: Request,
@@ -119,7 +167,10 @@ async def stripe_webhook(
     except BadRequestError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     apply_stripe_event(db, event)
+    rejected = apply_billing_email(db, event, get_mailer())
     db.commit()
+    if rejected:
+        raise HTTPException(status_code=502, detail="billing email was rejected")
     return {"received": True}
 
 
