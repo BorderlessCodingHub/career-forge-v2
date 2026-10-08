@@ -19,7 +19,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 
 | Trilho | Classe | Issue |
 |--------|--------|-------|
-| Continuity email | **[P]** | [V3a: Continuity email](https://linear.app/career-forge-v2/issue/CAR-123) |
+| Continuity email | **Done** | [V3a: Continuity email](https://linear.app/career-forge-v2/issue/CAR-123) — PR #90. Sweep: `apps/backend/scripts/continuity_sweep.py` |
 | Video References | **[P]** | [V3a: Video References](https://linear.app/career-forge-v2/issue/CAR-124) |
 | Stripe copy | **[S]** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — depois do gate freemium, para a frase do paywall bater com ele |
 | Portal + Billing email | **[P]** | [V3a: Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) |
