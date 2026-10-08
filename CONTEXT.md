@@ -50,6 +50,10 @@ _Avoid_: calling Welcome part of the loop; “the app” as if marketing were in
 One skill step on a learner's Roadmap, with status, tasks, and references.
 _Avoid_: lesson, card, module, graph vertex (engineering)
 
+**Next Node**:
+The first Node on the Roadmap spine that is neither approved nor locked.
+_Avoid_: focus gap, the Node they last opened, a later review ahead of an earlier step
+
 **Task**:
 A practice item on a Node. Completing it is a checklist act, not opening a URL.
 _Avoid_: homework, assignment, reference
@@ -57,6 +61,10 @@ _Avoid_: homework, assignment, reference
 **Reference**:
 A pointed study source on a Node (title + URL). It is a checklist item. Opening it is not the same act as marking it done. It is not Canonical skill content and not a Forge source.
 _Avoid_: resource (forge-internal), link, bookmark, blog post, learn page, forge timeline source
+
+**Video Reference**:
+One English video Reference on a Node, 4 to 20 minutes, attached after the Roadmap exists by a single search per forge. Any channel may supply it. Official docs References still win when equal. Not Canonical skill content.
+_Avoid_: YouTube (mechanism), Short, a second video on the same Node, Live Forge timeline card
 
 **Reference viewer**:
 The dedicated in-product page (`/reference`) that shows **one** Reference, addressed by Node + Reference item — never by the raw external URL. Entry: NodeDrawer or that URL. Not tutor, mentor, or Live Forge timeline. Chrome: Node title, this item's `done` control, and the Node's other References (switching replaces the slot). A CTA returns to that Node on the Roadmap. Opening is not `done`. Embed is best-effort; refused hosts get an Escape hatch. Bad or missing address returns the learner to the Roadmap — no empty viewer.
@@ -101,8 +109,34 @@ The right to start diagnosis and to forge. Entitled BASE/PSP membership grants i
 _Avoid_: authentication, one free forge, ransoming artifacts
 
 **Paywall**:
-The billing gate for an external learner without entitlement. It blocks **starting** diagnosis and **starting** a forge. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have. Public Labs price for unpaid `external` (Welcome copy): USD $15/mo, billed in-loop after Email identity — not on `/welcome`. BASE/PSP remain included (no Stripe).
+The billing gate for an external learner without entitlement. It blocks **starting** diagnosis and **starting** a forge. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have. Public Labs price for unpaid `external` (Welcome copy): USD $7/mo, billed in-loop after Email identity — not on `/welcome`. Checkout may show that amount in BRL. No second list price. BASE/PSP remain included (no Stripe).
 _Avoid_: OTP, login, calling the identity gate “the paywall”; blocking `/` Continue on an existing artifact; blocking the goal picker; putting Stripe on Welcome
+
+### Continuity & operations (V3)
+
+**Roadmap presence**:
+The learner on an existing Roadmap: opening it, ticking a checklist item, validating, forging, or opening a Reference.
+_Avoid_: token refresh, Welcome, opening the email, a click that stops at the Identity gate
+
+**Quiet stretch**:
+168 hours in UTC since the learner's last Roadmap presence.
+_Avoid_: streak, calendar week, “you’re behind”
+
+**Continuity email**:
+An email that brings a learner back to an existing Roadmap after a quiet stretch. When a next Node exists, the email names it. Channel is email first.
+_Avoid_: Billing email, notification (generic), nudge spam, push, streak, “you’re behind”
+
+**Billing email**:
+An email to a paying external learner that a subscription charge failed, while Entitlement still holds. Its own track, separate from a Continuity email.
+_Avoid_: Continuity email, dunning, Paywall, “access ended”, Roadmap, next Node, Welcome checkout
+
+**Failed-charge spell**:
+The stretch from a failed subscription charge on a paying external learner until a later charge succeeds.
+_Avoid_: quiet stretch, retry, dunning sequence
+
+**System observability**:
+Capturing product, API, and UI failures for engineers (Sentry FE+BE). Distinct from LangSmith, which traces LLM GraphRuns only.
+_Avoid_: calling LangSmith “observability” alone; learner-facing error desk; Operator error strip (deferred)
 
 ### Operator console
 
@@ -141,8 +175,8 @@ _Avoid_: CMS author, admin
 ### Marketing surface
 
 **Welcome** (`/welcome`):
-Commercial Premium B landpage: convert with **Start here** (accessible name: Start diagnosis) into the product loop. BASE/PSP included; unpaid `external` sees USD $15/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Does not mount the Marketing week map; no `#curriculum` hashes. Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are Yuri Pereira and Pedro Alano. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
-_Avoid_: treating Welcome as the identity gate or the Paywall; treating $15 as live checkout on the landpage; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen; selling a static syllabus as the Roadmap
+Commercial Premium B landpage: convert with **Start here** (accessible name: Start diagnosis) into the product loop. BASE/PSP included; unpaid `external` sees USD $7/mo on the landpage, billed in-loop (no Stripe/email on Welcome). Apply / Strategy / Syllabus modals removed (CAR-53). Does not mount the Marketing week map; no `#curriculum` hashes. Logo wall credits Borderless BASE/PSP employers, not Career Forge alumni. Mentors are Yuri Pereira and Pedro Alano. Unsplash testimonials stay until pilot quotes (CAR-93). No Welcome confetti. Does not require Email identity.
+_Avoid_: treating Welcome as the identity gate or the Paywall; treating $7 as live checkout on the landpage; putting Stripe on Welcome; product entry (`/` — GoalPicker / recovery) as a public anonymous screen; selling a static syllabus as the Roadmap
 
 **Marketing week map**:
 A static four-phase outline of RAG, Fine-Tuning, Evals, and OpsLLM. Chrome for Welcome only — not a Roadmap and not Live Roadmap Forge. Currently unmounted from Welcome until an explicit product decision brings it back.

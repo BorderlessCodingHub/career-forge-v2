@@ -1,6 +1,6 @@
 # Career Forge docs — index
 
-**Entry:** [AGENTS.md](../AGENTS.md) · **Plan:** [V2-PLAN.md](./V2-PLAN.md)
+**Entry:** [AGENTS.md](../AGENTS.md) · **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **V3:** [V3-PLAN.md](./V3-PLAN.md)
 
 Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). Linear team **Career Forge V2** (`CAR`).
 
@@ -11,6 +11,7 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | Doc | Purpose |
 |-----|---------|
 | [V2-PLAN.md](./V2-PLAN.md) | Canonical execution plan · decision log · F1–F3 |
+| [V3-PLAN.md](./V3-PLAN.md) | V3a — Continuity email, Video References, Stripe $7, Sentry DSN |
 | [ROADMAP.md](./ROADMAP.md) | Current phase · CAR issues · deps |
 | [STATUS.md](./STATUS.md) | Phase gates · cost gate · last merge |
 | [CHECKPOINT.md](./CHECKPOINT.md) | Product + architecture overview for agents |

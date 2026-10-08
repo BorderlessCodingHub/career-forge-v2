@@ -4,7 +4,7 @@ The product loop requires **Email identity** before any step. Unpaid `external` 
 
 | Field | Value |
 |-------|-------|
-| **Status** | **Accepted** — grill 2026-08-22 (Founder Engineer) · **Amend 2026-09-12:** password entry = Borderless credential check, CF still IdP ([ADR-008](./ADR-008-borderless-password-credential-check.md)) |
+| **Status** | **Accepted** — grill 2026-08-22 (Founder Engineer) · **Amend 2026-09-12:** password entry = Borderless credential check, CF still IdP ([ADR-008](./ADR-008-borderless-password-credential-check.md)) · **Amend 2026-10-07:** public price USD $7/mo ([price lock](https://linear.app/one-percent-better/issue/CAR-120/dollar15-stripe-price-vs-welcome-copy-lock)) |
 | **Date** | 2026-08-22 |
 | **Deciders** | Pedro Alano |
 | **Linear (v2)** | [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) · project F3b — Email OTP auth + membership |
@@ -42,7 +42,7 @@ It also meant we paid for nameless diagnosis and forge, the OTP wall was **UI-on
 | Unpaid `external` | **402** on **start diagnosis** and **start forge**. No free forge. No unpaid diagnosis. |
 | Goal picker | Allowed without billing (no LLM). |
 | Existing Roadmap | **Not ransomed** — Continue / validate / report stay usable. Paywall does not lock `/` for someone who already has an artifact. |
-| Welcome | Pricing chrome is honest copy (CAR-92): BASE/PSP included · External **$15/mo** billed in-loop. Runtime checkout is **not** on Welcome. |
+| Welcome | Pricing chrome is honest copy (CAR-92): BASE/PSP included · External **$7/mo** billed in-loop. Runtime checkout is **not** on Welcome. Checkout may present that USD price in BRL. Amended 2026-10-07; was $15/mo. |
 | Pilot grant | **Amended by CAR-87:** `billing_pilot_emails` is the runtime source. Migration 018 imports `ENTITLEMENT_BILLING_ALLOWLIST` once; runtime then ignores the env. |
 
 Identity and Paywall remain **two gates**. Early identity does not mean BASE/PSP pay. It does mean `external` pays before we run diagnosis.
