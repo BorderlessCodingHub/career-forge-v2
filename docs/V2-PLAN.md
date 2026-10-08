@@ -245,7 +245,11 @@ Linear: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-l
 
 ## Fora de escopo (v3+)
 
-SSO além da platform · NocoDB/Discord · dashboard OPS genérico além do Operator console F3c · certificação/Gate-as-a-Service · monetização Stripe · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout runtime ([intent doc](./product/waitlist-checkout-intent.md))
+SSO além da platform · NocoDB/Discord · dashboard OPS genérico além do Operator console F3c · certificação/Gate-as-a-Service · RAG de vagas no forge · hard block de diagnóstico · Frame landing · domínio global standalone · waitlist/checkout runtime on Welcome ([intent doc](./product/waitlist-checkout-intent.md))
+
+**Amend 2026-09-22:** monetização Stripe (go-live + Portal + dunning email), Continuity email, Sentry (system observability), e Video References estão **no mapa** [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109) — não no runtime até o mapa fechar. pt-BR ([CAR-37](https://linear.app/career-forge-v2/issue/CAR-37)) ficou fora da Fase 3.
+
+**Amend 2026-10-08:** pt-BR marketing + chrome reabre dentro da V3a. Prompts de diagnosis, forge e validation continuam em EN. Entitlement do `external` passa a um forge na vida da conta e depois USD $7/mo — [V3-PLAN](./V3-PLAN.md) § Freemium.
 
 ---
 

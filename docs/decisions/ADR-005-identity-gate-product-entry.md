@@ -4,7 +4,7 @@ The product loop requires **Email identity** before any step. Unpaid `external` 
 
 | Field | Value |
 |-------|-------|
-| **Status** | **Accepted** — grill 2026-08-22 (Founder Engineer) · **Amend 2026-09-12:** password entry = Borderless credential check, CF still IdP ([ADR-008](./ADR-008-borderless-password-credential-check.md)) · **Amend 2026-10-07:** public price USD $7/mo ([price lock](https://linear.app/one-percent-better/issue/CAR-120/dollar15-stripe-price-vs-welcome-copy-lock)) |
+| **Status** | **Accepted** — grill 2026-08-22 (Founder Engineer) · **Amend 2026-09-12:** password entry = Borderless credential check, CF still IdP ([ADR-008](./ADR-008-borderless-password-credential-check.md)) · **Amend 2026-10-07:** public price USD $7/mo ([price lock](https://linear.app/one-percent-better/issue/CAR-120/dollar15-stripe-price-vs-welcome-copy-lock)) · **Amend 2026-10-08:** one lifetime forge for `external`, then the subscription; BASE/PSP stay at 2 completed forges per UTC month ([V3-PLAN](../V3-PLAN.md) § Freemium) |
 | **Date** | 2026-08-22 |
 | **Deciders** | Pedro Alano |
 | **Linear (v2)** | [CAR-57](https://linear.app/career-forge-v2/issue/CAR-57) · project F3b — Email OTP auth + membership |
@@ -68,6 +68,22 @@ Impersonation (typing a listed email) is accepted for the closed cohort.
 
 `IDENTITY_METHOD` (`email_otp` \| `pilot_enter` \| `borderless_password`) is the explicit switch. Empty → derive from `IDENTITY_EMAIL_OTP` (`true` → OTP, `false` → pilot enter). **`IDENTITY_EMAIL_OTP=false` is never password mode.** Borderless password does not replace Career Forge as JWT issuer — see [ADR-008](./ADR-008-borderless-password-credential-check.md).
 
+### 6. Freemium and Career Forge password (2026-10-08)
+
+This amends §2. The title’s “paywall before diagnosis” is the 2026-08-22 rule. From this amend, the paywall sits after the lifetime forge.
+
+| Concern | Decision |
+|---------|----------|
+| Included programs | BASE and PSP only, from `GET /api/users/profile` field `membership`. FREE, any other value, and a missing field are `external`. |
+| BASE / PSP | No Stripe. Up to 2 completed forges in a UTC month. The third waits until the next month. No Stripe offer on that path. |
+| External | One forge in the life of the account, and only when no forge on that account has been completed. Starting it spends the allowance, including failure or leaving. Diagnosis may be repeated until that start. A completed forge, including one completed as BASE or PSP, spends it too. |
+| After the allowance | 402 on start diagnosis and start forge until a Career Forge subscription (USD $7/mo). Cancel does not restore another free forge. |
+| Subscribed external | Outside the 2/month ceiling. The global monthly API budget still applies. |
+| Failed profile read | Last successful label stands. The next entitlement check retries in silence once five minutes have passed. No poll while the learner is away. |
+| Password mode | `borderless_user_id` alone does not include the learner. |
+| Career Forge password | First access proves the email with OTP and sets a password Career Forge stores. Later access uses that password. The same email on Borderless sign-in is the same account. |
+| Existing Roadmap | Still not withheld. Welcome still does not host checkout. |
+
 ---
 
 ## Considered options (rejected)
@@ -83,8 +99,8 @@ Impersonation (typing a listed email) is accepted for the closed cohort.
 
 ## Consequences
 
-- Happy path: Welcome → `/` → OTP → membership → goal (even if unpaid `external`) → Paywall if unpaid `external` → diagnosis → forge.
-- `FREE_FORGE_LIMIT` for `external` goes away. Entitlement must run on diagnosis start, not only `POST /forge`.
+- Happy path from 2026-10-08: Welcome → identity → goal → one forge for `external` (diagnosis included) → Paywall → subscription. BASE/PSP skip the Paywall and stop at 2 completed forges in the UTC month.
+- `FREE_FORGE_LIMIT` for `external` goes away as an unbounded counter. The allowance is one start in the life of the account. Entitlement still runs on diagnosis start and on forge start.
 - F3a “login not required” is historical for landing work already shipped; **humans in the loop** now require CAR-57.
 - Cost caps (`FORGE_CAP_PER_USER_MONTH`, pool) still apply to entitled learners.
 

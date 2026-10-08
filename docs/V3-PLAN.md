@@ -1,19 +1,19 @@
 # Career Forge v3 — Plano de execução
 
 > Borderless · labs.borderlesscoding.com/career-forge  
-> **Atualizado:** 2026-10-07  
+> **Atualizado:** 2026-10-08  
 > **Mapa:** [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109)  
 > Cada decisão mora no ticket. Este arquivo é o corte para construir.
 
-V3 devolve o learner a um Roadmap que já existe, cobra o `external` a **USD $7/mo**, e pendura um Video Reference em cada Node. Não abre mercado, não cria V3b, e não constrói o que está na névoa.
+V3 devolve o learner a um Roadmap que já existe, deixa o `external` forjar uma vez e depois cobra **USD $7/mo**, pendura um Video Reference em cada Node, e abre Welcome e chrome em pt-BR além do inglês. Não abre mercado, não cria V3b, e não constrói o que está na névoa.
 
-**Público:** BASE e PSP incluídos. `external` paga. Welcome não hospeda checkout.
+**Público:** BASE e PSP incluídos, com 2 forges concluídos por mês UTC. `external` — membership FREE, ou sem conta na Borderless — tem um forge na vida da conta e depois a assinatura. Welcome não hospeda checkout.
 
 ---
 
-## V3a — uma fase, quatro trilhos paralelos
+## V3a — uma fase
 
-Nenhum trilho bloqueia o início dos outros. Classe **[P]** entre trilhos. A única sequência **[S]** é a virada live do Stripe, e ela não segura os demais.
+Trilhos **[P]** começam juntos. Duas sequências **[S]**: o gate freemium depois da leitura do perfil, e a copy do paywall depois desse gate. A virada live do Stripe também é **[S]** e não segura os demais.
 
 Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 
@@ -21,9 +21,13 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 |--------|--------|-------|
 | Continuity email | **[P]** | [V3a: Continuity email](https://linear.app/career-forge-v2/issue/CAR-123) |
 | Video References | **[P]** | [V3a: Video References](https://linear.app/career-forge-v2/issue/CAR-124) |
-| Stripe copy | **[P]** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — pode ir a `main` antes do Portal |
+| Stripe copy | **[S]** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — depois do gate freemium, para a frase do paywall bater com ele |
 | Portal + Billing email | **[P]** | [V3a: Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) |
 | Sentry DSN no deploy | **[P]** | [V3a: Pass the Sentry frontend DSN in the Labs deploy](https://linear.app/career-forge-v2/issue/CAR-127) |
+| Membership no perfil | **[P]** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) |
+| Freemium | **[S]** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — depois da leitura do perfil |
+| Senha do Career Forge | **[P]** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) |
+| Dual language | **[P]** | [pt-BR marketing + chrome (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — Welcome e chrome em pt-BR e EN; diagnosis, forge e validation continuam em EN |
 | Chaves live | **[S]** | [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) e um Checkout sandbox. Não bloqueia os trilhos acima. |
 
 Não há **[B]** para começar a V3a.
@@ -67,7 +71,7 @@ Um vídeo por Node: 4–20 min, inglês, embeddable, qualquer canal, sem piso de
 
 Um Price: **USD $7, mensal**. Sem Price em BRL, sem anual, sem trial. Welcome, o paywall e o glossário dizem USD $7/mo. Checkout pode mostrar esse valor em BRL (Adaptive Pricing). Welcome e o paywall ficam em USD. Welcome não hospeda checkout.
 
-O paywall deixa de dizer “Free forge used” e “subscribe to continue”. Ele nomeia USD $7/mo e diz que assinar é o que inicia diagnosis e forge. BASE e PSP não veem o painel. O texto exato é do build.
+O paywall deixa de dizer “Free forge used” e “subscribe to continue”. Ele nomeia USD $7/mo para quem já gastou o forge da vida da conta e não tem assinatura. BASE e PSP não veem o painel. O texto exato é do build. Essa copy espera o gate freemium.
 
 Labs usa chaves e Price de teste, no mesmo USD $7/mo, até um Checkout sandbox completar. Aí sim chaves live e o Price live (**[S]**).
 
@@ -95,6 +99,40 @@ O que a V3a ainda faz: o workflow de deploy passa `NEXT_PUBLIC_SENTRY_DSN` como 
 
 ---
 
+## Freemium
+
+[V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) · [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) · [ADR-005](./decisions/ADR-005-identity-gate-product-entry.md)
+
+`external` é quem tem membership FREE, quem não tem conta na Borderless, ou cujo perfil falta. Pode começar **um forge na vida da conta**, e só se nenhum forge dessa conta foi concluído. Começar gasta a franquia, mesmo se o forge falhar ou a pessoa sair. A diagnosis pode ser refeita até esse começo e faz parte desse forge. Um forge concluído também gasta, inclusive um concluído como BASE ou PSP: virar FREE depois disso leva à assinatura. Um forge de BASE ou PSP que começou e não concluiu não gasta.
+
+Depois da franquia, começar diagnosis ou forge devolve 402 até a assinatura no Checkout do Career Forge, USD $7/mo. Cancelar não devolve outro forge grátis. A franquia é uma por conta, em qualquer goal. O Checkout aparece quando ela acaba.
+
+BASE e PSP não passam pelo Stripe. Podem concluir 2 forges num mês UTC. O terceiro espera o mês seguinte, sem oferta de Stripe. Quem assina fica fora desse teto. O orçamento mensal global da API continua valendo para todo mundo. Um Roadmap que já existe continua aberto.
+
+No modo senha, ter `borderless_user_id` deixa de incluir a pessoa. Só BASE e PSP entram sem cobrança.
+
+## Membership
+
+Cada checagem de entitlement de quem tem conta na Borderless chama `GET /api/users/profile`. O campo `membership` vale BASE, PSP ou FREE. Uma leitura que falha mantém o último rótulo que funcionou. A checagem seguinte, cinco minutos depois da falha, tenta de novo em silêncio. Fora do produto, nada dispara sozinho. O acesso da Borderless que guardamos é renovável, para a nova leitura funcionar sem pedir a senha outra vez. Se não der para renovar, o último rótulo fica até o próximo login com a senha da Borderless.
+
+Conta só no Career Forge não tem perfil para ler e permanece `external` até um login da Borderless no mesmo e-mail.
+
+## Conta só no Career Forge
+
+[V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129)
+
+O primeiro acesso prova o e-mail com o OTP e define uma senha que o Career Forge guarda. Os acessos seguintes usam essa senha. O OTP do learner não é a porta de todo dia. Essa senha é outra, distinta da senha da Borderless. As duas abrem o mesmo usuário.
+
+Esquecer a senha do Career Forge troca por um e-mail nesse endereço. A senha da Borderless não muda. O mesmo e-mail no login da Borderless é a mesma conta: a checagem seguinte lê o perfil, BASE ou PSP entram na regra incluída, FREE continua `external`, e um forge já começado continua gasto. Uma conta já ligada à Borderless pode ganhar essa senha depois.
+
+## Dual language
+
+[pt-BR marketing + chrome (i18n)](https://linear.app/career-forge-v2/issue/CAR-37)
+
+Welcome e o chrome ficam legíveis em pt-BR e em EN. Diagnosis, forge e validation, com os prompts, continuam em EN. O inglês que a [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) já entregou permanece.
+
+---
+
 ## Fora da V3a
 
 Ficam sem fase até uma decisão futura, não como V3b:
@@ -104,7 +142,7 @@ Ficam sem fase até uma decisão futura, não como V3b:
 - Continuidade dentro do produto (bell, banner)
 - Faixa de erros recentes no Operator
 
-Fora deste plano: Discord, NocoDB, Job-RAG, domínio standalone, certificação, diagnosis hard-block, streaks, badges, checkout na Welcome, pt-BR, Stripe no Operator console, SSO além da Borderless.
+Fora deste plano: Discord, NocoDB, Job-RAG, domínio standalone, certificação, diagnosis hard-block, streaks, badges, checkout na Welcome, prompts de diagnosis/forge/validation em pt-BR, Stripe no Operator console, SSO além da Borderless.
 
 ---
 

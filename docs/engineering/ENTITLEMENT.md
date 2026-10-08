@@ -1,5 +1,7 @@
 # Entitlement paywall (CAR-46 · **CAR-57 / CAR-87 / ADR-005** · **CAR-108**)
 
+> **Spec ahead of the code (2026-10-08).** [V3-PLAN](../V3-PLAN.md) § Freemium replaces “no free forge” and “any Borderless account is included.” The tables below describe the code until [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) lands.
+
 Identity (email OTP or Borderless password) and membership label (`base|psp|external`) are separate from **billing** in OTP / `pilot_enter` modes. Unpaid `external` learners cannot **start diagnosis** or **start a forge** until they have a Career Forge subscription (or a pilot allowlist). There is **no free forge**. Active BASE/PSP never hit the Stripe gate. An existing Roadmap is not withheld.
 
 When `IDENTITY_METHOD=borderless_password`, a Borderless platform account **is** Career Forge included: entitled **only** if `users.borderless_user_id` is set (plus existing demo / cost-guard exclude). Pilot list, Stripe, `billing_entitled`, and BASE/PSP label do **not** bypass that gate.

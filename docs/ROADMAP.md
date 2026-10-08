@@ -10,11 +10,11 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 ## Current focus — V3a
 
-**Phase 3 closed 2026-09-22** (F3a/F3b/F3c shipped). [pt-BR marketing + chrome (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) parked **outside** the phase — not Done, not on the V3 map.
+**Phase 3 closed 2026-09-22** (F3a/F3b/F3c shipped). [pt-BR marketing + chrome (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) was parked outside that phase and **reopened into V3a** on 2026-10-08. Product AI stays EN.
 
-**Plan:** [V3-PLAN.md](./V3-PLAN.md) · map [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109) (decisions closed 2026-10-07).
+**Plan:** [V3-PLAN.md](./V3-PLAN.md) · map [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109). Entitlement amend 2026-10-08: one forge, then USD $7/mo.
 
-**Epic:** [V3a](https://linear.app/career-forge-v2/issue/CAR-122). Parallel **[P]:** [Continuity email](https://linear.app/career-forge-v2/issue/CAR-123) · [Video References](https://linear.app/career-forge-v2/issue/CAR-124) · [Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) · [Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) · [Sentry frontend DSN](https://linear.app/career-forge-v2/issue/CAR-127). Live keys are **[S]** after [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) and one sandbox Checkout. That wait does not block the other tracks. No V3b.
+**Epic:** [V3a](https://linear.app/career-forge-v2/issue/CAR-122). **[P]:** [Continuity email](https://linear.app/career-forge-v2/issue/CAR-123) · [Video References](https://linear.app/career-forge-v2/issue/CAR-124) · [Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) · [Sentry frontend DSN](https://linear.app/career-forge-v2/issue/CAR-127) · [Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) · [Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) · [pt-BR marketing + chrome](https://linear.app/career-forge-v2/issue/CAR-37). **[S]:** [One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) after the profile read · [Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) after that gate · live keys after [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) and one sandbox Checkout. No V3b.
 
 ---
 
@@ -40,7 +40,7 @@ Grill decisions: [V2-PLAN.md](./V2-PLAN.md) § Fase 3 (F3.1–F3.13). Amend 2026
 | Issue | Title | Class | Blocked by |
 |-------|-------|-------|------------|
 | [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) | Marketing `/welcome` (EN) | [S] | **Done** — PR #31 |
-| [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) | pt-BR marketing + chrome | — | **Parked outside Phase 3** (2026-09-22) — Backlog, not V3 map |
+| [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) | pt-BR marketing + chrome | [P] | **Reopened into V3a** (2026-10-08) — Backlog. Left Phase 3 on 2026-09-22. Product AI stays EN |
 | [CAR-38](https://linear.app/career-forge-v2/issue/CAR-38) | `/welcome` motion polish | [S] | **Done** — PR #32 |
 | [CAR-39](https://linear.app/career-forge-v2/issue/CAR-39) | `/welcome` marketing copy (outcome hero) | [P] | **Done** — PR #34 |
 | [CAR-40](https://linear.app/career-forge-v2/issue/CAR-40) | Marketing `/welcome/plg` (product-led) | [P] | **Done** — PR #35 |
@@ -68,7 +68,7 @@ Spec locked 2026-08-22 ([CAR-54](https://linear.app/career-forge-v2/issue/CAR-54
 | [CAR-99](https://linear.app/career-forge-v2/issue/CAR-99) | Welcome testimonials: Borderless BASE/PSP stories | [P] | **Done** — PR #82 · ecosystem proof; CAR-93 still for CF pilots |
 | [CAR-96](https://linear.app/career-forge-v2/issue/CAR-96) | Welcome Marketing week map unmounted | [P] | **Done** — PR #74 |
 
-**F3a Welcome track complete** (CAR-53/91/92/93/96/99 **Done**). CAR-37 pt-BR parked outside phase.
+**F3a Welcome track complete** (CAR-53/91/92/93/96/99 **Done**). CAR-37 pt-BR left this phase and reopened into V3a (2026-10-08).
 
 ### F3b — email OTP auth + membership **[S]**
 
@@ -230,13 +230,13 @@ Grill decisions locked in [V2-PLAN.md](./V2-PLAN.md) § Fase 2 (2026-07-25).
 
 ## Phase 3 — ✅ Completed (2026-09-22)
 
-F3a + F3b + F3c shipped. Linear history: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · F3b CAR-28 · F3c CAR-58. Deferred outside phase: [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR.
+F3a + F3b + F3c shipped. Linear history: [Phase 3a](https://linear.app/career-forge-v2/project/phase-3a-rebrand-landing-pilots-ebc398e30d12) · F3b CAR-28 · F3c CAR-58. [CAR-37](https://linear.app/career-forge-v2/issue/CAR-37) pt-BR left this phase on 2026-09-22 and reopened into V3a on 2026-10-08.
 
 ---
 
 ## V3 — wayfinding (in progress)
 
-Map: [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109). Four pillars: Continuity email · Sentry · Stripe sell+Portal+dunning email · Video References. `docs/V3-PLAN.md` lands when the map clears.
+Map: [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109). Plan: [V3-PLAN.md](./V3-PLAN.md). Pillars: Continuity email · Sentry · Stripe sell+Portal+dunning email · Video References. Amend 2026-10-08: one forge then USD $7/mo, Career Forge password, and pt-BR marketing + chrome.
 
 [Provision Sentry](https://linear.app/career-forge-v2/issue/CAR-118) **Done** — PR #88. Two projects, DSNs in env, no learner UI. Frontend DSN still needs a GitHub Actions build arg before Labs reports browser errors.
 
@@ -244,6 +244,6 @@ Map: [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109). Four p
 
 ## Out of scope (still parked past V3 map unless destination redraws)
 
-SSO beyond platform · NocoDB/Discord · generic OPS dashboard beyond the scoped F3c Operator console · Gate-as-a-Service · Stripe actions in the console · job-RAG in forge · diagnosis hard block · Frame landing · global standalone domain · streaks/badges · Welcome checkout · pt-BR until retargeted
+SSO beyond platform · NocoDB/Discord · generic OPS dashboard beyond the scoped F3c Operator console · Gate-as-a-Service · Stripe actions in the console · job-RAG in forge · diagnosis hard block · Frame landing · global standalone domain · streaks/badges · Welcome checkout · diagnosis/forge/validation prompts in pt-BR
 
 Hackathon sprint history: [archive/SPRINT-BOARD.md](./archive/SPRINT-BOARD.md)
