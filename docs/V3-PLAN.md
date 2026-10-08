@@ -22,7 +22,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Continuity email | **Done** | [V3a: Continuity email](https://linear.app/career-forge-v2/issue/CAR-123) — PR #90. Sweep: `apps/backend/scripts/continuity_sweep.py` |
 | Video References | **[P]** | [V3a: Video References](https://linear.app/career-forge-v2/issue/CAR-124) |
 | Stripe copy | **[S]** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — depois do gate freemium, para a frase do paywall bater com ele |
-| Portal + Billing email | **[P]** | [V3a: Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) |
+| Portal + Billing email | **Done** | [V3a: Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) — PR #91. Alembic `022_billing_email_spell` |
 | Sentry DSN no deploy | **[P]** | [V3a: Pass the Sentry frontend DSN in the Labs deploy](https://linear.app/career-forge-v2/issue/CAR-127) |
 | Membership no perfil | **[P]** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) |
 | Freemium | **[S]** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — depois da leitura do perfil |
