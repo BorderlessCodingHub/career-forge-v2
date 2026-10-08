@@ -92,6 +92,10 @@ _Avoid_: unauthenticated, logged out, guest, “no auth”
 Proof that the learner owns an email address, established by Career Forge OTP. This is what “authenticate” means in product talk.
 _Avoid_: authenticate (overloaded), login (generic), Borderless account, membership, Operator OTP
 
+**Career Forge password**:
+A password Career Forge stores. The first access proves the email with OTP and sets this password; later access uses the password. It opens a learner who has no Borderless account, and the same user when that email later signs in with the Borderless password. A forgotten password is replaced through that inbox. Distinct from the Borderless password.
+_Avoid_: Borderless password, Operator OTP, Membership, Entitlement
+
 **Sign out** (UI: *Sair*):
 Ends Email identity on this browser. Clears all client state and revokes the access JWT server-side. Returns the learner to the Identity gate — not “logged out of Borderless.”
 _Avoid_: logged out, logout (generic), deauthenticate, Borderless sign-out
@@ -101,16 +105,16 @@ The rule that the product loop requires Email identity before any step in it. We
 _Avoid_: paywall, post-forge upgrade, Welcome login, entry-gate on marketing
 
 **Membership**:
-Soft label of the learner as BASE, PSP, or external to Borderless. Not identity and not entitlement.
-_Avoid_: login, account type, “authenticated as BASE”
+Soft label of the learner as BASE, PSP, or external. Only BASE and PSP are the included programs. A Borderless membership of FREE is external.
+_Avoid_: login, account type, FREE as a third included program, “authenticated as BASE”
 
 **Entitlement**:
-The right to start diagnosis and to forge. Entitled BASE/PSP membership grants it without billing. External requires billing first — there is no free forge and no unpaid diagnosis. An existing Roadmap is not withheld for lack of entitlement.
-_Avoid_: authentication, one free forge, ransoming artifacts
+The right to start diagnosis and to forge. BASE and PSP have it without billing, for up to 2 completed forges in a UTC month. External — no Borderless account, or a Borderless membership of FREE — may start one forge in the life of the account, and only when no forge has been completed on that account. Starting it spends the allowance, including when the forge fails or the learner leaves. A completed forge, including one completed as BASE or PSP, spends it too: becoming FREE after that leads to the subscription. Diagnosis may be repeated until that start. That forge includes the diagnosis that builds it. After that forge, external entitlement comes from a Career Forge subscription. A Borderless-linked learner’s membership is read again on each entitlement check. A failed read keeps the last label that was read successfully. The next entitlement check retries that read in silence once five minutes have passed since the failure. A subscribed external sits outside the monthly ceiling. An existing Roadmap is not withheld for lack of entitlement.
+_Avoid_: authentication, pay-before-the-first-forge, a second free forge, ransoming artifacts, treating FREE as an included program
 
 **Paywall**:
-The billing gate for an external learner without entitlement. It blocks **starting** diagnosis and **starting** a forge. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have. Public Labs price for unpaid `external` (Welcome copy): USD $7/mo, billed in-loop after Email identity — not on `/welcome`. Checkout may show that amount in BRL. No second list price. BASE/PSP remain included (no Stripe).
-_Avoid_: OTP, login, calling the identity gate “the paywall”; blocking `/` Continue on an existing artifact; blocking the goal picker; putting Stripe on Welcome
+The billing gate for an external learner whose lifetime forge is spent and who has no Career Forge subscription. It blocks **starting** diagnosis and **starting** a forge. It does not apply to BASE or PSP. It does not lock Welcome, share, resume, choosing a goal, or a Roadmap they already have. Public Labs price: USD $7/mo, billed in-loop after Email identity — not on `/welcome`. Checkout is Career Forge’s Checkout. Checkout may show that amount in BRL. No second list price.
+_Avoid_: OTP, login, calling the identity gate “the paywall”; blocking an existing Roadmap; blocking the goal picker; putting Stripe on Welcome; offering the paywall to BASE or PSP
 
 ### Continuity & operations (V3)
 

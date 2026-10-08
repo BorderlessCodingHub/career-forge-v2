@@ -311,6 +311,10 @@ export async function streamForgeRun(
   return state.events;
 }
 
+export async function recordRoadmapPresence(): Promise<void> {
+  await apiFetch<{ recorded: boolean }>("/roadmap/presence", { method: "POST" });
+}
+
 export async function getRoadmap(userId?: string): Promise<RoadmapResponse> {
   const resolvedUserId = userId ?? getUserId();
   // /roadmap/current avoids App Router page collision on Labs (CAR-30 / CAR-20 pattern).

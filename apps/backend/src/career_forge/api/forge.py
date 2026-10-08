@@ -115,6 +115,9 @@ async def forge_run(
     )
     get_cost_guard().check(run)
     store.save(run)
+    from career_forge.services.continuity import record_roadmap_presence
+
+    record_roadmap_presence(db, external_id)
 
     return ForgeRunResponse(
         run_id=run.id,

@@ -47,6 +47,12 @@ class User(Base):
     stripe_subscription_status: Mapped[str | None] = mapped_column(
         String(32), nullable=True
     )
+    roadmap_presence_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    continuity_accepted_presence_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

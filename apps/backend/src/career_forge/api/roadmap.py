@@ -10,6 +10,7 @@ from career_forge.db.session import get_db
 from career_forge.errors import DomainError
 from career_forge.schemas.roadmap import ChecklistToggleRequest, RoadmapResponse, RoadmapSyncRequest
 from career_forge.services import roadmap as roadmap_service
+from career_forge.services.continuity import record_roadmap_presence
 
 router = APIRouter()
 
@@ -53,6 +54,16 @@ def sync_roadmap(
                 for node in body.nodes
             },
         )
+
+
+@router.post("/presence")
+def post_roadmap_presence(
+    external_id: EmailExternalId,
+    db: Session = Depends(get_db),
+) -> dict[str, bool]:
+    """Opening the Roadmap or a Reference. Not token refresh, Welcome, or the Identity gate."""
+    record_roadmap_presence(db, external_id)
+    return {"recorded": True}
 
 
 @router.patch("/nodes/{node_id}/checklist", response_model=RoadmapResponse)
