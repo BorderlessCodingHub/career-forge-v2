@@ -5,7 +5,7 @@
 > **Mapa:** [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109)  
 > Cada decisão mora no ticket. Este arquivo é o corte para construir.
 
-V3 devolve o learner a um Roadmap que já existe, deixa o `external` forjar uma vez e depois cobra **USD $7/mo**, pendura um Video Reference em cada Node, e abre Welcome e chrome em pt-BR além do inglês. Não abre mercado, não cria V3b, e não constrói o que está na névoa.
+V3 devolve o learner a um Roadmap que já existe, deixa o `external` forjar uma vez e depois cobra **USD $7/mo**, pendura um Video Reference em cada Node, e abre a interface do learner em pt-BR além do inglês. Não abre mercado, não cria V3b, e não constrói o que está na névoa.
 
 **Público:** BASE e PSP incluídos, com 2 forges concluídos por mês UTC. `external` — membership FREE, ou sem conta na Borderless — tem um forge na vida da conta e depois a assinatura. Welcome não hospeda checkout.
 
@@ -13,7 +13,7 @@ V3 devolve o learner a um Roadmap que já existe, deixa o `external` forjar uma 
 
 ## V3a — uma fase
 
-Trilhos **[P]** começam juntos. Duas sequências **[S]**: o gate freemium depois da leitura do perfil, e a copy do paywall depois desse gate. A virada live do Stripe também é **[S]** e não segura os demais.
+Trilhos **[P]** começam juntos. Sequências **[S]**: o gate freemium depois da leitura do perfil, a copy do paywall depois desse gate, e os emails e o roadmap no idioma depois da interface. A virada live do Stripe também é **[S]** e não segura os demais.
 
 Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 
@@ -27,7 +27,9 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Membership no perfil | **[P]** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) |
 | Freemium | **[S]** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — depois da leitura do perfil |
 | Senha do Career Forge | **[P]** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) |
-| Dual language | **[P]** | [pt-BR marketing + chrome (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — Welcome e chrome em pt-BR e EN; diagnosis, forge e validation continuam em EN |
+| Dual language — interface | **[P]** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — catálogos `en` e `pt-BR`, EN padrão, URL estável |
+| Emails no idioma | **[S]** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — depois da interface |
+| Roadmap no idioma | **[S]** | [V3a: Forge roadmap in the learner locale](https://linear.app/career-forge-v2/issue/CAR-132) — depois da interface |
 | Chaves live | **[S]** | [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) e um Checkout sandbox. Não bloqueia os trilhos acima. |
 
 Não há **[B]** para começar a V3a.
@@ -127,9 +129,17 @@ Esquecer a senha do Career Forge troca por um e-mail nesse endereço. A senha da
 
 ## Dual language
 
-[pt-BR marketing + chrome (i18n)](https://linear.app/career-forge-v2/issue/CAR-37)
+[pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) · [Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) · [Forge roadmap in the learner locale](https://linear.app/career-forge-v2/issue/CAR-132)
 
-Welcome e o chrome ficam legíveis em pt-BR e em EN. Diagnosis, forge e validation, com os prompts, continuam em EN. O inglês que a [CAR-35](https://linear.app/career-forge-v2/issue/CAR-35) já entregou permanece.
+Inglês é o padrão. pt-BR é opt-in. A URL não muda. `next-intl` escolhe o catálogo pelo cookie. A Welcome indexada continua a inglesa. O controle fica no chrome, Welcome incluída.
+
+Sem login, só o cookie. No login, se a pessoa mexeu no controle, o cookie grava por cima da conta. Logada, o controle grava os dois. Sem escolha gravada, interface e email ficam em inglês.
+
+A interface do learner entra nos catálogos, inclusive a casca de `/learn` e de Reference. O markdown da lição e o corpo de um embed de fora ficam como foram publicados. O Operator console fica em inglês. Chave pt-BR sem revisão humana cai para o inglês. A máquina pode rascunhar o catálogo. A issue não fecha antes dessa revisão.
+
+Os emails do learner (código, continuidade, cobrança, resume) usam o idioma gravado na conta. O email do Operator fica em inglês. Mesma regra de rascunho e revisão.
+
+O prompt do forge continua em inglês e, na largada, pede o roadmap no idioma da conta. Trocar no meio do stream não reescreve esse forge. O próximo usa o idioma novo. Um roadmap já existente não é traduzido. Diagnosis, validation e mentor continuam em inglês. O texto em pt-BR é português do Brasil.
 
 ---
 
@@ -142,7 +152,7 @@ Ficam sem fase até uma decisão futura, não como V3b:
 - Continuidade dentro do produto (bell, banner)
 - Faixa de erros recentes no Operator
 
-Fora deste plano: Discord, NocoDB, Job-RAG, domínio standalone, certificação, diagnosis hard-block, streaks, badges, checkout na Welcome, prompts de diagnosis/forge/validation em pt-BR, Stripe no Operator console, SSO além da Borderless.
+Fora deste plano: Discord, NocoDB, Job-RAG, domínio standalone, certificação, diagnosis hard-block, streaks, badges, checkout na Welcome, prompts traduzidos, diagnosis/validation/mentor em pt-BR, Stripe no Operator console, SSO além da Borderless.
 
 ---
 
