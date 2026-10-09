@@ -8,12 +8,21 @@ from typing import Protocol, runtime_checkable
 from urllib import error, request
 
 from career_forge.config import settings
+from career_forge.services.learner_mail import (
+    operator_otp_letter,
+    otp_letter,
+    resume_letter,
+)
 
 logger = logging.getLogger(__name__)
 
 # Cloudflare in front of api.resend.com returns 1010 for Python-urllib's default UA (CAR-84).
 RESEND_USER_AGENT = "CareerForge/1.0 (+https://labs.borderlesscoding.com/career-forge)"
 _MAX_ERROR_BODY = 300
+
+
+def _otp_minutes() -> int:
+    return max(1, settings.otp_ttl_seconds // 60)
 
 
 def _http_error_detail(exc: error.HTTPError) -> str:
@@ -25,11 +34,13 @@ def _http_error_detail(exc: error.HTTPError) -> str:
 
 @runtime_checkable
 class Mailer(Protocol):
-    def send_otp(self, *, to_email: str, code: str) -> None: ...
+    def send_otp(self, *, to_email: str, code: str, locale: str | None = None) -> None: ...
 
     def send_operator_otp(self, *, to_email: str, code: str) -> None: ...
 
-    def send_resume_link(self, *, to_email: str, resume_url: str) -> None: ...
+    def send_resume_link(
+        self, *, to_email: str, resume_url: str, locale: str | None = None
+    ) -> None: ...
 
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None: ...
 
@@ -39,27 +50,43 @@ class Mailer(Protocol):
 class LogMailer:
     """Dev/test mailer — prints payloads so local stacks need no SMTP."""
 
-    def send_otp(self, *, to_email: str, code: str) -> None:
+    def send_otp(self, *, to_email: str, code: str, locale: str | None = None) -> None:
+        subject, text = otp_letter(
+            code=code,
+            minutes=_otp_minutes(),
+            locale=locale,
+        )
         logger.info(
-            "OTP for %s: %s (valid ~%ss) — mailer_backend=log",
+            "OTP for %s: %s — mailer_backend=log\n%s\n%s",
             to_email,
             code,
-            settings.otp_ttl_seconds,
+            subject,
+            text,
         )
 
     def send_operator_otp(self, *, to_email: str, code: str) -> None:
+        subject, text = operator_otp_letter(code=code, minutes=_otp_minutes())
         logger.info(
-            "Operator console OTP for %s: %s (valid ~%ss) — not learner Email identity",
+            "Operator console OTP for %s: %s — not learner Email identity\n%s\n%s",
             to_email,
             code,
-            settings.otp_ttl_seconds,
+            subject,
+            text,
         )
 
-    def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
+    def send_resume_link(
+        self, *, to_email: str, resume_url: str, locale: str | None = None
+    ) -> None:
+        subject, text = resume_letter(
+            url=resume_url,
+            days=settings.jwt_resume_ttl_days,
+            locale=locale,
+        )
         logger.info(
-            "Resume link for %s: %s — mailer_backend=log",
+            "Resume link for %s — mailer_backend=log\n%s\n%s",
             to_email,
-            resume_url,
+            subject,
+            text,
         )
 
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
@@ -82,39 +109,23 @@ class LogMailer:
 class ResendMailer:
     """Prod mailer via Resend HTTP API when ``RESEND_API_KEY`` is set."""
 
-    def send_otp(self, *, to_email: str, code: str) -> None:
-        minutes = max(1, settings.otp_ttl_seconds // 60)
-        self._send(
-            to_email=to_email,
-            subject="Your Career Forge code",
-            text=(
-                f"Your verification code is {code}. "
-                f"It expires in {minutes} minutes."
-            ),
-        )
+    def send_otp(self, *, to_email: str, code: str, locale: str | None = None) -> None:
+        subject, text = otp_letter(code=code, minutes=_otp_minutes(), locale=locale)
+        self._send(to_email=to_email, subject=subject, text=text)
 
     def send_operator_otp(self, *, to_email: str, code: str) -> None:
-        minutes = max(1, settings.otp_ttl_seconds // 60)
-        self._send(
-            to_email=to_email,
-            subject="Your Operator console code",
-            text=(
-                f"Your Operator console verification code is {code}. "
-                f"This is not your learner Email identity login. "
-                f"It expires in {minutes} minutes."
-            ),
-        )
+        subject, text = operator_otp_letter(code=code, minutes=_otp_minutes())
+        self._send(to_email=to_email, subject=subject, text=text)
 
-    def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
-        self._send(
-            to_email=to_email,
-            subject="Your Career Forge resume link",
-            text=(
-                "Use this single-use link to resume your Career Forge roadmap "
-                f"(expires in about {settings.jwt_resume_ttl_days} days):\n\n"
-                f"{resume_url}\n"
-            ),
+    def send_resume_link(
+        self, *, to_email: str, resume_url: str, locale: str | None = None
+    ) -> None:
+        subject, text = resume_letter(
+            url=resume_url,
+            days=settings.jwt_resume_ttl_days,
+            locale=locale,
         )
+        self._send(to_email=to_email, subject=subject, text=text)
 
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
         self._send(to_email=to_email, subject=subject, text=text)
@@ -156,39 +167,23 @@ class ResendMailer:
 class SesMailer:
     """Prod mailer via AWS SES (boto3) when region is configured."""
 
-    def send_otp(self, *, to_email: str, code: str) -> None:
-        minutes = max(1, settings.otp_ttl_seconds // 60)
-        self._send(
-            to_email=to_email,
-            subject="Your Career Forge code",
-            text=(
-                f"Your verification code is {code}. "
-                f"It expires in {minutes} minutes."
-            ),
-        )
+    def send_otp(self, *, to_email: str, code: str, locale: str | None = None) -> None:
+        subject, text = otp_letter(code=code, minutes=_otp_minutes(), locale=locale)
+        self._send(to_email=to_email, subject=subject, text=text)
 
     def send_operator_otp(self, *, to_email: str, code: str) -> None:
-        minutes = max(1, settings.otp_ttl_seconds // 60)
-        self._send(
-            to_email=to_email,
-            subject="Your Operator console code",
-            text=(
-                f"Your Operator console verification code is {code}. "
-                f"This is not your learner Email identity login. "
-                f"It expires in {minutes} minutes."
-            ),
-        )
+        subject, text = operator_otp_letter(code=code, minutes=_otp_minutes())
+        self._send(to_email=to_email, subject=subject, text=text)
 
-    def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
-        self._send(
-            to_email=to_email,
-            subject="Your Career Forge resume link",
-            text=(
-                "Use this single-use link to resume your Career Forge roadmap "
-                f"(expires in about {settings.jwt_resume_ttl_days} days):\n\n"
-                f"{resume_url}\n"
-            ),
+    def send_resume_link(
+        self, *, to_email: str, resume_url: str, locale: str | None = None
+    ) -> None:
+        subject, text = resume_letter(
+            url=resume_url,
+            days=settings.jwt_resume_ttl_days,
+            locale=locale,
         )
+        self._send(to_email=to_email, subject=subject, text=text)
 
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
         self._send(to_email=to_email, subject=subject, text=text)

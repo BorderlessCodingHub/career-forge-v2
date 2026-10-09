@@ -150,7 +150,11 @@ def email_resume_link(
     session.add(row)
     session.flush()
     try:
-        (mailer or get_mailer()).send_resume_link(to_email=email, resume_url=resume_url)
+        (mailer or get_mailer()).send_resume_link(
+            to_email=email,
+            resume_url=resume_url,
+            locale=user.ui_locale,
+        )
         session.commit()
     except Exception as exc:
         session.rollback()

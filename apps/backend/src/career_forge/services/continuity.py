@@ -16,6 +16,10 @@ from sqlalchemy.orm import Session
 
 from career_forge.config import settings
 from career_forge.db.models.forge_artifact import ForgeArtifact
+from career_forge.services.learner_mail import (
+    continuity_idle_letter,
+    continuity_node_letter,
+)
 from career_forge.db.models.user import User
 from career_forge.db.models.user_skill_node import UserSkillNode
 from career_forge.db.repositories.user import get_by_external_id
@@ -38,6 +42,7 @@ class Stretch:
     accepted_presence_at: datetime | None
     email: str | None
     has_roadmap: bool
+    locale: str | None = None
 
 
 class ContinuityMailer(Protocol):
@@ -66,19 +71,18 @@ def continuity_message(
     node: SpineNode | None,
     *,
     frontend_url: str,
+    locale: str | None = None,
 ) -> tuple[str, str, str]:
     """Subject, body, and absolute URL. Copy does not say the learner is behind."""
     base = frontend_url.rstrip("/")
     if node is None:
         url = f"{base}/roadmap?from=continuity"
-        subject = "Your roadmap is here"
-        text = f"Your roadmap is ready when you are.\n\n{url}\n"
+        subject, text = continuity_idle_letter(url=url, locale=locale)
         return subject, text, url
 
     query = urlencode({"from": "continuity", "node": node.node_id})
     url = f"{base}/roadmap?{query}"
-    subject = f"Continue with {node.title}"
-    text = f"{node.title} is the next node on your roadmap.\n\n{url}\n"
+    subject, text = continuity_node_letter(title=node.title, url=url, locale=locale)
     return subject, text, url
 
 
@@ -94,7 +98,11 @@ def try_send(
     if now is not None and not is_due(stretch, now):
         raise ValueError("continuity stretch is not due")
     email = (stretch.email or "").strip()
-    subject, text, _url = continuity_message(node, frontend_url=frontend_url)
+    subject, text, _url = continuity_message(
+        node,
+        frontend_url=frontend_url,
+        locale=stretch.locale,
+    )
     try:
         mailer.send_continuity(to_email=email, subject=subject, text=text)
     except Exception:
@@ -179,6 +187,7 @@ def _stretch_for(session: Session, user: User) -> Stretch:
         accepted_presence_at=user.continuity_accepted_presence_at,
         email=user.email,
         has_roadmap=user_has_roadmap(session, user),
+        locale=user.ui_locale,
     )
 
 

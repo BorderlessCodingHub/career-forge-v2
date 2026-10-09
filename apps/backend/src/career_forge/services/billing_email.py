@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from career_forge.config import settings
 from career_forge.db.models.user import User
+from career_forge.services.learner_mail import billing_letter
 
 logger = logging.getLogger(__name__)
 
@@ -104,15 +105,14 @@ def spell_should_send(charge: FailedCharge) -> bool:
     return True
 
 
-def billing_message(frontend_url: str) -> tuple[str, str, str]:
+def billing_message(
+    frontend_url: str,
+    *,
+    locale: str | None = None,
+) -> tuple[str, str, str]:
     """Subject, body, and the Career Forge card URL. No opt-out."""
     url = f"{frontend_url.rstrip('/')}{CARD_PATH}"
-    subject = "A charge for Career Forge failed"
-    text = (
-        "A charge for Career Forge failed. "
-        "You can keep using Career Forge. "
-        f"This link updates your card:\n\n{url}\n"
-    )
+    subject, text = billing_letter(url=url, locale=locale)
     return subject, text, url
 
 
@@ -129,12 +129,13 @@ def try_send(
     mailer: BillingMailer,
     *,
     frontend_url: str,
+    locale: str | None = None,
 ) -> tuple[FailedCharge, bool]:
     """Send one letter. A rejected send leaves the spell unspent."""
     if not spell_should_send(charge):
         raise ValueError("failed-charge spell should not send")
     email = (charge.email or "").strip()
-    subject, text, _url = billing_message(frontend_url)
+    subject, text, _url = billing_message(frontend_url, locale=locale)
     try:
         mailer.send_billing(to_email=email, subject=subject, text=text)
     except Exception:
@@ -178,7 +179,12 @@ def apply_billing_email(
     if not spell_should_send(charge):
         return False
     origin = frontend_url if frontend_url is not None else settings.frontend_url
-    updated, accepted = try_send(charge, mailer, frontend_url=origin)
+    updated, accepted = try_send(
+        charge,
+        mailer,
+        frontend_url=origin,
+        locale=user.ui_locale,
+    )
     if not accepted:
         return True
     user.billing_email_spell_open = updated.spell_open

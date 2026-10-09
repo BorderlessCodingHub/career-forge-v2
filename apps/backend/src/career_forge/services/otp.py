@@ -130,7 +130,8 @@ def request_otp(
     )
     session.commit()
 
-    (mailer or get_mailer()).send_otp(to_email=email, code=code)
+    stored_locale = session.scalar(select(User.ui_locale).where(User.email == email))
+    (mailer or get_mailer()).send_otp(to_email=email, code=code, locale=stored_locale)
     return settings.otp_ttl_seconds
 
 
