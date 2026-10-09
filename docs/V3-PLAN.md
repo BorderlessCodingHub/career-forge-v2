@@ -28,7 +28,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Freemium | **[S]** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — depois da leitura do perfil |
 | Senha do Career Forge | **[P]** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) |
 | Dual language — interface | **Merged** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #92. Alembic `023_ui_locale`. O catálogo pt-BR é rascunho; a issue não fecha antes da revisão humana |
-| Emails no idioma | **[S]** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — depois da interface |
+| Emails no idioma | **Merged** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — PR #93. O rascunho pt-BR não é enviado; a issue não fecha antes da revisão humana |
 | Roadmap no idioma | **[S]** | [V3a: Forge roadmap in the learner locale](https://linear.app/career-forge-v2/issue/CAR-132) — depois da interface |
 | Chaves live | **[S]** | [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) e um Checkout sandbox. Não bloqueia os trilhos acima. |
 
