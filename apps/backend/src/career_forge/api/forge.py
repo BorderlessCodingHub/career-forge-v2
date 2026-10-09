@@ -19,6 +19,7 @@ from career_forge.auth.stream_tickets import (
     mint_forge_stream_ticket,
     stream_ticket_ttl_seconds,
 )
+from career_forge.db.repositories.user import get_by_external_id
 from career_forge.db.session import get_db
 from career_forge.schemas.forge import (
     ForgeRunRequest,
@@ -27,6 +28,7 @@ from career_forge.schemas.forge import (
 )
 from career_forge.services.cost_guard import FORGE_GRAPH_NAME, get_cost_guard
 from career_forge.services.entitlement import require_forge_entitlement
+from career_forge.services.forge_locale import stamp_forge_output_locale
 from career_forge.services.forge_persistence import extract_goal_id, persist_graph_ready
 from career_forge.services.lean_forge import apply_lean_forge_input
 from career_forge.services.profile_diagnosis import load_forge_motor_input
@@ -99,12 +101,17 @@ async def forge_run(
     if body.diagnosis is None:
         motor_input = load_forge_motor_input(db, external_id)
 
+    account = get_by_external_id(db, external_id)
+    stored_locale = account.ui_locale if account is not None else None
     store = get_graph_run_store()
     run = with_trace_input(
         GraphRun(
             graph_name="roadmap_forge",
             user_id=external_id,
-            input=_build_forge_input(body, motor_input),
+            input=stamp_forge_output_locale(
+                _build_forge_input(body, motor_input),
+                stored_locale,
+            ),
         )
     )
     # Paywall before CostGuard — BASE/PSP skip Stripe; cap still applies after.

@@ -9,6 +9,24 @@ from career_forge.ai.llm.client import StructuredToolClient
 from career_forge.ai.tracing import LlmTraceContext
 from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
 from career_forge.services.forge_context import LearnerForgeContext
+from career_forge.services.forge_locale import roadmap_language_instruction
+
+_PLANNER_TEMPLATE = (
+    "You are the Career Forge planner. Generate a robust, practical, sequenced, "
+    "source-based StudyPlan. Give the model room to invent, but keep quality: "
+    "prerequisites, tasks, practical evidence, and fit to the learner context. "
+    "When learner_context lists must_have_node_ids, prefer including those catalog "
+    "ids as StudyPlan node_id values (job-market must-haves for this goal). "
+    "For each node fill `key_concepts`: 3 to 6 atomic TECHNICAL concepts the chapter "
+    "teaches (e.g. 'list comprehension', 'PUT idempotency', 'np.reshape'). "
+    "Never study-logistics language — those concepts become the base for mock "
+    "interviews and the Q&A tutor."
+)
+
+
+def planner_system(locale: str | None) -> str:
+    """English planner template plus the roadmap language named at forge start."""
+    return f"{_PLANNER_TEMPLATE} {roadmap_language_instruction(locale)}"
 
 
 class StudyPlanPlanner(Protocol):
@@ -90,17 +108,7 @@ class OpenAiStudyPlanPlanner:
         previous_plan: StudyPlan | None,
         trace: LlmTraceContext | None = None,
     ) -> StudyPlan:
-        system = (
-            "You are the Career Forge planner. Generate a robust, practical, sequenced, "
-            "source-based StudyPlan. Give the model room to invent, but keep quality: "
-            "prerequisites, tasks, practical evidence, and fit to the learner context. "
-            "When learner_context lists must_have_node_ids, prefer including those catalog "
-            "ids as StudyPlan node_id values (job-market must-haves for this goal). "
-            "For each node fill `key_concepts`: 3 to 6 atomic TECHNICAL concepts the chapter "
-            "teaches (e.g. 'list comprehension', 'PUT idempotency', 'np.reshape'). "
-            "Never study-logistics language — those concepts become the base for mock "
-            "interviews and the Q&A tutor."
-        )
+        system = planner_system(context.output_locale)
         user = _planner_prompt(
             context=context,
             research_events=research_events,
