@@ -21,7 +21,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 |--------|--------|-------|
 | Continuity email | **Done** | [V3a: Continuity email](https://linear.app/career-forge-v2/issue/CAR-123) — PR #90. Sweep: `apps/backend/scripts/continuity_sweep.py` |
 | Video References | **[P]** | [V3a: Video References](https://linear.app/career-forge-v2/issue/CAR-124) |
-| Stripe copy | **[S]** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — depois do gate freemium, para a frase do paywall bater com ele |
+| Stripe copy | **Done** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — PR #95. A frase do painel descreve a franquia gasta; o gate ainda é a [CAR-130](https://linear.app/career-forge-v2/issue/CAR-130) |
 | Portal + Billing email | **Done** | [V3a: Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) — PR #91. Alembic `022_billing_email_spell` |
 | Sentry DSN no deploy | **[P]** | [V3a: Pass the Sentry frontend DSN in the Labs deploy](https://linear.app/career-forge-v2/issue/CAR-127) |
 | Membership no perfil | **[P]** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) |
@@ -73,7 +73,7 @@ Um vídeo por Node: 4–20 min, inglês, embeddable, qualquer canal, sem piso de
 
 Um Price: **USD $7, mensal**. Sem Price em BRL, sem anual, sem trial. Welcome, o paywall e o glossário dizem USD $7/mo. Checkout pode mostrar esse valor em BRL (Adaptive Pricing). Welcome e o paywall ficam em USD. Welcome não hospeda checkout.
 
-O paywall deixa de dizer “Free forge used” e “subscribe to continue”. Ele nomeia USD $7/mo para quem já gastou o forge da vida da conta e não tem assinatura. BASE e PSP não veem o painel. O texto exato é do build. Essa copy espera o gate freemium.
+O paywall deixa de dizer “Free forge used” e “subscribe to continue”. Ele nomeia USD $7/mo para quem já gastou o forge da vida da conta e não tem assinatura. BASE e PSP não veem o painel. Entregue no PR #95 (`e43d7cd`): “Your included forge is spent. USD $7/mo continues Career Forge.” O gate que torna essa frase verdadeira ainda é a [CAR-130](https://linear.app/career-forge-v2/issue/CAR-130).
 
 Labs usa chaves e Price de teste, no mesmo USD $7/mo, até um Checkout sandbox completar. Aí sim chaves live e o Price live (**[S]**).
 
