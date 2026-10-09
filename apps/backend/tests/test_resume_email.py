@@ -8,6 +8,7 @@ from sqlalchemy import select
 from career_forge.auth.jwt_tokens import EMAIL_PROVIDER
 from career_forge.config import settings
 from career_forge.db.models.forge_access_token import ROLE_RESUME, ForgeAccessToken
+from career_forge.db.models.user import User
 from career_forge.db.session import SessionLocal
 from career_forge.schemas.common import Priority, SkillStatus, UserSkillNode
 from career_forge.services import otp as otp_service
@@ -104,11 +105,15 @@ def test_email_resume_sends_link_via_mailer(
     sent: list[dict[str, str]] = []
 
     class _CaptureMailer:
-        def send_otp(self, *, to_email: str, code: str) -> None:
+        def send_otp(self, *, to_email: str, code: str, locale: str | None = None) -> None:
             return None
 
-        def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
-            sent.append({"to_email": to_email, "resume_url": resume_url})
+        def send_resume_link(
+            self, *, to_email: str, resume_url: str, locale: str | None = None
+        ) -> None:
+            sent.append(
+                {"to_email": to_email, "resume_url": resume_url, "locale": locale}
+            )
 
     monkeypatch.setattr(
         "career_forge.services.forge_access_tokens.get_mailer",
@@ -124,6 +129,13 @@ def test_email_resume_sends_link_via_mailer(
         email="verified-pilot@example.com",
         code="555666",
     )
+    with SessionLocal() as session:
+        account = session.scalar(
+            select(User).where(User.email == "verified-pilot@example.com")
+        )
+        assert account is not None
+        account.ui_locale = "pt-BR"
+        session.commit()
 
     res = raw_client.post(
         f"/me/forges/{artifact.public_id}/resume/email",
@@ -137,6 +149,7 @@ def test_email_resume_sends_link_via_mailer(
 
     assert len(sent) == 1
     assert sent[0]["to_email"] == "verified-pilot@example.com"
+    assert sent[0]["locale"] == "pt-BR"
     assert sent[0]["resume_url"] == (
         f"http://localhost:3300/career-forge{body['path']}"
     )
@@ -160,10 +173,12 @@ def test_email_resume_rolls_back_when_mailer_fails(
     settings.frontend_url = "http://localhost:3300/career-forge"
 
     class _FailingMailer:
-        def send_otp(self, *, to_email: str, code: str) -> None:
+        def send_otp(self, *, to_email: str, code: str, locale: str | None = None) -> None:
             return None
 
-        def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
+        def send_resume_link(
+            self, *, to_email: str, resume_url: str, locale: str | None = None
+        ) -> None:
             raise RuntimeError("smtp down")
 
     monkeypatch.setattr(
@@ -220,10 +235,12 @@ def test_email_resume_link_consumable(
     settings.frontend_url = "http://localhost:3300/career-forge"
 
     class _QuietMailer:
-        def send_otp(self, *, to_email: str, code: str) -> None:
+        def send_otp(self, *, to_email: str, code: str, locale: str | None = None) -> None:
             return None
 
-        def send_resume_link(self, *, to_email: str, resume_url: str) -> None:
+        def send_resume_link(
+            self, *, to_email: str, resume_url: str, locale: str | None = None
+        ) -> None:
             return None
 
     monkeypatch.setattr(

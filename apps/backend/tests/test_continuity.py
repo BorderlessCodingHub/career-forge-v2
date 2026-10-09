@@ -82,6 +82,25 @@ def test_missing_email_or_roadmap_is_not_due() -> None:
     assert is_due(_stretch(presence_at=None), due_at) is False
 
 
+def test_locale_does_not_change_whether_the_stretch_is_due() -> None:
+    due_at = PRESENCE + timedelta(hours=168)
+    assert is_due(_stretch(locale="pt-BR"), due_at) is True
+    assert is_due(_stretch(locale="pt-BR"), PRESENCE) is False
+
+
+def test_unreviewed_locale_keeps_the_english_letter() -> None:
+    node = SpineNode("retrieval", "Retrieval", "em_estudo")
+    subject, text, url = continuity_message(
+        node,
+        frontend_url="http://localhost:3300/career-forge",
+        locale="pt-BR",
+    )
+
+    assert subject == "Continue with Retrieval"
+    assert "Retrieval is the next node on your roadmap." in text
+    assert url == "http://localhost:3300/career-forge/roadmap?from=continuity&node=retrieval"
+
+
 def test_letter_names_the_next_node_and_does_not_say_the_learner_is_behind() -> None:
     node = SpineNode("retrieval", "Retrieval", "em_estudo")
     subject, text, url = continuity_message(
@@ -132,6 +151,29 @@ def test_rejected_send_does_not_spend_the_stretch() -> None:
     assert accepted is False
     assert updated.accepted_presence_at is None
     assert mailer.sent == []
+
+
+def test_accepted_send_uses_the_locale_carried_on_the_stretch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "career_forge.services.learner_mail.REVIEWED_LOCALES",
+        frozenset({"en", "pt-BR"}),
+    )
+    mailer = _Mailer()
+
+    _updated, accepted = try_send(
+        _stretch(locale="pt-BR"),
+        SpineNode("retrieval", "Retrieval", "em_estudo"),
+        mailer,
+        frontend_url="http://localhost:3300/career-forge",
+    )
+
+    assert accepted is True
+    _to, subject, text = mailer.sent[0]
+    assert subject == "Continue com Retrieval"
+    assert "próximo nó da sua trilha" in text
+    assert "behind" not in text.lower()
 
 
 def test_accepted_send_records_the_presence_it_covered() -> None:
