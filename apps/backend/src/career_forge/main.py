@@ -8,7 +8,11 @@ from fastapi.responses import JSONResponse
 
 from career_forge.api.router import api_router
 from career_forge.auth.middleware import BearerAuthMiddleware
-from career_forge.config import assert_production_jwt_secret, settings
+from career_forge.config import (
+    assert_borderless_token_key,
+    assert_production_jwt_secret,
+    settings,
+)
 from career_forge.errors import (
     BorderlessRateLimitedError,
     DomainError,
@@ -25,6 +29,7 @@ from career_forge.sentry_setup import init_sentry
 async def lifespan(_app: FastAPI):
     configure_logging()
     assert_production_jwt_secret()
+    assert_borderless_token_key()
     yield
 
 

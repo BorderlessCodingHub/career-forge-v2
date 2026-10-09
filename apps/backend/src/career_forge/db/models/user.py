@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Index, String, func, text
+from sqlalchemy import Boolean, DateTime, Index, String, Text, func, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -29,6 +29,13 @@ class User(Base):
     email: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
     borderless_user_id: Mapped[str | None] = mapped_column(
         String(255), nullable=True
+    )
+    borderless_access_token: Mapped[str | None] = mapped_column(Text, nullable=True)
+    borderless_access_unrenewable: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
+    )
+    membership_read_failed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
     )
     membership_label: Mapped[str] = mapped_column(
         String(16), nullable=False, default="external", server_default="external"

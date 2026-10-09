@@ -1,10 +1,10 @@
 # Entitlement paywall (CAR-46 · **CAR-57 / CAR-87 / ADR-005** · **CAR-108**)
 
-> **Spec ahead of the code (2026-10-08).** [V3-PLAN](../V3-PLAN.md) § Freemium replaces “no free forge” and “any Borderless account is included.” The tables below describe the code until [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) lands.
+> **Spec ahead of the code for the lifetime forge (2026-10-08).** [V3-PLAN](../V3-PLAN.md) § Freemium gives `external` one forge, then the subscription. That allowance is [CAR-130](https://linear.app/career-forge-v2/issue/CAR-130) and is not in this table. Password-mode inclusion below is CAR-128.
 
-Identity (email OTP or Borderless password) and membership label (`base|psp|external`) are separate from **billing** in OTP / `pilot_enter` modes. Unpaid `external` learners cannot **start diagnosis** or **start a forge** until they have a Career Forge subscription (or a pilot allowlist). There is **no free forge**. Active BASE/PSP never hit the Stripe gate. An existing Roadmap is not withheld.
+Identity (email OTP or Borderless password) and membership label (`base|psp|external`) are separate from **billing** in OTP / `pilot_enter` modes. Unpaid `external` learners cannot **start diagnosis** or **start a forge** until they have a Career Forge subscription (or a pilot allowlist). There is **no free forge** until CAR-130. Active BASE/PSP never hit the Stripe gate. An existing Roadmap is not withheld.
 
-When `IDENTITY_METHOD=borderless_password`, a Borderless platform account **is** Career Forge included: entitled **only** if `users.borderless_user_id` is set (plus existing demo / cost-guard exclude). Pilot list, Stripe, `billing_entitled`, and BASE/PSP label do **not** bypass that gate.
+When `IDENTITY_METHOD=borderless_password`, a linked learner is included only when the stored profile label is BASE or PSP, or the Operator desk overrides it. `users.borderless_user_id` alone does not include. Each entitlement check reads `GET /api/users/profile` with the encrypted Borderless access token when that token can still be used. A failed read keeps the last successful label and retries on the next check after five minutes. 401/403 keeps that label until the next Borderless password sign-in. Unpaid `external` is paywalled. Active Stripe, `billing_entitled`, and `billing_pilot_emails` still allow.
 
 Cost caps still apply to everyone (`FORGE_CAP_PER_USER_MONTH`).
 
@@ -16,8 +16,9 @@ Canonical product rule: [ADR-005](../decisions/ADR-005-identity-gate-product-ent
 
 | Caller | Start diagnosis / start forge |
 |--------|-------------------------------|
-| **Password mode** (`IDENTITY_METHOD=borderless_password`) + `users.borderless_user_id` set | Allowed |
-| **Password mode** without `borderless_user_id` (stale OTP/pilot JWT) | HTTP **402** `paywall` — until `POST /auth/signin` |
+| **Password mode** + profile BASE/PSP, or Operator override `base`/`psp` | Allowed |
+| **Password mode** + active Stripe, `billing_entitled`, or pilot email | Allowed |
+| **Password mode** otherwise (`borderless_user_id` alone, FREE, missing profile, Career Forge-only) | HTTP **402** `paywall` |
 | OTP / `pilot_enter`: `membership_entitled` BASE/PSP | Allowed (no Stripe) |
 | OTP / `pilot_enter`: `external` + active Stripe subscription | Allowed |
 | OTP / `pilot_enter`: `external` + `users.billing_entitled` operator flag | Allowed |
@@ -62,7 +63,7 @@ When `IDENTITY_EMAIL_OTP=false` (CAR-100 freeze) **and** `IDENTITY_METHOD` is em
 **only product-loop door**: `require_email_provider` rejects sessions whose
 `users.email` is not listed. Restore `true` to return to OTP + billing-as-grant.
 
-`IDENTITY_METHOD=borderless_password` (CAR-107 Labs cutover, CAR-108 entitlement): set the method explicitly. Sign-in **must not** call membership HTTP. `MEMBERSHIP_BACKEND=stub`. `BORDERLESS_MEMBERS_*` is **not** a cutover requirement. Access desk membership may stay stale (`Not entitled`) this slice.
+`IDENTITY_METHOD=borderless_password` (CAR-107 Labs cutover, CAR-128 profile membership): set the method explicitly. Sign-in stores the Borderless access token encrypted and reads the profile. `BORDERLESS_TOKEN_ENCRYPTION_KEY` is required or the process does not start. `MEMBERSHIP_BACKEND=stub`. `BORDERLESS_MEMBERS_*` is **not** a cutover requirement.
 
 ---
 

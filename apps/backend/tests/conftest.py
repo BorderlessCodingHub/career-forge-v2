@@ -26,6 +26,17 @@ pytest_plugins = ("pytest_asyncio",)
 
 # Longer than RFC minimum to silence InsecureKeyLengthWarning in tests.
 _TEST_JWT_SECRET = "test-jwt-secret-car-23-long-enough-32b"
+# Dev-only Fernet key. Production must generate its own.
+_TEST_BORDERLESS_TOKEN_KEY = "59sh7vyMCFpNmX6Rt9hiMJQhx8VjW5oa2i8P8USr1MY="
+
+
+class _OfflineBorderlessProfile:
+    """Keeps sign-in tests off the network. A failed read leaves the last label."""
+
+    def read(self, access_token: str):
+        from career_forge.services.borderless_profile import ProfileRead
+
+        return ProfileRead(kind="failed")
 
 
 @pytest.fixture(autouse=True)
@@ -48,6 +59,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     from career_forge.config import settings
     from career_forge.services.otp import reset_otp_rate_limiter
+    from career_forge.services.borderless_profile import set_borderless_profile_client
     from career_forge.services.borderless_signin import (
         reset_signin_rate_limiter,
         set_borderless_signin_client,
@@ -62,9 +74,11 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     settings.operator_allowlist = ""
     settings.identity_email_otp = True
     settings.identity_method = ""
+    settings.borderless_token_encryption_key = _TEST_BORDERLESS_TOKEN_KEY
     reset_otp_rate_limiter()
     reset_signin_rate_limiter()
     set_borderless_signin_client(None)
+    set_borderless_profile_client(_OfflineBorderlessProfile())
     reset_operator_otp_rate_limiter()
     yield
     reset_mock_interview_sessions()
@@ -76,6 +90,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     reset_otp_rate_limiter()
     reset_signin_rate_limiter()
     set_borderless_signin_client(None)
+    set_borderless_profile_client(None)
     reset_operator_otp_rate_limiter()
 
 

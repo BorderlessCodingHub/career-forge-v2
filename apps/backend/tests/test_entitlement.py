@@ -283,36 +283,48 @@ def test_paywall_error_shape() -> None:
     assert "start diagnosis" not in lowered
 
 
-def test_password_mode_borderless_user_id_is_entitled() -> None:
+def test_password_mode_profile_base_is_included() -> None:
     decision = evaluate_entitlement(
         user_id="pw-1",
-        membership_label="external",
-        membership_entitled=False,
+        membership_label="base",
+        membership_entitled=True,
         billing_entitled=False,
         email="pw@example.com",
         forge_count=0,
         identity_method="borderless_password",
-        borderless_user_id="bl-user-1",
     )
     assert decision.allowed is True
-    assert decision.reason == "borderless"
+    assert decision.reason == "membership"
 
 
-def test_password_mode_without_borderless_user_id_is_paywalled() -> None:
+def test_password_mode_borderless_link_without_included_label_is_paywalled() -> None:
     decision = evaluate_entitlement(
-        user_id="pw-stale",
-        membership_label="base",
-        membership_entitled=True,
-        billing_entitled=True,
-        stripe_subscription_status="active",
-        email="stale@example.com",
+        user_id="pw-free",
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=False,
+        email="free@example.com",
         forge_count=0,
-        pilot_email_listed=True,
         identity_method="borderless_password",
-        borderless_user_id=None,
     )
     assert decision.allowed is False
     assert decision.reason == "paywall"
+
+
+def test_password_mode_paid_external_is_allowed() -> None:
+    decision = evaluate_entitlement(
+        user_id="pw-paid",
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=True,
+        stripe_subscription_status="active",
+        email="paid@example.com",
+        forge_count=0,
+        pilot_email_listed=True,
+        identity_method="borderless_password",
+    )
+    assert decision.allowed is True
+    assert decision.reason == "billing"
 
 
 def test_password_mode_still_excludes_demo_ana() -> None:
@@ -325,7 +337,6 @@ def test_password_mode_still_excludes_demo_ana() -> None:
         forge_count=9,
         run_input={},
         identity_method="borderless_password",
-        borderless_user_id=None,
     )
     assert decision.allowed is True
     assert decision.reason == "excluded"
@@ -340,13 +351,12 @@ def test_otp_mode_unpaid_external_stays_paywalled_with_borderless_id() -> None:
         email="otp@example.com",
         forge_count=0,
         identity_method="email_otp",
-        borderless_user_id="bl-user-otp",
     )
     assert decision.allowed is False
     assert decision.reason == "paywall"
 
 
-def test_password_mode_signed_in_user_skips_http_paywall(
+def test_password_mode_linked_external_is_paywalled(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -362,10 +372,11 @@ def test_password_mode_signed_in_user_skips_http_paywall(
         session.commit()
 
     first = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
-    assert first.status_code == 202, first.text
+    assert first.status_code == 402, first.text
+    assert first.json()["detail"]["code"] == "paywall"
 
 
-def test_password_mode_stale_jwt_without_borderless_id_is_paywalled(
+def test_password_mode_paid_account_without_borderless_link_is_allowed(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -376,16 +387,15 @@ def test_password_mode_stale_jwt_without_borderless_id_is_paywalled(
     with SessionLocal() as session:
         row = ensure_user(session, user)
         row.email = email
-        row.membership_label = "base"
-        row.membership_entitled = True
+        row.membership_label = "external"
+        row.membership_entitled = False
         row.billing_entitled = True
         row.stripe_subscription_status = "active"
         session.merge(BillingPilotEmail(email=email))
         session.commit()
 
     first = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
-    assert first.status_code == 402, first.text
-    assert first.json()["detail"]["code"] == "paywall"
+    assert first.status_code == 202, first.text
 
 
 def test_password_mode_cost_cap_still_applies(
@@ -398,8 +408,8 @@ def test_password_mode_cost_cap_still_applies(
     with SessionLocal() as session:
         row = ensure_user(session, user)
         row.borderless_user_id = "bl-cap-108"
-        row.membership_label = "external"
-        row.membership_entitled = False
+        row.membership_label = "base"
+        row.membership_entitled = True
         session.commit()
 
     store = InMemoryUsageStore()
