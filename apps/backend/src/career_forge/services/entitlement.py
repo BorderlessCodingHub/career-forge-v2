@@ -197,10 +197,10 @@ def _entitlement_for_user(
     run_input: dict | None = None,
 ) -> EntitlementDecision:
     user = ensure_user(session, external_id)
-    if user.borderless_access_token:
+    identity_method = settings.resolved_identity_method()
+    if identity_method == BORDERLESS_PASSWORD and user.borderless_access_token:
         sync_borderless_membership(user)
         session.commit()
-    identity_method = settings.resolved_identity_method()
     if identity_method == BORDERLESS_PASSWORD:
         membership_label, membership_entitled = _password_mode_label(user)
     else:

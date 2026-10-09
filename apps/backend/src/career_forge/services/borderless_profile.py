@@ -116,12 +116,13 @@ def _first_membership_string(payload: dict) -> str | None:
 
 
 def parse_profile_body(raw: str) -> ProfileRead:
+    """A 200 body is a successful read. Unreadable JSON is a missing field."""
     try:
         payload = json.loads(raw)
     except json.JSONDecodeError:
-        return ProfileRead(kind="failed")
+        return ProfileRead(kind="label", label="external")
     if not isinstance(payload, dict):
-        return ProfileRead(kind="failed")
+        return ProfileRead(kind="label", label="external")
     return ProfileRead(kind="label", label=membership_label_from_payload(payload))
 
 
@@ -167,10 +168,7 @@ class BorderlessProfileClient:
         if status != 200:
             logger.warning("borderless profile read failed status=%s", status)
             return ProfileRead(kind="failed")
-        parsed = parse_profile_body(body)
-        if parsed.kind != "label":
-            logger.warning("borderless profile read returned an unreadable body")
-        return parsed
+        return parse_profile_body(body)
 
 
 _profile_client: ProfileClient | None = None

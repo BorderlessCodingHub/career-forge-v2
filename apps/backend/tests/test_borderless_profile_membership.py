@@ -71,12 +71,15 @@ class _ProfileScript:
         self.status = status
         self.membership = membership
         self.calls = 0
+        self.raw: str | None = None
 
     def fetch(self, url: str, access_token: str, timeout: float) -> tuple[int, str]:
         assert url == "https://api.borderlesscoding.com/api/users/profile"
         assert access_token
         assert timeout == 5.0
         self.calls += 1
+        if self.raw is not None:
+            return self.status, self.raw
         if self.membership is None:
             body: dict = {"data": {"user": {}}}
         else:
@@ -402,6 +405,73 @@ def test_operator_override_includes_when_the_profile_says_free(
         user = session.scalar(select(User).where(User.email == email))
         assert user is not None
         assert user.operator_membership_label == "psp"
+
+
+def test_unreadable_profile_body_replaces_base_with_external(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "borderless_password")
+    email = "profile-garbage@example.com"
+    password = "pw"
+    script = _ProfileScript(200, "BASE")
+    set_borderless_signin_client(
+        _signin_client(
+            email,
+            password,
+            user_id="borderless-garbage-128",
+            name="Garbage Body",
+            access_token="borderless-access-token-garbage",
+        )
+    )
+    _use_profile(script)
+    body = _post_signin(raw_client, email, password)
+    headers = {"Authorization": f"Bearer {body['access_token']}"}
+
+    script.raw = "not-json"
+    started = raw_client.post(
+        "/forge/runs",
+        json=_diagnosis_payload(body["external_id"]),
+        headers=headers,
+    )
+    assert started.status_code == 402, started.text
+    me = raw_client.get("/me/profile", headers=headers)
+    assert me.json()["membership_label"] == "external"
+    assert me.json()["membership_entitled"] is False
+
+
+def test_otp_mode_does_not_reread_the_borderless_profile(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "identity_method", "email_otp")
+    email = "profile-otp@example.com"
+    password = "pw"
+    script = _ProfileScript(200, "BASE")
+    set_borderless_signin_client(
+        _signin_client(
+            email,
+            password,
+            user_id="borderless-otp-128",
+            name="OTP Learner",
+            access_token="borderless-access-token-otp",
+        )
+    )
+    _use_profile(script)
+    body = _post_signin(raw_client, email, password)
+    headers = {"Authorization": f"Bearer {body['access_token']}"}
+    calls_after_signin = script.calls
+
+    script.membership = "FREE"
+    started = raw_client.post(
+        "/forge/runs",
+        json=_diagnosis_payload(body["external_id"]),
+        headers=headers,
+    )
+    assert started.status_code == 202, started.text
+    assert script.calls == calls_after_signin
+    me = raw_client.get("/me/profile", headers=headers)
+    assert me.json()["membership_label"] == "base"
 
 
 def test_password_mode_refuses_to_boot_without_a_token_key(
