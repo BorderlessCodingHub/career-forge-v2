@@ -23,7 +23,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Video References | **[P]** | [V3a: Video References](https://linear.app/career-forge-v2/issue/CAR-124) |
 | Stripe copy | **Done** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — PR #95. A frase do painel descreve a franquia gasta; o gate ainda é a [CAR-130](https://linear.app/career-forge-v2/issue/CAR-130) |
 | Portal + Billing email | **Done** | [V3a: Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) — PR #91. Alembic `022_billing_email_spell` |
-| Sentry DSN no deploy | **[P]** | [V3a: Pass the Sentry frontend DSN in the Labs deploy](https://linear.app/career-forge-v2/issue/CAR-127) |
+| Sentry DSN no deploy | **Done** | [V3a: Pass the Sentry frontend DSN in the Labs deploy](https://linear.app/career-forge-v2/issue/CAR-127) — PR #96. O build da imagem passa `NEXT_PUBLIC_SENTRY_DSN` |
 | Membership no perfil | **[P]** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) |
 | Freemium | **[S]** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — depois da leitura do perfil |
 | Senha do Career Forge | **[P]** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) |
@@ -91,13 +91,13 @@ Sem opt-out, e sem um switch que também cale a Continuity email. Nenhum outro e
 
 ---
 
-## Sentry — [P]
+## Sentry — Done
 
-[Sentry topology for Labs Career Forge](https://linear.app/career-forge-v2/issue/CAR-112) · [Provision Sentry for Career Forge](https://linear.app/career-forge-v2/issue/CAR-118) (Done, PR #88)
+[Sentry topology for Labs Career Forge](https://linear.app/career-forge-v2/issue/CAR-112) · [Provision Sentry for Career Forge](https://linear.app/career-forge-v2/issue/CAR-118) (Done, PR #88) · [Pass the Sentry frontend DSN in the Labs deploy](https://linear.app/career-forge-v2/issue/CAR-127) (Done, PR #96)
 
 Dois projetos (frontend e backend). DSN no env de Labs. `environment=labs`. Release = git SHA. Email e PII fora do evento. Público é engenheiro. Sem UI de learner e sem faixa de erro no Operator.
 
-O que a V3a ainda faz: o workflow de deploy passa `NEXT_PUBLIC_SENTRY_DSN` como build arg do Next.js. O backend já lê `SENTRY_DSN` na subida do container.
+O workflow de deploy passa `NEXT_PUBLIC_SENTRY_DSN` como build arg do Next.js. O backend lê `SENTRY_DSN` na subida do container.
 
 ---
 
