@@ -24,8 +24,8 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Stripe copy | **Done** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — PR #95. A frase do painel descreve a franquia gasta; o gate ainda é a [CAR-130](https://linear.app/career-forge-v2/issue/CAR-130) |
 | Portal + Billing email | **Done** | [V3a: Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) — PR #91. Alembic `022_billing_email_spell` |
 | Sentry DSN no deploy | **Done** | [V3a: Pass the Sentry frontend DSN in the Labs deploy](https://linear.app/career-forge-v2/issue/CAR-127) — PR #96. O build da imagem passa `NEXT_PUBLIC_SENTRY_DSN` |
-| Membership no perfil | **[P]** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) |
-| Freemium | **[S]** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — depois da leitura do perfil |
+| Membership no perfil | **Done** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) — PR #97. Alembic `024_borderless_profile_access`. Sem `BORDERLESS_TOKEN_ENCRYPTION_KEY` o processo não sobe no modo senha |
+| Freemium | **[S]** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — a leitura do perfil já entrou; a franquia de um forge ainda é esta issue |
 | Senha do Career Forge | **[P]** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) |
 | Dual language — interface | **Merged** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #92. Alembic `023_ui_locale`. O catálogo pt-BR é rascunho; a issue não fecha antes da revisão humana |
 | Emails no idioma | **Merged** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — PR #93. O rascunho pt-BR não é enviado; a issue não fecha antes da revisão humana |
