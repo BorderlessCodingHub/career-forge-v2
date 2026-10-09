@@ -64,7 +64,7 @@ def _identity(
     )
 
 
-def test_signin_mints_cf_jwt_discards_borderless_token_without_membership_lookup(
+def test_signin_mints_cf_jwt_without_returning_the_borderless_token(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,

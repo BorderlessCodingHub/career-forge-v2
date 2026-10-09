@@ -8,8 +8,8 @@ Linear [CAR-102](https://linear.app/career-forge-v2/issue/CAR-102) asked for “
 | **Date** | 2026-09-12 |
 | **Deciders** | Pedro Alano |
 | **Linear (v2)** | Epic [CAR-101](https://linear.app/career-forge-v2/issue/CAR-101) · first slice [CAR-102](https://linear.app/career-forge-v2/issue/CAR-102) |
-| **Amends** | [ADR-003](./ADR-003-forge-recovery-auth-scaffold.md) · [ADR-005](./ADR-005-identity-gate-product-entry.md) — issuer remains Career Forge; learner *entry method* may be Borderless email+password when flagged. **Amend 2026-09-16 ([CAR-108](https://linear.app/career-forge-v2/issue/CAR-108)):** in password mode a Borderless platform account **is** Career Forge included; do not call `GET members?email=` after sign-in. |
-| **Does not supersede** | Bearer JWT, `jti` / sign-out (ADR-006), OTP/pilot membership lookup, Operator OTP. Password-mode paywall is `users.borderless_user_id`, not membership HTTP. |
+| **Amends** | [ADR-003](./ADR-003-forge-recovery-auth-scaffold.md) · [ADR-005](./ADR-005-identity-gate-product-entry.md) — issuer remains Career Forge; learner *entry method* may be Borderless email+password when flagged. **Amend 2026-09-16 ([CAR-108](https://linear.app/career-forge-v2/issue/CAR-108)):** in password mode a Borderless platform account **is** Career Forge included; do not call `GET members?email=` after sign-in. **Amend 2026-10-09 ([CAR-128](https://linear.app/career-forge-v2/issue/CAR-128)):** password mode includes BASE/PSP from `GET /api/users/profile` only. `borderless_user_id` alone does not include. The Borderless `accessToken` is stored encrypted and used for that read. |
+| **Does not supersede** | Bearer JWT, `jti` / sign-out (ADR-006), OTP/pilot membership lookup, Operator OTP. |
 
 ---
 
@@ -60,6 +60,7 @@ Do not set `IDENTITY_METHOD=borderless_password` in Labs until CAR-105 + CAR-106
 - Proxy + password UI + 410 OTP shipped in CAR-101 children.
 - Labs freeze (`IDENTITY_EMAIL_OTP=false`, empty `IDENTITY_METHOD`) is unchanged: `pilot_enter`.
 - **CAR-108:** password-mode Labs cutover uses `MEMBERSHIP_BACKEND=stub`. `BORDERLESS_MEMBERS_*` is **not** a cutover requirement. Access desk membership may stay stale (`Not entitled`) this slice. Cost caps still apply. No operator deny/ban flag.
+- **CAR-128:** password mode stores the Borderless `accessToken` encrypted (`BORDERLESS_TOKEN_ENCRYPTION_KEY`) and reads `GET /api/users/profile`. BASE/PSP include. `borderless_user_id` alone does not. OTP / `pilot_enter` still use `GET members?email=`. The browser still never receives the Borderless token.
 
 ## Related
 

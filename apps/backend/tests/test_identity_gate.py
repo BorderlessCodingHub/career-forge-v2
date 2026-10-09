@@ -105,8 +105,8 @@ def test_password_mode_diagnosis_allows_borderless_id(
         row = ensure_user(session, user)
         row.email = "diag-pw@example.com"
         row.borderless_user_id = "bl-diag-108"
-        row.membership_label = "external"
-        row.membership_entitled = False
+        row.membership_label = "base"
+        row.membership_entitled = True
         session.commit()
 
     res = raw_client.post(

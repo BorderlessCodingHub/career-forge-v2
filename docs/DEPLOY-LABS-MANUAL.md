@@ -194,8 +194,10 @@ Flip Labs to Borderless password **only after** CAR-105 + CAR-106 are on `main`.
 # Wins over IDENTITY_EMAIL_OTP. Recreate backend after change.
 IDENTITY_METHOD=borderless_password
 BORDERLESS_SIGNIN_URL=https://api.borderlesscoding.com/api/auth/signin
-# CAR-108 — Borderless account entitles. Members HTTP is unused.
-# BORDERLESS_MEMBERS_* is not a cutover requirement.
+# CAR-128 — Fernet key. The process does not start in password mode without it.
+# python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+BORDERLESS_TOKEN_ENCRYPTION_KEY=<fernet-key>
+# CAR-108 — members HTTP is unused. BORDERLESS_MEMBERS_* is not a cutover requirement.
 MEMBERSHIP_BACKEND=stub
 BORDERLESS_SIGNUP_URL=https://platform.borderlesscoding.com/sign-up
 BORDERLESS_FORGOT_PASSWORD_URL=https://platform.borderlesscoding.com/forgot-password

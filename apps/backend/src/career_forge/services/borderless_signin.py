@@ -7,7 +7,7 @@ import time
 import uuid
 from collections import defaultdict
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Protocol, TypedDict
 from urllib import error, request
 
@@ -19,6 +19,10 @@ from career_forge.auth.providers import get_auth_provider
 from career_forge.config import settings
 from career_forge.db.models.user import User
 from career_forge.db.repositories.user import ensure_user
+from career_forge.services.borderless_profile import (
+    seal_access_token,
+    sync_borderless_membership,
+)
 from career_forge.errors import (
     BorderlessEmailUnverifiedError,
     BorderlessIdentityMismatchError,
@@ -34,6 +38,7 @@ class BorderlessIdentity:
     user_id: str
     email_verified: bool
     name: str | None
+    access_token: str | None = field(default=None, repr=False)
 
 
 @dataclass(frozen=True)
@@ -149,11 +154,26 @@ class BorderlessSigninClient:
             raise BorderlessSigninUnavailableError()
         name_raw = user.get("name")
         name = name_raw.strip() if isinstance(name_raw, str) and name_raw.strip() else None
+        access_token = _access_token(payload)
         return BorderlessIdentity(
             user_id=user_id.strip(),
             email_verified=email_verified,
             name=name,
+            access_token=access_token,
         )
+
+
+def _access_token(payload: dict) -> str | None:
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        return None
+    token = data.get("token")
+    if not isinstance(token, dict):
+        return None
+    raw = token.get("accessToken")
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    return raw.strip()
 
 
 _signin_client: SigninClient | None = None
@@ -220,8 +240,10 @@ def signin(
 ) -> SigninTokenPayload:
     """Check Borderless credentials, bind identity, and mint a CF email JWT.
 
-    Password mode does not look up membership HTTP (CAR-108). Entitlement is
-    ``users.borderless_user_id`` plus cost-guard exclude.
+    When Borderless returns an access token, store it encrypted and read
+    ``GET /api/users/profile`` before the session opens (CAR-128). A failed
+    profile read still opens the session. A missing token leaves the previous
+    credential and label untouched.
     """
     _check_rate_limit(email=email, client_ip=client_ip)
     identity = get_borderless_signin_client().authenticate(email, password)
@@ -243,5 +265,10 @@ def signin(
     user.borderless_user_id = identity.user_id
     if identity.name and (is_new or _is_placeholder_name(user)):
         user.display_name = identity.name
+    if identity.access_token:
+        user.borderless_access_token = seal_access_token(identity.access_token)
+        user.borderless_access_unrenewable = False
+        user.membership_read_failed_at = None
+        sync_borderless_membership(user, force=True)
     session.commit()
     return _token_payload(user.external_id)

@@ -46,6 +46,9 @@ class Settings(BaseSettings):
         "https://api.borderlesscoding.com/api/auth/signin"
     )
     borderless_signin_timeout_seconds: float = Field(default=2.5, ge=2.0, le=3.0)
+    # CAR-128 — Fernet key for the stored Borderless access token. Required
+    # when IDENTITY_METHOD=borderless_password. Empty is fine in other modes.
+    borderless_token_encryption_key: str = ""
     borderless_signup_url: str = "https://platform.borderlesscoding.com/sign-up"
     borderless_forgot_password_url: str = (
         "https://platform.borderlesscoding.com/forgot-password"
@@ -115,6 +118,27 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def assert_borderless_token_key() -> None:
+    """Refuse password mode without a key that can seal the Borderless token."""
+    from career_forge.identity_method import BORDERLESS_PASSWORD
+    from cryptography.fernet import Fernet
+
+    if settings.resolved_identity_method() != BORDERLESS_PASSWORD:
+        return
+    key = settings.borderless_token_encryption_key.strip()
+    if not key:
+        raise RuntimeError(
+            "BORDERLESS_TOKEN_ENCRYPTION_KEY is required when "
+            "IDENTITY_METHOD=borderless_password"
+        )
+    try:
+        Fernet(key.encode())
+    except (ValueError, TypeError) as exc:
+        raise RuntimeError(
+            "BORDERLESS_TOKEN_ENCRYPTION_KEY must be a Fernet key"
+        ) from exc
 
 
 def assert_production_jwt_secret() -> None:
