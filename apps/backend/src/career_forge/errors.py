@@ -136,7 +136,7 @@ class QuotaExhaustedError(DomainError):
         super().__init__(QUOTA_EXHAUSTED_MESSAGE)
 
 
-PAYWALL_MESSAGE = "Subscribe to start diagnosis and forge your roadmap"
+PAYWALL_MESSAGE = "Your included forge is spent. USD $7/mo continues Career Forge."
 PAYWALL_CODE = "paywall"
 
 

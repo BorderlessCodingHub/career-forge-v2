@@ -276,6 +276,11 @@ def test_paywall_error_shape() -> None:
     assert err.code == "paywall"
     assert err.checkout_available is True
     assert str(err) == PAYWALL_MESSAGE
+    assert "USD $7/mo" in PAYWALL_MESSAGE
+    lowered = PAYWALL_MESSAGE.lower()
+    assert "free forge used" not in lowered
+    assert "subscribe to continue" not in lowered
+    assert "start diagnosis" not in lowered
 
 
 def test_password_mode_borderless_user_id_is_entitled() -> None:

@@ -1,6 +1,6 @@
-/** Canonical paywall copy (CAR-46) — keep in sync with backend PaywallError. */
+/** Canonical paywall copy (CAR-125) — keep in sync with backend PaywallError. */
 export const PAYWALL_COPY =
-  "Subscribe to start diagnosis and forge your roadmap";
+  "Your included forge is spent. USD $7/mo continues Career Forge.";
 
 export class PaywallError extends Error {
   readonly code = "paywall" as const;
