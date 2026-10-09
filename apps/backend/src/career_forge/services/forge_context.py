@@ -10,6 +10,7 @@ from career_forge.schemas.profile_diagnosis import (
     ProfileDiagnosisRecord,
     parse_profile_diagnosis,
 )
+from career_forge.services.forge_locale import forge_output_locale
 
 
 class LearnerForgeContext(BaseModel):
@@ -23,6 +24,7 @@ class LearnerForgeContext(BaseModel):
     interview_answers: dict[str, str] = Field(default_factory=dict)
     cv_summary: str | None = None
     must_have_node_ids: list[str] = Field(default_factory=list)
+    output_locale: str = "en"
 
     def compact_summary(self) -> str:
         answers = "; ".join(
@@ -62,6 +64,7 @@ def build_forge_context_from_input(
         for node_id in raw_must
         if isinstance(node_id, str) and node_id.strip()
     ]
+    raw_locale = input_data.get("output_locale")
     return LearnerForgeContext(
         user_id=user_id,
         goal_id=str(input_data.get("goal_id") or intake.goal_id),
@@ -71,6 +74,7 @@ def build_forge_context_from_input(
         interview_answers=_answers_from_input(input_data, intake),
         cv_summary=_cv_summary(intake),
         must_have_node_ids=must_ids,
+        output_locale=forge_output_locale(raw_locale if isinstance(raw_locale, str) else None),
     )
 
 
