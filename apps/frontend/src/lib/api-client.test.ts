@@ -217,7 +217,7 @@ describe("streamDiagnosisInterviewStart", () => {
           JSON.stringify({
             detail: {
               code: "paywall",
-              message: "Subscribe to start diagnosis and forge your roadmap",
+              message: "Your included forge is spent. USD $7/mo continues Career Forge.",
               checkout_available: false,
             },
           }),

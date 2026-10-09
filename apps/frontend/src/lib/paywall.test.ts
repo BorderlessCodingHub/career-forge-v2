@@ -7,6 +7,16 @@ import {
   paywallErrorFromResponse,
 } from "./paywall";
 
+describe("PAYWALL_COPY", () => {
+  it("names USD $7/mo for a spent included forge", () => {
+    expect(PAYWALL_COPY).toContain("USD $7/mo");
+    expect(PAYWALL_COPY.toLowerCase()).not.toContain("free forge used");
+    expect(PAYWALL_COPY.toLowerCase()).not.toContain("subscribe to continue");
+    expect(PAYWALL_COPY.toLowerCase()).not.toContain("start diagnosis");
+    expect(PAYWALL_COPY).not.toMatch(/R\$|BRL/);
+  });
+});
+
 describe("paywallErrorFromResponse", () => {
   it("returns PaywallError on 402 with checkout flag", () => {
     const err = paywallErrorFromResponse(402, {

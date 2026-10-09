@@ -10,7 +10,7 @@ type PaywallPanelProps = {
   checkoutAvailable: boolean;
 };
 
-/** Clear paywall after the free forge — BASE/PSP never see this (CAR-46). */
+/** Shown when an external account has spent its included forge and has no subscription. */
 export function PaywallPanel({ checkoutAvailable }: PaywallPanelProps) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,12 +34,12 @@ export function PaywallPanel({ checkoutAvailable }: PaywallPanelProps) {
       role="status"
     >
       <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-        Free forge used
+        Included forge spent
       </p>
       <p className="mt-2 text-sm text-text-primary">{PAYWALL_COPY}</p>
       <p className="mt-2 text-sm text-text-secondary">
-        BASE and PSP members keep forging without Stripe. External learners
-        subscribe to continue.
+        BASE and PSP stay included. This panel is for an external account with
+        no subscription.
       </p>
       {checkoutAvailable ? (
         <Button

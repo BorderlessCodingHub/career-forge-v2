@@ -1,4 +1,7 @@
+import { PAYWALL_COPY } from "./paywall";
+
 /** Canonical kill-switch copy (CAR-6) — keep in sync with backend QuotaExhaustedError. */
+
 export const QUOTA_EXHAUSTED_COPY =
   "experimental quota exhausted — come back on day 1 of next month";
 
@@ -8,7 +11,7 @@ export function isQuotaExhaustedMessage(message: string): boolean {
 
 export function toUserFacingApiError(status: number, detail: string): string {
   if (status === 402) {
-    return "Subscribe to start diagnosis and forge your roadmap";
+    return PAYWALL_COPY;
   }
   if (isQuotaExhaustedMessage(detail)) {
     return QUOTA_EXHAUSTED_COPY;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Calculator, TrendingUp, ArrowRight } from 'lucide-react';
 
-const MONTHLY_SUBSCRIPTION_USD = 15;
+const MONTHLY_SUBSCRIPTION_USD = 7;
 
 export function RoiCalculator() {
   const [currentRole, setCurrentRole] = useState<'junior' | 'mid' | 'senior' | 'staff' | 'data'>('senior');
@@ -31,7 +31,7 @@ export function RoiCalculator() {
   const projectedSalary = Math.round(currentSalary * BOOST_MULTIPLIER[currentRole]);
   const salaryIncrease = projectedSalary - currentSalary;
   
-  // Payback in days: $15/mo subscription / daily salary lift (toy math, not placement data)
+  // Payback in days: USD $7/mo subscription / daily salary lift (toy math, not placement data)
   const dailyIncrease = salaryIncrease / 365;
   const rawPaybackDays = MONTHLY_SUBSCRIPTION_USD / dailyIncrease;
   const paybackLabel =
@@ -51,8 +51,8 @@ export function RoiCalculator() {
             Calculate Your AI Engineering <span className="gradient-text-purple">Compensation Lift</span>
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
-            Toy payback math against a <strong className="text-slate-200">$15/mo</strong> monthly
-            subscription (top of the Labs band). Invented salary lift — not Career Forge placement data.
+            Toy payback math against a <strong className="text-slate-200">USD $7/mo</strong> monthly
+            subscription. Invented salary lift — not Career Forge placement data.
           </p>
         </div>
 
@@ -158,7 +158,7 @@ export function RoiCalculator() {
                   <span className="font-bold text-slate-200">${currentSalary.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-slate-300">
-                  <span className="text-slate-400">$15/mo subscription payback:</span>
+                  <span className="text-slate-400">USD $7/mo subscription payback:</span>
                   <span className="font-bold text-emerald-400">{paybackLabel}</span>
                 </div>
               </div>
