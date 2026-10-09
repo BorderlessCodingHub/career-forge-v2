@@ -1,7 +1,7 @@
 # Career Forge v3 — Plano de execução
 
 > Borderless · labs.borderlesscoding.com/career-forge  
-> **Atualizado:** 2026-10-08  
+> **Atualizado:** 2026-10-09  
 > **Mapa:** [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109)  
 > Cada decisão mora no ticket. Este arquivo é o corte para construir.
 
@@ -29,7 +29,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Senha do Career Forge | **[P]** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) |
 | Dual language — interface | **Merged** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #92. Alembic `023_ui_locale`. O catálogo pt-BR é rascunho; a issue não fecha antes da revisão humana |
 | Emails no idioma | **Merged** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — PR #93. O rascunho pt-BR não é enviado; a issue não fecha antes da revisão humana |
-| Roadmap no idioma | **[S]** | [V3a: Forge roadmap in the learner locale](https://linear.app/career-forge-v2/issue/CAR-132) — depois da interface |
+| Roadmap no idioma | **Done** | [V3a: Forge roadmap in the learner locale](https://linear.app/career-forge-v2/issue/CAR-132) — PR #94. O prompt fica em inglês e, na largada, pede o idioma da conta |
 | Chaves live | **[S]** | [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) e um Checkout sandbox. Não bloqueia os trilhos acima. |
 
 Não há **[B]** para começar a V3a.
@@ -139,7 +139,7 @@ A interface do learner entra nos catálogos, inclusive a casca de `/learn` e de 
 
 Os emails do learner (código, continuidade, cobrança, resume) usam o idioma gravado na conta. O email do Operator fica em inglês. Mesma regra de rascunho e revisão.
 
-O prompt do forge continua em inglês e, na largada, pede o roadmap no idioma da conta. Trocar no meio do stream não reescreve esse forge. O próximo usa o idioma novo. Um roadmap já existente não é traduzido. Diagnosis, validation e mentor continuam em inglês. O texto em pt-BR é português do Brasil.
+O prompt do forge continua em inglês e, na largada, pede o roadmap no idioma da conta. Trocar no meio do stream não reescreve esse forge. O próximo usa o idioma novo. Um roadmap já existente não é traduzido. Diagnosis, validation e mentor continuam em inglês. O texto em pt-BR é português do Brasil. Entregue no PR #94 (`151cfe8`).
 
 ---
 
