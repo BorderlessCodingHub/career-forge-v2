@@ -53,6 +53,9 @@ def test_missing_locale_asks_for_an_english_roadmap() -> None:
     assert system.startswith("You are the Career Forge planner.")
     assert instruction in system
     assert "in English" in instruction
+    assert "why_now" in instruction
+    assert "key_concepts" in instruction
+    assert "evidence_prompt" in instruction
     assert "Brazilian Portuguese" not in system
 
 
@@ -64,6 +67,9 @@ def test_pt_br_asks_for_brazilian_portuguese_in_an_english_prompt() -> None:
     assert system.startswith("You are the Career Forge planner.")
     assert "Brazilian Portuguese" in system
     assert "português do Brasil" in system
+    assert "why_now" in system
+    assert "key_concepts" in system
+    assert "evidence_prompt" in system
     assert "Escreva" not in system
 
 

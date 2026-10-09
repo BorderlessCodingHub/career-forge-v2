@@ -27,15 +27,16 @@ def stamp_forge_output_locale(
     return stamped
 
 
+_STUDY_PLAN_PROSE = (
+    "goal, learner_context_summary, strategy, each node's title, why_now, "
+    "and key_concepts, and each task's title, outcome, and evidence_prompt"
+)
+
+
 def roadmap_language_instruction(locale: str | None) -> str:
     """English instruction that names the roadmap's output language."""
     if forge_output_locale(locale) == "pt-BR":
-        return (
-            "Write the StudyPlan learner-facing prose in Brazilian Portuguese "
-            "(português do Brasil): node titles, rationales, and task text. "
-            "Keep key_concepts as short technical terms."
-        )
-    return (
-        "Write the StudyPlan learner-facing prose in English: "
-        "node titles, rationales, and task text."
-    )
+        language = "Brazilian Portuguese (português do Brasil)"
+    else:
+        language = "English"
+    return f"Write these StudyPlan strings in {language}: {_STUDY_PLAN_PROSE}."
