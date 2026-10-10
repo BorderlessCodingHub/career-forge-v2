@@ -1,6 +1,7 @@
 export {
   applyMappingDimensionEvent,
   diagnosisStreamPhaseLabel,
+  diagnosisStreamPhaseMessageKey,
   firstPendingAnalyzingKey,
   isMappingItemDone,
   mergeMappingItem,

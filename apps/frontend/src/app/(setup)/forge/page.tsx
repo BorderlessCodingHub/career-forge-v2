@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -22,6 +23,7 @@ import { isPaywallError, type PaywallError } from "@/lib/paywall";
 import type { RoadmapForgeEvent } from "@/types/contracts";
 
 function ForgePageContent() {
+  const t = useTranslations("forge");
   const router = useRouter();
   const [events, setEvents] = useState<RoadmapForgeEvent[]>([]);
   const [status, setStatus] = useState<"idle" | "starting" | "streaming" | "done" | "error">(
@@ -90,7 +92,7 @@ function ForgePageContent() {
         });
 
         if (collected.length > 0 && !collected.some((event) => event.type === "graph_ready")) {
-          setError("O forge encerrou antes de gerar o grafo. Tente novamente.");
+          setError(t("endedEarly"));
           setStatus("error");
           if (timerRef.current) clearInterval(timerRef.current);
         }
@@ -101,7 +103,7 @@ function ForgePageContent() {
         throw err;
       }
     },
-    [finishForge],
+    [finishForge, t],
   );
 
   const startForge = useCallback(async (forceNewRun = false) => {
@@ -139,7 +141,7 @@ function ForgePageContent() {
         return;
       }
       const message =
-        err instanceof Error ? err.message : "Failed to start forge";
+        err instanceof Error ? err.message : t("startFailed");
       if (message.includes("404")) {
         router.replace("/onboarding/edit");
         return;
@@ -148,7 +150,7 @@ function ForgePageContent() {
       setStatus("error");
       if (timerRef.current) clearInterval(timerRef.current);
     }
-  }, [connectStream, router]);
+  }, [connectStream, router, t]);
 
   useEffect(() => {
     if (startedRef.current) return;
@@ -171,13 +173,13 @@ function ForgePageContent() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-8">
           <p className="text-xs uppercase tracking-widest text-text-muted">
-            Live Roadmap Forge
+            {t("eyebrow")}
           </p>
           <h1 className="mt-2 text-3xl font-semibold text-text-primary">
-            Forging your personalized trail
+            {t("title")}
           </h1>
           <p className="mt-2 text-sm text-text-secondary">
-            Live timeline — no graph preview during the stream.
+            {t("timelineNote")}
           </p>
           {softGateWarning ? (
             <div className="mt-4">
@@ -189,12 +191,24 @@ function ForgePageContent() {
           ) : null}
           <div className="mt-4 flex gap-4 text-xs text-text-muted">
             <span>{elapsedSec}s</span>
-            <span>{completedSteps} steps completed</span>
-            <span className="capitalize">{status}</span>
+            <span>{t("stepsCompleted", { count: completedSteps })}</span>
+            <span>
+              {t(
+                status === "starting"
+                  ? "statusStarting"
+                  : status === "streaming"
+                    ? "statusStreaming"
+                    : status === "done"
+                      ? "statusDone"
+                      : status === "error"
+                        ? "statusError"
+                        : "statusIdle",
+              )}
+            </span>
           </div>
           {status === "done" && (
             <p className="mt-3 text-sm text-accent-mint">
-              Plan ready — review the result and continue when you want.
+              {t("planReady")}
             </p>
           )}
         </div>
@@ -216,7 +230,7 @@ function ForgePageContent() {
           ))}
           {(status === "starting" || status === "streaming") && events.length === 0 && (
             <li className="font-mono text-sm text-accent-mint animate-pulse">
-              Conectando ao stream SSE…
+              {t("connecting")}
             </li>
           )}
         </ForgeTimeline>
@@ -230,10 +244,10 @@ function ForgePageContent() {
                 void startForge(true);
               }}
             >
-              Tentar novamente
+              {t("tryAgain")}
             </Button>
             <Link href="/onboarding/edit">
-              <Button variant="ghost">Back to diagnosis</Button>
+              <Button variant="ghost">{t("backToDiagnosis")}</Button>
             </Link>
           </div>
         )}
@@ -241,10 +255,10 @@ function ForgePageContent() {
         {status === "done" && (
           <div className="mt-8 flex flex-wrap gap-4">
             <Link href="/forge/complete">
-              <Button>Ver roadmap →</Button>
+              <Button>{t("seeRoadmap")}</Button>
             </Link>
             <Link href="/onboarding/edit">
-              <Button variant="ghost">Back to diagnosis</Button>
+              <Button variant="ghost">{t("backToDiagnosis")}</Button>
             </Link>
           </div>
         )}

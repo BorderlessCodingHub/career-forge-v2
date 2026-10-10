@@ -17,12 +17,23 @@ const INTERVIEW_ROUND_LABELS = [
   "Context and constraints",
 ] as const;
 
-export function interviewRoundLabel(roundCount: number): string {
-  const index = Math.max(
+const INTERVIEW_ROUND_MESSAGE_KEYS = ["roundPractice", "roundContext"] as const;
+
+export type InterviewRoundMessageKey = (typeof INTERVIEW_ROUND_MESSAGE_KEYS)[number];
+
+function interviewRoundIndex(roundCount: number): number {
+  return Math.max(
     0,
     Math.min(roundCount - 1, INTERVIEW_ROUND_LABELS.length - 1),
   );
-  return INTERVIEW_ROUND_LABELS[index];
+}
+
+export function interviewRoundLabel(roundCount: number): string {
+  return INTERVIEW_ROUND_LABELS[interviewRoundIndex(roundCount)];
+}
+
+export function interviewRoundMessageKey(roundCount: number): InterviewRoundMessageKey {
+  return INTERVIEW_ROUND_MESSAGE_KEYS[interviewRoundIndex(roundCount)];
 }
 
 export function toInterviewCv(cv: CvAttachment): DiagnosisInterviewCvAttachment {

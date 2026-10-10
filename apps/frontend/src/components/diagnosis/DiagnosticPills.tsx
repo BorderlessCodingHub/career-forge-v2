@@ -1,19 +1,20 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { PaywallPanel } from "@/components/billing/PaywallPanel";
 import { Button } from "@/components/ui";
 import { OnboardingRecapSidebar } from "@/components/diagnosis/OnboardingRecapSidebar";
-import { CAREER_GOALS } from "@/lib/onboarding-data";
+import { trackMessageKey } from "@/lib/goal-copy";
+import { interviewRoundMessageKey } from "@/lib/diagnosis-interview";
 import { getCvAttachment } from "@/lib/onboarding-session";
-import { interviewRoundLabel } from "@/lib/diagnosis-interview";
 import { useDiagnosisInterview } from "@/lib/hooks/useDiagnosisInterview";
 
 import { PillRound } from "./PillRound";
 
-const ROUND_INTRO =
-  "No right or wrong answers — two fixed rounds. The more concrete, the better AI maps your profile.";
-
 export function DiagnosticPills() {
+  const t = useTranslations("diagnosis");
+  const tGoal = useTranslations("goal");
   const {
     intake,
     questions,
@@ -37,12 +38,10 @@ export function DiagnosticPills() {
 
   if (!intake) return null;
 
-  const goalTitle =
-    CAREER_GOALS.find((goal) => goal.id === intake.goalId)?.title ??
-    intake.goalId;
+  const goalKey = trackMessageKey(intake.goalId);
+  const goalTitle = goalKey ? tGoal(goalKey) : intake.goalId;
   const cvAttachment = getCvAttachment();
-
-  const roundTitle = interviewRoundLabel(roundCount);
+  const roundTitle = t(interviewRoundMessageKey(roundCount));
 
   return (
     <main
@@ -81,7 +80,7 @@ export function DiagnosticPills() {
                 <PillRound label={roundTitle} />
               </div>
 
-              <p className="mt-4 text-sm text-text-secondary">{ROUND_INTRO}</p>
+              <p className="mt-4 text-sm text-text-secondary">{t("intro")}</p>
 
               <div className="mt-6 grid gap-4">
                 {questions.map((question) => (
@@ -114,22 +113,21 @@ export function DiagnosticPills() {
                 >
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                   <div className="text-sm text-text-secondary">
-                    <strong className="text-text-primary">Processando respostas…</strong>{" "}
-                    AI is updating your competency map.
+                    <strong className="text-text-primary">{t("processing")}</strong>{" "}
+                    {t("updatingMap")}
                   </div>
                 </div>
               ) : (
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                   <span className="text-sm text-text-muted">
-                    {questions.length} pergunta(s) nesta rodada · responda todas
-                    to continue
+                    {t("questionsInRound", { count: questions.length })}
                   </span>
                   <Button
                     data-testid="submit-round"
                     disabled={!roundComplete || questions.length === 0}
                     onClick={() => void submitRound()}
                   >
-                    {roundCount >= maxRounds ? "Generate diagnosis" : "Next round"} →
+                    {roundCount >= maxRounds ? t("generateDiagnosis") : t("nextRound")}
                   </Button>
                 </div>
               )}

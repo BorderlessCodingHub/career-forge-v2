@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -11,7 +12,7 @@ import {
 import {
   applyDiagnosisStreamEvent,
   createInitialDiagnosisStreamState,
-  diagnosisStreamPhaseLabel,
+  diagnosisStreamPhaseMessageKey,
   firstPendingAnalyzingKey,
   hydrateMappingFromResponse,
   type DiagnosisStreamUiState,
@@ -87,6 +88,7 @@ function hydrateInterviewResponse(response: InterviewTurnResponse): {
 
 export function useDiagnosisInterview() {
   const router = useRouter();
+  const t = useTranslations("diagnosis");
   const intake = useMemo(() => readOnboardingIntake(), []);
 
   const [sessionId, setSessionId] = useState<string | null>(() =>
@@ -236,7 +238,7 @@ export function useDiagnosisInterview() {
         setError(
           cause instanceof Error
             ? cause.message
-            : "Could not start the diagnosis.",
+            : t("startFailed"),
         );
         setPhase("ready");
       }
@@ -246,7 +248,7 @@ export function useDiagnosisInterview() {
     return () => {
       cancelled = true;
     };
-  }, [applyTurnResponse, dispatchStreamEvent, finishWithDiagnosis, intake, router]);
+  }, [applyTurnResponse, dispatchStreamEvent, finishWithDiagnosis, intake, router, t]);
 
   const activeKeys = useMemo(
     () => new Set(questions.map((question) => question.rubric_key)),
@@ -304,7 +306,7 @@ export function useDiagnosisInterview() {
       setError(
         cause instanceof Error
           ? cause.message
-          : "Could not submit your answers. Please try again.",
+          : t("submitFailed"),
       );
     } finally {
       if (!finished) {
@@ -325,6 +327,7 @@ export function useDiagnosisInterview() {
     questions,
     roundComplete,
     sessionId,
+    t,
   ]);
 
   return {
@@ -336,7 +339,7 @@ export function useDiagnosisInterview() {
     bootstrapping: phase === "bootstrapping",
     submitting: phase === "submitting",
     streaming: phase === "bootstrapping" || phase === "submitting",
-    streamPhaseLabel: diagnosisStreamPhaseLabel(streamPhase),
+    streamPhaseLabel: t(diagnosisStreamPhaseMessageKey(streamPhase)),
     analyzingKey,
     error,
     paywall,

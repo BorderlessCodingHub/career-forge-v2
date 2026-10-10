@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 import { ChecklistProgress, getChecklistProgress } from "@/components/roadmap/ChecklistProgress";
 import type { RoadmapNode } from "@/types/contracts";
 
@@ -8,12 +12,17 @@ type SkillNodeProps = {
 };
 
 export function SkillNode({ node, selected = false, onSelect }: SkillNodeProps) {
+  const t = useTranslations("roadmap");
   const isReview = node.status === "revisar";
   const { total: checklistTotal, completed: checklistCompleted } = getChecklistProgress(node);
   const showChecklistProgress = checklistTotal > 0;
 
   const ariaLabel = showChecklistProgress
-    ? `${node.title}. ${checklistCompleted} of ${checklistTotal} study items completed.`
+    ? t("studyItems", {
+        title: node.title,
+        completed: checklistCompleted,
+        total: checklistTotal,
+      })
     : node.title;
 
   return (
@@ -38,7 +47,7 @@ export function SkillNode({ node, selected = false, onSelect }: SkillNodeProps) 
             className="rounded-full bg-warning/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-warning"
             data-testid={`roadmap-node-${node.node_id}-revisar-badge`}
           >
-            Review
+            {t("reviewBadge")}
           </span>
         )}
       </div>

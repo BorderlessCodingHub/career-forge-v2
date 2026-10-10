@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Button, Select } from "@/components/ui";
+import { trackMessageKey } from "@/lib/goal-copy";
 import { CAREER_GOALS } from "@/lib/onboarding-data";
 import {
   clearCvAttachment,
@@ -18,12 +20,13 @@ import {
   type CvAttachment,
   type YearsXpRange,
 } from "@/lib/onboarding-session";
-import { YEARS_XP_OPTIONS } from "@/lib/years-xp";
+import { yearMessageKey, YEARS_XP_OPTIONS } from "@/lib/years-xp";
 
 import { CvDropzone } from "./CvDropzone";
 
 export function GoalPicker() {
   const router = useRouter();
+  const t = useTranslations("goal");
   const [selected, setSelected] = useState("rag-engineer");
   const [motivation, setMotivationValue] = useState("");
   const [yearsXp, setYearsXpValue] = useState<YearsXpRange | "">("");
@@ -58,15 +61,17 @@ export function GoalPicker() {
       <div className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 py-16">
         <header className="mb-8">
           <span className="text-sm uppercase tracking-wide text-text-muted">
-            Step 1 of 3
+            {t("step")}
           </span>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight text-text-primary md:text-5xl">
-            Where do you want to go?
+            {t("title")}
           </h1>
         </header>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          {CAREER_GOALS.map((goal) => (
+          {CAREER_GOALS.map((goal) => {
+            const titleKey = trackMessageKey(goal.id);
+            return (
             <button
               key={goal.id}
               type="button"
@@ -80,13 +85,14 @@ export function GoalPicker() {
               } ${!goal.active ? "cursor-not-allowed opacity-50" : ""}`}
             >
               <span className="text-base font-medium text-text-primary">
-                {goal.title}
+                {titleKey ? t(titleKey) : goal.title}
               </span>
               {!goal.active && (
-                <span className="mt-2 block text-xs text-text-muted">Coming soon</span>
+                <span className="mt-2 block text-xs text-text-muted">{t("comingSoon")}</span>
               )}
             </button>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-8">
@@ -94,14 +100,14 @@ export function GoalPicker() {
             htmlFor="motivation"
             className="flex items-center justify-between text-sm text-text-secondary"
           >
-            Why this path?
+            {t("why")}
             <span className="text-text-muted">{motivation.length}/280</span>
           </label>
           <textarea
             id="motivation"
             data-testid="motivation-input"
             className="mt-2 min-h-[120px] w-full resize-none rounded-md border border-border bg-surface-elevated px-4 py-3 text-sm text-text-primary outline-none ring-accent focus:ring-2"
-            placeholder="In your own words, what motivates you on this path…"
+            placeholder={t("motivationPlaceholder")}
             value={motivation}
             onChange={(event) => {
               setMotivationValue(event.target.value.slice(0, 280));
@@ -110,7 +116,7 @@ export function GoalPicker() {
           />
           {touched && motivation.trim().length < 20 && (
             <p className="mt-2 text-sm text-warning">
-              At least 20 characters so we can personalize your trail.
+              {t("motivationShort")}
             </p>
           )}
         </div>
@@ -120,15 +126,21 @@ export function GoalPicker() {
             htmlFor="years-xp"
             className="text-sm text-text-secondary"
           >
-            Years of experience (if applicable)
+            {t("years")}
           </label>
           <Select
             id="years-xp"
             data-testid="years-xp-select"
             className="mt-2"
             value={yearsXp}
-            options={YEARS_XP_OPTIONS}
-            placeholder="Select…"
+            options={YEARS_XP_OPTIONS.map((option) => {
+              const key = yearMessageKey(option.value);
+              return {
+                value: option.value,
+                label: key ? t(key) : option.label,
+              };
+            })}
+            placeholder={t("yearsPlaceholder")}
             onChange={(next) => {
               setYearsXpValue(next);
               setTouched(true);
@@ -136,14 +148,14 @@ export function GoalPicker() {
           />
           {touched && !yearsXp && (
             <p className="mt-2 text-sm text-warning">
-              Share your experience so we can calibrate the diagnosis.
+              {t("yearsRequired")}
             </p>
           )}
         </div>
 
         <div className="mt-6">
           <label className="text-sm text-text-secondary">
-            Resume (optional)
+            {t("resume")}
           </label>
           <CvDropzone
             attachment={cvAttachment}
@@ -164,7 +176,7 @@ export function GoalPicker() {
             disabled={!valid}
             onClick={handleContinue}
           >
-            Start diagnosis →
+            {t("start")}
           </Button>
         </div>
       </div>

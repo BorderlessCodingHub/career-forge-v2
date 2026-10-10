@@ -1,10 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 type TrailProgressRingProps = {
   percent: number;
 };
 
 export function TrailProgressRing({ percent }: TrailProgressRingProps) {
+  const t = useTranslations("roadmap");
   const size = 44;
   const strokeWidth = 4;
   const radius = (size - strokeWidth) / 2;
@@ -21,7 +24,7 @@ export function TrailProgressRing({ percent }: TrailProgressRingProps) {
       aria-valuenow={percent}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-label={`Progresso de estudo: ${percent}%`}
+      aria-label={t("studyProgressAria", { percent })}
     >
       <svg
         className="-rotate-90"

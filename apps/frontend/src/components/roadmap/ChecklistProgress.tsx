@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 import type { RoadmapNode } from "@/types/contracts";
 
 import { getChecklistProgress } from "./checklist-progress-stats";
@@ -10,6 +14,7 @@ type ChecklistProgressProps = {
 };
 
 export function ChecklistProgress({ node, variant }: ChecklistProgressProps) {
+  const t = useTranslations("roadmap");
   const { total, completed, percent } = getChecklistProgress(node);
   if (total <= 0) return null;
 
@@ -51,15 +56,14 @@ export function ChecklistProgress({ node, variant }: ChecklistProgressProps) {
       data-testid="node-checklist-progress"
     >
       <div className="flex items-center justify-between text-xs text-text-muted">
-        <span>Progresso de estudo</span>
+        <span>{t("studyProgress")}</span>
         <span className="font-mono text-text-primary">
-          {completed}/{total} completed
+          {t("completedCount", { completed, total })}
         </span>
       </div>
       {progressBar}
       <p className="mt-2 text-xs text-text-muted" data-testid="checklist-non-blocking-copy">
-        Checking off reading and practice helps track study — optional and does not replace
-        AI validation. Real mastery proof remains the mock interview.
+        {t("checklistNote")}
       </p>
     </div>
   );
