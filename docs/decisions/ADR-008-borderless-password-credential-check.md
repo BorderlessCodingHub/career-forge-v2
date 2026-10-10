@@ -61,6 +61,7 @@ Do not set `IDENTITY_METHOD=borderless_password` in Labs until CAR-105 + CAR-106
 - Labs freeze (`IDENTITY_EMAIL_OTP=false`, empty `IDENTITY_METHOD`) is unchanged: `pilot_enter`.
 - **CAR-108:** password-mode Labs cutover uses `MEMBERSHIP_BACKEND=stub`. `BORDERLESS_MEMBERS_*` is **not** a cutover requirement. Access desk membership may stay stale (`Not entitled`) this slice. Cost caps still apply. No operator deny/ban flag.
 - **CAR-128:** password mode stores the Borderless `accessToken` encrypted (`BORDERLESS_TOKEN_ENCRYPTION_KEY`) and reads `GET /api/users/profile`. BASE/PSP include. `borderless_user_id` alone does not. OTP / `pilot_enter` still use `GET members?email=`. The browser still never receives the Borderless token.
+- **CAR-129:** password mode also stores a Career Forge password (`users.password_hash`). Signup stores the name and password and emails a confirmation link. The session opens when that link is consumed (`users.email_confirmed_at`). Later access uses that password. A replacement uses a different link, only after the email is confirmed. Learner OTP verify stays closed. The Borderless password is unchanged. Both open the same user. A Borderless sign-in on a still-pending signup confirms the email and drops the pending password.
 
 ## Related
 

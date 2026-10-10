@@ -9,8 +9,10 @@ from urllib import error, request
 
 from career_forge.config import settings
 from career_forge.services.learner_mail import (
+    confirm_letter,
     operator_otp_letter,
     otp_letter,
+    reset_letter,
     resume_letter,
 )
 
@@ -23,6 +25,14 @@ _MAX_ERROR_BODY = 300
 
 def _otp_minutes() -> int:
     return max(1, settings.otp_ttl_seconds // 60)
+
+
+def _account_letter(
+    kind: str, url: str, hours: int, locale: str | None
+) -> tuple[str, str]:
+    if kind == "reset":
+        return reset_letter(url=url, hours=hours, locale=locale)
+    return confirm_letter(url=url, hours=hours, locale=locale)
 
 
 def _http_error_detail(exc: error.HTTPError) -> str:
@@ -45,6 +55,16 @@ class Mailer(Protocol):
     def send_continuity(self, *, to_email: str, subject: str, text: str) -> None: ...
 
     def send_billing(self, *, to_email: str, subject: str, text: str) -> None: ...
+
+    def send_account_link(
+        self,
+        *,
+        to_email: str,
+        url: str,
+        kind: str,
+        hours: int,
+        locale: str | None = None,
+    ) -> None: ...
 
 
 class LogMailer:
@@ -105,6 +125,23 @@ class LogMailer:
             text,
         )
 
+    def send_account_link(
+        self,
+        *,
+        to_email: str,
+        url: str,
+        kind: str,
+        hours: int,
+        locale: str | None = None,
+    ) -> None:
+        subject, text = _account_letter(kind, url, hours, locale)
+        logger.info(
+            "Account link for %s — mailer_backend=log\n%s\n%s",
+            to_email,
+            subject,
+            text,
+        )
+
 
 class ResendMailer:
     """Prod mailer via Resend HTTP API when ``RESEND_API_KEY`` is set."""
@@ -131,6 +168,18 @@ class ResendMailer:
         self._send(to_email=to_email, subject=subject, text=text)
 
     def send_billing(self, *, to_email: str, subject: str, text: str) -> None:
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_account_link(
+        self,
+        *,
+        to_email: str,
+        url: str,
+        kind: str,
+        hours: int,
+        locale: str | None = None,
+    ) -> None:
+        subject, text = _account_letter(kind, url, hours, locale)
         self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:
@@ -189,6 +238,18 @@ class SesMailer:
         self._send(to_email=to_email, subject=subject, text=text)
 
     def send_billing(self, *, to_email: str, subject: str, text: str) -> None:
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_account_link(
+        self,
+        *,
+        to_email: str,
+        url: str,
+        kind: str,
+        hours: int,
+        locale: str | None = None,
+    ) -> None:
+        subject, text = _account_letter(kind, url, hours, locale)
         self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:

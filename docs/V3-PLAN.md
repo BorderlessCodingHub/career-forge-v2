@@ -123,9 +123,9 @@ Conta só no Career Forge não tem perfil para ler e permanece `external` até u
 
 [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129)
 
-O primeiro acesso prova o e-mail com o OTP e define uma senha que o Career Forge guarda. Os acessos seguintes usam essa senha. O OTP do learner não é a porta de todo dia. Essa senha é outra, distinta da senha da Borderless. As duas abrem o mesmo usuário.
+O cadastro pede nome, e-mail, senha e confirmação da senha. O Career Forge grava a senha e envia um magic link. A sessão abre quando o link é consumido. Os acessos seguintes usam essa senha. O link de confirmar a conta e o de trocar a senha duram 24 horas, são de uso único, e um reenvio mata o anterior. Essa senha é outra, distinta da senha da Borderless. As duas abrem o mesmo usuário. O OTP do learner não é a porta.
 
-Esquecer a senha do Career Forge troca por um e-mail nesse endereço. A senha da Borderless não muda. O mesmo e-mail no login da Borderless é a mesma conta: a checagem seguinte lê o perfil, BASE ou PSP entram na regra incluída, FREE continua `external`, e um forge já começado continua gasto. Uma conta já ligada à Borderless pode ganhar essa senha depois.
+Esquecer a senha do Career Forge pede outro magic link nesse endereço, e o e-mail sai só se a senha já foi confirmada. A resposta é a mesma quando o e-mail não tem essa senha. A senha da Borderless não muda. O mesmo e-mail no login da Borderless é a mesma conta. Se o cadastro ainda estava pendente, esse login confirma o e-mail, apaga a senha pendente e invalida o link. O nome escolhido fica. Uma senha já confirmada permanece. A checagem seguinte lê o perfil, BASE ou PSP entram na regra incluída, FREE continua `external`, e um forge já começado continua gasto. Quem já entra pela Borderless continua por essa porta. Definir a senha do Career Forge dentro da sessão fica para uma issue seguinte.
 
 ## Dual language
 

@@ -7,11 +7,13 @@ import pytest
 from career_forge.services.learner_mail import (
     REVIEWED_LOCALES,
     billing_letter,
+    confirm_letter,
     continuity_idle_letter,
     continuity_node_letter,
     email_locale,
     operator_otp_letter,
     otp_letter,
+    reset_letter,
     resume_letter,
 )
 
@@ -27,6 +29,24 @@ def test_stored_english_stays_english() -> None:
     subject, text = otp_letter(code="424242", minutes=10, locale="en")
     assert subject == "Your Career Forge code"
     assert text == "Your verification code is 424242. It expires in 10 minutes."
+
+
+def test_account_link_copy_stays_english_until_pt_br_is_reviewed() -> None:
+    subject, text = confirm_letter(
+        url="https://labs.example/account/confirm?token=abc",
+        hours=24,
+        locale="pt-BR",
+    )
+    assert subject == "Confirm your Career Forge email"
+    assert "24" in text
+    assert "https://labs.example/account/confirm?token=abc" in text
+    reset_subject, reset_text = reset_letter(
+        url="https://labs.example/account/reset?token=abc",
+        hours=24,
+        locale=None,
+    )
+    assert reset_subject == "Choose a new Career Forge password"
+    assert "https://labs.example/account/reset?token=abc" in reset_text
 
 
 def test_unreviewed_pt_br_stays_english() -> None:
@@ -119,6 +139,16 @@ def test_prod_mailers_send_the_resolved_letter_and_keep_operator_english(
         )
         assert seen["subject"] == "Seu link para retomar o Career Forge"
         assert "https://labs.example/resume/abc" in seen["text"]
+
+        mailer.send_account_link(
+            to_email="ana@example.com",
+            url="https://labs.example/account/confirm?token=abc",
+            kind="confirm",
+            hours=24,
+            locale="pt-BR",
+        )
+        assert seen["subject"] == "Confirme seu e-mail do Career Forge"
+        assert "https://labs.example/account/confirm?token=abc" in seen["text"]
 
 
 def test_otp_and_billing_and_continuity_read_the_stored_locale(

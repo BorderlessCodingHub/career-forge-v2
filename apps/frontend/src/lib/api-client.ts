@@ -610,6 +610,112 @@ export async function signInWithPassword(
   return data;
 }
 
+export class EmailUnconfirmedError extends Error {
+  constructor() {
+    super("Email is not confirmed");
+    this.name = "EmailUnconfirmedError";
+  }
+}
+
+export class AccountExistsError extends Error {
+  constructor() {
+    super("This email already has an account");
+    this.name = "AccountExistsError";
+  }
+}
+
+export class MailDeliveryError extends Error {
+  constructor() {
+    super("Could not send the email");
+    this.name = "MailDeliveryError";
+  }
+}
+
+type AccountAck = { ok: true; email: string };
+
+async function postCareerForgeAccount(
+  path: string,
+  body: Record<string, string>,
+): Promise<Response> {
+  return fetch(`${backendUrl}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+function storeSignin(data: SigninResponse): SigninResponse {
+  setSessionFromOtp(data.access_token, data.external_id);
+  return data;
+}
+
+/** Pending Career Forge account. The confirmation link opens the session. */
+export async function registerCareerForgeAccount(
+  name: string,
+  email: string,
+  password: string,
+): Promise<AccountAck> {
+  const res = await postCareerForgeAccount("/auth/account/signup", {
+    name,
+    email,
+    password,
+  });
+  if (res.status === 409) throw new AccountExistsError();
+  if (res.status === 503) throw new MailDeliveryError();
+  if (!res.ok) throw await readApiError(res);
+  return res.json() as Promise<AccountAck>;
+}
+
+/** Another confirmation link for a pending account. The password stays. */
+export async function resendCareerForgeConfirmation(email: string): Promise<AccountAck> {
+  const res = await postCareerForgeAccount("/auth/account/resend", { email });
+  if (res.status === 503) throw new MailDeliveryError();
+  if (!res.ok) throw await readApiError(res);
+  return res.json() as Promise<AccountAck>;
+}
+
+/** Consume the confirmation link and open the session in this browser. */
+export async function confirmCareerForgeEmail(token: string): Promise<SigninResponse> {
+  const res = await postCareerForgeAccount("/auth/account/confirm", { token });
+  if (!res.ok) throw await readApiError(res);
+  return storeSignin((await res.json()) as SigninResponse);
+}
+
+/** The response is the same whether or not a reset link was sent. */
+export async function requestCareerForgePasswordReset(email: string): Promise<void> {
+  const res = await postCareerForgeAccount("/auth/account/forgot", { email });
+  if (res.status === 503) throw new MailDeliveryError();
+  if (!res.ok) throw await readApiError(res);
+}
+
+/** Store a new Career Forge password from a reset link and open a session. */
+export async function resetCareerForgePassword(
+  token: string,
+  password: string,
+): Promise<SigninResponse> {
+  const res = await postCareerForgeAccount("/auth/account/reset", { token, password });
+  if (!res.ok) throw await readApiError(res);
+  return storeSignin((await res.json()) as SigninResponse);
+}
+
+/** Later access with the stored Career Forge password. Not the Borderless password. */
+export async function signInWithCareerForgePassword(
+  email: string,
+  password: string,
+): Promise<SigninResponse> {
+  const res = await postCareerForgeAccount("/auth/account/signin", { email, password });
+  if (res.status === 403) {
+    const err = await readApiError(res);
+    if (err.message.includes("Email is not confirmed")) throw new EmailUnconfirmedError();
+    throw err;
+  }
+  if (!res.ok) {
+    if (res.status === 400) throw await readApiError(res);
+    throw new Error(signInUserMessage(res.status));
+  }
+  return storeSignin((await res.json()) as SigninResponse);
+}
+
 /** Product-loop session check — false when freeze list rejects the JWT. */
 export async function checkAuthSession(): Promise<boolean> {
   const token = getAccessToken();

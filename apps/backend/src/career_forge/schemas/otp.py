@@ -64,6 +64,54 @@ class OtpVerifyResponse(BaseModel):
     expires_in: int
 
 
+class AccountSignupBody(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    email: str = Field(min_length=3, max_length=255)
+    password: str = Field(min_length=1, max_length=1024, repr=False)
+
+    @field_validator("name")
+    @classmethod
+    def normalize_name(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("name is required")
+        if len(cleaned) > 120:
+            raise ValueError("name is too long")
+        return cleaned
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        return _normalize_identity_email(value)
+
+
+class AccountEmailBody(BaseModel):
+    email: str = Field(min_length=3, max_length=255)
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        return _normalize_identity_email(value)
+
+
+class AccountAckResponse(BaseModel):
+    ok: bool = True
+    email: str
+
+
+class AccountForgotResponse(BaseModel):
+    ok: bool = True
+
+
+class AccountTokenBody(BaseModel):
+    token: str = Field(min_length=1, max_length=512)
+
+
+class AccountResetBody(BaseModel):
+    token: str = Field(min_length=1, max_length=512)
+    password: str = Field(min_length=1, max_length=1024, repr=False)
+
+
 class SigninBody(BaseModel):
     email: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=1, max_length=1024, repr=False)
