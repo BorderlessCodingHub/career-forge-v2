@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -164,6 +165,7 @@ function EditableList({
   tone: Tone;
   onChange: (items: string[]) => void;
 }) {
+  const t = useTranslations("diagnosis");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [adding, setAdding] = useState(false);
 
@@ -227,7 +229,7 @@ function EditableList({
             className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-accent/30 py-2 text-sm text-accent transition hover:bg-accent/5"
           >
             <Plus size={14} />
-            Add {tone === "strength" ? "strength" : "gap"}
+            {tone === "strength" ? t("addStrength") : t("addGap")}
           </button>
         )}
       </div>
@@ -236,6 +238,7 @@ function EditableList({
 }
 
 function SortableItem({ id, value }: { id: string; value: string }) {
+  const t = useTranslations("diagnosis");
   const {
     attributes,
     listeners,
@@ -262,7 +265,7 @@ function SortableItem({ id, value }: { id: string; value: string }) {
       <button
         type="button"
         className="cursor-grab touch-none text-accent-mint/50 hover:text-accent-mint active:cursor-grabbing"
-        aria-label="Drag to reorder"
+        aria-label={t("dragReorder")}
         {...attributes}
         {...listeners}
       >
@@ -282,6 +285,7 @@ function ReorderableList({
   items: string[];
   onChange: (items: string[]) => void;
 }) {
+  const t = useTranslations("diagnosis");
   const stableIdsRef = useRef<Map<string, string>>(new Map());
   const counterRef = useRef(0);
 
@@ -335,7 +339,7 @@ function ReorderableList({
         </SortableContext>
       </DndContext>
       <p className="mt-3 text-center text-xs text-text-muted">
-        Arraste para reordenar prioridades
+        {t("reorderHint")}
       </p>
     </div>
   );
@@ -346,6 +350,7 @@ type EditableDiagnosisProps = {
 };
 
 export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) {
+  const t = useTranslations("diagnosis");
   const router = useRouter();
   const [diagnosis, setDiagnosis] = useState<DiagnosisResponse | null>(
     () => initialDiagnosis ?? getStoredDiagnosis(),
@@ -367,7 +372,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
   if (!diagnosis) {
     return (
       <main className="min-h-screen grid-dots p-8">
-        <p className="text-text-secondary">Loading diagnosis…</p>
+        <p className="text-text-secondary">{t("loading")}</p>
       </main>
     );
   }
@@ -385,7 +390,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
     const goalId = getSelectedGoal();
     const motivation = getMotivation();
     if (!goalId || !motivation) {
-      setError("Incomplete onboarding data. Please redo the diagnosis.");
+      setError(t("incomplete"));
       return;
     }
 
@@ -413,7 +418,7 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to confirm diagnosis or start the forge.",
+          : t("confirmFailed"),
       );
       setConfirming(false);
     }
@@ -430,15 +435,12 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-sm text-text-secondary">
             <span className="h-2 w-2 rounded-full bg-accent-mint" />
-            Perfil: <strong className="text-text-primary">{diagnosis.profile.label}</strong>
+            {t("profile")} <strong className="text-text-primary">{diagnosis.profile.label}</strong>
           </div>
           <h1 className="mt-4 text-4xl font-semibold text-text-primary">
-            Your diagnosis
+            {t("yourDiagnosis")}
           </h1>
-          <p className="mt-3 max-w-3xl text-text-secondary">
-            Adjust strengths, gaps, and priorities before forging your trail. This
-            is the snapshot for today — it recalibrates after each validation.
-          </p>
+          <p className="mt-3 max-w-3xl text-text-secondary">{t("diagnosisLead")}</p>
         </div>
 
         {diagnosis.soft_gated && diagnosis.soft_gate_warning ? (
@@ -449,19 +451,19 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
 
         <div className="grid gap-4 lg:grid-cols-3">
           <EditableList
-            title="Strengths"
+            title={t("strengths")}
             tone="strength"
             items={diagnosis.strengths}
             onChange={(strengths) => updateDiagnosis({ strengths })}
           />
           <EditableList
-            title="Gaps"
+            title={t("gaps")}
             tone="gap"
             items={diagnosis.gaps}
             onChange={(gaps) => updateDiagnosis({ gaps })}
           />
           <ReorderableList
-            title="Initial priorities"
+            title={t("priorities")}
             items={diagnosis.starting_priorities}
             onChange={(starting_priorities) =>
               updateDiagnosis({ starting_priorities })
@@ -470,9 +472,8 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
         </div>
 
         <div className="mt-6 rounded-md border border-border bg-surface p-5 text-sm text-text-secondary">
-          <strong className="text-text-primary">Evidence-based assessment.</strong>{" "}
-          Career Forge does not let you mark topics complete without proving
-          understanding in an AI interview.
+          <strong className="text-text-primary">{t("evidenceLead")}</strong>{" "}
+          {t("evidenceBody")}
         </div>
 
         {paywall ? (
@@ -488,14 +489,14 @@ export function EditableDiagnosis({ initialDiagnosis }: EditableDiagnosisProps) 
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <Button variant="ghost" onClick={handleRestart} disabled={confirming}>
-            Redo diagnosis
+            {t("redo")}
           </Button>
           <Button
             data-testid="generate-roadmap"
             onClick={() => void handleConfirmAndForge()}
             disabled={confirming}
           >
-            {confirming ? "Saving and starting forge…" : "Generate roadmap →"}
+            {confirming ? t("savingForge") : t("generateRoadmap")}
           </Button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { MentorReportView } from "@/components/mentor-report/MentorReportView";
@@ -8,6 +9,7 @@ import { getUserId } from "@/lib/user-session";
 import type { MentorReportResponse } from "@/types/contracts";
 
 export function MentorReportContent() {
+  const t = useTranslations("report");
   const [report, setReport] = useState<MentorReportResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +25,7 @@ export function MentorReportContent() {
         if (!cancelled) setReport(data);
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to load report");
+          setError(err instanceof Error ? err.message : t("loadFailed"));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -34,12 +36,12 @@ export function MentorReportContent() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-sm text-text-muted">
-        Loading mentor report…
+        {t("loading")}
       </div>
     );
   }
@@ -47,7 +49,7 @@ export function MentorReportContent() {
   if (error || !report) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-10 text-center">
-        <p className="text-sm text-warning">{error ?? "Report unavailable"}</p>
+        <p className="text-sm text-warning">{error ?? t("unavailable")}</p>
       </div>
     );
   }

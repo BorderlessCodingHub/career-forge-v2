@@ -22,6 +22,27 @@ const STATUS_RANK: Record<RubricDimensionStatus, number> = {
   mapped: 2,
 };
 
+const PHASE_MESSAGE_KEYS = {
+  analyzing_intake: "phaseIntake",
+  analyzing_cv: "phaseCv",
+  judging: "phaseJudging",
+  loading_questions: "phaseQuestions",
+  planning_questions: "phaseQuestions",
+  processing_answers: "phaseAnswers",
+  finalizing: "phaseFinal",
+} as const;
+
+export type DiagnosisPhaseMessageKey =
+  | (typeof PHASE_MESSAGE_KEYS)[DiagnosisInterviewStatusPhase]
+  | "phaseIdle";
+
+export function diagnosisStreamPhaseMessageKey(
+  phase: DiagnosisInterviewStatusPhase | null,
+): DiagnosisPhaseMessageKey {
+  if (!phase) return "phaseIdle";
+  return PHASE_MESSAGE_KEYS[phase];
+}
+
 export function diagnosisStreamPhaseLabel(
   phase: DiagnosisInterviewStatusPhase | null,
 ): string {

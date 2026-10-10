@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { BookOpenCheck } from "lucide-react";
 import { useState } from "react";
@@ -22,6 +23,7 @@ export function ValidationResult({
   planUpdate,
   onRetry,
 }: ValidationResultProps) {
+  const t = useTranslations("assess");
   const [accordionOpen, setAccordionOpen] = useState(false);
   const passed = result.status === "aprovado";
 
@@ -35,7 +37,7 @@ export function ValidationResult({
           <p className="font-medium text-text-primary">{nodeTitle}</p>
         </div>
         <div className="flex items-center gap-2 text-xs text-text-muted">
-          <span>Resultado</span>
+          <span>{t("resultLabel")}</span>
           <span className="h-2 w-2 rounded-full bg-success" />
           <span className="h-2 w-2 rounded-full bg-success" />
           <span className="h-2 w-2 rounded-full bg-success" />
@@ -52,12 +54,10 @@ export function ValidationResult({
                 : "bg-warning/15 text-warning"
             }`}
           >
-            {passed ? "Passed" : "Review"}
+            {passed ? t("passed") : t("review")}
           </span>
           <p className="text-center text-sm text-text-secondary">
-            {passed
-              ? "Enough evidence — mastery validated."
-              : "You are close, but not quite there yet."}
+            {passed ? t("passedBody") : t("reviewBody")}
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export function ValidationResult({
           {result.strengths.length > 0 && (
             <div className="rounded-md border border-success/30 bg-success/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-success">
-                You got
+                {t("youGot")}
               </p>
               <ul className="mt-3 space-y-2 text-sm text-text-secondary">
                 {result.strengths.map((item) => (
@@ -81,7 +81,7 @@ export function ValidationResult({
           {result.gaps.length > 0 && (
             <div className="rounded-md border border-warning/30 bg-warning/5 p-4">
               <p className="text-xs font-semibold uppercase tracking-widest text-warning">
-                Precisa melhorar
+                {t("needsWork")}
               </p>
               <ul className="mt-3 space-y-2 text-sm text-text-secondary">
                 {result.gaps.map((item) => (
@@ -96,7 +96,7 @@ export function ValidationResult({
 
           <div className="rounded-md border border-accent/30 bg-accent/10 p-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-              Next step
+              {t("nextStep")}
             </p>
             <p className="mt-2 text-sm text-text-secondary">{result.next_action}</p>
           </div>
@@ -107,7 +107,7 @@ export function ValidationResult({
               className="flex w-full items-center justify-between px-4 py-3 text-left text-sm text-text-secondary"
               onClick={() => setAccordionOpen((open) => !open)}
             >
-              <span>Summary for mentor (Borderless)</span>
+              <span>{t("mentorSummary")}</span>
               <span>{accordionOpen ? "▴" : "▾"}</span>
             </button>
             {accordionOpen && (
@@ -121,18 +121,18 @@ export function ValidationResult({
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <Link href={passed ? "/roadmap" : "/roadmap?adaptive=1"}>
-          <Button variant="ghost">← Back to trail</Button>
+          <Button variant="ghost">{t("backToTrail")}</Button>
         </Link>
         <div className="flex flex-wrap gap-2">
           {!passed && planUpdate && (
             <Link href="/roadmap?adaptive=1">
               <Button data-testid="view-adaptive-roadmap">
-                See adapted trail →
+                {t("seeAdapted")}
               </Button>
             </Link>
           )}
           <Button variant="ghost" onClick={onRetry}>
-            Retry validation
+            {t("retry")}
           </Button>
         </div>
       </div>

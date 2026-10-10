@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui";
@@ -14,6 +15,7 @@ type MentorDrawerProps = {
 };
 
 export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
+  const t = useTranslations("mentor");
   const [messages, setMessages] = useState<MentorMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [context, setContext] = useState<MentorContextSnapshot | null>(null);
@@ -51,12 +53,12 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
         { role: "assistant", content: response.mentor.reply },
       ]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to talk to mentor");
+      setError(err instanceof Error ? err.message : t("failed"));
       setMessages((current) => current.slice(0, -1));
     } finally {
       setLoading(false);
     }
-  }, [draft, loading, messages, node?.node_id, node?.title]);
+  }, [draft, loading, messages, node?.node_id, node?.title, t]);
 
   if (!open) return null;
 
@@ -64,7 +66,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
     <>
       <button
         type="button"
-        aria-label="Fechar mentor"
+        aria-label={t("close")}
         className="fixed inset-0 z-40 bg-black/40"
         onClick={onClose}
         data-testid="mentor-drawer-backdrop"
@@ -77,9 +79,9 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
           <div className="flex items-center gap-3">
             <MentorAvatar className="h-9 w-9 text-sm" />
             <div>
-              <p className="text-sm font-semibold text-text-primary">Contextual mentor</p>
+              <p className="text-sm font-semibold text-text-primary">{t("drawerTitle")}</p>
               <p className="text-xs text-accent-mint">
-                knows your trail · {node?.title ?? "overview"}
+                {t("knowsTrail", { title: node?.title ?? t("overview") })}
               </p>
             </div>
           </div>
@@ -95,12 +97,12 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
         {context && (
           <div className="border-b border-border bg-surface px-6 py-3 text-xs text-text-secondary">
             {context.validation_count > 0 && (
-              <span>{context.validation_count} validations · </span>
+              <span>{t("validations", { count: context.validation_count })}</span>
             )}
             {context.recent_gaps.length > 0 ? (
-              <span>Lacuna recente: {context.recent_gaps[0]}</span>
+              <span>{t("recentGap", { gap: context.recent_gaps[0] })}</span>
             ) : (
-              <span>No gaps recorded yet</span>
+              <span>{t("noGaps")}</span>
             )}
           </div>
         )}
@@ -108,8 +110,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
         <div className="flex-1 space-y-3 overflow-y-auto px-5 py-5" data-testid="mentor-messages">
           {messages.length === 0 && (
             <p className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary">
-              Ask about references, validation gaps, or how to practice{" "}
-              {node?.title ?? "your trail"}.
+              {t("empty", { title: node?.title ?? t("yourTrail") })}
             </p>
           )}
           {messages.map((message, index) => (
@@ -125,7 +126,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
             </div>
           ))}
           {loading && (
-            <p className="text-sm text-text-muted animate-pulse">Mentor thinking…</p>
+            <p className="text-sm text-text-muted animate-pulse">{t("thinking")}</p>
           )}
         </div>
 
@@ -141,7 +142,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
               onKeyDown={(event) => {
                 if (event.key === "Enter") void send();
               }}
-              placeholder="Ask something about your trail..."
+              placeholder={t("placeholder")}
               className="flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted"
               data-testid="mentor-input"
             />
@@ -150,7 +151,7 @@ export function MentorDrawer({ open, onClose, node }: MentorDrawerProps) {
               disabled={!draft.trim() || loading}
               data-testid="mentor-send"
             >
-              Send
+              {t("send")}
             </Button>
           </div>
         </div>

@@ -1,5 +1,9 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 import { MappingDimensionList } from "@/components/diagnosis/MappingDimensionList";
-import { formatYearsXpLabel } from "@/lib/years-xp";
+import { yearMessageKey } from "@/lib/years-xp";
 import type { CvAttachment, RubricDimensionKey, RubricMapItem, YearsXpRange } from "@/types/contracts";
 
 type OnboardingRecapSidebarProps = {
@@ -31,22 +35,26 @@ export function OnboardingRecapSidebar({
   activeKeys,
   analyzingKey,
 }: OnboardingRecapSidebarProps) {
+  const t = useTranslations("diagnosis");
+  const tGoal = useTranslations("goal");
+  const yearKey = yearMessageKey(yearsXp);
+
   return (
     <aside className="rounded-md border border-border bg-surface p-6">
       <div className="text-xs uppercase tracking-wide text-text-muted">
-        Your goal
+        {t("yourGoal")}
       </div>
       <div className="mt-3 text-lg font-medium text-text-primary">{goalTitle}</div>
       <p className="mt-3 text-sm leading-relaxed text-text-secondary">{motivation}</p>
 
       <dl className="mt-4 space-y-2 border-t border-border-soft pt-4 text-sm">
         <div className="flex justify-between gap-3">
-          <dt className="text-text-muted">Experience</dt>
-          <dd className="text-text-primary">{formatYearsXpLabel(yearsXp)}</dd>
+          <dt className="text-text-muted">{t("experience")}</dt>
+          <dd className="text-text-primary">{yearKey ? tGoal(yearKey) : yearsXp}</dd>
         </div>
         {cvAttachment && (
           <div className="flex justify-between gap-3">
-            <dt className="text-text-muted">Resume</dt>
+            <dt className="text-text-muted">{t("resume")}</dt>
             <dd className="truncate text-text-primary" title={cvAttachment.filename}>
               {cvAttachment.filename}
             </dd>
@@ -57,7 +65,7 @@ export function OnboardingRecapSidebar({
       {!bootstrapping && roundCount > 0 && (
         <div className="mt-6">
           <div className="flex items-center justify-between text-xs text-text-muted">
-            <span>Perfil completo</span>
+            <span>{t("profileComplete")}</span>
             <span>{progressPct}%</span>
           </div>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-elevated">
@@ -71,7 +79,7 @@ export function OnboardingRecapSidebar({
 
       <div className="mt-6">
         <div className="text-xs uppercase tracking-wide text-text-muted">
-          What AI is mapping
+          {t("mapping")}
         </div>
         {streaming && (
           <p className="mt-1 flex items-center gap-2 text-xs text-accent">

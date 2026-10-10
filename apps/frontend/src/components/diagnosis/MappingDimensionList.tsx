@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 import type {
   RubricDimensionKey,
   RubricDimensionStatus,
@@ -5,6 +9,7 @@ import type {
 } from "@/types/contracts";
 
 import { isMappingItemDone } from "@/lib/diagnosis-stream";
+import { DIMENSION_COPY_KEYS } from "@/lib/profile-dimensions";
 
 const STATUS_STYLES: Record<
   RubricDimensionStatus | "active" | "analyzing",
@@ -63,24 +68,32 @@ export function MappingDimensionList({
   analyzingKey,
   streaming,
 }: MappingDimensionListProps) {
+  const t = useTranslations("diagnosis");
+
   return (
     <ul className="mt-3 space-y-3">
       {items.map((item) => {
         const status = resolveStatus(item, activeKeys, analyzingKey, streaming);
         const styles = STATUS_STYLES[status];
+        const copy = DIMENSION_COPY_KEYS[item.rubric_key];
+        const note = item.note.trim();
 
         const descriptionText =
           status === "analyzing"
-            ? "Analisando…"
-            : !streaming && item.note.trim().length > 0
-              ? item.note
-              : item.description;
+            ? t("analyzing")
+            : !streaming && note.length > 0
+              ? note
+              : copy
+                ? t(copy.hint)
+                : item.description;
 
         return (
           <li key={item.rubric_key} className="flex gap-2.5">
             <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${styles.dot}`} />
             <div className="min-w-0">
-              <div className={`text-sm font-medium ${styles.label}`}>{item.label}</div>
+              <div className={`text-sm font-medium ${styles.label}`}>
+                {copy ? t(copy.label) : item.label}
+              </div>
               <div className={`mt-0.5 text-xs leading-snug ${styles.description}`}>
                 {descriptionText}
               </div>

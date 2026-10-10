@@ -1,8 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 import { Button } from "@/components/ui";
+import { trackMessageKey } from "@/lib/goal-copy";
 import type { MentorReportResponse, MentorReportValidationEntry } from "@/types/contracts";
 
 import {
@@ -38,19 +40,20 @@ function EvidenceBulletList({
 }
 
 function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
+  const t = useTranslations("report");
   const structured = hasStructuredEvidence(entry);
 
   if (structured) {
     return (
       <div className="mt-5 rounded-md border border-border bg-surface p-4">
         <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-          Mentor summary
+          {t("mentorSummary")}
         </p>
 
         {entry.gaps.length > 0 && (
           <div className="mt-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-warning">
-              Main gaps
+              {t("mainGaps")}
             </p>
             <EvidenceBulletList items={entry.gaps} tone="warning" />
           </div>
@@ -59,7 +62,7 @@ function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
         {entry.strengths.length > 0 && (
           <div className="mt-4">
             <p className="text-xs font-semibold uppercase tracking-widest text-success">
-              Positive evidence
+              {t("positiveEvidence")}
             </p>
             <EvidenceBulletList items={entry.strengths} tone="success" />
           </div>
@@ -68,7 +71,7 @@ function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
         {entry.recommended_intervention.trim() && (
           <div className="mt-4 rounded-md border border-accent/30 bg-accent/10 p-3">
             <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-              Next step
+              {t("nextStep")}
             </p>
             <p className="mt-2 text-sm text-text-secondary">
               {entry.recommended_intervention}
@@ -85,7 +88,7 @@ function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
   return (
     <div className="mt-5 rounded-md border border-border bg-surface p-4">
       <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-        Mentor summary
+        {t("mentorSummary")}
       </p>
       <div className="mt-2 space-y-2 text-sm text-text-secondary">
         {legacyLines.map((line) => (
@@ -97,6 +100,7 @@ function MentorSummaryBlock({ entry }: { entry: MentorReportValidationEntry }) {
 }
 
 function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
+  const t = useTranslations("report");
   const passed = entry.status === "aprovado";
   const displayTitle = formatNodeTitleForDisplay(entry.node_title, entry.node_id);
 
@@ -107,7 +111,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-widest text-text-muted">Topic assessed</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">{t("topic")}</p>
           <h3 className="text-lg font-semibold text-text-primary">{displayTitle}</h3>
         </div>
         <div className="text-right">
@@ -117,7 +121,7 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
               passed ? "bg-success/15 text-success" : "bg-warning/15 text-warning"
             }`}
           >
-            {passed ? "Aprovado" : "Precisa revisar"}
+            {passed ? t("passed") : t("needsReview")}
           </span>
         </div>
       </div>
@@ -128,37 +132,38 @@ function ValidationCard({ entry }: { entry: MentorReportValidationEntry }) {
 }
 
 export function MentorReportView({ report }: MentorReportViewProps) {
+  const t = useTranslations("report");
+  const tGoal = useTranslations("goal");
+  const goalKey = trackMessageKey(report.goal);
+  const goalLabel = goalKey ? tGoal(goalKey) : formatGoalForDisplay(report.goal);
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10" data-screen="mentor-report" data-testid="mentor-report">
       <div className="mb-8 rounded-md border border-border bg-surface px-5 py-4">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-          Borderless report
+          {t("eyebrow")}
         </p>
         <h1 className="mt-2 text-2xl font-semibold text-text-primary">
-          Learning evidence
+          {t("title")}
         </h1>
-        <p className="mt-2 text-sm text-text-secondary">
-          Mentors see what the learner demonstrated — not guesswork.
-        </p>
+        <p className="mt-2 text-sm text-text-secondary">{t("lead")}</p>
       </div>
 
       <div className="mb-8 grid gap-4 rounded-md border border-border bg-surface-elevated p-5 sm:grid-cols-2">
         <div>
-          <p className="text-xs uppercase tracking-widest text-text-muted">Learner</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">{t("learner")}</p>
           <p className="mt-1 text-lg font-medium text-text-primary">{report.display_name}</p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-widest text-text-muted">Objetivo</p>
-          <p className="mt-1 text-lg font-medium text-text-primary">
-            {formatGoalForDisplay(report.goal)}
-          </p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">{t("goal")}</p>
+          <p className="mt-1 text-lg font-medium text-text-primary">{goalLabel}</p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-widest text-text-muted">Trail</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">{t("trail")}</p>
           <p className="mt-1 text-sm text-text-secondary">{report.track_title}</p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-widest text-text-muted">Perfil</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">{t("profile")}</p>
           <p className="mt-1 text-sm text-text-secondary">{report.profile_label}</p>
         </div>
       </div>
@@ -166,7 +171,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
       {report.learner_gaps.length > 0 && (
         <div className="mb-8 rounded-md border border-warning/30 bg-warning/5 p-5">
           <p className="text-xs font-semibold uppercase tracking-widest text-warning">
-            Gaps from initial diagnosis
+            {t("diagnosisGaps")}
           </p>
           <ul className="mt-3 flex flex-wrap gap-2">
             {report.learner_gaps.map((gap) => (
@@ -184,7 +189,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
       {report.validations.length === 0 ? (
         <div className="rounded-md border border-dashed border-border bg-surface p-8 text-center">
           <p className="text-sm text-text-muted">
-            No validations recorded yet. Ask the learner to validate a topic on the trail.
+            {t("empty")}
           </p>
         </div>
       ) : (
@@ -197,7 +202,7 @@ export function MentorReportView({ report }: MentorReportViewProps) {
 
       <div className="mt-8">
         <Link href="/roadmap">
-          <Button variant="ghost">← Back to trail</Button>
+          <Button variant="ghost">{t("backToTrail")}</Button>
         </Link>
       </div>
     </div>

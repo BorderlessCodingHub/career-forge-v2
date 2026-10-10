@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useRef, useState } from "react";
 
 import type { CvAttachment } from "@/lib/onboarding-session";
@@ -44,6 +45,7 @@ function readFileAsBase64(file: File): Promise<string> {
 }
 
 export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) {
+  const t = useTranslations("goal");
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,11 +55,11 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
     async (file: File) => {
       setError(null);
       if (!isAcceptedFile(file)) {
-        setError("Unsupported format. Use PDF.");
+        setError(t("cvUnsupported"));
         return;
       }
       if (file.size > MAX_BYTES) {
-        setError("File too large. Maximum 5 MB.");
+        setError(t("cvTooLarge"));
         return;
       }
 
@@ -75,12 +77,12 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
           dataBase64,
         });
       } catch {
-        setError("Could not attach the resume.");
+        setError(t("cvFailed"));
       } finally {
         setBusy(false);
       }
     },
-    [onAttach],
+    [onAttach, t],
   );
 
   const onDrop = useCallback(
@@ -104,7 +106,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
             {attachment.filename}
           </p>
           <p className="text-xs text-text-muted">
-            {(attachment.size / 1024).toFixed(0)} KB · attached (not analyzed yet)
+            {t("cvAttached", { size: (attachment.size / 1024).toFixed(0) })}
           </p>
         </div>
         <button
@@ -113,7 +115,7 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
           onClick={onRemove}
           className="ml-3 shrink-0 text-sm text-text-muted hover:text-warning"
         >
-          Remove
+          {t("cvRemove")}
         </button>
       </div>
     );
@@ -145,13 +147,13 @@ export function CvDropzone({ attachment, onAttach, onRemove }: CvDropzoneProps) 
         } ${busy ? "pointer-events-none opacity-60" : ""}`}
       >
         <p className="text-sm font-medium text-text-primary">
-          Drop your resume here
+          {t("cvDrop")}
         </p>
         <p className="mt-1 text-xs text-text-muted">
-          or click to choose · PDF · up to 5 MB
+          {t("cvHint")}
         </p>
         <p className="mt-2 text-[11px] text-text-muted">
-          Optional — we will use it to personalize your trail soon
+          {t("cvOptional")}
         </p>
       </div>
       <input

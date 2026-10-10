@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -16,6 +17,7 @@ import {
 import { getForgeGraph, setForgeGraph, type ForgeGraphNode } from "@/lib/forge-session";
 
 function ForgeCompleteContent() {
+  const t = useTranslations("forge");
   const [graph, setGraph] = useState<ForgeGraphNode[] | null>(null);
   const [graphChecked, setGraphChecked] = useState(false);
   const [revealed, setRevealed] = useState(0);
@@ -106,7 +108,7 @@ function ForgeCompleteContent() {
         const target = items.find((item) => item.is_active) ?? items[0];
         if (!target) {
           if (!cancelled) {
-            setResumeError("Resume link unavailable — no forge artifact yet.");
+            setResumeError(t("resumeUnavailable"));
           }
           return;
         }
@@ -118,7 +120,7 @@ function ForgeCompleteContent() {
       } catch (err) {
         if (!cancelled) {
           setResumeError(
-            err instanceof Error ? err.message : "Failed to mint resume link",
+            err instanceof Error ? err.message : t("mintFailed"),
           );
         }
       }
@@ -126,12 +128,12 @@ function ForgeCompleteContent() {
     return () => {
       cancelled = true;
     };
-  }, [graph]);
+  }, [graph, t]);
 
   if (!graphChecked) {
     return (
       <main className="min-h-screen grid-dots p-8">
-        <p className="text-text-secondary">Loading your trail…</p>
+        <p className="text-text-secondary">{t("loadingTrail")}</p>
       </main>
     );
   }
@@ -139,9 +141,9 @@ function ForgeCompleteContent() {
   if (!graph?.length) {
     return (
       <main className="min-h-screen grid-dots p-8">
-        <p className="text-text-secondary">No forged graph yet.</p>
+        <p className="text-text-secondary">{t("noGraph")}</p>
         <Link href="/forge" className="mt-4 inline-block text-accent">
-          Back to forge
+          {t("backToForge")}
         </Link>
       </main>
     );
@@ -156,12 +158,9 @@ function ForgeCompleteContent() {
     >
       <div className="mx-auto max-w-2xl">
         <h1 className="text-3xl font-semibold text-text-primary">
-          Your trail is ready
+          {t("revealTitle")}
         </h1>
-        <p className="mt-2 text-text-secondary">
-          Each chapter of your plan appears below. Explore your vertical trail
-          when the reveal finishes.
-        </p>
+        <p className="mt-2 text-text-secondary">{t("revealLead")}</p>
 
         <ol className="mt-10 space-y-4">
           {graph.slice(0, revealed).map((node) => (
@@ -184,7 +183,7 @@ function ForgeCompleteContent() {
           <div className="mt-10 space-y-4">
             <Link href="/roadmap">
               <Button data-testid="forge-to-roadmap">
-                Explore vertical trail →
+                {t("exploreTrail")}
               </Button>
             </Link>
 
@@ -193,12 +192,9 @@ function ForgeCompleteContent() {
               data-testid="forge-resume-copy"
             >
               <p className="text-sm font-medium text-text-primary">
-                Save a resume link
+                {t("saveResume")}
               </p>
-              <p className="mt-1 text-sm text-text-secondary">
-                Single-use · expires in ~7 days. Copy it now — you will not see
-                this link again on this screen.
-              </p>
+              <p className="mt-1 text-sm text-text-secondary">{t("resumeHint")}</p>
               {resumeUrl ? (
                 <div className="mt-3 space-y-2">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -214,7 +210,7 @@ function ForgeCompleteContent() {
                         });
                       }}
                     >
-                      {copied ? "Copied" : "Copy resume link"}
+                      {copied ? t("copied") : t("copyResume")}
                     </Button>
                   </div>
                   {resumePublicId ? (
@@ -235,7 +231,7 @@ function ForgeCompleteContent() {
                               setEmailSendError(
                                 err instanceof Error
                                   ? err.message
-                                  : "Failed to email resume link",
+                                  : t("emailFailed"),
                               );
                             } finally {
                               setEmailSendBusy(false);
@@ -244,10 +240,10 @@ function ForgeCompleteContent() {
                         }}
                       >
                         {emailSent
-                          ? "Sent to your email"
+                          ? t("emailSent")
                           : emailSendBusy
-                            ? "Sending…"
-                            : "Email me this link"}
+                            ? t("sending")
+                            : t("emailLink")}
                       </Button>
                       {emailSendError ? (
                         <p
@@ -262,7 +258,7 @@ function ForgeCompleteContent() {
                 </div>
               ) : (
                 <p className="mt-2 text-sm text-text-secondary">
-                  {resumeError ?? "Preparing resume link…"}
+                  {resumeError ?? t("preparingResume")}
                 </p>
               )}
             </div>

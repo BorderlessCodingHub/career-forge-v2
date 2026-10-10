@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 function SkeletonConnectorStub() {
   return (
     <div
@@ -35,12 +39,14 @@ function SkeletonSpineRow({ isLeft }: { isLeft: boolean }) {
 }
 
 export function VerticalSpineSkeleton() {
+  const t = useTranslations("roadmap");
+
   return (
     <div
       className="relative mx-auto max-w-3xl px-4 py-6"
       data-testid="vertical-spine-skeleton"
       aria-busy="true"
-      aria-label="Loading trail"
+      aria-label={t("loadingTrail")}
     >
       <div
         className="absolute bottom-0 left-1/2 top-0 w-px -translate-x-1/2 bg-border/60"

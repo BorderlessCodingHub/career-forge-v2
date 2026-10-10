@@ -37,6 +37,30 @@ const PROFILE_DIMENSIONS: Array<{
   },
 ];
 
+export const DIMENSION_COPY_KEYS: Record<
+  RubricDimensionKey,
+  {
+    label:
+      | "dimMotivation"
+      | "dimBackground"
+      | "dimVelocity"
+      | "dimHandsOn"
+      | "dimConstraints";
+    hint:
+      | "dimMotivationHint"
+      | "dimBackgroundHint"
+      | "dimVelocityHint"
+      | "dimHandsOnHint"
+      | "dimConstraintsHint";
+  }
+> = {
+  motivation_goal: { label: "dimMotivation", hint: "dimMotivationHint" },
+  background_transfer: { label: "dimBackground", hint: "dimBackgroundHint" },
+  learning_velocity: { label: "dimVelocity", hint: "dimVelocityHint" },
+  hands_on_proof: { label: "dimHandsOn", hint: "dimHandsOnHint" },
+  constraints: { label: "dimConstraints", hint: "dimConstraintsHint" },
+};
+
 if (PROFILE_DIMENSIONS.length !== PROFILE_DIMENSION_KEYS.length) {
   throw new Error("PROFILE_DIMENSIONS out of sync with PROFILE_DIMENSION_KEYS");
 }

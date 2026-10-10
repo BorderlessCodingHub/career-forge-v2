@@ -1,10 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Button } from "@/components/ui";
 import { startBillingCheckout } from "@/lib/api-client";
-import { PAYWALL_COPY } from "@/lib/paywall";
 
 type PaywallPanelProps = {
   checkoutAvailable: boolean;
@@ -12,6 +12,7 @@ type PaywallPanelProps = {
 
 /** Shown when an external account has spent its included forge and has no subscription. */
 export function PaywallPanel({ checkoutAvailable }: PaywallPanelProps) {
+  const t = useTranslations("paywall");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +24,7 @@ export function PaywallPanel({ checkoutAvailable }: PaywallPanelProps) {
       window.location.assign(url);
     } catch (err) {
       setBusy(false);
-      setError(err instanceof Error ? err.message : "Checkout failed");
+      setError(err instanceof Error ? err.message : t("checkoutFailed"));
     }
   }
 
@@ -34,13 +35,10 @@ export function PaywallPanel({ checkoutAvailable }: PaywallPanelProps) {
       role="status"
     >
       <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-        Included forge spent
+        {t("eyebrow")}
       </p>
-      <p className="mt-2 text-sm text-text-primary">{PAYWALL_COPY}</p>
-      <p className="mt-2 text-sm text-text-secondary">
-        BASE and PSP stay included. This panel is for an external account with
-        no subscription.
-      </p>
+      <p className="mt-2 text-sm text-text-primary">{t("body")}</p>
+      <p className="mt-2 text-sm text-text-secondary">{t("audience")}</p>
       {checkoutAvailable ? (
         <Button
           className="mt-4"
@@ -48,12 +46,11 @@ export function PaywallPanel({ checkoutAvailable }: PaywallPanelProps) {
           disabled={busy}
           onClick={() => void handleSubscribe()}
         >
-          {busy ? "Opening checkout…" : "Subscribe"}
+          {busy ? t("opening") : t("subscribe")}
         </Button>
       ) : (
         <p className="mt-3 text-sm text-text-secondary" data-testid="paywall-allowlist">
-          Checkout is not live yet. Ask to be added to the pilot billing
-          allowlist.
+          {t("allowlist")}
         </p>
       )}
       {error ? (

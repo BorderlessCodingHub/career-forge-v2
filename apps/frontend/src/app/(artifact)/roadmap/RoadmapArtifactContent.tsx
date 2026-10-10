@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -37,6 +38,7 @@ function forgeGraphToSyncNodes(graph: ForgeGraphNode[]): RoadmapSyncNode[] {
 }
 
 export default function RoadmapArtifactPageContent() {
+  const t = useTranslations("roadmap");
   const searchParams = useSearchParams();
   const adaptiveMode = searchParams.get("adaptive") === "1";
   const nodeFromQuery = searchParams.get("node");
@@ -128,12 +130,12 @@ export default function RoadmapArtifactPageContent() {
         setHighlightNodeId(adaptiveSession.nodeId);
         setSelectedNodeId(adaptiveSession.nodeId);
       } else {
-        setError(err instanceof Error ? err.message : "Failed to load trail");
+        setError(err instanceof Error ? err.message : t("loadFailed"));
       }
     } finally {
       setLoading(false);
     }
-  }, [adaptiveMode, fromContinuity, nodeFromQuery]);
+  }, [adaptiveMode, fromContinuity, nodeFromQuery, t]);
 
   useEffect(() => {
     void loadRoadmap();
@@ -232,17 +234,15 @@ export default function RoadmapArtifactPageContent() {
         data-testid="vertical-roadmap"
       >
         <div className="mx-auto max-w-3xl px-4 pt-6 text-center">
-          <p className="text-xs uppercase tracking-widest text-text-muted">Artifact · Trail</p>
+          <p className="text-xs uppercase tracking-widest text-text-muted">{t("artifactEyebrow")}</p>
           <p className="mt-2 text-sm text-text-secondary">
-            {showingAdaptiveView
-              ? "The trail reacted to your performance — review the highlighted node before moving on."
-              : "Click a node to see status, references, and validate mastery."}
+            {showingAdaptiveView ? t("adaptiveTrail") : t("clickNode")}
           </p>
           {trailProgressPct != null && (
             <div className="mt-4 flex flex-col items-center gap-1.5">
               <TrailProgressRing percent={trailProgressPct} />
               <p className="text-[10px] uppercase tracking-widest text-text-muted">
-                Progresso de estudo
+                {t("studyProgress")}
               </p>
             </div>
           )}

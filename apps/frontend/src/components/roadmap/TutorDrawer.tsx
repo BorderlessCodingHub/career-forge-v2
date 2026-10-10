@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui";
@@ -13,6 +14,7 @@ type TutorDrawerProps = {
 };
 
 export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
+  const t = useTranslations("tutor");
   const [messages, setMessages] = useState<TutorMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [context, setContext] = useState<TutorContext | null>(null);
@@ -51,12 +53,12 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
         { role: "assistant", content: response.tutor.reply },
       ]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to talk to the tutor");
+      setError(err instanceof Error ? err.message : t("failed"));
       setMessages((current) => current.slice(0, -1));
     } finally {
       setLoading(false);
     }
-  }, [draft, loading, messages, node?.node_id, node?.title]);
+  }, [draft, loading, messages, node?.node_id, node?.title, t]);
 
   if (!open) return null;
 
@@ -64,7 +66,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
     <>
       <button
         type="button"
-        aria-label="Fechar tutor"
+        aria-label={t("close")}
         className="fixed inset-0 z-40 bg-black/40"
         onClick={onClose}
         data-testid="tutor-drawer-backdrop"
@@ -75,9 +77,9 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-5">
           <div>
-            <p className="text-sm font-semibold text-text-primary">Chapter tutor</p>
+            <p className="text-sm font-semibold text-text-primary">{t("drawerTitle")}</p>
             <p className="text-xs text-accent-mint">
-              focus on {node?.title ?? "this chapter"}
+              {t("focus", { title: node?.title ?? t("thisChapter") })}
             </p>
           </div>
           <button
@@ -91,10 +93,10 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
 
         {context && context.key_concepts.length > 0 && (
           <div className="border-b border-border bg-surface px-6 py-3 text-xs text-text-secondary">
-            <span className="text-text-muted">Concepts: </span>
+            <span className="text-text-muted">{t("concepts")}</span>
             {context.key_concepts.slice(0, 4).join(" · ")}
             {context.open_gaps.length > 0 && (
-              <span className="ml-1 text-warning">· foco: {context.open_gaps[0]}</span>
+              <span className="ml-1 text-warning">{t("focusGap", { gap: context.open_gaps[0] })}</span>
             )}
           </div>
         )}
@@ -102,8 +104,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
         <div className="flex-1 space-y-3 overflow-y-auto px-5 py-5" data-testid="tutor-messages">
           {messages.length === 0 && (
             <p className="rounded-md border border-border bg-surface px-4 py-3 text-sm text-text-secondary">
-              Ask technical questions about {node?.title ?? "this chapter"}. The tutor answers
-              grounded in key concepts, references, and your gaps.
+              {t("empty", { title: node?.title ?? t("thisChapter") })}
             </p>
           )}
           {messages.map((message, index) => (
@@ -119,7 +120,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
             </div>
           ))}
           {loading && (
-            <p className="text-sm text-text-muted animate-pulse">Tutor thinking…</p>
+            <p className="text-sm text-text-muted animate-pulse">{t("thinking")}</p>
           )}
         </div>
 
@@ -133,7 +134,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
               onKeyDown={(event) => {
                 if (event.key === "Enter") void send();
               }}
-              placeholder="Ask about this chapter's content..."
+              placeholder={t("placeholder")}
               className="flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted"
               data-testid="tutor-input"
             />
@@ -142,7 +143,7 @@ export function TutorDrawer({ open, onClose, node }: TutorDrawerProps) {
               disabled={!draft.trim() || loading}
               data-testid="tutor-send"
             >
-              Send
+              {t("send")}
             </Button>
           </div>
         </div>
