@@ -9,7 +9,6 @@ from career_forge.auth.providers import get_auth_provider
 from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
-from career_forge.errors import PAYWALL_MESSAGE
 from career_forge.services import otp as otp_service
 
 
@@ -48,26 +47,20 @@ def test_anon_jwt_rejected_on_product_loop(
     assert diagnosis.status_code == 403, diagnosis.text
 
 
-def test_unpaid_external_diagnosis_start_returns_402(
+def test_unpaid_external_diagnosis_is_allowed_until_the_forge_starts(
     raw_client: TestClient,
 ) -> None:
     user = "diag-paywall"
     headers = _email_headers(raw_client, user)
+    body = {
+        "user_id": user,
+        "goal_id": "rag-engineer",
+        "motivation": "I want to build production RAG systems with evals.",
+        "years_xp": "0-1",
+    }
 
-    res = raw_client.post(
-        "/diagnosis/interview/start",
-        json={
-            "user_id": user,
-            "goal_id": "rag-engineer",
-            "motivation": "I want to build production RAG systems with evals.",
-            "years_xp": "0-1",
-        },
-        headers=headers,
-    )
-    assert res.status_code == 402, res.text
-    detail = res.json()["detail"]
-    assert detail["code"] == "paywall"
-    assert detail["message"] == PAYWALL_MESSAGE
+    res = raw_client.post("/diagnosis/interview/start", json=body, headers=headers)
+    assert res.status_code == 200, res.text
 
 
 def test_base_member_diagnosis_start_allowed(
@@ -122,7 +115,7 @@ def test_password_mode_diagnosis_allows_borderless_id(
     assert res.status_code == 200, res.text
 
 
-def test_password_mode_diagnosis_paywalls_without_borderless_id(
+def test_password_mode_without_borderless_id_is_not_included(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -145,8 +138,7 @@ def test_password_mode_diagnosis_paywalls_without_borderless_id(
         },
         headers=headers,
     )
-    assert res.status_code == 402, res.text
-    assert res.json()["detail"]["code"] == "paywall"
+    assert res.status_code == 200, res.text
 
 
 def test_otp_verify_without_bearer_uses_external_id(

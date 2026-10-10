@@ -1,26 +1,34 @@
-"""Product entitlement paywall — before diagnosis and forge for unpaid external (CAR-57)."""
+"""Product entitlement — one forge, then the subscription (CAR-130)."""
 
 from __future__ import annotations
+
+from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
 
 from career_forge.ai.graphs.diagnosis import build_diagnosis_response
-from career_forge.ai.run import GraphRun, InMemoryGraphRunStore
+from career_forge.ai.run import GraphRun, InMemoryGraphRunStore, get_graph_run_store
 from career_forge.config import settings
 from career_forge.db.models.billing_pilot_email import BillingPilotEmail
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
 from career_forge.demo.ana_state import DEMO_ANA_EXTERNAL_ID
 from career_forge.auth.providers import get_auth_provider
-from career_forge.errors import PAYWALL_MESSAGE, PaywallError
+from career_forge.errors import (
+    MONTHLY_FORGE_CEILING_MESSAGE,
+    PAYWALL_MESSAGE,
+    MonthlyForgeCeilingError,
+    PaywallError,
+)
 from career_forge.schemas.diagnosis import DiagnosisRequest
+from career_forge.db.models.usage_monthly import GLOBAL_USAGE_USER_ID
 from career_forge.services.cost_guard import CostGuard, InMemoryUsageStore, current_year_month
 from career_forge.services.cost_guard import set_cost_guard
-from career_forge.services.entitlement import evaluate_entitlement
+from career_forge.services.entitlement import ForgeHistory, evaluate_entitlement
 
 
-def test_unpaid_external_is_paywalled() -> None:
+def test_unpaid_external_may_start_one_forge_before_any_completion() -> None:
     decision = evaluate_entitlement(
         user_id="ext-1",
         membership_label="external",
@@ -28,12 +36,13 @@ def test_unpaid_external_is_paywalled() -> None:
         billing_entitled=False,
         email="ext@example.com",
         forge_count=0,
+        forge_history=ForgeHistory(),
     )
-    assert decision.allowed is False
-    assert decision.reason == "paywall"
+    assert decision.allowed is True
+    assert decision.reason == "allowance"
 
 
-def test_unpaid_external_stays_paywalled_after_forge() -> None:
+def test_spent_allowance_paywalls_until_a_subscription() -> None:
     decision = evaluate_entitlement(
         user_id="ext-1",
         membership_label="external",
@@ -41,6 +50,21 @@ def test_unpaid_external_stays_paywalled_after_forge() -> None:
         billing_entitled=False,
         email="ext@example.com",
         forge_count=1,
+        forge_history=ForgeHistory(external_start=True),
+    )
+    assert decision.allowed is False
+    assert decision.reason == "paywall"
+
+
+def test_completed_forge_spends_the_allowance_even_without_an_external_start() -> None:
+    decision = evaluate_entitlement(
+        user_id="ext-1",
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=False,
+        email="ext@example.com",
+        forge_count=1,
+        forge_history=ForgeHistory(completed_any=True),
     )
     assert decision.allowed is False
     assert decision.reason == "paywall"
@@ -70,6 +94,52 @@ def test_active_psp_never_hits_paywall() -> None:
     )
     assert decision.allowed is True
     assert decision.reason == "membership"
+
+
+def test_included_program_refuses_the_third_completed_forge_this_utc_month() -> None:
+    decision = evaluate_entitlement(
+        user_id="base-1",
+        membership_label="base",
+        membership_entitled=True,
+        billing_entitled=False,
+        email="ana@borderless.com",
+        forge_count=2,
+        forge_history=ForgeHistory(completed_any=True, completed_this_utc_month=2),
+    )
+    assert decision.allowed is False
+    assert decision.reason == "monthly_ceiling"
+
+
+def test_included_program_allows_a_forge_after_the_utc_month_turns() -> None:
+    decision = evaluate_entitlement(
+        user_id="psp-1",
+        membership_label="psp",
+        membership_entitled=True,
+        billing_entitled=False,
+        email="psp@borderless.com",
+        forge_count=2,
+        forge_history=ForgeHistory(completed_any=True, completed_this_utc_month=0),
+    )
+    assert decision.allowed is True
+    assert decision.reason == "membership"
+
+
+def test_subscribed_external_sits_outside_the_monthly_ceiling() -> None:
+    decision = evaluate_entitlement(
+        user_id="paid-1",
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=True,
+        email="paid@example.com",
+        forge_count=4,
+        forge_history=ForgeHistory(
+            completed_any=True,
+            external_start=True,
+            completed_this_utc_month=3,
+        ),
+    )
+    assert decision.allowed is True
+    assert decision.reason == "billing"
 
 
 def test_stripe_billing_entitled_external_skips_paywall() -> None:
@@ -180,7 +250,28 @@ def test_memory_store_counts_forge_runs_per_user() -> None:
     assert store.count_for_user("a", graph_name="mentor") == 1
 
 
-def test_external_first_forge_http_402(
+def _previous_utc_month(now: datetime) -> datetime:
+    month = now.month - 1
+    year = now.year
+    if month == 0:
+        month = 12
+        year -= 1
+    return now.replace(year=year, month=month, day=1)
+
+
+def _save_forge(user_id: str, *, status: str, when: datetime | None = None) -> None:
+    get_graph_run_store().save(
+        GraphRun(
+            graph_name="roadmap_forge",
+            user_id=user_id,
+            status=status,  # type: ignore[arg-type]
+            completed_at=when if status == "completed" else None,
+            input={"goal_id": "rag-engineer"},
+        )
+    )
+
+
+def test_external_first_forge_is_allowed_and_the_next_is_paywalled(
     raw_client: TestClient,
 ) -> None:
     user = "paywall-ext-http"
@@ -188,11 +279,19 @@ def test_external_first_forge_http_402(
     body = _diagnosis_payload(user)
 
     first = raw_client.post("/forge/runs", json=body, headers=headers)
-    assert first.status_code == 402, first.text
-    detail = first.json()["detail"]
+    assert first.status_code == 202, first.text
+
+    other_goal = _diagnosis_payload(user)
+    other_goal["diagnosis"]["goal_id"] = "agent-engineer"
+    second = raw_client.post("/forge/runs", json=other_goal, headers=headers)
+    assert second.status_code == 402, second.text
+    detail = second.json()["detail"]
     assert detail["code"] == "paywall"
     assert detail["message"] == PAYWALL_MESSAGE
     assert detail["checkout_available"] is False
+
+    roadmap = raw_client.get("/roadmap/current", headers=headers)
+    assert roadmap.status_code == 200, roadmap.text
 
 
 def test_base_member_forge_skips_paywall(
@@ -229,7 +328,9 @@ def test_legacy_env_allowlist_is_ignored_at_runtime(
 
     body = _diagnosis_payload(user)
     first = raw_client.post("/forge/runs", json=body, headers=headers)
-    assert first.status_code == 402, first.text
+    assert first.status_code == 202, first.text
+    second = raw_client.post("/forge/runs", json=body, headers=headers)
+    assert second.status_code == 402, second.text
 
 
 def test_database_pilot_email_skips_http_paywall(raw_client: TestClient) -> None:
@@ -297,7 +398,7 @@ def test_password_mode_profile_base_is_included() -> None:
     assert decision.reason == "membership"
 
 
-def test_password_mode_borderless_link_without_included_label_is_paywalled() -> None:
+def test_password_mode_borderless_link_without_included_label_gets_one_forge() -> None:
     decision = evaluate_entitlement(
         user_id="pw-free",
         membership_label="external",
@@ -305,6 +406,21 @@ def test_password_mode_borderless_link_without_included_label_is_paywalled() -> 
         billing_entitled=False,
         email="free@example.com",
         forge_count=0,
+        identity_method="borderless_password",
+    )
+    assert decision.allowed is True
+    assert decision.reason == "allowance"
+
+
+def test_password_mode_spent_external_is_paywalled() -> None:
+    decision = evaluate_entitlement(
+        user_id="pw-free",
+        membership_label="external",
+        membership_entitled=False,
+        billing_entitled=False,
+        email="free@example.com",
+        forge_count=1,
+        forge_history=ForgeHistory(external_start=True),
         identity_method="borderless_password",
     )
     assert decision.allowed is False
@@ -342,7 +458,7 @@ def test_password_mode_still_excludes_demo_ana() -> None:
     assert decision.reason == "excluded"
 
 
-def test_otp_mode_unpaid_external_stays_paywalled_with_borderless_id() -> None:
+def test_otp_mode_unspent_external_may_start_one_forge() -> None:
     decision = evaluate_entitlement(
         user_id="otp-1",
         membership_label="external",
@@ -352,11 +468,11 @@ def test_otp_mode_unpaid_external_stays_paywalled_with_borderless_id() -> None:
         forge_count=0,
         identity_method="email_otp",
     )
-    assert decision.allowed is False
-    assert decision.reason == "paywall"
+    assert decision.allowed is True
+    assert decision.reason == "allowance"
 
 
-def test_password_mode_linked_external_is_paywalled(
+def test_password_mode_borderless_id_alone_gets_one_forge_then_the_paywall(
     raw_client: TestClient,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -372,8 +488,10 @@ def test_password_mode_linked_external_is_paywalled(
         session.commit()
 
     first = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
-    assert first.status_code == 402, first.text
-    assert first.json()["detail"]["code"] == "paywall"
+    assert first.status_code == 202, first.text
+    second = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert second.status_code == 402, second.text
+    assert second.json()["detail"]["code"] == "paywall"
 
 
 def test_password_mode_paid_account_without_borderless_link_is_allowed(
@@ -423,3 +541,257 @@ def test_password_mode_cost_cap_still_applies(
     )
     assert blocked.status_code == 429, blocked.text
     assert blocked.json()["detail"]["code"] == "per_user_cap"
+
+
+def _interview_body(user: str) -> dict:
+    return {
+        "user_id": user,
+        "goal_id": "rag-engineer",
+        "motivation": "I want to build production RAG systems with evals.",
+        "years_xp": "0-1",
+    }
+
+
+def test_diagnosis_repeats_until_the_forge_starts(raw_client: TestClient) -> None:
+    user = "allowance-diag"
+    headers = _email_auth_headers(raw_client, user)
+    first = raw_client.post(
+        "/diagnosis/interview/start",
+        json=_interview_body(user),
+        headers=headers,
+    )
+    assert first.status_code == 200, first.text
+    second = raw_client.post(
+        "/diagnosis/interview/start",
+        json=_interview_body(user),
+        headers=headers,
+    )
+    assert second.status_code == 200, second.text
+
+    started = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert started.status_code == 202, started.text
+
+    blocked = raw_client.post(
+        "/diagnosis/interview/start",
+        json=_interview_body(user),
+        headers=headers,
+    )
+    assert blocked.status_code == 402, blocked.text
+    assert blocked.json()["detail"]["code"] == "paywall"
+
+
+def test_completed_base_forge_spends_the_allowance_after_becoming_external(
+    raw_client: TestClient,
+) -> None:
+    user = "base-then-free"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "base"
+        row.membership_entitled = True
+        session.commit()
+    _save_forge(user, status="completed", when=datetime.now(UTC))
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "external"
+        row.membership_entitled = False
+        session.commit()
+
+    blocked = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert blocked.status_code == 402, blocked.text
+    assert blocked.json()["detail"]["code"] == "paywall"
+
+
+def test_incomplete_base_forge_does_not_spend_the_allowance(
+    raw_client: TestClient,
+) -> None:
+    user = "base-open-forge"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "base"
+        row.membership_entitled = True
+        session.commit()
+    _save_forge(user, status="pending")
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "external"
+        row.membership_entitled = False
+        session.commit()
+
+    first = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert first.status_code == 202, first.text
+    second = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert second.status_code == 402, second.text
+
+
+def test_cancel_does_not_restore_another_free_forge(raw_client: TestClient) -> None:
+    user = "cancel-no-restore"
+    headers = _email_auth_headers(raw_client, user)
+    body = _diagnosis_payload(user)
+    started = raw_client.post("/forge/runs", json=body, headers=headers)
+    assert started.status_code == 202, started.text
+
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.billing_entitled = True
+        row.stripe_subscription_status = "active"
+        session.commit()
+    subscribed = raw_client.post("/forge/runs", json=body, headers=headers)
+    assert subscribed.status_code == 202, subscribed.text
+
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.billing_entitled = False
+        row.stripe_subscription_status = "canceled"
+        session.commit()
+    blocked = raw_client.post("/forge/runs", json=body, headers=headers)
+    assert blocked.status_code == 402, blocked.text
+    assert blocked.json()["detail"]["code"] == "paywall"
+
+
+def test_included_third_forge_waits_until_next_month_without_stripe(
+    raw_client: TestClient,
+) -> None:
+    user = "base-month-cap"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "psp"
+        row.membership_entitled = True
+        session.commit()
+    now = datetime.now(UTC)
+    _save_forge(user, status="completed", when=now)
+    _save_forge(user, status="completed", when=now)
+
+    blocked = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert blocked.status_code == 409, blocked.text
+    detail = blocked.json()["detail"]
+    assert detail["code"] == "monthly_forge_ceiling"
+    assert detail["message"] == MONTHLY_FORGE_CEILING_MESSAGE
+    assert "checkout_available" not in detail
+    lowered = detail["message"].lower()
+    assert "usd" not in lowered
+    assert "subscri" not in lowered
+    assert "stripe" not in lowered
+
+    diagnosis = raw_client.post(
+        "/diagnosis/interview/start",
+        json=_interview_body(user),
+        headers=headers,
+    )
+    assert diagnosis.status_code == 200, diagnosis.text
+
+
+def test_included_forges_from_last_month_do_not_fill_this_month(
+    raw_client: TestClient,
+) -> None:
+    user = "base-last-month"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "base"
+        row.membership_entitled = True
+        session.commit()
+    last_month = _previous_utc_month(datetime.now(UTC))
+    _save_forge(user, status="completed", when=last_month)
+    _save_forge(user, status="completed", when=last_month)
+
+    started = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert started.status_code == 202, started.text
+
+
+def test_two_open_included_forges_refuse_a_third_start(raw_client: TestClient) -> None:
+    user = "base-open-slots"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "base"
+        row.membership_entitled = True
+        session.commit()
+    _save_forge(user, status="pending")
+    _save_forge(user, status="running")
+
+    blocked = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert blocked.status_code == 409, blocked.text
+    assert blocked.json()["detail"]["code"] == "monthly_forge_ceiling"
+
+
+def test_failed_included_forges_do_not_fill_the_month(raw_client: TestClient) -> None:
+    user = "base-failed-slots"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "psp"
+        row.membership_entitled = True
+        session.commit()
+    _save_forge(user, status="failed")
+    _save_forge(user, status="failed")
+
+    started = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert started.status_code == 202, started.text
+
+
+def test_subscribed_external_is_outside_the_monthly_ceiling(
+    raw_client: TestClient,
+) -> None:
+    user = "paid-over-ceiling"
+    headers = _email_auth_headers(raw_client, user)
+    with SessionLocal() as session:
+        row = ensure_user(session, user)
+        row.membership_label = "external"
+        row.membership_entitled = False
+        row.billing_entitled = True
+        row.stripe_subscription_status = "active"
+        session.commit()
+    now = datetime.now(UTC)
+    for _ in range(3):
+        _save_forge(user, status="completed", when=now)
+
+    usage = InMemoryUsageStore()
+    usage.increment(current_year_month(), user, forge_runs=2)
+    set_cost_guard(CostGuard(store=usage, cfg=settings))
+
+    started = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert started.status_code == 202, started.text
+
+    usage.increment(
+        current_year_month(),
+        GLOBAL_USAGE_USER_ID,
+        estimated_cost_brl=settings.monthly_api_budget_brl,
+    )
+    pooled = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert pooled.status_code == 429, pooled.text
+    assert pooled.json()["detail"]["code"] == "global_pool"
+
+
+def test_checkout_appears_when_the_allowance_is_spent(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "stripe_secret_key", "sk_test")
+    monkeypatch.setattr(settings, "stripe_webhook_secret", "whsec_test")
+    monkeypatch.setattr(settings, "stripe_price_id", "price_test")
+    user = "checkout-when-spent"
+    headers = _email_auth_headers(raw_client, user)
+
+    before = raw_client.get("/me/profile", headers=headers)
+    assert before.status_code == 200, before.text
+    assert before.json()["checkout_available"] is False
+
+    started = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert started.status_code == 202, started.text
+    profile = raw_client.get("/me/profile", headers=headers)
+    assert profile.json()["checkout_available"] is True
+
+    blocked = raw_client.post("/forge/runs", json=_diagnosis_payload(user), headers=headers)
+    assert blocked.status_code == 402, blocked.text
+    assert blocked.json()["detail"]["checkout_available"] is True
+
+
+def test_monthly_ceiling_error_offers_no_checkout() -> None:
+    err = MonthlyForgeCeilingError()
+    assert err.status_code == 409
+    assert err.code == "monthly_forge_ceiling"
+    assert str(err) == MONTHLY_FORGE_CEILING_MESSAGE
+    assert not hasattr(err, "checkout_available")

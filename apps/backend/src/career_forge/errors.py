@@ -159,10 +159,14 @@ class QuotaExhaustedError(DomainError):
 
 PAYWALL_MESSAGE = "Your included forge is spent. USD $7/mo continues Career Forge."
 PAYWALL_CODE = "paywall"
+MONTHLY_FORGE_CEILING_MESSAGE = (
+    "Two forges are already complete this month. The next one waits until next month."
+)
+MONTHLY_FORGE_CEILING_CODE = "monthly_forge_ceiling"
 
 
 class PaywallError(DomainError):
-    """External user blocked after the free forge (CAR-46)."""
+    """External user blocked after the lifetime forge (CAR-130)."""
 
     status_code = 402
 
@@ -170,3 +174,13 @@ class PaywallError(DomainError):
         self.code = PAYWALL_CODE
         self.checkout_available = checkout_available
         super().__init__(PAYWALL_MESSAGE)
+
+
+class MonthlyForgeCeilingError(DomainError):
+    """BASE or PSP already completed two forges in this UTC month (CAR-130)."""
+
+    status_code = 409
+
+    def __init__(self) -> None:
+        self.code = MONTHLY_FORGE_CEILING_CODE
+        super().__init__(MONTHLY_FORGE_CEILING_MESSAGE)
