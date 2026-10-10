@@ -1,7 +1,7 @@
 # Career Forge v3 — Plano de execução
 
 > Borderless · labs.borderlesscoding.com/career-forge  
-> **Atualizado:** 2026-10-09  
+> **Atualizado:** 2026-10-10  
 > **Mapa:** [Career Forge V3](https://linear.app/career-forge-v2/issue/CAR-109)  
 > Cada decisão mora no ticket. Este arquivo é o corte para construir.
 
@@ -21,11 +21,11 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 |--------|--------|-------|
 | Continuity email | **Done** | [V3a: Continuity email](https://linear.app/career-forge-v2/issue/CAR-123) — PR #90. Sweep: `apps/backend/scripts/continuity_sweep.py` |
 | Video References | **[P]** | [V3a: Video References](https://linear.app/career-forge-v2/issue/CAR-124) |
-| Stripe copy | **Done** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — PR #95. A frase do painel descreve a franquia gasta; o gate ainda é a [CAR-130](https://linear.app/career-forge-v2/issue/CAR-130) |
+| Stripe copy | **Done** | [V3a: Welcome and paywall say USD $7/mo](https://linear.app/career-forge-v2/issue/CAR-125) — PR #95. A frase do painel descreve a franquia gasta |
 | Portal + Billing email | **Done** | [V3a: Customer Portal and Billing email](https://linear.app/career-forge-v2/issue/CAR-126) — PR #91. Alembic `022_billing_email_spell` |
 | Sentry DSN no deploy | **Done** | [V3a: Pass the Sentry frontend DSN in the Labs deploy](https://linear.app/career-forge-v2/issue/CAR-127) — PR #96. O build da imagem passa `NEXT_PUBLIC_SENTRY_DSN` |
 | Membership no perfil | **Done** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) — PR #97. Alembic `024_borderless_profile_access`. Sem `BORDERLESS_TOKEN_ENCRYPTION_KEY` o processo não sobe no modo senha |
-| Freemium | **[S]** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — a leitura do perfil já entrou; a franquia de um forge ainda é esta issue |
+| Freemium | **Done** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — PR #99. Alembic `027_lifetime_forge_started_at` |
 | Senha do Career Forge | **Done** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) — PR #98. Alembic `025_career_forge_password` e `026_email_confirmed_at`. A sessão abre no link |
 | Dual language — interface | **Merged** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #92. Alembic `023_ui_locale`. O catálogo pt-BR é rascunho; a issue não fecha antes da revisão humana |
 | Emails no idioma | **Merged** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — PR #93. O rascunho pt-BR não é enviado; a issue não fecha antes da revisão humana |
@@ -73,7 +73,7 @@ Um vídeo por Node: 4–20 min, inglês, embeddable, qualquer canal, sem piso de
 
 Um Price: **USD $7, mensal**. Sem Price em BRL, sem anual, sem trial. Welcome, o paywall e o glossário dizem USD $7/mo. Checkout pode mostrar esse valor em BRL (Adaptive Pricing). Welcome e o paywall ficam em USD. Welcome não hospeda checkout.
 
-O paywall deixa de dizer “Free forge used” e “subscribe to continue”. Ele nomeia USD $7/mo para quem já gastou o forge da vida da conta e não tem assinatura. BASE e PSP não veem o painel. Entregue no PR #95 (`e43d7cd`): “Your included forge is spent. USD $7/mo continues Career Forge.” O gate que torna essa frase verdadeira ainda é a [CAR-130](https://linear.app/career-forge-v2/issue/CAR-130).
+O paywall deixa de dizer “Free forge used” e “subscribe to continue”. Ele nomeia USD $7/mo para quem já gastou o forge da vida da conta e não tem assinatura. BASE e PSP não veem o painel. Entregue no PR #95 (`e43d7cd`): “Your included forge is spent. USD $7/mo continues Career Forge.” O gate que torna essa frase verdadeira entrou no PR #99.
 
 Labs usa chaves e Price de teste, no mesmo USD $7/mo, até um Checkout sandbox completar. Aí sim chaves live e o Price live (**[S]**).
 
