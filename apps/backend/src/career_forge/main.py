@@ -18,6 +18,7 @@ from career_forge.errors import (
     DomainError,
     EmailOwnedConflictError,
     ForbiddenError,
+    MonthlyForgeCeilingError,
     PaywallError,
     QuotaExhaustedError,
 )
@@ -43,6 +44,11 @@ async def _domain_error_handler(_request: Request, exc: DomainError) -> JSONResp
             headers=headers,
         )
     if isinstance(exc, QuotaExhaustedError):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": {"message": str(exc), "code": exc.code}},
+        )
+    if isinstance(exc, MonthlyForgeCeilingError):
         return JSONResponse(
             status_code=exc.status_code,
             content={"detail": {"message": str(exc), "code": exc.code}},

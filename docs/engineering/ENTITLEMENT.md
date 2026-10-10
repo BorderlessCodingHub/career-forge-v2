@@ -1,12 +1,14 @@
-# Entitlement paywall (CAR-46 · **CAR-57 / CAR-87 / ADR-005** · **CAR-108**)
+# Entitlement paywall (CAR-46 · **CAR-57 / CAR-87 / ADR-005** · **CAR-108** · **CAR-130**)
 
-> **Spec ahead of the code for the lifetime forge (2026-10-08).** [V3-PLAN](../V3-PLAN.md) § Freemium gives `external` one forge, then the subscription. That allowance is [CAR-130](https://linear.app/career-forge-v2/issue/CAR-130) and is not in this table. Password-mode inclusion below is CAR-128.
+Identity (email OTP or Borderless password) and membership label (`base|psp|external`) are separate from **billing**. `external` — FREE, no Borderless account, or a missing profile — may **start one forge** in the life of the account, and only when no forge on that account has been completed. Starting it spends the allowance, including failure or leaving. Diagnosis may be repeated until that start. A completed forge spends it too, including one completed as BASE or PSP. After that, starting diagnosis or a forge returns **402** until a Career Forge subscription. Cancel does not restore another free forge. Checkout appears on that 402 when Stripe is configured. Welcome does not host checkout.
 
-Identity (email OTP or Borderless password) and membership label (`base|psp|external`) are separate from **billing** in OTP / `pilot_enter` modes. Unpaid `external` learners cannot **start diagnosis** or **start a forge** until they have a Career Forge subscription (or a pilot allowlist). There is **no free forge** until CAR-130. Active BASE/PSP never hit the Stripe gate. An existing Roadmap is not withheld.
+BASE and PSP never see Stripe. They may complete **2 forges in a UTC month**. The third start (diagnosis or forge) returns **409** `monthly_forge_ceiling` until the next month, with no checkout. A subscribed external sits outside that ceiling. The global monthly API budget still applies to everyone. An existing Roadmap is not withheld.
 
-A Career Forge password (CAR-129) opens the same email account and does not include the learner. Signup stores the password before a session exists. The session opens when the confirmation link is consumed, and that confirmation does not change the allowance. Inclusion still waits for a Borderless sign-in that reads the profile. When `IDENTITY_METHOD=borderless_password`, a linked learner is included only when the stored profile label is BASE or PSP, or the Operator desk overrides it. `users.borderless_user_id` alone does not include. Each entitlement check reads `GET /api/users/profile` with the encrypted Borderless access token when that token can still be used. A failed read keeps the last successful label and retries on the next check after five minutes. 401/403 keeps that label until the next Borderless password sign-in. Unpaid `external` is paywalled. Active Stripe, `billing_entitled`, and `billing_pilot_emails` still allow.
+When `IDENTITY_METHOD=borderless_password`, a linked learner is included only when the stored profile label is BASE or PSP, or the Operator desk overrides it. `users.borderless_user_id` alone does not include. The lifetime forge still applies.
 
-Cost caps still apply to everyone (`FORGE_CAP_PER_USER_MONTH`).
+A Career Forge password (CAR-129) opens the same email account and does not include the learner. Signup stores the password before a session exists. The session opens when the confirmation link is consumed, and that confirmation does not change the allowance. Inclusion still waits for a Borderless sign-in that reads the profile. When `IDENTITY_METHOD=borderless_password`, a linked learner is included only when the stored profile label is BASE or PSP, or the Operator desk overrides it. `users.borderless_user_id` alone does not include. Each entitlement check reads `GET /api/users/profile` with the encrypted Borderless access token when that token can still be used. A failed read keeps the last successful label and retries on the next check after five minutes. 401/403 keeps that label until the next Borderless password sign-in. Unpaid `external` may start one forge, then the paywall. Active Stripe, `billing_entitled`, and `billing_pilot_emails` still allow and sit outside the monthly ceiling.
+
+The global monthly API budget still applies to everyone. `FORGE_CAP_PER_USER_MONTH` still applies to BASE, PSP, and an external whose allowance is not a subscription. A subscribed external (active Stripe, `billing_entitled`, or a pilot email) sits outside that per-user cap.
 
 Canonical product rule: [ADR-005](../decisions/ADR-005-identity-gate-product-entry.md).
 
@@ -16,19 +18,19 @@ Canonical product rule: [ADR-005](../decisions/ADR-005-identity-gate-product-ent
 
 | Caller | Start diagnosis / start forge |
 |--------|-------------------------------|
-| **Password mode** + profile BASE/PSP, or Operator override `base`/`psp` | Allowed |
-| **Password mode** + active Stripe, `billing_entitled`, or pilot email | Allowed |
-| **Password mode** otherwise (`borderless_user_id` alone, FREE, missing profile, Career Forge-only) | HTTP **402** `paywall` |
-| OTP / `pilot_enter`: `membership_entitled` BASE/PSP | Allowed (no Stripe) |
-| OTP / `pilot_enter`: `external` + active Stripe subscription | Allowed |
-| OTP / `pilot_enter`: `external` + `users.billing_entitled` operator flag | Allowed |
-| OTP / `pilot_enter`: `external` + email in `billing_pilot_emails` | Allowed |
-| OTP / `pilot_enter`: `external` otherwise | HTTP **402** `paywall` |
+| **Password mode** + profile BASE/PSP, or Operator override `base`/`psp` | Allowed until 2 completed forges this UTC month, then **409** `monthly_forge_ceiling` (no Stripe) |
+| **Password mode** + active Stripe, `billing_entitled`, or pilot email | Allowed (outside the monthly ceiling) |
+| **Password mode** otherwise, allowance unspent (`borderless_user_id` alone, FREE, missing profile, Career Forge-only) | Allowed once. Starting the forge spends it |
+| **Password mode** otherwise, allowance spent | HTTP **402** `paywall` |
+| OTP / `pilot_enter`: `membership_entitled` BASE/PSP | Allowed until 2 completed forges this UTC month, then **409** (no Stripe) |
+| OTP / `pilot_enter`: `external` + active Stripe, `billing_entitled`, or pilot email | Allowed (outside the monthly ceiling) |
+| OTP / `pilot_enter`: `external`, allowance unspent | Allowed once. Starting the forge spends it |
+| OTP / `pilot_enter`: `external`, allowance spent | HTTP **402** `paywall` |
 | `demo-ana` / synthetic gate | Excluded (same as CostGuard) |
 
 Also allowed **without** billing: choosing a goal; Continue / validate / report on a Roadmap they already have.
 
-The gate runs on diagnosis **start** and on `POST /forge` / `POST /forge/runs` **before** CostGuard. Product-loop APIs also require Email identity (`provider=email`) — see ADR-005.
+The gate runs on diagnosis **start** and on `POST /forge` / `POST /forge/runs` **before** CostGuard. An external start records `users.lifetime_forge_started_at` only after CostGuard allows the run. A completed `roadmap_forge` also spends the allowance. Alembic `027_lifetime_forge_started_at`. Product-loop APIs also require Email identity (`provider=email`) — see ADR-005.
 
 ---
 

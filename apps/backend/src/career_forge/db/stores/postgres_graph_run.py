@@ -6,7 +6,7 @@ from uuid import UUID
 
 from sqlalchemy import func, select
 
-from career_forge.ai.run import GraphRun
+from career_forge.ai.run import ForgeRunStamp, GraphRun
 from career_forge.db.models.graph_run import GraphRunRecord
 from career_forge.db.session import SessionLocal
 
@@ -96,5 +96,29 @@ class PostgresGraphRunStore:
                 )
             )
             return int(total or 0)
+        finally:
+            db.close()
+
+    def forge_stamps_for_user(self, user_id: str, *, graph_name: str) -> list[ForgeRunStamp]:
+        db = SessionLocal()
+        try:
+            rows = db.execute(
+                select(
+                    GraphRunRecord.status,
+                    GraphRunRecord.created_at,
+                    GraphRunRecord.completed_at,
+                ).where(
+                    GraphRunRecord.user_id == user_id,
+                    GraphRunRecord.graph_name == graph_name,
+                )
+            ).all()
+            return [
+                ForgeRunStamp(
+                    status=status,  # type: ignore[arg-type]
+                    created_at=created_at,
+                    completed_at=completed_at,
+                )
+                for status, created_at, completed_at in rows
+            ]
         finally:
             db.close()

@@ -240,4 +240,47 @@ describe("streamDiagnosisInterviewStart", () => {
       }),
     ).rejects.toBeInstanceOf(PaywallError);
   });
+
+  it("shows the monthly forge ceiling without offering checkout", async () => {
+    const learnerToken = `header.${Buffer.from(
+      JSON.stringify({
+        provider: "email",
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      }),
+    ).toString("base64url")}.signature`;
+    localStorage.setItem("career-forge.access-token", learnerToken);
+    localStorage.setItem("career-forge.user-id", "learner-id");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            detail: {
+              code: "monthly_forge_ceiling",
+              message:
+                "Two forges are already complete this month. The next one waits until next month.",
+            },
+          }),
+          {
+            status: 409,
+            statusText: "Conflict",
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      ),
+    );
+
+    const { startForgeRunFromProfile } = await import("./api-client");
+    const { isPaywallError } = await import("./paywall");
+    try {
+      await startForgeRunFromProfile();
+      throw new Error("expected the ceiling");
+    } catch (err) {
+      expect(isPaywallError(err)).toBe(false);
+      expect(err).toBeInstanceOf(Error);
+      expect((err as Error).message).toBe(
+        "Two forges are already complete this month. The next one waits until next month.",
+      );
+    }
+  });
 });

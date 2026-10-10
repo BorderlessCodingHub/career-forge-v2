@@ -162,8 +162,12 @@ class CostGuard:
     def is_excluded(self, user_id: str, run_input: dict | None = None) -> bool:
         return resolve_exclude_reason(user_id, run_input) is not None
 
-    def check(self, run: GraphRun) -> None:
-        """Raise ``QuotaExhaustedError`` when pool or forge cap is exhausted."""
+    def check(self, run: GraphRun, *, skip_per_user_cap: bool = False) -> None:
+        """Raise ``QuotaExhaustedError`` when pool or forge cap is exhausted.
+
+        A subscribed external sits outside the per-user forge cap. The global
+        monthly API budget still applies.
+        """
         if self.is_excluded(run.user_id, run.input):
             return
 
@@ -172,10 +176,12 @@ class CostGuard:
         if global_usage.estimated_cost_brl >= self._cfg.monthly_api_budget_brl:
             raise QuotaExhaustedError("global_pool")
 
-        if run.graph_name == FORGE_GRAPH_NAME:
-            user_usage = self._store.get(year_month, run.user_id)
-            if user_usage.forge_runs >= self._cfg.forge_cap_per_user_month:
-                raise QuotaExhaustedError("per_user_cap")
+        if skip_per_user_cap or run.graph_name != FORGE_GRAPH_NAME:
+            return
+
+        user_usage = self._store.get(year_month, run.user_id)
+        if user_usage.forge_runs >= self._cfg.forge_cap_per_user_month:
+            raise QuotaExhaustedError("per_user_cap")
 
     def record(self, run: GraphRun) -> None:
         """Annotate run + increment monthly counters for completed billable runs."""

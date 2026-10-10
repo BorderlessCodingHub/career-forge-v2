@@ -26,8 +26,7 @@ from career_forge.schemas.forge import (
     ForgeRunResponse,
     ForgeStreamTicketResponse,
 )
-from career_forge.services.cost_guard import FORGE_GRAPH_NAME, get_cost_guard
-from career_forge.services.entitlement import require_forge_entitlement
+from career_forge.services.entitlement import authorize_forge_start
 from career_forge.services.forge_locale import stamp_forge_output_locale
 from career_forge.services.forge_persistence import extract_goal_id, persist_graph_ready
 from career_forge.services.lean_forge import apply_lean_forge_input
@@ -114,13 +113,7 @@ async def forge_run(
             ),
         )
     )
-    # Paywall before CostGuard — BASE/PSP skip Stripe; cap still applies after.
-    require_forge_entitlement(
-        db,
-        run,
-        forge_count=store.count_for_user(external_id, graph_name=FORGE_GRAPH_NAME),
-    )
-    get_cost_guard().check(run)
+    authorize_forge_start(db, run)
     store.save(run)
     from career_forge.services.continuity import record_roadmap_presence
 

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any, Literal, Protocol, TypeVar, runtime_checkable
 from uuid import uuid4
@@ -9,6 +10,15 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 GraphRunStatus = Literal["pending", "running", "completed", "failed"]
+
+
+@dataclass(frozen=True)
+class ForgeRunStamp:
+    """Status and times for one forge, without the event payload."""
+
+    status: GraphRunStatus
+    created_at: datetime
+    completed_at: datetime | None = None
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
@@ -66,6 +76,8 @@ class GraphRunStore(Protocol):
 
     def count_for_user(self, user_id: str, *, graph_name: str) -> int: ...
 
+    def forge_stamps_for_user(self, user_id: str, *, graph_name: str) -> list[ForgeRunStamp]: ...
+
 
 class InMemoryGraphRunStore:
     """Process-local store for scaffold/tests. Phase 2: SQLAlchemy GraphRunRecord."""
@@ -87,6 +99,17 @@ class InMemoryGraphRunStore:
             for run in self._runs.values()
             if run.user_id == user_id and run.graph_name == graph_name
         )
+
+    def forge_stamps_for_user(self, user_id: str, *, graph_name: str) -> list[ForgeRunStamp]:
+        return [
+            ForgeRunStamp(
+                status=run.status,
+                created_at=run.created_at,
+                completed_at=run.completed_at,
+            )
+            for run in self._runs.values()
+            if run.user_id == user_id and run.graph_name == graph_name
+        ]
 
 
 # Module-level default for API layer (lazy-init for prod Postgres).

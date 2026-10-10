@@ -62,6 +62,9 @@ class User(Base):
         Boolean, nullable=False, default=False, server_default="false"
     )
     ui_locale: Mapped[str | None] = mapped_column(String(8), nullable=True)
+    lifetime_forge_started_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     roadmap_presence_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )

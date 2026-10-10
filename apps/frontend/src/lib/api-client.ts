@@ -91,6 +91,16 @@ async function readApiError(res: Response): Promise<Error> {
   const paywall = paywallErrorFromResponse(res.status, body);
   if (paywall) return paywall;
   const detail = body.detail;
+  if (
+    detail &&
+    typeof detail === "object" &&
+    "code" in detail &&
+    detail.code === "monthly_forge_ceiling" &&
+    "message" in detail &&
+    typeof detail.message === "string"
+  ) {
+    return new Error(detail.message);
+  }
   let message = `${res.status} ${res.statusText}`;
   if (typeof detail === "string") {
     message = detail;

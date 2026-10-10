@@ -312,8 +312,10 @@ def test_failed_profile_read_keeps_base_and_retries_after_five_minutes(
     script.status = 200
     script.membership = "FREE"
     third = raw_client.post("/forge/runs", json=_diagnosis_payload(user_id), headers=headers)
-    assert third.status_code == 402, third.text
+    assert third.status_code == 202, third.text
     assert script.calls == calls_after_signin + 2
+    fourth = raw_client.post("/forge/runs", json=_diagnosis_payload(user_id), headers=headers)
+    assert fourth.status_code == 402, fourth.text
     me = raw_client.get("/me/profile", headers=headers)
     assert me.json()["membership_label"] == "external"
 
@@ -434,7 +436,13 @@ def test_unreadable_profile_body_replaces_base_with_external(
         json=_diagnosis_payload(body["external_id"]),
         headers=headers,
     )
-    assert started.status_code == 402, started.text
+    assert started.status_code == 202, started.text
+    again = raw_client.post(
+        "/forge/runs",
+        json=_diagnosis_payload(body["external_id"]),
+        headers=headers,
+    )
+    assert again.status_code == 402, again.text
     me = raw_client.get("/me/profile", headers=headers)
     assert me.json()["membership_label"] == "external"
     assert me.json()["membership_entitled"] is False
