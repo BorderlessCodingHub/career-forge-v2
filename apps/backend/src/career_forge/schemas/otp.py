@@ -64,6 +64,34 @@ class OtpVerifyResponse(BaseModel):
     expires_in: int
 
 
+class AccountCodeBody(BaseModel):
+    email: str = Field(min_length=3, max_length=255)
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        return _normalize_identity_email(value)
+
+
+class AccountPasswordBody(BaseModel):
+    email: str = Field(min_length=3, max_length=255)
+    code: str = Field(min_length=6, max_length=6)
+    password: str = Field(min_length=1, max_length=1024, repr=False)
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        return _normalize_identity_email(value)
+
+    @field_validator("code")
+    @classmethod
+    def normalize_code(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not _OTP_CODE_RE.match(cleaned):
+            raise ValueError("code must be 6 digits")
+        return cleaned
+
+
 class SigninBody(BaseModel):
     email: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=1, max_length=1024, repr=False)

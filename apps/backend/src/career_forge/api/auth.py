@@ -22,6 +22,8 @@ from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import get_db
 from career_forge.schemas.otp import (
+    AccountCodeBody,
+    AccountPasswordBody,
     IdentityModeResponse,
     OtpRequestBody,
     OtpRequestResponse,
@@ -32,6 +34,7 @@ from career_forge.schemas.otp import (
     SigninResponse,
 )
 from career_forge.services.borderless_signin import signin
+from career_forge.services.career_forge_password import request_code, set_password, sign_in
 from career_forge.services.otp import request_otp, verify_otp
 from career_forge.services.pilot_enter import enter_pilot
 
@@ -99,6 +102,43 @@ def identity_mode() -> IdentityModeResponse:
         signup_url=settings.borderless_signup_url.strip(),
         forgot_password_url=settings.borderless_forgot_password_url.strip(),
     )
+
+
+@router.post("/account/code", response_model=OtpRequestResponse)
+def account_code(
+    body: AccountCodeBody,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> OtpRequestResponse:
+    """Send a one-time code so the learner can set a Career Forge password."""
+    expires_in = request_code(db, email=body.email, client_ip=_client_ip(request))
+    return OtpRequestResponse(email=body.email, expires_in=expires_in)
+
+
+@router.post("/account/password", response_model=SigninResponse)
+def account_password(
+    body: AccountPasswordBody,
+    db: Session = Depends(get_db),
+) -> SigninResponse:
+    """Set or replace the Career Forge password after the inbox code."""
+    result = set_password(db, email=body.email, code=body.code, password=body.password)
+    return SigninResponse(**result)
+
+
+@router.post("/account/signin", response_model=SigninResponse)
+def account_signin(
+    body: SigninBody,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> SigninResponse:
+    """Open a session with the stored Career Forge password."""
+    result = sign_in(
+        db,
+        email=body.email,
+        password=body.password,
+        client_ip=_client_ip(request),
+    )
+    return SigninResponse(**result)
 
 
 @router.post("/signin", response_model=SigninResponse)

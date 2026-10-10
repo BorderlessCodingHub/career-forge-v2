@@ -5,7 +5,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ReactNode } from "react";
 
 import { IdentityGate } from "./IdentityGate";
-import { enterPilot, requestOtp, signInWithPassword } from "@/lib/api-client";
+import {
+  enterPilot,
+  requestCareerForgeCode,
+  requestOtp,
+  setCareerForgePassword,
+  signInWithCareerForgePassword,
+  signInWithPassword,
+} from "@/lib/api-client";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn() }),
@@ -29,6 +36,9 @@ vi.mock("next/link", () => ({
 vi.mock("@/lib/api-client", () => ({
   enterPilot: vi.fn(),
   requestOtp: vi.fn(),
+  requestCareerForgeCode: vi.fn(),
+  setCareerForgePassword: vi.fn(),
+  signInWithCareerForgePassword: vi.fn(),
   verifyOtp: vi.fn(),
   signInWithPassword: vi.fn(),
   OtpEmailOwnedError: class OtpEmailOwnedError extends Error {},
@@ -159,6 +169,71 @@ describe("IdentityGate password", () => {
     expect(screen.getByTestId("identity-gate-password")).toBeTruthy();
     expect(screen.queryByTestId("identity-gate-forgot")).toBeNull();
     expect(screen.queryByTestId("identity-gate-signup")).toBeNull();
+  });
+
+  it("signs in with a Career Forge password and can set one from an inbox code", async () => {
+    const onVerified = vi.fn();
+    vi.mocked(signInWithCareerForgePassword).mockResolvedValue({
+      access_token: "cf-jwt",
+      token_type: "bearer",
+      external_id: "user-cf-password",
+      provider: "email",
+      expires_in: 3600,
+    });
+    vi.mocked(requestCareerForgeCode).mockResolvedValue({
+      ok: true,
+      email: "ada@example.com",
+      expires_in: 600,
+    });
+    vi.mocked(setCareerForgePassword).mockResolvedValue({
+      access_token: "cf-jwt",
+      token_type: "bearer",
+      external_id: "user-cf-password",
+      provider: "email",
+      expires_in: 3600,
+    });
+    render(
+      <IdentityGate
+        method="borderless_password"
+        forgotPasswordUrl={forgotUrl}
+        signupUrl={signupUrl}
+        onVerified={onVerified}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-password"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signin"));
+    await waitFor(() => {
+      expect(signInWithCareerForgePassword).toHaveBeenCalledWith(
+        "ada@example.com",
+        "career-forge-secret",
+      );
+    });
+    expect(signInWithPassword).not.toHaveBeenCalled();
+    expect(requestOtp).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-code-request"));
+    await waitFor(() => {
+      expect(requestCareerForgeCode).toHaveBeenCalledWith("ada@example.com");
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-code"), {
+      target: { value: "424242" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-set"));
+    await waitFor(() => {
+      expect(setCareerForgePassword).toHaveBeenCalledWith(
+        "ada@example.com",
+        "424242",
+        "career-forge-secret",
+      );
+      expect(onVerified).toHaveBeenCalled();
+    });
   });
 
   it("toggles password visibility", () => {

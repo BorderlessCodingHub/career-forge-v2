@@ -92,6 +92,14 @@
     "signupStep2": "Abra a Borderless, conclua o cadastro e verifique o e-mail se pedirem.",
     "signupStep3": "Volte para esta aba e entre com o mesmo e-mail e a mesma senha.",
     "createOnBorderless": "Criar conta na Borderless Platform",
-    "alreadyHaveAccount": "Já tenho uma conta"
+    "alreadyHaveAccount": "Já tenho uma conta",
+    "useCareerForgePassword": "Sem conta na Borderless? Use uma senha do Career Forge",
+    "careerForgeTitle": "Senha do Career Forge",
+    "careerForgeDescription": "Essa senha fica no Career Forge. Não é a senha da Borderless.",
+    "emailMeACode": "Primeira vez ou esqueci essa senha",
+    "setCareerForgePassword": "Salvar senha",
+    "newPassword": "Nova senha",
+    "backToBorderless": "Entrar com a Borderless",
+    "codeSent": "Enviamos um código para a sua caixa de entrada."
   }
 }

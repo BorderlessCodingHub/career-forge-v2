@@ -610,6 +610,55 @@ export async function signInWithPassword(
   return data;
 }
 
+async function postCareerForgeAccount(
+  path: string,
+  body: Record<string, string>,
+): Promise<SigninResponse | OtpRequestResponse> {
+  const res = await fetch(`${backendUrl}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    if (res.status === 400) throw await readApiError(res);
+    throw new Error(signInUserMessage(res.status));
+  }
+  return res.json() as Promise<SigninResponse | OtpRequestResponse>;
+}
+
+/** Inbox code for a first Career Forge password or a replacement (CAR-129). */
+export async function requestCareerForgeCode(email: string): Promise<OtpRequestResponse> {
+  return postCareerForgeAccount("/auth/account/code", { email }) as Promise<OtpRequestResponse>;
+}
+
+/** Store a Career Forge password after the inbox code and open the session. */
+export async function setCareerForgePassword(
+  email: string,
+  code: string,
+  password: string,
+): Promise<SigninResponse> {
+  const data = (await postCareerForgeAccount("/auth/account/password", {
+    email,
+    code,
+    password,
+  })) as SigninResponse;
+  setSessionFromOtp(data.access_token, data.external_id);
+  return data;
+}
+
+/** Later access with the stored Career Forge password. Not the Borderless password. */
+export async function signInWithCareerForgePassword(
+  email: string,
+  password: string,
+): Promise<SigninResponse> {
+  const data = (await postCareerForgeAccount("/auth/account/signin", {
+    email,
+    password,
+  })) as SigninResponse;
+  setSessionFromOtp(data.access_token, data.external_id);
+  return data;
+}
+
 /** Product-loop session check — false when freeze list rejects the JWT. */
 export async function checkAuthSession(): Promise<boolean> {
   const token = getAccessToken();

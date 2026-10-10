@@ -76,6 +76,13 @@ class RateLimitedError(DomainError):
     status_code = 429
 
 
+class InvalidCredentialsError(DomainError):
+    status_code = 401
+
+    def __init__(self) -> None:
+        super().__init__("Invalid email or password")
+
+
 class InvalidBorderlessCredentialsError(DomainError):
     status_code = 401
 
