@@ -55,6 +55,34 @@ _CONTINUITY_NODE = {
     ),
 }
 
+_CONFIRM = {
+    "en": (
+        "Confirm your Career Forge email",
+        "Confirm your email to open Career Forge. "
+        "This link expires in {hours} hours.\n\n{url}\n\n"
+        "If you did not create this account, ignore this email.\n",
+    ),
+    "pt-BR": (
+        "Confirme seu e-mail do Career Forge",
+        "Confirme seu e-mail para abrir o Career Forge. "
+        "Este link expira em {hours} horas.\n\n{url}\n\n"
+        "Se você não criou esta conta, ignore este e-mail.\n",
+    ),
+}
+
+_RESET = {
+    "en": (
+        "Choose a new Career Forge password",
+        "Use this link to choose a new Career Forge password. "
+        "It expires in {hours} hours.\n\n{url}\n",
+    ),
+    "pt-BR": (
+        "Escolha uma nova senha do Career Forge",
+        "Use este link para escolher uma nova senha do Career Forge. "
+        "Ele expira em {hours} horas.\n\n{url}\n",
+    ),
+}
+
 _BILLING = {
     "en": (
         "A charge for Career Forge failed",
@@ -106,6 +134,14 @@ def continuity_node_letter(
 
 def billing_letter(*, url: str, locale: str | None) -> tuple[str, str]:
     return _render(_BILLING[email_locale(locale)], url=url)
+
+
+def confirm_letter(*, url: str, hours: int, locale: str | None) -> tuple[str, str]:
+    return _render(_CONFIRM[email_locale(locale)], url=url, hours=hours)
+
+
+def reset_letter(*, url: str, hours: int, locale: str | None) -> tuple[str, str]:
+    return _render(_RESET[email_locale(locale)], url=url, hours=hours)
 
 
 def operator_otp_letter(*, code: str, minutes: int) -> tuple[str, str]:

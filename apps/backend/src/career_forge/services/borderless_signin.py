@@ -19,6 +19,7 @@ from career_forge.auth.providers import get_auth_provider
 from career_forge.config import settings
 from career_forge.db.models.user import User
 from career_forge.db.repositories.user import ensure_user
+from career_forge.services.career_forge_password import claim_pending_signup
 from career_forge.services.borderless_profile import (
     seal_access_token,
     sync_borderless_membership,
@@ -270,5 +271,6 @@ def signin(
         user.borderless_access_unrenewable = False
         user.membership_read_failed_at = None
         sync_borderless_membership(user, force=True)
+    claim_pending_signup(session, user)
     session.commit()
     return _token_payload(user.external_id)

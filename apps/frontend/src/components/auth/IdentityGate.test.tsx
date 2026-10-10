@@ -6,10 +6,14 @@ import type { ReactNode } from "react";
 
 import { IdentityGate } from "./IdentityGate";
 import {
+  AccountExistsError,
+  EmailUnconfirmedError,
+  MailDeliveryError,
   enterPilot,
-  requestCareerForgeCode,
+  registerCareerForgeAccount,
+  requestCareerForgePasswordReset,
   requestOtp,
-  setCareerForgePassword,
+  resendCareerForgeConfirmation,
   signInWithCareerForgePassword,
   signInWithPassword,
 } from "@/lib/api-client";
@@ -36,12 +40,22 @@ vi.mock("next/link", () => ({
 vi.mock("@/lib/api-client", () => ({
   enterPilot: vi.fn(),
   requestOtp: vi.fn(),
-  requestCareerForgeCode: vi.fn(),
-  setCareerForgePassword: vi.fn(),
+  registerCareerForgeAccount: vi.fn(),
+  resendCareerForgeConfirmation: vi.fn(),
+  requestCareerForgePasswordReset: vi.fn(),
   signInWithCareerForgePassword: vi.fn(),
   verifyOtp: vi.fn(),
   signInWithPassword: vi.fn(),
   OtpEmailOwnedError: class OtpEmailOwnedError extends Error {},
+  AccountExistsError: class AccountExistsError extends Error {
+    override name = "AccountExistsError";
+  },
+  EmailUnconfirmedError: class EmailUnconfirmedError extends Error {
+    override name = "EmailUnconfirmedError";
+  },
+  MailDeliveryError: class MailDeliveryError extends Error {
+    override name = "MailDeliveryError";
+  },
 }));
 
 afterEach(() => {
@@ -171,7 +185,7 @@ describe("IdentityGate password", () => {
     expect(screen.queryByTestId("identity-gate-signup")).toBeNull();
   });
 
-  it("signs in with a Career Forge password and can set one from an inbox code", async () => {
+  it("signs in with a Career Forge password and creates an account without a code", async () => {
     const onVerified = vi.fn();
     vi.mocked(signInWithCareerForgePassword).mockResolvedValue({
       access_token: "cf-jwt",
@@ -180,17 +194,9 @@ describe("IdentityGate password", () => {
       provider: "email",
       expires_in: 3600,
     });
-    vi.mocked(requestCareerForgeCode).mockResolvedValue({
+    vi.mocked(registerCareerForgeAccount).mockResolvedValue({
       ok: true,
       email: "ada@example.com",
-      expires_in: 600,
-    });
-    vi.mocked(setCareerForgePassword).mockResolvedValue({
-      access_token: "cf-jwt",
-      token_type: "bearer",
-      external_id: "user-cf-password",
-      provider: "email",
-      expires_in: 3600,
     });
     render(
       <IdentityGate
@@ -214,26 +220,216 @@ describe("IdentityGate password", () => {
         "ada@example.com",
         "career-forge-secret",
       );
+      expect(onVerified).toHaveBeenCalled();
     });
     expect(signInWithPassword).not.toHaveBeenCalled();
     expect(requestOtp).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByTestId("identity-gate-career-forge-code-request"));
-    await waitFor(() => {
-      expect(requestCareerForgeCode).toHaveBeenCalledWith("ada@example.com");
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-name"), {
+      target: { value: "Ada Lovelace" },
     });
-    fireEvent.change(screen.getByTestId("identity-gate-career-forge-code"), {
-      target: { value: "424242" },
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
     });
-    fireEvent.click(screen.getByTestId("identity-gate-career-forge-set"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-password"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-confirm"), {
+      target: { value: "different-secret" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signup"));
+    expect(registerCareerForgeAccount).not.toHaveBeenCalled();
+    expect(screen.getByTestId("identity-gate-error").textContent).toBe(
+      "Passwords do not match.",
+    );
+
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-confirm"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signup"));
     await waitFor(() => {
-      expect(setCareerForgePassword).toHaveBeenCalledWith(
+      expect(registerCareerForgeAccount).toHaveBeenCalledWith(
+        "Ada Lovelace",
         "ada@example.com",
-        "424242",
         "career-forge-secret",
       );
-      expect(onVerified).toHaveBeenCalled();
     });
+    expect(screen.getByTestId("identity-gate-career-forge-sent").textContent).toContain(
+      "ada@example.com",
+    );
+    expect(onVerified).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns to Career Forge sign-in when the email already has an account", async () => {
+    vi.mocked(registerCareerForgeAccount).mockRejectedValue(new AccountExistsError());
+    render(
+      <IdentityGate
+        method="borderless_password"
+        forgotPasswordUrl={forgotUrl}
+        signupUrl={signupUrl}
+        onVerified={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-name"), {
+      target: { value: "Ada Lovelace" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-password"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-confirm"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signup"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-gate-career-forge-signin")).toBeTruthy();
+    });
+    expect(screen.getByTestId("identity-gate-error").textContent).toBe(
+      "This email already has an account.",
+    );
+    expect(screen.getByTestId("identity-gate-back-borderless")).toBeTruthy();
+  });
+
+  it("offers a resend when the Career Forge password is not confirmed yet", async () => {
+    vi.mocked(signInWithCareerForgePassword).mockRejectedValue(new EmailUnconfirmedError());
+    vi.mocked(resendCareerForgeConfirmation).mockResolvedValue({
+      ok: true,
+      email: "ada@example.com",
+    });
+    render(
+      <IdentityGate
+        method="borderless_password"
+        forgotPasswordUrl={forgotUrl}
+        signupUrl={signupUrl}
+        onVerified={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-password"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signin"));
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-gate-error").textContent).toBe(
+        "Email is not confirmed.",
+      );
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-resend"));
+    await waitFor(() => {
+      expect(resendCareerForgeConfirmation).toHaveBeenCalledWith("ada@example.com");
+    });
+  });
+
+  it("offers resend when the confirmation email fails, without replacing the password", async () => {
+    vi.mocked(registerCareerForgeAccount).mockRejectedValue(new MailDeliveryError());
+    vi.mocked(resendCareerForgeConfirmation).mockResolvedValue({
+      ok: true,
+      email: "ada@example.com",
+    });
+    render(
+      <IdentityGate
+        method="borderless_password"
+        forgotPasswordUrl={forgotUrl}
+        signupUrl={signupUrl}
+        onVerified={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-name"), {
+      target: { value: "Ada Lovelace" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-password"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-confirm"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signup"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-gate-error").textContent).toBe(
+        "Could not send the email. Try again.",
+      );
+    });
+    expect(screen.queryByTestId("identity-gate-career-forge-sent")).toBeNull();
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-resend"));
+    await waitFor(() => {
+      expect(resendCareerForgeConfirmation).toHaveBeenCalledWith("ada@example.com");
+    });
+    expect(registerCareerForgeAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the resend control when resend itself fails", async () => {
+    vi.mocked(signInWithCareerForgePassword).mockRejectedValue(new EmailUnconfirmedError());
+    vi.mocked(resendCareerForgeConfirmation).mockRejectedValue(new MailDeliveryError());
+    render(
+      <IdentityGate
+        method="borderless_password"
+        forgotPasswordUrl={forgotUrl}
+        signupUrl={signupUrl}
+        onVerified={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-password"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signin"));
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-gate-career-forge-resend")).toBeTruthy();
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-resend"));
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-gate-error").textContent).toBe(
+        "Could not send the email. Try again.",
+      );
+    });
+    expect(screen.getByTestId("identity-gate-career-forge-resend")).toBeTruthy();
+  });
+
+  it("shows the same sentence after asking for a Career Forge password reset", async () => {
+    vi.mocked(requestCareerForgePasswordReset).mockResolvedValue(undefined);
+    render(
+      <IdentityGate
+        method="borderless_password"
+        forgotPasswordUrl={forgotUrl}
+        signupUrl={signupUrl}
+        onVerified={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-forgot"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-forgot-submit"));
+    await waitFor(() => {
+      expect(requestCareerForgePasswordReset).toHaveBeenCalledWith("ada@example.com");
+    });
+    expect(screen.getByTestId("identity-gate-career-forge-notice").textContent).toBe(
+      "If a confirmed Career Forge account exists for that email, we sent a link.",
+    );
   });
 
   it("toggles password visibility", () => {

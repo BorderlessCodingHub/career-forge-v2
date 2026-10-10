@@ -83,6 +83,20 @@ class InvalidCredentialsError(DomainError):
         super().__init__("Invalid email or password")
 
 
+class EmailUnconfirmedError(DomainError):
+    status_code = 403
+
+    def __init__(self) -> None:
+        super().__init__("Email is not confirmed")
+
+
+class MailDeliveryError(DomainError):
+    status_code = 503
+
+    def __init__(self) -> None:
+        super().__init__("Could not send the email")
+
+
 class InvalidBorderlessCredentialsError(DomainError):
     status_code = 401
 

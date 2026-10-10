@@ -81,7 +81,7 @@ This amends §2. The title’s “paywall before diagnosis” is the 2026-08-22 
 | Subscribed external | Outside the 2/month ceiling. The global monthly API budget still applies. |
 | Failed profile read | Last successful label stands. The next entitlement check retries in silence once five minutes have passed. No poll while the learner is away. |
 | Password mode | `borderless_user_id` alone does not include the learner. |
-| Career Forge password | First access proves the email with OTP and sets a password Career Forge stores. Later access uses that password. The same email on Borderless sign-in is the same account. |
+| Career Forge password | Signup stores a name and password and emails a confirmation link. The session opens when that link is consumed. Later access uses that password. The same email on Borderless sign-in is the same account. A Borderless sign-in on a still-pending signup confirms the email and drops the pending password. |
 | Existing Roadmap | Still not withheld. Welcome still does not host checkout. |
 
 ---

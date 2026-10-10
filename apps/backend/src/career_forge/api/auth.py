@@ -22,8 +22,12 @@ from career_forge.config import settings
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import get_db
 from career_forge.schemas.otp import (
-    AccountCodeBody,
-    AccountPasswordBody,
+    AccountAckResponse,
+    AccountEmailBody,
+    AccountForgotResponse,
+    AccountResetBody,
+    AccountSignupBody,
+    AccountTokenBody,
     IdentityModeResponse,
     OtpRequestBody,
     OtpRequestResponse,
@@ -34,7 +38,14 @@ from career_forge.schemas.otp import (
     SigninResponse,
 )
 from career_forge.services.borderless_signin import signin
-from career_forge.services.career_forge_password import request_code, set_password, sign_in
+from career_forge.services.career_forge_password import (
+    confirm_account,
+    register_account,
+    request_password_reset,
+    resend_confirmation,
+    reset_password,
+    sign_in,
+)
 from career_forge.services.otp import request_otp, verify_otp
 from career_forge.services.pilot_enter import enter_pilot
 
@@ -104,25 +115,61 @@ def identity_mode() -> IdentityModeResponse:
     )
 
 
-@router.post("/account/code", response_model=OtpRequestResponse)
-def account_code(
-    body: AccountCodeBody,
+@router.post("/account/signup", response_model=AccountAckResponse)
+def account_signup(
+    body: AccountSignupBody,
     request: Request,
     db: Session = Depends(get_db),
-) -> OtpRequestResponse:
-    """Send a one-time code so the learner can set a Career Forge password."""
-    expires_in = request_code(db, email=body.email, client_ip=_client_ip(request))
-    return OtpRequestResponse(email=body.email, expires_in=expires_in)
+) -> AccountAckResponse:
+    """Create a pending Career Forge account and email a confirmation link."""
+    register_account(
+        db,
+        name=body.name,
+        email=body.email,
+        password=body.password,
+        client_ip=_client_ip(request),
+    )
+    return AccountAckResponse(email=body.email)
 
 
-@router.post("/account/password", response_model=SigninResponse)
-def account_password(
-    body: AccountPasswordBody,
+@router.post("/account/resend", response_model=AccountAckResponse)
+def account_resend(
+    body: AccountEmailBody,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> AccountAckResponse:
+    """Send another confirmation link. Does not change the pending password."""
+    resend_confirmation(db, email=body.email, client_ip=_client_ip(request))
+    return AccountAckResponse(email=body.email)
+
+
+@router.post("/account/confirm", response_model=SigninResponse)
+def account_confirm(
+    body: AccountTokenBody,
     db: Session = Depends(get_db),
 ) -> SigninResponse:
-    """Set or replace the Career Forge password after the inbox code."""
-    result = set_password(db, email=body.email, code=body.code, password=body.password)
-    return SigninResponse(**result)
+    """Consume the confirmation link and open the session."""
+    return SigninResponse(**confirm_account(db, token=body.token))
+
+
+@router.post("/account/forgot", response_model=AccountForgotResponse)
+def account_forgot(
+    body: AccountEmailBody,
+    request: Request,
+    db: Session = Depends(get_db),
+) -> AccountForgotResponse:
+    """Ask for a password-reset link. The response does not reveal the account."""
+    request_password_reset(db, email=body.email, client_ip=_client_ip(request))
+    return AccountForgotResponse()
+
+
+@router.post("/account/reset", response_model=SigninResponse)
+def account_reset(
+    body: AccountResetBody,
+    db: Session = Depends(get_db),
+) -> SigninResponse:
+    """Store a new Career Forge password from a reset link and open a session."""
+    return SigninResponse(**reset_password(db, token=body.token, password=body.password))
 
 
 @router.post("/account/signin", response_model=SigninResponse)
