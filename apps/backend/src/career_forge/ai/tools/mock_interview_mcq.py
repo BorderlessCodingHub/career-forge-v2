@@ -22,6 +22,9 @@ from career_forge.services.mock_interview_session import (
     save_mock_interview_session,
 )
 from career_forge.services.forge_context import LearnerForgeContext
+from career_forge.services.forge_locale import is_portuguese
+from career_forge.services.learner_locale import account_output_locale
+from career_forge.learner_text import MOCK_FIELDS, with_learner_instruction
 
 MCQ_LETTERS = ("A", "B", "C", "D")
 
@@ -67,17 +70,54 @@ class MockInterviewMcqDraft(BaseModel):
     questions: list[McqQuestionDraft] = Field(min_length=5, max_length=7)
 
 
-def _fallback_mcq_from_templates(node_id: str, session_db) -> MockInterviewQuestionsResponse:
+_MOCK_BODY = (
+    "You create multiple-choice mock interviews that validate TECHNICAL MASTERY of "
+    "a study chapter.\n\n"
+    "STEP 1 — Determine `subject`: the real TECHNICAL TOPIC of the chapter. "
+    "The title may include study-logistics language (e.g. 'build a study routine', "
+    "'Weeks 1–4', 'master the minimum of'). IGNORE that frame and extract the technical topic "
+    "(e.g. 'Python for AI/ML', 'REST APIs', 'Git and versioning').\n\n"
+    "STEP 2 — Generate 5 to 7 questions that test TECHNICAL UNDERSTANDING of "
+    "the subject. Each question has exactly 4 options (A–D), one correct answer, and a specific "
+    "technical `concept` (e.g. 'list comprehension', 'np.reshape', 'PUT idempotency').\n\n"
+    "STRICTLY FORBIDDEN: questions about study habits, routine, scheduling, time management, "
+    "motivation, how to organize learning, or how many hours to study. That is NOT "
+    "technical knowledge and must not appear.\n\n"
+    "Mix phases: base (fundamental concept), gap_probe (common mistake/typical gap), "
+    "scenario (practical application). Plausible but clearly weaker distractors. "
+    "Anchor questions in the official references when provided."
+)
+
+
+def mock_interview_system(locale: str | None) -> str:
+    """English mock-interview body plus the locale instruction."""
+    return with_learner_instruction(_MOCK_BODY, locale, MOCK_FIELDS)
+
+
+def _fallback_mcq_from_templates(
+    node_id: str,
+    session_db,
+    *,
+    locale: str | None = None,
+) -> MockInterviewQuestionsResponse:
     """Deterministic MCQ when LLM is unavailable (tests / missing API key)."""
-    template = build_mock_interview_questions(node_id, session_db)
+    template = build_mock_interview_questions(node_id, session_db, locale=locale)
     questions: list[MockInterviewQuestion] = []
-    for item in template.questions:
-        correct_text = item.rubric_criterion.rstrip(".")[:120]
+    title = template.node_title
+    if is_portuguese(locale):
         distractors = [
-            f"Generic concept without applying {template.node_title}",
+            f"Conceito genérico sem aplicar {title}",
+            "Resposta rasa que não cobre o critério",
+            "Confunde os termos ou pula a evidência prática",
+        ]
+    else:
+        distractors = [
+            f"Generic concept without applying {title}",
             "Shallow answer that does not cover the criterion",
             "Confuses terms or skips practical evidence",
         ]
+    for item in template.questions:
+        correct_text = item.rubric_criterion.rstrip(".")[:120]
         options = [
             MockInterviewOption(letter="A", text=correct_text),
             MockInterviewOption(letter="B", text=distractors[0]),
@@ -165,12 +205,14 @@ class OpenAiMockInterviewMcqGenerator:
         study_block: dict,
         learner: LearnerForgeContext | None,
         trace: LlmTraceContext | None = None,
+        locale: str | None = None,
     ) -> MockInterviewMcqDraft:
         return await asyncio.to_thread(
             self._invoke,
             study_block=study_block,
             learner=learner,
             trace=trace,
+            locale=locale,
         )
 
     def _invoke(
@@ -179,25 +221,10 @@ class OpenAiMockInterviewMcqGenerator:
         study_block: dict,
         learner: LearnerForgeContext | None,
         trace: LlmTraceContext | None = None,
+        locale: str | None = None,
     ) -> MockInterviewMcqDraft:
         context = format_context_for_prompt(study_block, learner)
-        system = (
-            "You create multiple-choice mock interviews that validate TECHNICAL MASTERY of "
-            "a study chapter.\n\n"
-            "STEP 1 — Determine `subject`: the real TECHNICAL TOPIC of the chapter. "
-            "The title may include study-logistics language (e.g. 'build a study routine', "
-            "'Weeks 1–4', 'master the minimum of'). IGNORE that frame and extract the technical topic "
-            "(e.g. 'Python for AI/ML', 'REST APIs', 'Git and versioning').\n\n"
-            "STEP 2 — Generate 5 to 7 questions in English that test TECHNICAL UNDERSTANDING of "
-            "the subject. Each question has exactly 4 options (A–D), one correct answer, and a specific "
-            "technical `concept` (e.g. 'list comprehension', 'np.reshape', 'PUT idempotency').\n\n"
-            "STRICTLY FORBIDDEN: questions about study habits, routine, scheduling, time management, "
-            "motivation, how to organize learning, or how many hours to study. That is NOT "
-            "technical knowledge and must not appear.\n\n"
-            "Mix phases: base (fundamental concept), gap_probe (common mistake/typical gap), "
-            "scenario (practical application). Plausible but clearly weaker distractors. "
-            "Anchor questions in the official references when provided."
-        )
+        system = mock_interview_system(locale)
         user = (
             f"{context}\n\n"
             "Determine the technical subject (ignoring title logistics) and generate the MCQ questionnaire now."
@@ -222,6 +249,7 @@ async def generate_mcq_mock_interview(
 ) -> MockInterviewQuestionsResponse:
     """Generate MCQ session; uses LLM when configured, else deterministic fallback."""
     node_title = str(study_block.get("title") or node_id)
+    locale = account_output_locale(user_id, session_db)
     trace = llm_trace_context(
         user_id=user_id,
         graph_name="mock_interview",
@@ -229,10 +257,15 @@ async def generate_mcq_mock_interview(
     )
     try:
         generator = OpenAiMockInterviewMcqGenerator()
-        draft = await generator.generate(study_block=study_block, learner=learner, trace=trace)
+        draft = await generator.generate(
+            study_block=study_block,
+            learner=learner,
+            trace=trace,
+            locale=locale,
+        )
         public, answer_key, rubric = _draft_to_public(node_id, node_title, node_icon, draft)
     except RuntimeError:
-        public = _fallback_mcq_from_templates(node_id, session_db)
+        public = _fallback_mcq_from_templates(node_id, session_db, locale=locale)
         answer_key = {
             question.id: "A"
             for question in public.questions

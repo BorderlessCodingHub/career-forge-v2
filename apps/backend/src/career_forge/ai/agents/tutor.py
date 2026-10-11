@@ -46,11 +46,14 @@ class TutorAgentRunnable:
             },
         )
 
+        raw_locale = input_data.get("output_locale")
+        locale = raw_locale if isinstance(raw_locale, str) else None
         result = await asyncio.to_thread(
             build_tutor_response,
             payload,
             context,
             trace=require_trace_from_input(input_data, graph_name=self.graph_name),
+            locale=locale,
         )
 
         yield emit_chain_end(

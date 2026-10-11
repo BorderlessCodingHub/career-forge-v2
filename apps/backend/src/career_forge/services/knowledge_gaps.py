@@ -28,6 +28,7 @@ from career_forge.schemas.knowledge_gap import (
     WrongAnswerItem,
 )
 from career_forge.schemas.mock_interview import MockInterviewRequest
+from career_forge.services.forge_locale import forge_output_locale
 from career_forge.services.mock_interview_session import MockInterviewSessionRecord
 from career_forge.services.roadmap.evidence import REMEDIATION_PREFIX, read_evidence
 
@@ -67,7 +68,7 @@ def build_gap_capture(
                 concept=concept,
                 prompt=str(question.get("prompt", "")),
                 chosen=chosen,
-                chosen_text=options.get(chosen, "(sem resposta)"),
+                chosen_text=options.get(chosen, "(no answer)"),
                 correct=expected,
                 correct_text=options.get(expected, ""),
             ),
@@ -290,6 +291,7 @@ def classify_and_store_gaps(
                     learner_summary=learner_summary,
                     wrong_items=items,
                     trace=trace,
+                    locale=forge_output_locale(user.ui_locale),
                 )
                 for draft in classification.gaps:
                     upsert_knowledge_gap(

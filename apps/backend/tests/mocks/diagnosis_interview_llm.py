@@ -167,7 +167,10 @@ class MockDiagnosisInterviewLlm:
         intake: DiagnosisIntake,
         cv_signals: CvSignals | None,
         cv_text: str | None,
+        *,
+        locale: str | None = None,
     ) -> BeliefState:
+        del locale
         belief = BeliefState.empty()
 
         _boost_dim(
@@ -206,8 +209,10 @@ class MockDiagnosisInterviewLlm:
         intake: DiagnosisIntake,
         transcript: list[InterviewTurn],
         answers: list[InterviewAnswer],
+        *,
+        locale: str | None = None,
     ) -> BeliefState:
-        del intake
+        del intake, locale
         updated = belief.model_copy(deep=True)
         answer_by_qid = {answer.question_id: answer.text for answer in answers}
         last_turn = transcript[-1] if transcript else None
@@ -234,18 +239,28 @@ class MockDiagnosisInterviewLlm:
         intake: DiagnosisIntake,
         transcript: list[InterviewTurn],
         round_count: int,
+        *,
+        locale: str | None = None,
     ) -> list[InterviewQuestion]:
         del intake
         round_index = round_index_for_count(round_count)
         if round_index is None:
             return []
-        return build_round_questions(round_index, belief=belief, transcript=transcript)
+        return build_round_questions(
+            round_index,
+            belief=belief,
+            transcript=transcript,
+            locale=locale,
+        )
 
     async def finalize_diagnosis(
         self,
         belief: BeliefState,
         intake: DiagnosisIntake,
+        *,
+        locale: str | None = None,
     ) -> DiagnosisResponse:
+        del locale
         track_id = TRACK_BY_GOAL.get(intake.goal_id, "rag-engineer-beginner")
         velocity = belief.dimensions["learning_velocity"].confidence
         proof = belief.dimensions["hands_on_proof"].confidence

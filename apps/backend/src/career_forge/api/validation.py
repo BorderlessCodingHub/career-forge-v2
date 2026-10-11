@@ -14,6 +14,7 @@ from career_forge.schemas.validation import (
 )
 from career_forge.services import assessment_flow
 from career_forge.services import validation as validation_service
+from career_forge.services.learner_locale import account_output_locale
 
 router = APIRouter()
 
@@ -26,7 +27,11 @@ def get_validation_questions(
 ) -> ValidationQuestionsResponse:
     _ = external_id  # Bearer required; questions are catalog-scoped
     try:
-        return validation_service.build_validation_questions(node_id, db)
+        return validation_service.build_validation_questions(
+            node_id,
+            db,
+            locale=account_output_locale(external_id, db),
+        )
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 

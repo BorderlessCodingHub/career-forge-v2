@@ -51,6 +51,8 @@ describe("learner catalogs", () => {
     expect(pt.paywall.body).toBe(
       "Seu forge incluído acabou. USD $7/mês continua o Career Forge.",
     );
+    expect(pt.recovery.welcome).toBe("Que bom te ver de novo");
+    expect(pt.recovery.reforge).toBe("Forjar de novo a partir do último diagnóstico");
     expect(en.paywall.body).toContain("USD $7/mo");
     expect(en.paywall.body).not.toMatch(/R\$|BRL/);
   });

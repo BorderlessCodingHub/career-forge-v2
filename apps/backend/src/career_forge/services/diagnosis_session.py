@@ -27,6 +27,7 @@ from career_forge.schemas.diagnosis_interview import (
     build_rubric_map,
 )
 from career_forge.services.cv import attach_extracted_text
+from career_forge.services.learner_locale import account_output_locale
 
 
 class DiagnosisSessionNotFoundError(Exception):
@@ -164,6 +165,21 @@ def _extract_graph_output(result: GraphRunResult) -> dict:
     raise DiagnosisInterviewLlmError(msg)
 
 
+def _graph_input(
+    *,
+    phase: str,
+    session: DiagnosisSession,
+    answers: list | None,
+) -> dict:
+    """Re-read the account on this call. A client-supplied locale is not accepted."""
+    return {
+        "phase": phase,
+        "session": session.model_dump(),
+        "answers": [answer.model_dump() for answer in answers or []],
+        "output_locale": account_output_locale(session.intake.user_id),
+    }
+
+
 def _session_to_turn_response(session: DiagnosisSession) -> InterviewTurnResponse:
     questions: list[InterviewQuestion] = []
     if session.status == "asking" and session.transcript:
@@ -176,7 +192,10 @@ def _session_to_turn_response(session: DiagnosisSession) -> InterviewTurnRespons
         status=session.status,
         round_count=session.round_count,
         questions=questions,
-        mapping_progress=build_rubric_map(session.belief),
+        mapping_progress=build_rubric_map(
+            session.belief,
+            locale=account_output_locale(session.intake.user_id),
+        ),
         diagnosis=session.diagnosis,
     )
 
@@ -280,11 +299,7 @@ class DiagnosisSessionService:
         run = GraphRun(
             graph_name="diagnosis_interview",
             user_id=session.intake.user_id,
-            input={
-                "phase": phase,
-                "session": session.model_dump(),
-                "answers": [answer.model_dump() for answer in answers or []],
-            },
+            input=_graph_input(phase=phase, session=session, answers=answers),
         )
         self._graph_store.save(run)
         event_iter = await self._executor.execute(run, stream=True)
@@ -367,11 +382,7 @@ class DiagnosisSessionService:
         run = GraphRun(
             graph_name="diagnosis_interview",
             user_id=session.intake.user_id,
-            input={
-                "phase": phase,
-                "session": session.model_dump(),
-                "answers": [answer.model_dump() for answer in answers or []],
-            },
+            input=_graph_input(phase=phase, session=session, answers=answers),
         )
         self._graph_store.save(run)
         try:

@@ -15,6 +15,7 @@ from career_forge.db.repositories.user import get_by_external_id
 from career_forge.demo.ana_state import DEMO_ANA_SKILL_STATE, DEMO_ANA_VALIDATIONS
 from career_forge.schemas.common import SkillStatus
 from career_forge.schemas.mentor import MentorContextSnapshot, MentorRequest, MentorResponse
+from career_forge.services.forge_locale import is_portuguese
 from career_forge.services.roadmap import read_evidence, resolve_skill_node_catalog_entry
 
 
@@ -157,12 +158,34 @@ def _intent(message: str) -> str:
     return "general"
 
 
+def _portuguese(locale: str | None) -> bool:
+    return is_portuguese(locale)
+
+
 def _reply_references(
     payload: MentorRequest,
     context: MentorContextSnapshot,
     node_title: str,
     references: list[str],
+    *,
+    locale: str | None = None,
 ) -> str:
+    del payload
+    if _portuguese(locale):
+        if references:
+            reply = (
+                f"Para {node_title}, comece por estas referências da trilha: "
+                f"{'; '.join(references)}. "
+            )
+        else:
+            reply = (
+                f"Para {node_title}, revise a documentação oficial do tema e "
+                "monte um mini projeto aplicando o conceito num endpoint real."
+            )
+        if context.recent_gaps:
+            reply += f" Priorize fechar: {context.recent_gaps[0]}."
+        return reply
+
     if references:
         reply = (
             f"For {node_title}, start with these trail references: "
@@ -183,23 +206,48 @@ def _reply_gaps(
     context: MentorContextSnapshot,
     node_title: str,
     references: list[str],
+    *,
+    locale: str | None = None,
 ) -> str:
+    del payload, references
     if context.recent_gaps:
         gap_text = "; ".join(context.recent_gaps[:2])
+        if _portuguese(locale):
+            return (
+                f"Você ainda tem lacunas em {node_title}: {gap_text}. "
+                "Vamos uma de cada vez — explique o conceito em voz alta e "
+                "compare com um exemplo concreto de API."
+            )
         return (
             f"I see you still have gaps in {node_title}: {gap_text}. "
             "Let's tackle one at a time — explain the concept out loud and "
             "compare it with a concrete API example."
         )
     if context.failed_nodes:
+        nodes = ", ".join(context.failed_nodes)
+        if _portuguese(locale):
+            return (
+                f"Seus nós em revisão: {nodes}. "
+                f"Em {node_title}, volte ao critério que falhou na validação antes de avançar."
+            )
         return (
-            f"Your nodes in review: {', '.join(context.failed_nodes)}. "
+            f"Your nodes in review: {nodes}. "
             f"On {node_title}, return to the criterion that failed validation before advancing."
         )
     if context.last_validation_feedback:
+        if _portuguese(locale):
+            return (
+                f"Do histórico recente: {context.last_validation_feedback} "
+                f"Quer retomar {node_title} com um plano curto de 20 minutos?"
+            )
         return (
             f"From recent history: {context.last_validation_feedback} "
             f"Want to resume {node_title} with a short 20-minute plan?"
+        )
+    if _portuguese(locale):
+        return (
+            f"Ainda não tenho evidência de falha em {node_title}. "
+            "Se algo está confuso, descreva o ponto exato."
         )
     return (
         f"I do not have failure evidence for {node_title} yet. "
@@ -212,7 +260,22 @@ def _reply_practice(
     context: MentorContextSnapshot,
     node_title: str,
     references: list[str],
+    *,
+    locale: str | None = None,
 ) -> str:
+    del payload
+    if _portuguese(locale):
+        reply = (
+            f"Plano rápido para {node_title}: (1) leia um resultado da trilha, "
+            "(2) implemente um exemplo mínimo, (3) explique em voz alta como se "
+            "estivesse ensinando um colega. "
+        )
+        if context.current_node_status == SkillStatus.REVISAR.value:
+            reply += "Foque no critério que falhou na última validação antes de avançar."
+        elif references:
+            reply += f"Referência sugerida: {references[0]}."
+        return reply
+
     reply = (
         f"Quick plan for {node_title}: (1) read one trail outcome, "
         "(2) implement a minimal example, (3) explain it out loud as if "
@@ -230,17 +293,38 @@ def _reply_focus(
     context: MentorContextSnapshot,
     node_title: str,
     references: list[str],
+    *,
+    locale: str | None = None,
 ) -> str:
+    del payload, references
     if context.failed_nodes:
+        if _portuguese(locale):
+            return (
+                f"Seu foco agora: feche {context.failed_nodes[0]} antes de avançar. "
+                f"Depois retome {node_title}."
+            )
         return (
             f"Your focus now: close {context.failed_nodes[0]} before advancing. "
             f"Then resume {node_title}."
         )
     if context.current_node_status in {SkillStatus.VALIDAR.value, SkillStatus.EM_ESTUDO.value}:
+        status = context.current_node_status.replace("_", " ")
+        mastery = context.current_node_mastery or 0
+        if _portuguese(locale):
+            return (
+                f"{node_title} está em {status} "
+                f"com domínio {mastery}%. "
+                "Valide ou pratique mais antes de pular para o próximo nó."
+            )
         return (
-            f"{node_title} is in {context.current_node_status.replace('_', ' ')} "
-            f"with mastery {context.current_node_mastery or 0}%. "
+            f"{node_title} is in {status} "
+            f"with mastery {mastery}%. "
             "Validate or practice more before jumping to the next node."
+        )
+    if _portuguese(locale):
+        return (
+            f"Siga em {node_title} com evidência concreta — "
+            "a trilha libera o domínio pela validação, não por caixinhas."
         )
     return (
         f"Keep going on {node_title} with concrete evidence — "
@@ -253,8 +337,25 @@ def _reply_general(
     context: MentorContextSnapshot,
     node_title: str,
     references: list[str],
+    *,
+    locale: str | None = None,
 ) -> str:
+    del references
     memory_bits: list[str] = []
+    if _portuguese(locale):
+        if context.validation_count:
+            memory_bits.append(f"{context.validation_count} validações no histórico")
+        if context.recent_strengths:
+            memory_bits.append(f"força: {context.recent_strengths[0]}")
+        if context.recent_gaps:
+            memory_bits.append(f"lacuna recente: {context.recent_gaps[0]}")
+        memory = ". ".join(memory_bits)
+        return (
+            f"Sobre {node_title}: {payload.message.strip()} — "
+            f"tenho contexto da sua trilha ({memory or 'ainda sem validações'}). "
+            "Posso sugerir referências, revisar lacunas ou montar um plano de prática."
+        )
+
     if context.validation_count:
         memory_bits.append(f"{context.validation_count} validations in history")
     if context.recent_strengths:
@@ -269,10 +370,9 @@ def _reply_general(
     )
 
 
-_INTENT_REPLIES: dict[
-    str,
-    Callable[[MentorRequest, MentorContextSnapshot, str, list[str]], str],
-] = {
+_Reply = Callable[..., str]
+
+_INTENT_REPLIES: dict[str, _Reply] = {
     "references": _reply_references,
     "gaps": _reply_gaps,
     "practice": _reply_practice,
@@ -284,14 +384,16 @@ _INTENT_REPLIES: dict[
 def build_mentor_response(
     payload: MentorRequest,
     context: MentorContextSnapshot,
+    *,
+    locale: str | None = None,
 ) -> MentorResponse:
     """Deterministic contextual mentor reply from learner memory (no LLM for MVP)."""
-    node_title = payload.node_title or "your trail"
+    node_title = payload.node_title or ("sua trilha" if _portuguese(locale) else "your trail")
     references = _node_references(payload.node_id)
     intent = _intent(payload.message)
 
     reply_for = _INTENT_REPLIES.get(intent, _reply_general)
-    reply = reply_for(payload, context, node_title, references)
+    reply = reply_for(payload, context, node_title, references, locale=locale)
 
     return MentorResponse(
         reply=reply.strip(),

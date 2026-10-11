@@ -16,7 +16,6 @@ from career_forge.ai.run import get_graph_run_store
 from career_forge.ai.tools.gap_classifier import OpenAiGapClassifier
 from career_forge.ai.tools.mock_interview_mcq import OpenAiMockInterviewMcqGenerator
 from career_forge.ai.tools.study_plan_planner import planner_system
-from career_forge.ai.tools.tutor_llm import OpenAiTutor
 from career_forge.auth.providers import get_auth_provider
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
@@ -98,17 +97,16 @@ def test_context_reads_the_locale_stamped_on_the_run() -> None:
     assert missing.output_locale == "en"
 
 
-def test_diagnosis_validation_and_mentor_prompts_stay_english() -> None:
+def test_diagnosis_prompt_bodies_stay_english() -> None:
+    """CAR-132 left these bodies English. CAR-133 adds the language instruction beside them."""
     diagnosis = "\n".join([JUDGE_SYSTEM, INTERVIEWER_SYSTEM, FINALIZE_SYSTEM])
-    assert "Conversational English" in INTERVIEWER_SYSTEM
-    assert "in English" in FINALIZE_SYSTEM
+    assert "You are the Interviewer" in INTERVIEWER_SYSTEM
+    assert "Finalize the diagnosis" in FINALIZE_SYSTEM
     assert "Brazilian Portuguese" not in diagnosis
-
-    assert "Respond in English." in inspect.getsource(OpenAiGapClassifier._invoke)
-    assert "questions in English" in inspect.getsource(
+    assert "Respond in English." not in inspect.getsource(OpenAiGapClassifier._invoke)
+    assert "questions in English" not in inspect.getsource(
         OpenAiMockInterviewMcqGenerator._invoke
     )
-    assert "English." in inspect.getsource(OpenAiTutor._invoke)
 
 
 def _headers(raw_client: TestClient, external_id: str) -> dict[str, str]:

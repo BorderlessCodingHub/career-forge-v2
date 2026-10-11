@@ -16,18 +16,19 @@ from career_forge.schemas.mock_interview import (
 )
 from career_forge.schemas.validation import ValidationResponse
 from career_forge.services.assessment_persistence import persist_assessment_result
+from career_forge.services.forge_locale import is_portuguese
 from career_forge.services.assessment_rubric import (
     PASS_THRESHOLD,
-    QUESTION_HINTS,
     QUESTION_LABELS,
-    QUESTION_TEMPLATES,
     RUBRIC_GAPS,
+    question_shells,
 )
 from career_forge.services.mock_interview_session import (
     MockInterviewSessionRecord,
     consume_mock_interview_session,
     get_mock_interview_session,
 )
+from career_forge.services.learner_locale import account_output_locale
 from career_forge.services.roadmap import resolve_skill_node_catalog_entry
 
 
@@ -43,11 +44,24 @@ GAP_TEMPLATES = (
     "You mentioned difficulty with: {criterion}. How would you fix that in a real project?",
     "Go deeper on the weak point: {criterion}. What would you do differently next time?",
 )
+GAP_TEMPLATES_PT = (
+    "Você mencionou dificuldade com: {criterion}. Como corrigiria isso num projeto real?",
+    "Aprofunde o ponto fraco: {criterion}. O que faria diferente na próxima vez?",
+)
 
 SCENARIO_TEMPLATES = (
     "Practical scenario: {criterion}. Describe step by step how you would solve it.",
     "Imagine a teammate is stuck on: {criterion}. How would you explain and guide the solution?",
 )
+SCENARIO_TEMPLATES_PT = (
+    "Cenário prático: {criterion}. Descreva passo a passo como você resolveria.",
+    "Imagine um colega travado em: {criterion}. Como você explicaria e guiaria a solução?",
+)
+
+_GAP_HINT = "Focus on a concrete action — what would you do differently?"
+_GAP_HINT_PT = "Foque numa ação concreta — o que você faria diferente?"
+_SCENARIO_HINT = "Use a concrete project or endpoint example."
+_SCENARIO_HINT_PT = "Use um projeto ou endpoint concreto como exemplo."
 
 
 def _pad_rubric(rubric: list[str], node_title: str, count: int) -> list[str]:
@@ -74,6 +88,8 @@ def _gap_criteria_for(node: dict[str, Any], raw_rubric: list[str]) -> list[str]:
 def build_mock_interview_questions(
     node_id: str,
     session: Session | None = None,
+    *,
+    locale: str | None = None,
 ) -> MockInterviewQuestionsResponse:
     """Generate 5–7 contextual mock interview questions from rubric, gaps, and outcomes.
 
@@ -87,6 +103,12 @@ def build_mock_interview_questions(
     gap_criteria = _gap_criteria_for(node, raw_rubric)
 
     questions: list[MockInterviewQuestion] = []
+    templates, hints = question_shells(locale)
+    portuguese = is_portuguese(locale)
+    gap_templates = GAP_TEMPLATES_PT if portuguese else GAP_TEMPLATES
+    gap_hint = _GAP_HINT_PT if portuguese else _GAP_HINT
+    scenario_templates = SCENARIO_TEMPLATES_PT if portuguese else SCENARIO_TEMPLATES
+    scenario_hint = _SCENARIO_HINT_PT if portuguese else _SCENARIO_HINT
 
     for index in range(3):
         questions.append(
@@ -94,8 +116,8 @@ def build_mock_interview_questions(
                 id=f"{node_id}-mi-q{index + 1}",
                 index=index + 1,
                 label=BASE_LABELS[index],
-                prompt=QUESTION_TEMPLATES[index].format(criterion=rubric[index].rstrip(".")),
-                hint=QUESTION_HINTS.get(BASE_LABELS[index]),
+                prompt=templates[index].format(criterion=rubric[index].rstrip(".")),
+                hint=hints.get(BASE_LABELS[index]),
                 rubric_criterion=rubric[index],
                 phase="base",
             ),
@@ -108,8 +130,8 @@ def build_mock_interview_questions(
                 id=f"{node_id}-mi-q{index + 4}",
                 index=index + 4,
                 label=GAP_LABELS[index],
-                prompt=GAP_TEMPLATES[index].format(criterion=criterion),
-                hint="Focus on a concrete action — what would you do differently?",
+                prompt=gap_templates[index].format(criterion=criterion),
+                hint=gap_hint,
                 rubric_criterion=criterion,
                 phase="gap_probe",
             ),
@@ -127,8 +149,8 @@ def build_mock_interview_questions(
                 id=f"{node_id}-mi-q{index + 6}",
                 index=index + 6,
                 label=SCENARIO_LABELS[index],
-                prompt=SCENARIO_TEMPLATES[index].format(criterion=criterion),
-                hint="Use a concrete project or endpoint example.",
+                prompt=scenario_templates[index].format(criterion=criterion),
+                hint=scenario_hint,
                 rubric_criterion=criterion,
                 phase="scenario",
             ),
@@ -153,7 +175,11 @@ def persist_mock_interview_result(
     """Store mock interview attempt with full 5–7 Q/A and update user skill node."""
     question_rows = stored_questions or [
         question.model_dump()
-        for question in build_mock_interview_questions(payload.node_id, session).questions
+        for question in build_mock_interview_questions(
+            payload.node_id,
+            session,
+            locale=account_output_locale(payload.user_id, session),
+        ).questions
     ]
     return persist_assessment_result(
         session,

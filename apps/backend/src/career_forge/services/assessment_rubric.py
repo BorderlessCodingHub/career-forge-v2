@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import re
 
+from career_forge.services.forge_locale import is_portuguese
+
 PASS_THRESHOLD = 70
 
 QUESTION_LABELS = ("concept", "application", "deepening")
@@ -27,6 +29,24 @@ QUESTION_HINTS = {
     "application": "Use a concrete project or pipeline example.",
     "deepening": "Explain as if you were teaching a colleague.",
 }
+
+QUESTION_TEMPLATES_PT = (
+    "Com suas palavras, {criterion}. Dê um exemplo prático.",
+    "Como você aplicaria isto num projeto real: {criterion}?",
+    "Explique para um colega júnior: {criterion}.",
+)
+QUESTION_HINTS_PT = {
+    "concept": "Comece pela definição e pelo porquê, antes do como.",
+    "application": "Use um projeto ou pipeline concreto.",
+    "deepening": "Explique como se estivesse ensinando um colega.",
+}
+
+
+def question_shells(locale: str | None) -> tuple[tuple[str, ...], dict[str, str]]:
+    """Validation prompt and hint around a forged criterion. Labels stay English keys."""
+    if is_portuguese(locale):
+        return QUESTION_TEMPLATES_PT, QUESTION_HINTS_PT
+    return QUESTION_TEMPLATES, QUESTION_HINTS
 
 _LEGACY_RUBRIC_KEYWORDS: dict[str, list[tuple[str, ...]]] = {
     "js": [

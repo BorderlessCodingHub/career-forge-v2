@@ -2,6 +2,13 @@
 
 from __future__ import annotations
 
+from career_forge.learner_text import (
+    FINALIZE_FIELDS,
+    INTERVIEW_FIELDS,
+    JUDGE_FIELDS,
+    with_learner_instruction,
+)
+
 JUDGE_SYSTEM = """\
 You are the Judge for Career Forge. Update the universal learner profile (5 dimensions) \
 from intake, transcript, and new answers.
@@ -20,8 +27,8 @@ Dimensions:
 Critical rules:
 1. Multi-map: one answer may update several dimensions.
 2. Explicit NEGATIVE hands-on ("never built", "zero projects", "theory only") on \
-hands_on_proof → status `mapped`, confidence 0.60–0.72, note \
-"No hands-on practice yet — baseline confirmed".
+hands_on_proof → status `mapped`, confidence 0.60–0.72, and a note that there \
+is no hands-on practice yet.
 3. Hours/week, routine, language in an answer → map `learning_velocity` and/or \
 `constraints` (confidence ≥ 0.75 if explicit).
 4. CV alone → needs_clarification (≤0.65). Direct intake may map motivation_goal.
@@ -33,7 +40,7 @@ status ∈ pending | mapped | needs_clarification
 """
 
 INTERVIEWER_SYSTEM = """\
-You are the Interviewer for Career Forge. Conversational English. Max 2 questions. \
+You are the Interviewer for Career Forge. Conversational. Max 2 questions. \
 Max 3 total rounds.
 
 Read the structured payload:
@@ -49,7 +56,7 @@ Rules:
 3. NEVER rephrase hands_on_proof if the user already said they have no practice.
 4. Round 0: prefer 1 compound question (hands_on_proof) if ≥3 dims remain open.
 5. Later rounds: close DIFFERENT gaps (e.g. only constraints if time/language missing).
-6. `topic` = EN label ("Hands-on proof"), never the raw rubric_key.
+6. `topic` is the dimension display name (for example "Hands-on proof"), never the raw rubric_key.
 7. Concrete questions — no generic SWE checklist (git/http/db). Probe application of \
 LLM-track concepts matching the goal_brief and experience level.
 
@@ -62,7 +69,7 @@ English or another language?","example_of_answer":"About 10h/week evenings; Engl
 FINALIZE_SYSTEM = """\
 Finalize the diagnosis from belief + goal_id.
 
-Audience: BASE/PSP early ↔ staff. Write strengths, gaps, and starting_priorities in English.
+Audience: BASE/PSP early ↔ staff. Write strengths, gaps, the profile label, and starting priorities.
 
 Gaps MUST be LLM-track gaps for the selected goal (RAG, agents, evals, or fine-tuning) — \
 NOT a legacy SWE checklist (git, http, db, REST, auth).
@@ -116,6 +123,21 @@ Staff probes: "how do you choose SFT vs preference optimization, and validate no
 capability regression before serve?"
 """,
 }
+
+
+def judge_system(locale: str | None) -> str:
+    """English judge body plus the locale instruction for sidebar fields."""
+    return with_learner_instruction(JUDGE_SYSTEM, locale, JUDGE_FIELDS)
+
+
+def interviewer_system(locale: str | None) -> str:
+    """English interviewer body plus the locale instruction for question fields."""
+    return with_learner_instruction(INTERVIEWER_SYSTEM, locale, INTERVIEW_FIELDS)
+
+
+def finalize_system(locale: str | None) -> str:
+    """English finalize body plus the locale instruction for diagnosis prose."""
+    return with_learner_instruction(FINALIZE_SYSTEM, locale, FINALIZE_FIELDS)
 
 
 def interviewer_brief_for_goal(goal_id: str) -> str:

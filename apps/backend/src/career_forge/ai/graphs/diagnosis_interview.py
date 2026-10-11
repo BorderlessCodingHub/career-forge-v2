@@ -25,6 +25,7 @@ from career_forge.schemas.diagnosis_interview import (
     build_rubric_map,
 )
 from career_forge.services.cv import parse_cv_attachment
+from career_forge.services.forge_locale import forge_output_locale
 
 GraphPhase = Literal["start", "turn"]
 
@@ -51,6 +52,7 @@ def _load_round_questions(
     *,
     belief: BeliefState | None = None,
     transcript: list[InterviewTurn] | None = None,
+    locale: str | None = None,
 ) -> list[InterviewQuestion]:
     round_index = round_index_for_count(round_count)
     if round_index is None:
@@ -59,6 +61,7 @@ def _load_round_questions(
         round_index,
         belief=belief,
         transcript=transcript,
+        locale=locale,
     )[:MAX_QUESTIONS_PER_TURN]
 
 
@@ -66,10 +69,12 @@ async def _finalize_session(
     session: DiagnosisSession,
     intake: DiagnosisIntake,
     llm: Any,
+    *,
+    locale: str | None = None,
 ) -> tuple[DiagnosisSession, DiagnosisResponse]:
     from career_forge.services.soft_gate import enrich_diagnosis_soft_gate
 
-    diagnosis = await llm.finalize_diagnosis(session.belief, intake)
+    diagnosis = await llm.finalize_diagnosis(session.belief, intake, locale=locale)
     # LLM sometimes returns bare goal slug (rag-engineer) — coerce to catalog id.
     track_id = normalize_catalog_track_id(diagnosis.profile.track_id)
     if track_id != diagnosis.profile.track_id:
@@ -90,10 +95,12 @@ async def run_interview_phase(
     phase: GraphPhase,
     session: DiagnosisSession,
     answers: list[InterviewAnswer] | None = None,
+    locale: str | None = None,
 ) -> dict[str, Any]:
     """Execute one graph phase — start (turn 1) or turn (update + next/finalize)."""
     llm = get_diagnosis_interview_llm()
     intake = session.intake
+    locale = forge_output_locale(locale)
 
     if phase == "start":
         cv_text, cv_signals = _extract_cv_text(intake)
@@ -105,7 +112,7 @@ async def run_interview_phase(
             )
             session = session.model_copy(update={"intake": intake})
 
-        belief = await llm.initialize_belief(intake, cv_signals, cv_text)
+        belief = await llm.initialize_belief(intake, cv_signals, cv_text, locale=locale)
         session = session.model_copy(
             update={
                 "belief": belief,
@@ -115,10 +122,10 @@ async def run_interview_phase(
         )
 
         if session.should_finalize():
-            session, diagnosis = await _finalize_session(session, intake, llm)
-            return _build_output(session, questions=[], diagnosis=diagnosis)
+            session, diagnosis = await _finalize_session(session, intake, llm, locale=locale)
+            return _build_output(session, questions=[], diagnosis=diagnosis, locale=locale)
 
-        questions = _load_round_questions(session.round_count)
+        questions = _load_round_questions(session.round_count, locale=locale)
         turn = InterviewTurn(questions=questions, answers=[])
         session = session.model_copy(
             update={
@@ -126,7 +133,7 @@ async def run_interview_phase(
                 "round_count": 1,
             },
         )
-        return _build_output(session, questions=questions)
+        return _build_output(session, questions=questions, locale=locale)
 
     # phase == "turn"
     if not answers:
@@ -149,21 +156,23 @@ async def run_interview_phase(
         intake,
         transcript,
         answers,
+        locale=locale,
     )
     session = session.model_copy(update={"belief": belief})
 
     if session.should_finalize():
-        session, diagnosis = await _finalize_session(session, intake, llm)
-        return _build_output(session, questions=[], diagnosis=diagnosis)
+        session, diagnosis = await _finalize_session(session, intake, llm, locale=locale)
+        return _build_output(session, questions=[], diagnosis=diagnosis, locale=locale)
 
     questions = _load_round_questions(
         session.round_count,
         belief=session.belief,
         transcript=session.transcript,
+        locale=locale,
     )
     if not questions:
-        session, diagnosis = await _finalize_session(session, intake, llm)
-        return _build_output(session, questions=[], diagnosis=diagnosis)
+        session, diagnosis = await _finalize_session(session, intake, llm, locale=locale)
+        return _build_output(session, questions=[], diagnosis=diagnosis, locale=locale)
 
     next_turn = InterviewTurn(questions=questions, answers=[])
     session = session.model_copy(
@@ -172,7 +181,7 @@ async def run_interview_phase(
             "round_count": session.round_count + 1,
         },
     )
-    return _build_output(session, questions=questions)
+    return _build_output(session, questions=questions, locale=locale)
 
 
 def _build_output(
@@ -180,8 +189,9 @@ def _build_output(
     *,
     questions: list[InterviewQuestion],
     diagnosis: DiagnosisResponse | None = None,
+    locale: str | None = None,
 ) -> dict[str, Any]:
-    mapping = build_rubric_map(session.belief)
+    mapping = build_rubric_map(session.belief, locale=locale)
     return {
         "session": session.model_dump(),
         "session_id": session.session_id,
@@ -196,9 +206,11 @@ def _build_output(
 
 async def _yield_mapping_progress(
     belief: BeliefState,
+    *,
+    locale: str | None = None,
 ) -> AsyncIterator[dict[str, Any]]:
     """Stream rubric dimensions one-by-one for live UI updates."""
-    mapping = build_rubric_map(belief)
+    mapping = build_rubric_map(belief, locale=locale)
     for index, item in enumerate(mapping):
         yield {
             "type": "mapping_dimension",
@@ -212,10 +224,13 @@ async def _yield_mapping_progress(
 
 async def _run_start_phase_streaming(
     session: DiagnosisSession,
+    *,
+    locale: str | None = None,
 ) -> AsyncIterator[dict[str, Any]]:
     """Start phase with SSE chunks; final yield is `_output` sentinel."""
     llm = get_diagnosis_interview_llm()
     intake = session.intake
+    locale = forge_output_locale(locale)
 
     yield {"type": "interview_status", "phase": "analyzing_intake"}
 
@@ -230,7 +245,7 @@ async def _run_start_phase_streaming(
         session = session.model_copy(update={"intake": intake})
 
     yield {"type": "interview_status", "phase": "judging"}
-    belief = await llm.initialize_belief(intake, cv_signals, cv_text)
+    belief = await llm.initialize_belief(intake, cv_signals, cv_text, locale=locale)
     session = session.model_copy(
         update={
             "belief": belief,
@@ -239,17 +254,20 @@ async def _run_start_phase_streaming(
         },
     )
 
-    async for chunk in _yield_mapping_progress(session.belief):
+    async for chunk in _yield_mapping_progress(session.belief, locale=locale):
         yield chunk
 
     if session.should_finalize():
         yield {"type": "interview_status", "phase": "finalizing"}
-        session, diagnosis = await _finalize_session(session, intake, llm)
-        yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
+        session, diagnosis = await _finalize_session(session, intake, llm, locale=locale)
+        yield {
+            "type": "_output",
+            "output": _build_output(session, questions=[], diagnosis=diagnosis, locale=locale),
+        }
         return
 
     yield {"type": "interview_status", "phase": "loading_questions"}
-    questions = _load_round_questions(session.round_count)
+    questions = _load_round_questions(session.round_count, locale=locale)
     turn = InterviewTurn(questions=questions, answers=[])
     session = session.model_copy(
         update={
@@ -257,15 +275,18 @@ async def _run_start_phase_streaming(
             "round_count": 1,
         },
     )
-    yield {"type": "_output", "output": _build_output(session, questions=questions)}
+    yield {"type": "_output", "output": _build_output(session, questions=questions, locale=locale)}
 
 
 async def _run_turn_phase_streaming(
     session: DiagnosisSession,
     answers: list[InterviewAnswer],
+    *,
+    locale: str | None = None,
 ) -> AsyncIterator[dict[str, Any]]:
     llm = get_diagnosis_interview_llm()
     intake = session.intake
+    locale = forge_output_locale(locale)
 
     if not session.transcript:
         msg = "session has no open question turn"
@@ -279,16 +300,25 @@ async def _run_turn_phase_streaming(
     session = session.model_copy(update={"transcript": transcript})
 
     yield {"type": "interview_status", "phase": "judging"}
-    belief = await llm.update_belief(session.belief, intake, transcript, answers)
+    belief = await llm.update_belief(
+        session.belief,
+        intake,
+        transcript,
+        answers,
+        locale=locale,
+    )
     session = session.model_copy(update={"belief": belief})
 
-    async for chunk in _yield_mapping_progress(session.belief):
+    async for chunk in _yield_mapping_progress(session.belief, locale=locale):
         yield chunk
 
     if session.should_finalize():
         yield {"type": "interview_status", "phase": "finalizing"}
-        session, diagnosis = await _finalize_session(session, intake, llm)
-        yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
+        session, diagnosis = await _finalize_session(session, intake, llm, locale=locale)
+        yield {
+            "type": "_output",
+            "output": _build_output(session, questions=[], diagnosis=diagnosis, locale=locale),
+        }
         return
 
     yield {"type": "interview_status", "phase": "loading_questions"}
@@ -296,11 +326,15 @@ async def _run_turn_phase_streaming(
         session.round_count,
         belief=session.belief,
         transcript=session.transcript,
+        locale=locale,
     )
     if not questions:
         yield {"type": "interview_status", "phase": "finalizing"}
-        session, diagnosis = await _finalize_session(session, intake, llm)
-        yield {"type": "_output", "output": _build_output(session, questions=[], diagnosis=diagnosis)}
+        session, diagnosis = await _finalize_session(session, intake, llm, locale=locale)
+        yield {
+            "type": "_output",
+            "output": _build_output(session, questions=[], diagnosis=diagnosis, locale=locale),
+        }
         return
 
     next_turn = InterviewTurn(questions=questions, answers=[])
@@ -310,7 +344,7 @@ async def _run_turn_phase_streaming(
             "round_count": session.round_count + 1,
         },
     )
-    yield {"type": "_output", "output": _build_output(session, questions=questions)}
+    yield {"type": "_output", "output": _build_output(session, questions=questions, locale=locale)}
 
 
 class DiagnosisInterviewGraphRunnable:
@@ -331,6 +365,8 @@ class DiagnosisInterviewGraphRunnable:
         session = DiagnosisSession.model_validate(input_data["session"])
         answers_raw = input_data.get("answers") or []
         answers = [InterviewAnswer.model_validate(item) for item in answers_raw]
+        raw_locale = input_data.get("output_locale")
+        locale = forge_output_locale(raw_locale if isinstance(raw_locale, str) else None)
 
         yield emit_chain_start(self.graph_name, run_id)
 
@@ -338,9 +374,9 @@ class DiagnosisInterviewGraphRunnable:
             output: dict[str, Any] | None = None
 
             if phase == "start":
-                stream = _run_start_phase_streaming(session)
+                stream = _run_start_phase_streaming(session, locale=locale)
             else:
-                stream = _run_turn_phase_streaming(session, answers)
+                stream = _run_turn_phase_streaming(session, answers, locale=locale)
 
             async for chunk in stream:
                 if chunk.get("type") == "_output":

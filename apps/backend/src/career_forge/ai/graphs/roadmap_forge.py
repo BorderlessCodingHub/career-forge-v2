@@ -40,6 +40,8 @@ from career_forge.services.forge_context import (
     LearnerForgeContext,
     build_forge_context_from_input,
 )
+from career_forge.services.forge_locale import is_portuguese
+from career_forge.learner_text import RESEARCH_FIELDS, learner_text_instruction
 from career_forge.services.lean_forge import (
     load_must_have_ids,
     resolve_lean_allowed_node_ids,
@@ -272,9 +274,11 @@ def build_research_prompt(
     instruction: str,
     summary: str,
 ) -> str:
+    language = learner_text_instruction(context.output_locale, RESEARCH_FIELDS)
     return (
         "You must use web_search. Run a focused search, cite sources, and "
-        "reply in English with at most 2 useful sentences for the UI.\n\n"
+        "reply with at most 2 useful sentences for the UI.\n"
+        f"{language}\n\n"
         f"Search focus: {focus}\n"
         f"Instruction: {instruction}\n\n"
         f"Learner context:\n{summary}\n"
@@ -299,16 +303,26 @@ async def iter_research_enrichment_events(
 ) -> AsyncIterator[dict[str, Any]]:
     for index, prompt in enumerate(build_research_prompts(context), start=1):
         result = await search_client.search(prompt)
-        yield _research_artifact(result, iteration=index)
+        yield _research_artifact(result, locale=context.output_locale)
 
 
-def _research_artifact(result: WebSearchResult, *, iteration: int = 1) -> dict[str, Any]:
+def _research_artifact(
+    result: WebSearchResult,
+    *,
+    iteration: int = 1,
+    locale: str | None = None,
+) -> dict[str, Any]:
     del iteration
+    if is_portuguese(locale):
+        label = "Pesquisando fontes oficiais..."
+        fallback = f"{len(result.sources)} fontes encontradas"
+    else:
+        label = "Searching official sources..."
+        fallback = f"{len(result.sources)} sources found"
     return {
         "type": "artifact_found",
-        "label": "Pesquisando fontes oficiais...",
-        "detail": _clean_research_summary(result.summary)
-        or f"{len(result.sources)} fontes encontradas",
+        "label": label,
+        "detail": _clean_research_summary(result.summary) or fallback,
         "sources": [
             {"title": source.title, "url": source.url, "snippet": source.snippet}
             for source in result.sources
