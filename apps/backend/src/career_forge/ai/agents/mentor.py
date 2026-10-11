@@ -32,7 +32,9 @@ class MentorAgentRunnable:
         payload = MentorRequest.model_validate(input_data)
         context_raw = input_data.get("context_snapshot") or {}
         context = MentorContextSnapshot.model_validate(context_raw)
-        result = build_mentor_response(payload, context)
+        raw_locale = input_data.get("output_locale")
+        locale = raw_locale if isinstance(raw_locale, str) else None
+        result = build_mentor_response(payload, context, locale=locale)
         run_id = new_run_id()
 
         yield emit_chain_start(self.graph_name, run_id)

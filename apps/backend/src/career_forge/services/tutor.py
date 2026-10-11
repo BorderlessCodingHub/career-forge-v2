@@ -52,6 +52,7 @@ def build_tutor_response(
     context: TutorContext,
     *,
     trace: LlmTraceContext | None = None,
+    locale: str | None = None,
 ) -> TutorResponse:
     """Grounded chapter reply (LLM when configured, deterministic fallback otherwise)."""
     draft = generate_tutor_reply(
@@ -59,6 +60,7 @@ def build_tutor_response(
         history=payload.history,
         context=context,
         trace=trace,
+        locale=locale,
     )
     references = [ref.title for ref in context.references][:3]
     return TutorResponse(

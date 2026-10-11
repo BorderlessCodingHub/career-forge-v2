@@ -14,6 +14,7 @@ from career_forge.schemas.diagnosis_interview import (
     InterviewTurn,
     RubricDimensionKey,
 )
+from career_forge.services.forge_locale import is_portuguese
 
 _NEGATIVE_PROOF_RE = re.compile(
     r"\b("
@@ -94,7 +95,39 @@ def build_belief_snapshot(belief: BeliefState) -> list[dict[str, Any]]:
     ]
 
 
-def apply_schedule_overrides(belief: BeliefState, transcript: list[InterviewTurn]) -> BeliefState:
+_OVERRIDE_NOTES = {
+    "schedule": (
+        "Routine/time mentioned by the user",
+        "Rotina ou tempo mencionados pelo aprendiz",
+    ),
+    "negative": (
+        "No hands-on practice yet — explicit negative from the user",
+        "Ainda sem prática hands-on — o aprendiz disse isso",
+    ),
+    "clear": (
+        "No relevant constraints — user confirmed",
+        "Sem restrições relevantes — o aprendiz confirmou",
+    ),
+    "baseline": (
+        "No hands-on practice yet — baseline confirmed",
+        "Ainda sem prática hands-on — linha de base confirmada",
+    ),
+}
+
+
+def _override_note(key: str, locale: str | None) -> str:
+    english, portuguese = _OVERRIDE_NOTES[key]
+    if is_portuguese(locale):
+        return portuguese
+    return english
+
+
+def apply_schedule_overrides(
+    belief: BeliefState,
+    transcript: list[InterviewTurn],
+    *,
+    locale: str | None = None,
+) -> BeliefState:
     """Map constraints/learning_velocity when user gave hours or routine."""
     updated = belief.model_copy(deep=True)
     for turn in transcript:
@@ -109,14 +142,19 @@ def apply_schedule_overrides(belief: BeliefState, transcript: list[InterviewTurn
                     update={
                         "status": "mapped",
                         "confidence": max(dim.confidence, 0.76),
-                        "note": "Routine/time mentioned by the user",
+                        "note": _override_note("schedule", locale),
                         "evidence": [*dim.evidence, text[:120]][:5],
                     },
                 )
     return updated
 
 
-def apply_negative_proof_overrides(belief: BeliefState, transcript: list[InterviewTurn]) -> BeliefState:
+def apply_negative_proof_overrides(
+    belief: BeliefState,
+    transcript: list[InterviewTurn],
+    *,
+    locale: str | None = None,
+) -> BeliefState:
     """Deterministic guard: explicit 'never built' closes hands_on_proof."""
     updated = belief.model_copy(deep=True)
     for turn in transcript:
@@ -130,7 +168,7 @@ def apply_negative_proof_overrides(belief: BeliefState, transcript: list[Intervi
                 update={
                     "status": "mapped",
                     "confidence": max(dim.confidence, 0.68),
-                    "note": "No hands-on practice yet — explicit negative from the user",
+                    "note": _override_note("negative", locale),
                     "evidence": [*dim.evidence, text[:120]][:5],
                 },
             )
@@ -140,6 +178,8 @@ def apply_negative_proof_overrides(belief: BeliefState, transcript: list[Intervi
 def apply_constraints_clear_overrides(
     belief: BeliefState,
     transcript: list[InterviewTurn],
+    *,
+    locale: str | None = None,
 ) -> BeliefState:
     """Map constraints when user explicitly says there are no blockers."""
     updated = belief.model_copy(deep=True)
@@ -154,14 +194,18 @@ def apply_constraints_clear_overrides(
                 update={
                     "status": "mapped",
                     "confidence": max(dim.confidence, 0.78),
-                    "note": "No relevant constraints — user confirmed",
+                    "note": _override_note("clear", locale),
                     "evidence": [*dim.evidence, text[:120]][:5],
                 },
             )
     return updated
 
 
-def apply_baseline_proof_override(belief: BeliefState) -> BeliefState:
+def apply_baseline_proof_override(
+    belief: BeliefState,
+    *,
+    locale: str | None = None,
+) -> BeliefState:
     """Close hands_on when baseline was already confirmed (even below saturation threshold)."""
     updated = belief.model_copy(deep=True)
     dim = updated.dimensions["hands_on_proof"]
@@ -177,18 +221,28 @@ def apply_baseline_proof_override(belief: BeliefState) -> BeliefState:
                 update={
                     "status": "mapped",
                     "confidence": max(dim.confidence, 0.68),
-                    "note": dim.note or "No hands-on practice yet — baseline confirmed",
+                    "note": dim.note or _override_note("baseline", locale),
                 },
             )
     return updated
 
 
-def apply_transcript_overrides(belief: BeliefState, transcript: list[InterviewTurn]) -> BeliefState:
+def apply_transcript_overrides(
+    belief: BeliefState,
+    transcript: list[InterviewTurn],
+    *,
+    locale: str | None = None,
+) -> BeliefState:
     updated = apply_constraints_clear_overrides(
-        apply_schedule_overrides(apply_negative_proof_overrides(belief, transcript), transcript),
+        apply_schedule_overrides(
+            apply_negative_proof_overrides(belief, transcript, locale=locale),
+            transcript,
+            locale=locale,
+        ),
         transcript,
+        locale=locale,
     )
-    return apply_baseline_proof_override(updated)
+    return apply_baseline_proof_override(updated, locale=locale)
 
 
 def build_judge_user_message(
@@ -280,7 +334,7 @@ def build_interviewer_user_message(
             "Generate 0–2 questions ONLY for keys in interviewable.",
             "If interviewable is empty, return questions: [].",
             "Never repeat an axis already in do_not_ask.",
-            "topic = EN label (Hands-on proof, Real context), never the raw rubric_key.",
+            "topic is the dimension display name, never the raw rubric_key.",
         ],
     )
     return "\n".join(sections)

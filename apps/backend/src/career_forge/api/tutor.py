@@ -22,6 +22,7 @@ from career_forge.schemas.tutor import (
     TutorRunResponse,
 )
 from career_forge.services import tutor as tutor_service
+from career_forge.services.learner_locale import account_output_locale
 
 router = APIRouter()
 
@@ -54,7 +55,11 @@ async def chat_with_tutor(
         GraphRun(
             graph_name="tutor",
             user_id=external_id,
-            input={**payload.model_dump(), "context_snapshot": context.model_dump()},
+            input={
+                **payload.model_dump(),
+                "context_snapshot": context.model_dump(),
+                "output_locale": account_output_locale(external_id, db),
+            },
         )
     )
     store.save(run)

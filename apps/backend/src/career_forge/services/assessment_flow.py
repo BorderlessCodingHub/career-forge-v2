@@ -28,6 +28,7 @@ from career_forge.services import knowledge_gaps as knowledge_gaps_service
 from career_forge.services import mock_interview as mock_interview_service
 from career_forge.services import planning as planning_service
 from career_forge.services import validation as validation_service
+from career_forge.services.learner_locale import account_output_locale
 from career_forge.services.mock_interview_session import (
     MockInterviewSessionRecord,
     consume_mock_interview_session,
@@ -104,7 +105,11 @@ def _schedule_gap_capture(
 async def run_validation(db: Session, body: ValidationRequest) -> ValidationRunResponse:
     """Validation interview: backfill rubric → run graph → persist → recalibrate."""
     if not body.rubric:
-        questions = validation_service.build_validation_questions(body.node_id, db)
+        questions = validation_service.build_validation_questions(
+            body.node_id,
+            db,
+            locale=account_output_locale(body.user_id, db),
+        )
         body = body.model_copy(
             update={"rubric": [question.rubric_criterion for question in questions.questions]},
         )

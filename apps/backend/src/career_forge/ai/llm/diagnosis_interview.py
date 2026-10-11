@@ -16,9 +16,9 @@ from career_forge.ai.payloads.diagnosis_interview import (
     closed_dimensions_from_transcript,
 )
 from career_forge.ai.prompts.diagnosis_interview import (
-    FINALIZE_SYSTEM,
-    INTERVIEWER_SYSTEM,
-    JUDGE_SYSTEM,
+    finalize_system,
+    interviewer_system,
+    judge_system,
 )
 from career_forge.config import settings
 from career_forge.schemas.diagnosis import DiagnosisResponse
@@ -47,6 +47,8 @@ class DiagnosisInterviewLlm(Protocol):
         intake: DiagnosisIntake,
         cv_signals: CvSignals | None,
         cv_text: str | None,
+        *,
+        locale: str | None = None,
     ) -> BeliefState: ...
 
     async def update_belief(
@@ -55,6 +57,8 @@ class DiagnosisInterviewLlm(Protocol):
         intake: DiagnosisIntake,
         transcript: list[InterviewTurn],
         answers: list[InterviewAnswer],
+        *,
+        locale: str | None = None,
     ) -> BeliefState: ...
 
     async def plan_questions(
@@ -63,12 +67,16 @@ class DiagnosisInterviewLlm(Protocol):
         intake: DiagnosisIntake,
         transcript: list[InterviewTurn],
         round_count: int,
+        *,
+        locale: str | None = None,
     ) -> list[InterviewQuestion]: ...
 
     async def finalize_diagnosis(
         self,
         belief: BeliefState,
         intake: DiagnosisIntake,
+        *,
+        locale: str | None = None,
     ) -> DiagnosisResponse: ...
 
 
@@ -112,6 +120,8 @@ class OpenAiDiagnosisInterviewLlm:
         intake: DiagnosisIntake,
         cv_signals: CvSignals | None,
         cv_text: str | None,
+        *,
+        locale: str | None = None,
     ) -> BeliefState:
         payload = build_judge_user_message(
             task="initialize_belief",
@@ -120,7 +130,7 @@ class OpenAiDiagnosisInterviewLlm:
             cv_text_excerpt=(cv_text or "")[:2000],
         )
         output = await self._client.invoke(
-            system=JUDGE_SYSTEM,
+            system=judge_system(locale),
             user=payload,
             schema=JudgeBeliefOutput,
             error_type=DiagnosisInterviewLlmError,
@@ -133,6 +143,8 @@ class OpenAiDiagnosisInterviewLlm:
         intake: DiagnosisIntake,
         transcript: list[InterviewTurn],
         answers: list[InterviewAnswer],
+        *,
+        locale: str | None = None,
     ) -> BeliefState:
         payload = build_judge_user_message(
             task="update_belief",
@@ -142,13 +154,13 @@ class OpenAiDiagnosisInterviewLlm:
             new_answers=answers,
         )
         output = await self._client.invoke(
-            system=JUDGE_SYSTEM,
+            system=judge_system(locale),
             user=payload,
             schema=JudgeBeliefOutput,
             error_type=DiagnosisInterviewLlmError,
         )
         updated = output.to_belief_state()
-        return apply_transcript_overrides(updated, transcript)
+        return apply_transcript_overrides(updated, transcript, locale=locale)
 
     async def plan_questions(
         self,
@@ -156,6 +168,8 @@ class OpenAiDiagnosisInterviewLlm:
         intake: DiagnosisIntake,
         transcript: list[InterviewTurn],
         round_count: int,
+        *,
+        locale: str | None = None,
     ) -> list[InterviewQuestion]:
         effective = _effective_interviewable(belief, transcript)
         if not effective:
@@ -169,7 +183,7 @@ class OpenAiDiagnosisInterviewLlm:
             max_questions=MAX_QUESTIONS_PER_TURN,
         )
         output = await self._client.invoke(
-            system=INTERVIEWER_SYSTEM,
+            system=interviewer_system(locale),
             user=payload,
             schema=InterviewerOutput,
             error_type=DiagnosisInterviewLlmError,
@@ -192,6 +206,8 @@ class OpenAiDiagnosisInterviewLlm:
         self,
         belief: BeliefState,
         intake: DiagnosisIntake,
+        *,
+        locale: str | None = None,
     ) -> DiagnosisResponse:
         payload = build_judge_user_message(
             task="finalize_diagnosis",
@@ -199,7 +215,7 @@ class OpenAiDiagnosisInterviewLlm:
             belief=belief,
         )
         output = await self._client.invoke(
-            system=FINALIZE_SYSTEM,
+            system=finalize_system(locale),
             user=payload,
             schema=FinalizeDiagnosisOutput,
             error_type=DiagnosisInterviewLlmError,

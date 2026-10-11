@@ -4,12 +4,13 @@ from __future__ import annotations
 
 from career_forge.ai.payloads.diagnosis_interview import closed_dimensions_from_transcript
 from career_forge.schemas.diagnosis_interview import (
-    PROFILE_DIMENSION_LABELS,
     BeliefState,
     InterviewQuestion,
     InterviewTurn,
     RubricDimensionKey,
+    dimension_label,
 )
+from career_forge.services.forge_locale import is_portuguese
 
 COMPOUND_ROUND_ONE = (
     "Tell me the most concrete thing you have built or tried on this path — "
@@ -37,6 +38,35 @@ FOLLOW_UP_BANK: dict[RubricDimensionKey, tuple[str, str]] = {
     "constraints": (
         "What real constraints do you have today (time, language, budget)?",
         "e.g. 8h/week, intermediate English, no paid bootcamp.",
+    ),
+}
+
+COMPOUND_ROUND_ONE_PT = (
+    "Me conta a coisa mais concreta que você construiu ou tentou nesse caminho — "
+    "o que você publicou, com quem, e o que aprendeu.",
+    "ex.: app em grupo na escola, Git básico, deploy na Vercel, um notebook pequeno de RAG.",
+)
+
+FOLLOW_UP_BANK_PT: dict[RubricDimensionKey, tuple[str, str]] = {
+    "motivation_goal": (
+        "O que realmente te motiva a seguir esse caminho agora?",
+        "ex.: quero entregar funcionalidades de produto com IA que tenham impacto real.",
+    ),
+    "background_transfer": (
+        "De onde você vem, e o que da sua trajetória ajuda nessa transição?",
+        "ex.: vim de vendas — explico ideias complexas com clareza.",
+    ),
+    "learning_velocity": (
+        "Com que frequência você pratica, e como mantém a constância?",
+        "ex.: 1h nos dias de semana, projetos no fim de semana.",
+    ),
+    "hands_on_proof": (
+        "Qual é a entrega mais concreta que você já tentou?",
+        "ex.: uma API simples no GitHub, um dashboard, um bot, um harness de eval.",
+    ),
+    "constraints": (
+        "Quais limites reais você tem hoje (tempo, idioma, orçamento)?",
+        "ex.: 8h por semana, inglês intermediário, sem bootcamp pago.",
     ),
 }
 
@@ -76,19 +106,29 @@ def pending_round_two_keys(
     return pending
 
 
+def _script_bank(
+    locale: str | None,
+) -> tuple[tuple[str, str], dict[RubricDimensionKey, tuple[str, str]]]:
+    if is_portuguese(locale):
+        return COMPOUND_ROUND_ONE_PT, FOLLOW_UP_BANK_PT
+    return COMPOUND_ROUND_ONE, FOLLOW_UP_BANK
+
+
 def build_round_questions(
     round_index: int,
     *,
     belief: BeliefState | None = None,
     transcript: list[InterviewTurn] | None = None,
+    locale: str | None = None,
 ) -> list[InterviewQuestion]:
     """Return fixed questions for round_index (0 = practical proof, 1 = context)."""
+    compound, follow_ups = _script_bank(locale)
     if round_index == 0:
-        prompt, example = COMPOUND_ROUND_ONE
+        prompt, example = compound
         return [
             InterviewQuestion(
                 id="q-r1-1",
-                topic=PROFILE_DIMENSION_LABELS["hands_on_proof"],
+                topic=dimension_label("hands_on_proof", locale),
                 rubric_key="hands_on_proof",
                 question=prompt,
                 example_of_answer=example,
@@ -103,11 +143,11 @@ def build_round_questions(
         )
         questions: list[InterviewQuestion] = []
         for index, key in enumerate(keys):
-            prompt, example = FOLLOW_UP_BANK[key]
+            prompt, example = follow_ups[key]
             questions.append(
                 InterviewQuestion(
                     id=f"q-r2-{index + 1}",
-                    topic=PROFILE_DIMENSION_LABELS[key],
+                    topic=dimension_label(key, locale),
                     rubric_key=key,
                     question=prompt,
                     example_of_answer=example,

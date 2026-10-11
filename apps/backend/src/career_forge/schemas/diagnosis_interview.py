@@ -7,6 +7,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from career_forge.schemas.diagnosis import DiagnosisResponse
+from career_forge.output_locale import is_portuguese
 
 # --- Universal profile dimensions (single source of truth) ---
 
@@ -42,6 +43,36 @@ PROFILE_DIMENSION_DESCRIPTIONS: dict[RubricDimensionKey, str] = {
     "constraints": "Hours/week, language, budget, how you study today",
 }
 
+_PROFILE_DIMENSION_LABELS_PT: dict[RubricDimensionKey, str] = {
+    "motivation_goal": "Objetivo",
+    "background_transfer": "De onde você vem",
+    "learning_velocity": "Ritmo de estudo",
+    "hands_on_proof": "Prova prática",
+    "constraints": "Contexto real",
+}
+
+_PROFILE_DIMENSION_DESCRIPTIONS_PT: dict[RubricDimensionKey, str] = {
+    "motivation_goal": "Por que este caminho e o alinhamento com seu objetivo",
+    "background_transfer": "Domínio anterior e hábitos que você traz para a tecnologia",
+    "learning_velocity": "Quanto você pratica, com que frequência e com que constância",
+    "hands_on_proof": "A maior coisa que você construiu, tentou ou publicou",
+    "constraints": "Horas por semana, idioma, orçamento, como você estuda hoje",
+}
+
+
+def dimension_label(key: RubricDimensionKey, locale: str | None = None) -> str:
+    """Sidebar name for one dimension. The rubric key stays English."""
+    if is_portuguese(locale):
+        return _PROFILE_DIMENSION_LABELS_PT[key]
+    return PROFILE_DIMENSION_LABELS[key]
+
+
+def dimension_description(key: RubricDimensionKey, locale: str | None = None) -> str:
+    """Sidebar description for one dimension."""
+    if is_portuguese(locale):
+        return _PROFILE_DIMENSION_DESCRIPTIONS_PT[key]
+    return PROFILE_DIMENSION_DESCRIPTIONS[key]
+
 SATURATION_CONFIDENCE_THRESHOLD = 0.75
 MAX_INTERVIEW_ROUNDS = 2
 MAX_QUESTIONS_PER_TURN = 2
@@ -61,7 +92,7 @@ class RubricDimension(BaseModel):
     status: RubricDimensionStatus = "pending"
     note: str = Field(
         default="",
-        description="Succinct English summary of what was inferred (intake, CV, or answers).",
+        description="Succinct summary of what was inferred (intake, CV, or answers).",
     )
 
 
@@ -206,13 +237,18 @@ def build_rubric_map(
     belief: BeliefState,
     *,
     threshold: float = SATURATION_CONFIDENCE_THRESHOLD,
+    locale: str | None = None,
 ) -> list[RubricMapItem]:
-    """Map belief state to frontend sidebar items (stable profile order)."""
+    """Map belief state to frontend sidebar items (stable profile order).
+
+    Label and description follow the locale of this response. The stored
+    note is the text already generated for that dimension.
+    """
     return [
         RubricMapItem(
             rubric_key=key,
-            label=dim.label,
-            description=PROFILE_DIMENSION_DESCRIPTIONS[key],
+            label=dimension_label(key, locale),
+            description=dimension_description(key, locale),
             confidence=dim.confidence,
             saturated=dim.status == "mapped" and dim.confidence >= threshold,
             status=dim.status,

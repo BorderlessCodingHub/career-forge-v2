@@ -14,16 +14,18 @@ from career_forge.schemas.validation import (
 )
 from career_forge.services.assessment_persistence import persist_assessment_result
 from career_forge.services.assessment_rubric import (
-    QUESTION_HINTS,
     QUESTION_LABELS,
-    QUESTION_TEMPLATES,
+    question_shells,
 )
+from career_forge.services.learner_locale import account_output_locale
 from career_forge.services.roadmap import resolve_skill_node_catalog_entry
 
 
 def build_validation_questions(
     node_id: str,
     session: Session | None = None,
+    *,
+    locale: str | None = None,
 ) -> ValidationQuestionsResponse:
     """Generate three interview questions from the rubric of a catalog or
     persisted AI-generated StudyPlan node (HAC-64)."""
@@ -31,14 +33,15 @@ def build_validation_questions(
     rubric: list[str] = node.get("rubric") or []
     while len(rubric) < 3:
         rubric.append(f"Demonstrate practical mastery of {node['title']}")
+    templates, hints = question_shells(locale)
 
     questions = [
         ValidationQuestion(
             id=f"{node_id}-q{index + 1}",
             index=index + 1,
             label=QUESTION_LABELS[index],
-            prompt=QUESTION_TEMPLATES[index].format(criterion=rubric[index].rstrip(".")),
-            hint=QUESTION_HINTS.get(QUESTION_LABELS[index]),
+            prompt=templates[index].format(criterion=rubric[index].rstrip(".")),
+            hint=hints.get(QUESTION_LABELS[index]),
             rubric_criterion=rubric[index],
         )
         for index in range(3)
@@ -58,7 +61,11 @@ def persist_validation_result(
     result: ValidationResponse,
 ) -> tuple[Validation, UserSkillNodeRow]:
     """Store validation attempt and update user skill node status."""
-    question_payload = build_validation_questions(payload.node_id, session)
+    question_payload = build_validation_questions(
+        payload.node_id,
+        session,
+        locale=account_output_locale(payload.user_id, session),
+    )
     return persist_assessment_result(
         session,
         user_id=payload.user_id,

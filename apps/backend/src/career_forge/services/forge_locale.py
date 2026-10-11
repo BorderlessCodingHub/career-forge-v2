@@ -9,12 +9,14 @@ from __future__ import annotations
 
 from typing import Any
 
+from career_forge.output_locale import forge_output_locale, is_portuguese
 
-def forge_output_locale(stored: str | None) -> str:
-    """English until the learner has chosen Brazilian Portuguese."""
-    if stored == "pt-BR":
-        return "pt-BR"
-    return "en"
+__all__ = [
+    "forge_output_locale",
+    "is_portuguese",
+    "roadmap_language_instruction",
+    "stamp_forge_output_locale",
+]
 
 
 def stamp_forge_output_locale(

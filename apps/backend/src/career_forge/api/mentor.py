@@ -21,6 +21,7 @@ from career_forge.schemas.mentor import (
     MentorRunResponse,
 )
 from career_forge.services import mentor as mentor_service
+from career_forge.services.learner_locale import account_output_locale
 
 router = APIRouter()
 
@@ -52,6 +53,7 @@ async def chat_with_mentor(
         input={
             **payload.model_dump(),
             "context_snapshot": context.model_dump(),
+            "output_locale": account_output_locale(external_id, db),
         },
     )
     store.save(run)
