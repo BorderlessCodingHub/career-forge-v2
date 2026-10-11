@@ -354,6 +354,11 @@ def test_editor_only_operator_cannot_read_or_write_access(
     )
     pilot_delete = raw_client.delete(f"/operator/access/pilot-emails/{email}")
     trail = raw_client.get(f"/operator/access/learners/{email}/audit")
+    provider_read = raw_client.get("/operator/access/provider-switch")
+    provider_write = raw_client.put(
+        "/operator/access/provider-switch",
+        json={"on": True},
+    )
 
     assert read.status_code == 403
     assert cost_pool.status_code == 403
@@ -362,5 +367,7 @@ def test_editor_only_operator_cannot_read_or_write_access(
     assert pilot_add.status_code == 403
     assert pilot_delete.status_code == 403
     assert trail.status_code == 403
+    assert provider_read.status_code == 403
+    assert provider_write.status_code == 403
     assert read.json()["detail"]["code"] == "access_desk_forbidden"
 

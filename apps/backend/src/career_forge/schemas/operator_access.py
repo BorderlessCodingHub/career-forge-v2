@@ -61,6 +61,19 @@ class BillingPilotEmailListResponse(BaseModel):
     emails: list[BillingPilotEmailResponse]
 
 
+class ProviderSwitchWrite(BaseModel):
+    on: bool
+
+
+class ProviderSwitchResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    on: bool
+    run_provider: Literal["direct", "gateway"]
+    operator_email: str | None
+    written_at: datetime | None
+
+
 class OperatorCostPoolResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
