@@ -14,6 +14,7 @@ from career_forge.db.models.knowledge_gap import KnowledgeGap
 from career_forge.db.models.operator import Operator
 from career_forge.db.models.operator_access_audit import OperatorAccessAudit
 from career_forge.db.models.profile import Profile
+from career_forge.db.models.provider_switch import ProviderSwitch
 from career_forge.db.models.skill_node import SkillNode
 from career_forge.db.models.usage_monthly import GLOBAL_USAGE_USER_ID, UsageMonthly
 from career_forge.db.models.revoked_token_jti import RevokedTokenJti
@@ -39,6 +40,7 @@ __all__ = [
     "OperatorAccessAudit",
     "User",
     "Profile",
+    "ProviderSwitch",
     "RevokedTokenJti",
     "SkillContent",
     "SkillNode",

@@ -32,6 +32,8 @@ from career_forge.schemas.operator_access import (
     OperatorAccessPatch,
     OperatorCostPoolResponse,
     OperatorLearnerAccessResponse,
+    ProviderSwitchResponse,
+    ProviderSwitchWrite,
 )
 from career_forge.schemas.operator_content import (
     OperatorContentListResponse,
@@ -65,6 +67,7 @@ from career_forge.services.operator_content import (
     update_content_skill,
 )
 from career_forge.services.operator_otp import request_operator_otp, verify_operator_otp
+from career_forge.services.provider_switch import read_provider_switch, write_provider_switch
 from career_forge.services.embed_allowlist import (
     add_embed_host,
     commit_embed_host_write,
@@ -273,6 +276,26 @@ def delete_operator_embed_host(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     commit_embed_host_write(db)
     return Response(status_code=204)
+
+
+@router.get("/access/provider-switch", response_model=ProviderSwitchResponse)
+def get_operator_provider_switch(
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> ProviderSwitchResponse:
+    require_access_role(principal)
+    return ProviderSwitchResponse.model_validate(read_provider_switch(db))
+
+
+@router.put("/access/provider-switch", response_model=ProviderSwitchResponse)
+def put_operator_provider_switch(
+    body: ProviderSwitchWrite,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> ProviderSwitchResponse:
+    view = write_provider_switch(db, principal=principal, on=body.on)
+    db.commit()
+    return ProviderSwitchResponse.model_validate(view)
 
 
 @router.get("/access/cost-pool", response_model=OperatorCostPoolResponse)

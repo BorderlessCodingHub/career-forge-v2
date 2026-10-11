@@ -69,6 +69,11 @@ check grep -q '"/access/cost-pool"' apps/backend/src/career_forge/api/operator.p
 check test -f apps/backend/src/career_forge/db/models/billing_pilot_email.py
 check test -f apps/backend/alembic/versions/018_billing_pilot_emails.py
 check grep -q '"/access/pilot-emails"' apps/backend/src/career_forge/api/operator.py
+check test -f apps/backend/src/career_forge/db/models/provider_switch.py
+check test -f apps/backend/src/career_forge/services/provider_switch.py
+check test -f apps/backend/alembic/versions/028_provider_switch.py
+check grep -q '"/access/provider-switch"' apps/backend/src/career_forge/api/operator.py
+check grep -q 'OPENROUTER_API_KEY' .env.example
 check file_lacks 'ENTITLEMENT_BILLING_ALLOWLIST|entitlement_billing_allowlist' apps/backend/src/career_forge/services/entitlement.py
 check test -f apps/backend/src/career_forge/services/operator_content.py
 check test -f apps/backend/src/career_forge/db/models/skill_content.py
