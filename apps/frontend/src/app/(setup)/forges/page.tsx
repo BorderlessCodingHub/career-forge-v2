@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { ProductEntryGate } from "@/components/auth";
@@ -83,6 +84,7 @@ function ForgeOverflowMenu({
   onEmailResume,
   onRevoke,
 }: ForgeOverflowMenuProps) {
+  const t = useTranslations("recovery");
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -118,7 +120,7 @@ function ForgeOverflowMenu({
         aria-expanded={open}
         aria-haspopup="menu"
         aria-controls={menuId}
-        aria-label="More forge actions"
+        aria-label={t("moreActions")}
         data-testid={`forge-overflow-${publicId}`}
         disabled={busy}
         onClick={() => onOpenChange(!open)}
@@ -141,7 +143,7 @@ function ForgeOverflowMenu({
               onShare();
             }}
           >
-            {copiedShare ? "Share copied" : "Copy share"}
+            {copiedShare ? t("shareCopied") : t("copyShare")}
           </button>
           <button
             type="button"
@@ -153,7 +155,7 @@ function ForgeOverflowMenu({
               onResume();
             }}
           >
-            {copiedResume ? "Resume copied" : "Copy resume"}
+            {copiedResume ? t("resumeCopied") : t("copyResume")}
           </button>
           {canEmailResume ? (
             <button
@@ -166,7 +168,7 @@ function ForgeOverflowMenu({
                 onEmailResume();
               }}
             >
-              {emailedResume ? "Resume emailed" : "Email resume"}
+              {emailedResume ? t("resumeEmailed") : t("emailResume")}
             </button>
           ) : null}
           <button
@@ -180,7 +182,7 @@ function ForgeOverflowMenu({
               onOpenChange(false);
             }}
           >
-            Revoke share
+            {t("revokeShare")}
           </button>
         </div>
       ) : null}
@@ -198,6 +200,7 @@ export default function ForgesListPage() {
 
 function ForgesListPageContent() {
   const router = useRouter();
+  const t = useTranslations("recovery");
   const [items, setItems] = useState<ForgeArtifactSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [paywall, setPaywall] = useState<PaywallError | null>(null);
@@ -224,7 +227,7 @@ function ForgesListPageContent() {
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to load forges");
+          setError(err instanceof Error ? err.message : t("failedLoad"));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -233,7 +236,7 @@ function ForgesListPageContent() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   async function handleOpen(publicId: string) {
     setBusyId(publicId);
@@ -244,7 +247,7 @@ function ForgesListPageContent() {
       router.push("/roadmap");
     } catch (err) {
       setBusyId(null);
-      setError(err instanceof Error ? err.message : "Failed to open forge");
+      setError(err instanceof Error ? err.message : t("failedOpen"));
     }
   }
 
@@ -263,7 +266,7 @@ function ForgesListPageContent() {
       await navigator.clipboard.writeText(url);
       setCopied(`${publicId}-${kind}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to mint link");
+      setError(err instanceof Error ? err.message : t("failedMint"));
     } finally {
       setBusyId(null);
     }
@@ -278,7 +281,7 @@ function ForgesListPageContent() {
       setMenuOpenId(null);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to email resume link",
+        err instanceof Error ? err.message : t("failedEmail"),
       );
     } finally {
       setBusyId(null);
@@ -292,7 +295,7 @@ function ForgesListPageContent() {
       await revokeShareLink(publicId);
       setCopied(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to revoke share");
+      setError(err instanceof Error ? err.message : t("failedRevoke"));
     } finally {
       setBusyId(null);
     }
@@ -301,7 +304,7 @@ function ForgesListPageContent() {
   async function handleSaveTitle(publicId: string) {
     const next = editTitle.trim();
     if (!next) {
-      setError("Title must not be empty");
+      setError(t("titleEmpty"));
       return;
     }
     setBusyId(`${publicId}-title`);
@@ -313,7 +316,7 @@ function ForgesListPageContent() {
       );
       setEditingId(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to rename forge");
+      setError(err instanceof Error ? err.message : t("failedRename"));
     } finally {
       setBusyId(null);
     }
@@ -326,7 +329,7 @@ function ForgesListPageContent() {
     try {
       const profile = await getMyProfile();
       if (!profile.has_diagnosis || !profile.diagnosis) {
-        setError("No saved diagnosis to reuse.");
+        setError(t("noDiagnosis"));
         setBusyId(null);
         return;
       }
@@ -345,7 +348,7 @@ function ForgesListPageContent() {
         return;
       }
       setError(
-        err instanceof Error ? err.message : "Failed to start forge from profile",
+        err instanceof Error ? err.message : t("failedStart"),
       );
     }
   }
@@ -359,22 +362,19 @@ function ForgesListPageContent() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-semibold text-text-primary">
-              Your forges
+              {t("title")}
             </h1>
-            <p className="mt-2 text-text-secondary">
-              Scan and open a saved roadmap. Rename anytime; share and resume
-              live in the row menu.
-            </p>
+            <p className="mt-2 text-text-secondary">{t("lead")}</p>
           </div>
           <Link href="/" className="text-sm text-accent">
-            Home
+            {t("home")}
           </Link>
         </div>
 
         {hasDiagnosis ? (
           <div className="rounded-md border border-border bg-surface px-4 py-3">
             <p className="text-sm text-text-secondary">
-              Reuse your last diagnosis without re-interviewing.
+              {t("reuse")}
             </p>
             <Button
               className="mt-2"
@@ -383,13 +383,13 @@ function ForgesListPageContent() {
               disabled={busyId !== null}
               onClick={() => void handleReforgeFromProfile()}
             >
-              Forge again from last diagnosis
+              {t("reforge")}
             </Button>
           </div>
         ) : null}
 
         {loading ? (
-          <p className="text-text-secondary">Loading…</p>
+          <p className="text-text-secondary">{t("loading")}</p>
         ) : null}
         {paywall ? (
           <PaywallPanel checkoutAvailable={paywall.checkoutAvailable} />
@@ -401,9 +401,9 @@ function ForgesListPageContent() {
         ) : null}
         {!loading && items.length === 0 ? (
           <p className="text-text-secondary">
-            No forges yet.{" "}
+            {t("empty")}{" "}
             <Link href="/" className="text-accent">
-              Start a new one
+              {t("startOne")}
             </Link>
             .
           </p>
@@ -432,14 +432,14 @@ function ForgesListPageContent() {
                         disabled={busyId !== null}
                         onClick={() => void handleSaveTitle(item.public_id)}
                       >
-                        Save
+                        {t("save")}
                       </Button>
                       <Button
                         variant="ghost"
                         disabled={busyId !== null}
                         onClick={() => setEditingId(null)}
                       >
-                        Cancel
+                        {t("cancel")}
                       </Button>
                     </div>
                   ) : (
@@ -447,7 +447,7 @@ function ForgesListPageContent() {
                       <span className="truncate">{forgeDisplayTitle(item)}</span>
                       {item.is_active ? (
                         <span className="ml-2 align-middle text-xs font-medium text-accent-mint">
-                          active
+                          {t("active")}
                         </span>
                       ) : null}
                     </p>
@@ -462,7 +462,7 @@ function ForgesListPageContent() {
                     disabled={busyId !== null}
                     onClick={() => void handleOpen(item.public_id)}
                   >
-                    Open
+                    {t("open")}
                   </Button>
                   {editingId !== item.public_id ? (
                     <Button
@@ -475,7 +475,7 @@ function ForgesListPageContent() {
                         setEditTitle(item.title);
                       }}
                     >
-                      Rename
+                      {t("rename")}
                     </Button>
                   ) : null}
                   {editingId !== item.public_id ? (

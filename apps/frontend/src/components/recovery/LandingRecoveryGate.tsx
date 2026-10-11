@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { GoalPicker } from "@/components/diagnosis";
@@ -30,6 +31,7 @@ function pickContinueTarget(items: ForgeArtifactSummary[]): ForgeArtifactSummary
 
 export function LandingRecoveryGate() {
   const router = useRouter();
+  const t = useTranslations("recovery");
   const [state, setState] = useState<GateState>({ status: "loading" });
   const [busy, setBusy] = useState(false);
   const [paywall, setPaywall] = useState<PaywallError | null>(null);
@@ -51,8 +53,7 @@ export function LandingRecoveryGate() {
         setState({ status: "ready", items, hasDiagnosis });
       } catch (err) {
         if (cancelled) return;
-        const message =
-          err instanceof Error ? err.message : "Failed to load forges";
+        const message = err instanceof Error ? err.message : t("failedLoad");
         // Fail open into goal picker so onboarding still works.
         setState({ status: "error", message });
       }
@@ -60,7 +61,7 @@ export function LandingRecoveryGate() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   async function handleContinue(items: ForgeArtifactSummary[]) {
     const target = pickContinueTarget(items);
@@ -72,7 +73,7 @@ export function LandingRecoveryGate() {
       setBusy(false);
       setState({
         status: "error",
-        message: err instanceof Error ? err.message : "Failed to open forge",
+        message: err instanceof Error ? err.message : t("failedOpen"),
       });
     }
   }
@@ -86,7 +87,7 @@ export function LandingRecoveryGate() {
         setBusy(false);
         setState({
           status: "error",
-          message: "No saved diagnosis to reuse.",
+          message: t("noDiagnosis"),
         });
         return;
       }
@@ -109,7 +110,7 @@ export function LandingRecoveryGate() {
         message:
           err instanceof Error
             ? err.message
-            : "Failed to start forge from profile",
+            : t("failedStart"),
       });
     }
   }
@@ -118,7 +119,7 @@ export function LandingRecoveryGate() {
     return (
       <main className="min-h-screen grid-dots flex items-center justify-center p-8">
         <p className="text-text-secondary" data-testid="landing-recovery-loading">
-          Checking your forges…
+          {t("checking")}
         </p>
       </main>
     );
@@ -134,12 +135,9 @@ export function LandingRecoveryGate() {
           <div className="mx-auto max-w-lg space-y-6">
             <div>
               <h1 className="text-3xl font-semibold text-text-primary">
-                Welcome back
+                {t("welcome")}
               </h1>
-              <p className="mt-2 text-text-secondary">
-                You have a saved diagnosis. Forge again without re-interviewing,
-                or start from scratch.
-              </p>
+              <p className="mt-2 text-text-secondary">{t("savedDiagnosis")}</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button
@@ -147,7 +145,7 @@ export function LandingRecoveryGate() {
                 disabled={busy}
                 onClick={() => void handleReforgeFromProfile()}
               >
-                Forge again from last diagnosis
+                {t("reforge")}
               </Button>
               <Button
                 variant="ghost"
@@ -155,7 +153,7 @@ export function LandingRecoveryGate() {
                 disabled={busy}
                 onClick={() => setState({ status: "new-forge", items: [] })}
               >
-                New from scratch
+                {t("newFromScratch")}
               </Button>
             </div>
             {paywall ? (
@@ -181,7 +179,7 @@ export function LandingRecoveryGate() {
             data-testid="landing-recovery-fallback"
             onClick={() => setState({ status: "empty", hasDiagnosis: false })}
           >
-            Start new forge
+            {t("startNew")}
           </Button>
         </div>
       </main>
@@ -199,16 +197,17 @@ export function LandingRecoveryGate() {
       <div className="mx-auto max-w-lg space-y-6">
         <div>
           <h1 className="text-3xl font-semibold text-text-primary">
-            Welcome back
+            {t("welcome")}
           </h1>
           <p className="mt-2 text-text-secondary">
-            You have {items.length} saved forge{items.length === 1 ? "" : "s"}.
-            Continue where you left off, browse all, or start a new one.
+            {items.length === 1
+              ? t("savedOne", { count: items.length })
+              : t("savedMany", { count: items.length })}
           </p>
         </div>
 
         <div className="rounded-md border border-border bg-surface px-4 py-3">
-          <p className="text-sm text-text-secondary">Last forge</p>
+          <p className="text-sm text-text-secondary">{t("lastForge")}</p>
           <p className="mt-1 font-medium text-text-primary">{last.title}</p>
           {last.goal_id ? (
             <p className="mt-0.5 text-sm text-text-secondary">{last.goal_id}</p>
@@ -221,7 +220,7 @@ export function LandingRecoveryGate() {
             disabled={busy}
             onClick={() => void handleContinue(items)}
           >
-            Continue
+            {t("continue")}
           </Button>
           <Button
             variant="ghost"
@@ -229,7 +228,7 @@ export function LandingRecoveryGate() {
             disabled={busy}
             onClick={() => router.push("/forges")}
           >
-            View all
+            {t("viewAll")}
           </Button>
           {hasDiagnosis ? (
             <Button
@@ -238,7 +237,7 @@ export function LandingRecoveryGate() {
               disabled={busy}
               onClick={() => void handleReforgeFromProfile()}
             >
-              Forge again from last diagnosis
+              {t("reforge")}
             </Button>
           ) : null}
           <Button
@@ -247,7 +246,7 @@ export function LandingRecoveryGate() {
             disabled={busy}
             onClick={() => setState({ status: "new-forge", items })}
           >
-            New forge
+            {t("newForge")}
           </Button>
         </div>
         {paywall ? (
