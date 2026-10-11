@@ -27,7 +27,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Membership no perfil | **Done** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) — PR #97. Alembic `024_borderless_profile_access`. Sem `BORDERLESS_TOKEN_ENCRYPTION_KEY` o processo não sobe no modo senha |
 | Freemium | **Done** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — PR #99. Alembic `027_lifetime_forge_started_at` |
 | Senha do Career Forge | **Done** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) — PR #98. Alembic `025_career_forge_password` e `026_email_confirmed_at`. A sessão abre no link |
-| Dual language — interface | **Merged** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #92. Alembic `023_ui_locale`. O catálogo pt-BR é rascunho; a issue não fecha antes da revisão humana |
+| Dual language — interface | **Merged** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #100 (`a088da6`) catálogos do chrome; PR #92 o switch e Alembic `023_ui_locale`. O catálogo pt-BR é rascunho; a issue não fecha antes da revisão humana. O texto que o modelo devolve é [CAR-133](https://linear.app/career-forge-v2/issue/CAR-133) |
 | Emails no idioma | **Merged** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — PR #93. O rascunho pt-BR não é enviado; a issue não fecha antes da revisão humana |
 | Roadmap no idioma | **Done** | [V3a: Forge roadmap in the learner locale](https://linear.app/career-forge-v2/issue/CAR-132) — PR #94. O prompt fica em inglês e, na largada, pede o idioma da conta |
 | Chaves live | **[S]** | [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) e um Checkout sandbox. Não bloqueia os trilhos acima. |
@@ -135,11 +135,13 @@ Inglês é o padrão. pt-BR é opt-in. A URL não muda. `next-intl` escolhe o ca
 
 Sem login, só o cookie. No login, se a pessoa mexeu no controle, o cookie grava por cima da conta. Logada, o controle grava os dois. Sem escolha gravada, interface e email ficam em inglês.
 
-A interface do learner entra nos catálogos, inclusive a casca de `/learn` e de Reference. O markdown da lição e o corpo de um embed de fora ficam como foram publicados. O Operator console fica em inglês. Chave pt-BR sem revisão humana cai para o inglês. A máquina pode rascunhar o catálogo. A issue não fecha antes dessa revisão.
+A interface do learner entra nos catálogos, inclusive a casca de `/learn` e de Reference. O markdown da lição e o corpo de um embed de fora ficam como foram publicados. O Operator console fica em inglês. Chave pt-BR sem revisão humana cai para o inglês. A máquina pode rascunhar o catálogo. A issue não fecha antes dessa revisão. Os catálogos do chrome entraram no PR #100 (`a088da6`).
+
+O texto que a pessoa lê do modelo (pergunta, nota da barra, validação, mentor, tutor, frase de pesquisa do forge) é [CAR-133](https://linear.app/career-forge-v2/issue/CAR-133). O corpo do prompt continua em inglês, com uma instrução de idioma. Um artefato já gerado não é reescrito.
 
 Os emails do learner (código, continuidade, cobrança, resume) usam o idioma gravado na conta. O email do Operator fica em inglês. Mesma regra de rascunho e revisão.
 
-O prompt do forge continua em inglês e, na largada, pede o roadmap no idioma da conta. Trocar no meio do stream não reescreve esse forge. O próximo usa o idioma novo. Um roadmap já existente não é traduzido. Diagnosis, validation e mentor continuam em inglês. O texto em pt-BR é português do Brasil. Entregue no PR #94 (`151cfe8`).
+O prompt do forge continua em inglês e, na largada, pede o roadmap no idioma da conta. Trocar no meio do stream não reescreve esse forge. O próximo usa o idioma novo. Um roadmap já existente não é traduzido. O texto em pt-BR é português do Brasil. Entregue no PR #94 (`151cfe8`).
 
 ---
 
@@ -152,7 +154,7 @@ Ficam sem fase até uma decisão futura, não como V3b:
 - Continuidade dentro do produto (bell, banner)
 - Faixa de erros recentes no Operator
 
-Fora deste plano: Discord, NocoDB, Job-RAG, domínio standalone, certificação, diagnosis hard-block, streaks, badges, checkout na Welcome, prompts traduzidos, diagnosis/validation/mentor em pt-BR, Stripe no Operator console, SSO além da Borderless.
+Fora deste plano: Discord, NocoDB, Job-RAG, domínio standalone, certificação, diagnosis hard-block, streaks, badges, checkout na Welcome, corpos de prompt traduzidos, Stripe no Operator console, SSO além da Borderless.
 
 ---
 
