@@ -12,6 +12,7 @@ Immutable **business + architecture decisions** for Career Forge. Agents must re
 | [ADR-006](./ADR-006-sign-out-jti-revocation.md) | **Accepted** | Sign out + JWT jti revocation |
 | [ADR-007](./ADR-007-reference-viewer.md) | **Accepted** | Reference viewer `/reference` — not overlay, not `/learn` |
 | [ADR-008](./ADR-008-borderless-password-credential-check.md) | **Accepted** | Borderless password = credential check; Career Forge stays IdP |
+| [ADR-009](./ADR-009-provider-switch-openrouter.md) | **Accepted** | Provider switch — OpenRouter behind one Access desk control |
 
 v2 execution decisions (cost pool, auth platform, goals): [V2-PLAN.md](../V2-PLAN.md) decision log.
 
