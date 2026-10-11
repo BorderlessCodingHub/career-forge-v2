@@ -27,7 +27,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Membership no perfil | **Done** | [V3a: Read membership from the Borderless profile](https://linear.app/career-forge-v2/issue/CAR-128) — PR #97. Alembic `024_borderless_profile_access`. Sem `BORDERLESS_TOKEN_ENCRYPTION_KEY` o processo não sobe no modo senha |
 | Freemium | **Done** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — PR #99. Alembic `027_lifetime_forge_started_at` |
 | Senha do Career Forge | **Done** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) — PR #98. Alembic `025_career_forge_password` e `026_email_confirmed_at`. A sessão abre no link |
-| Dual language — interface | **Done** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #100 (`a088da6`) catálogos do chrome; PR #92 o switch e Alembic `023_ui_locale`. O texto que o modelo devolve é [CAR-133](https://linear.app/career-forge-v2/issue/CAR-133) |
+| Dual language — interface | **Done** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #100 (`a088da6`) catálogos do chrome; PR #92 o switch e Alembic `023_ui_locale`. O texto que o modelo devolve está **Done** — [CAR-133](https://linear.app/career-forge-v2/issue/CAR-133) PR #101 (`59e26da`) |
 | Emails no idioma | **Merged** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — PR #93. O rascunho pt-BR não é enviado; a issue não fecha antes da revisão humana |
 | Roadmap no idioma | **Done** | [V3a: Forge roadmap in the learner locale](https://linear.app/career-forge-v2/issue/CAR-132) — PR #94. O prompt fica em inglês e, na largada, pede o idioma da conta |
 | Chaves live | **[S]** | [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) e um Checkout sandbox. Não bloqueia os trilhos acima. |
@@ -137,7 +137,7 @@ Sem login, só o cookie. No login, se a pessoa mexeu no controle, o cookie grava
 
 A interface do learner entra nos catálogos, inclusive a casca de `/learn` e de Reference. O markdown da lição e o corpo de um embed de fora ficam como foram publicados. O Operator console fica em inglês. Uma chave pt-BR vazia cai para o inglês. Os catálogos do chrome entraram no PR #100 (`a088da6`) e a issue está fechada.
 
-O texto que a pessoa lê do modelo (pergunta, nota da barra, validação, mentor, tutor, frase de pesquisa do forge) é [CAR-133](https://linear.app/career-forge-v2/issue/CAR-133). O corpo do prompt continua em inglês, com uma instrução de idioma. Um artefato já gerado não é reescrito.
+O texto que a pessoa lê do modelo (pergunta, nota da barra, validação, mentor, tutor, frase de pesquisa do forge) está entregue em [CAR-133](https://linear.app/career-forge-v2/issue/CAR-133) — PR #101 (`59e26da`). O corpo do prompt continua em inglês, com uma instrução de idioma. Um artefato já gerado não é reescrito. A welcome de retorno e a lista de forges usam os catálogos.
 
 Os emails do learner (código, continuidade, cobrança, resume) usam o idioma gravado na conta. O email do Operator fica em inglês. Mesma regra de rascunho e revisão.
 
