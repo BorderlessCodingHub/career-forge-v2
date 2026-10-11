@@ -43,8 +43,16 @@ class RunCostRecord:
     error: str | None = None
 
 
+def bare_configured_model(model_name: str) -> str:
+    """Drop a gateway ``openai/`` prefix so cost burn keeps the configured name."""
+    name = model_name.strip()
+    if name.lower().startswith("openai/"):
+        return name.split("/", 1)[1]
+    return name
+
+
 def normalize_model_key(model_name: str) -> str:
-    name = model_name.strip().lower()
+    name = bare_configured_model(model_name).lower()
     # Prefer longest prefix match so gpt-5.4-mini beats gpt-5.4.
     candidates = sorted(MODEL_PRICING_USD_PER_1M.keys(), key=len, reverse=True)
     for key in candidates:
@@ -71,6 +79,36 @@ def cost_usd_from_usage(usage_by_model: dict[str, dict[str, Any]]) -> float:
         total += cached / 1_000_000 * prices["cached_input"]
         total += output_tokens / 1_000_000 * prices["output"]
     return total
+
+
+def group_usage_by_configured_model(
+    usage_by_model: dict[str, dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    """Collapse ``openai/gpt-5.4`` and ``gpt-5.4`` into one usage row."""
+    grouped: dict[str, dict[str, Any]] = {}
+    for model_name, usage in usage_by_model.items():
+        key = bare_configured_model(str(model_name))
+        bucket = grouped.setdefault(key, {})
+        _merge_usage(bucket, usage)
+    return grouped
+
+
+def _merge_usage(bucket: dict[str, Any], usage: dict[str, Any]) -> None:
+    for field, value in usage.items():
+        if isinstance(value, dict):
+            nested = bucket.get(field)
+            if not isinstance(nested, dict):
+                nested = {}
+                bucket[field] = nested
+            for inner_key, inner_value in value.items():
+                if isinstance(inner_value, int):
+                    nested[inner_key] = int(nested.get(inner_key) or 0) + inner_value
+                elif inner_key not in nested:
+                    nested[inner_key] = inner_value
+        elif isinstance(value, int):
+            bucket[field] = int(bucket.get(field) or 0) + value
+        elif field not in bucket:
+            bucket[field] = value
 
 
 def to_brl(usd: float, fx: float = DEFAULT_FX_USD_BRL) -> float:

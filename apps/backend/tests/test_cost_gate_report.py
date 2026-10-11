@@ -21,6 +21,17 @@ def test_normalize_prefers_mini_over_base() -> None:
     assert normalize_model_key("gpt-5.4-2026-03-05") == "gpt-5.4"
 
 
+def test_gateway_prefix_and_bare_name_are_one_cost_row() -> None:
+    assert normalize_model_key("openai/gpt-5.4") == "gpt-5.4"
+    assert normalize_model_key("gpt-5.4") == "gpt-5.4"
+    assert normalize_model_key("openai/gpt-5.4-mini") == "gpt-5.4-mini"
+    usage = {
+        "openai/gpt-5.4": {"input_tokens": 1_000_000, "output_tokens": 0},
+        "gpt-5.4": {"input_tokens": 1_000_000, "output_tokens": 0},
+    }
+    assert cost_usd_from_usage(usage) == pytest.approx(2 * 2.50)
+
+
 def test_cost_usd_accounts_for_cache() -> None:
     usage = {
         "gpt-5.4-2026-03-05": {

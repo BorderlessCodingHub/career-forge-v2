@@ -25,6 +25,7 @@ from career_forge.schemas.profile_diagnosis import (
 )
 from career_forge.services.entitlement import require_diagnosis_entitlement
 from career_forge.services.profile_diagnosis import confirm_diagnosis
+from career_forge.services.provider_switch import stamp_run_provider
 
 router = APIRouter()
 
@@ -39,10 +40,13 @@ async def create_diagnosis(
     require_diagnosis_entitlement(db, external_id)
     payload = body.model_copy(update={"user_id": external_id})
     store = get_graph_run_store()
-    run = GraphRun(
-        graph_name="diagnosis",
-        user_id=external_id,
-        input=payload.model_dump(),
+    run = stamp_run_provider(
+        GraphRun(
+            graph_name="diagnosis",
+            user_id=external_id,
+            input=payload.model_dump(),
+        ),
+        db,
     )
     store.save(run)
 

@@ -6,6 +6,7 @@ from collections.abc import AsyncIterator
 from typing import Any
 
 from career_forge.ai.factory import AgentFactory, get_agent_factory
+from career_forge.ai.llm.model_chat import bound_run_provider
 from career_forge.ai.graphs.base import GraphRunnable
 from career_forge.ai.langsmith_capture import (
     UsageCaptureBag,
@@ -104,14 +105,15 @@ class GraphExecutor:
         parent_trace_id: str | None = None
 
         try:
-            with usage_capture_context(usage_bag):
-                with langsmith_parent_trace(run, config) as parent_trace_id:
-                    async for lc_event in self._astream_events_v2(runnable, run.input, config):
-                        record_raw_event(run, lc_event)
-                        payload = self._normalize_to_payload(lc_event, run.graph_name)
-                        if payload is not None:
-                            record_normalized_event(run, payload)
-                            yield payload
+            with bound_run_provider(run.run_provider):
+                with usage_capture_context(usage_bag):
+                    with langsmith_parent_trace(run, config) as parent_trace_id:
+                        async for lc_event in self._astream_events_v2(runnable, run.input, config):
+                            record_raw_event(run, lc_event)
+                            payload = self._normalize_to_payload(lc_event, run.graph_name)
+                            if payload is not None:
+                                record_normalized_event(run, payload)
+                                yield payload
         finally:
             apply_langsmith_capture(
                 run,

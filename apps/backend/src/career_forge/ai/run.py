@@ -41,6 +41,7 @@ class GraphRun(BaseModel):
 
     id: str = Field(default_factory=lambda: str(uuid4()))
     graph_name: str
+    run_provider: Literal["direct", "gateway"] = "direct"
     user_id: str
     status: GraphRunStatus = "pending"
     input: dict[str, Any] = Field(default_factory=dict)

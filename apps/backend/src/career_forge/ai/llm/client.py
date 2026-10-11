@@ -12,7 +12,15 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, ValidationError
 
 from career_forge.ai.llm.errors import LlmError, RETRY_MESSAGE
+from career_forge.ai.llm.model_chat import (
+    OPENROUTER_BASE_URL,
+    ModelGatewayKeyMissing,
+    configured_model_name,
+    current_run_provider,
+    wire_model_name,
+)
 from career_forge.ai.tracing import LlmTraceContext, trace_config_for_invoke
+from career_forge.db.models.provider_switch import DIRECT_PROVIDER, GATEWAY_PROVIDER
 
 logger = logging.getLogger(__name__)
 
@@ -36,10 +44,14 @@ class StructuredLlmClient:
         if not cleaned:
             msg = "LLM model name must be non-empty"
             raise ValueError(msg)
-        self._model = cleaned
+        self._model = configured_model_name(cleaned)
         self._temperature = temperature
         self._method = method
-        self._chat = ChatOpenAI(model=self._model, temperature=self._temperature)
+        # Diagnosis interview stays on the Direct provider until the session pin.
+        self._chat = ChatOpenAI(
+            model=wire_model_name(self._model, DIRECT_PROVIDER),
+            temperature=self._temperature,
+        )
 
     @property
     def model(self) -> str:
@@ -79,9 +91,10 @@ class StructuredToolClient:
     """Synchronous structured-output client for fire-and-forget / sync tools.
 
     Consolidates the boilerplate shared by the gap/tutor/mcq/planner tools:
-    OpenAI key check, env-based model resolution, `ChatOpenAI` construction and
+    key check, env-based model resolution, `ChatOpenAI` construction and
     `with_structured_output(...).invoke(...)`. Raises ``RuntimeError`` when the
-    key is missing so callers fall back deterministically (tests / offline).
+    Direct provider key is missing so callers fall back deterministically.
+    A missing Model gateway key raises ``ModelGatewayKeyMissing`` instead.
     """
 
     def __init__(
@@ -95,12 +108,29 @@ class StructuredToolClient:
         model: str | None = None,
         api_key: str | None = None,
     ) -> None:
+        configured = model or os.getenv(model_env, default_model)
+        self._model = configured_model_name(configured)
+        self._method = method
+        provider = current_run_provider()
+        if provider == GATEWAY_PROVIDER:
+            gateway_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+            if not gateway_key:
+                raise ModelGatewayKeyMissing()
+            self._chat = ChatOpenAI(
+                model=wire_model_name(self._model, GATEWAY_PROVIDER),
+                api_key=gateway_key,
+                base_url=OPENROUTER_BASE_URL,
+                temperature=temperature,
+            )
+            return
         resolved_key = (api_key if api_key is not None else os.getenv("OPENAI_API_KEY", "")).strip()
         if not resolved_key:
             raise RuntimeError(key_error)
-        self._model = model or os.getenv(model_env, default_model)
-        self._method = method
-        self._chat = ChatOpenAI(model=self._model, api_key=resolved_key, temperature=temperature)
+        self._chat = ChatOpenAI(
+            model=wire_model_name(self._model, DIRECT_PROVIDER),
+            api_key=resolved_key,
+            temperature=temperature,
+        )
 
     @property
     def model(self) -> str:

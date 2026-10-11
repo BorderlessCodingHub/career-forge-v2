@@ -14,6 +14,7 @@ from career_forge.db.session import SessionLocal
 def graph_run_to_record_fields(run: GraphRun) -> dict:
     return {
         "graph_name": run.graph_name,
+        "run_provider": run.run_provider,
         "user_id": run.user_id,
         "status": run.status,
         "input": run.input,
@@ -37,6 +38,7 @@ def record_to_graph_run(record: GraphRunRecord) -> GraphRun:
     return GraphRun(
         id=str(record.id),
         graph_name=record.graph_name,
+        run_provider=record.run_provider,  # type: ignore[arg-type]
         user_id=record.user_id,
         status=record.status,  # type: ignore[arg-type]
         input=record.input,

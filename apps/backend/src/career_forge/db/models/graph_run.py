@@ -6,22 +6,35 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, Float, String, Text, func
+from sqlalchemy import Boolean, CheckConstraint, DateTime, Float, String, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from career_forge.db.base import Base
+from career_forge.db.models.provider_switch import DIRECT_PROVIDER
 
 
 class GraphRunRecord(Base):
     """Persisted GraphRun — mirrors ``career_forge.ai.run.GraphRun``."""
 
     __tablename__ = "graph_runs"
+    __table_args__ = (
+        CheckConstraint(
+            "run_provider IN ('direct', 'gateway')",
+            name="ck_graph_runs_run_provider",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     graph_name: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    run_provider: Mapped[str] = mapped_column(
+        String(16),
+        nullable=False,
+        default=DIRECT_PROVIDER,
+        server_default=DIRECT_PROVIDER,
+    )
     user_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="pending")
     input: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)

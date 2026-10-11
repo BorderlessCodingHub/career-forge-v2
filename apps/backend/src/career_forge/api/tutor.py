@@ -23,6 +23,7 @@ from career_forge.schemas.tutor import (
 )
 from career_forge.services import tutor as tutor_service
 from career_forge.services.learner_locale import account_output_locale
+from career_forge.services.provider_switch import stamp_run_provider
 
 router = APIRouter()
 
@@ -52,14 +53,17 @@ async def chat_with_tutor(
 
     store = get_graph_run_store()
     run = with_trace_input(
-        GraphRun(
-            graph_name="tutor",
-            user_id=external_id,
-            input={
-                **payload.model_dump(),
-                "context_snapshot": context.model_dump(),
-                "output_locale": account_output_locale(external_id, db),
-            },
+        stamp_run_provider(
+            GraphRun(
+                graph_name="tutor",
+                user_id=external_id,
+                input={
+                    **payload.model_dump(),
+                    "context_snapshot": context.model_dump(),
+                    "output_locale": account_output_locale(external_id, db),
+                },
+            ),
+            db,
         )
     )
     store.save(run)
