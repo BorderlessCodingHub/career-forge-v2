@@ -10,13 +10,16 @@ import {
   getOperatorLearnerAccess,
   getOperatorLearnerAccessAudit,
   getOperatorPilotEmails,
+  getOperatorProviderSwitch,
   patchOperatorLearnerAccess,
   removeOperatorPilotEmail,
+  writeOperatorProviderSwitch,
   type OperatorAccessAuditEntry,
   type OperatorAccessPatch,
   type OperatorCostPool,
   type OperatorLearnerAccess,
   type OperatorPilotEmail,
+  type OperatorProviderSwitch,
 } from "@/lib/operator-console";
 
 function formatBrl(value: number): string {
@@ -86,6 +89,109 @@ function CostStrip({
       <p className="mt-2 text-[11px] text-text-muted">
         {pool.billable_runs} billable runs · {pool.forge_runs} forge runs
       </p>
+    </section>
+  );
+}
+
+function formatWrittenAt(value: string): string {
+  return `${new Date(value).toLocaleString("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  })} UTC`;
+}
+
+function SwitchNotice({ children }: { children: string }) {
+  return (
+    <p
+      className="mt-3 max-w-2xl rounded-md border border-red-900 bg-red-950 px-3 py-2 text-sm text-red-200"
+      role="alert"
+      data-testid="operator-provider-switch-error"
+    >
+      {children}
+    </p>
+  );
+}
+
+function ProviderSwitchPanel({
+  choice,
+  saving,
+  error,
+  onWrite,
+}: {
+  choice: OperatorProviderSwitch | null;
+  saving: boolean;
+  error: string | null;
+  onWrite: (on: boolean) => void;
+}) {
+  if (!choice) {
+    if (error) {
+      return (
+        <section
+          className="rounded-card border border-border bg-surface p-5 sm:p-6"
+          data-testid="operator-provider-switch"
+        >
+          <h3 className="text-base font-semibold text-text-primary">Provider switch</h3>
+          <SwitchNotice>{error}</SwitchNotice>
+        </section>
+      );
+    }
+    return (
+      <div
+        className="h-[4.5rem] animate-pulse rounded-card border border-border bg-surface"
+        data-testid="operator-provider-switch-loading"
+      />
+    );
+  }
+
+  const gateway = choice.run_provider === "gateway";
+  const label = gateway ? "Model gateway" : "Direct provider";
+
+  return (
+    <section
+      className="rounded-card border border-border bg-surface p-5 sm:p-6"
+      data-testid="operator-provider-switch"
+    >
+      <h3 className="text-base font-semibold text-text-primary">Provider switch</h3>
+      <p className="mt-1 max-w-2xl text-xs leading-5 text-text-secondary">
+        Chooses the Run provider for model chat and Forge search. One switch for the product.
+      </p>
+      <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+        Current choice
+      </p>
+      <p className="mt-1 text-sm text-text-primary" data-testid="operator-provider-switch-choice">
+        {label}
+      </p>
+      {choice.operator_email && choice.written_at ? (
+        <div className="mt-1">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+            Last write
+          </p>
+          <p className="mt-1 text-xs text-text-muted" data-testid="operator-provider-switch-writer">
+            {choice.operator_email} · {formatWrittenAt(choice.written_at)}
+          </p>
+        </div>
+      ) : null}
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button
+          type="button"
+          disabled={saving || gateway}
+          data-testid="operator-provider-switch-arm"
+          onClick={() => onWrite(true)}
+        >
+          Arm Model gateway
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          disabled={saving || !gateway}
+          data-testid="operator-provider-switch-disarm"
+          onClick={() => onWrite(false)}
+        >
+          Disarm to Direct provider
+        </Button>
+      </div>
+      {error ? <SwitchNotice>{error}</SwitchNotice> : null}
     </section>
   );
 }
@@ -378,13 +484,7 @@ function AccessCard({
                   {formatAuditValue(entry.after)}
                 </p>
                 <p className="mt-1 text-[11px] text-text-muted">
-                  {entry.actor_email ?? entry.actor_type} ·{" "}
-                  {new Date(entry.created_at).toLocaleString("en-GB", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                    timeZone: "UTC",
-                  })}{" "}
-                  UTC
+                  {entry.actor_email ?? entry.actor_type} · {formatWrittenAt(entry.created_at)}
                 </p>
               </li>
             ))}
@@ -402,6 +502,9 @@ function AccessCard({
 export function AccessDesk() {
   const [pool, setPool] = useState<OperatorCostPool | null>(null);
   const [poolError, setPoolError] = useState<string | null>(null);
+  const [providerSwitch, setProviderSwitch] = useState<OperatorProviderSwitch | null>(null);
+  const [providerSwitchSaving, setProviderSwitchSaving] = useState(false);
+  const [providerSwitchError, setProviderSwitchError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [pilotEmails, setPilotEmails] = useState<OperatorPilotEmail[]>([]);
   const [pilotLoading, setPilotLoading] = useState(true);
@@ -422,6 +525,30 @@ export function AccessDesk() {
         ),
       );
   }, []);
+
+  useEffect(() => {
+    getOperatorProviderSwitch()
+      .then(setProviderSwitch)
+      .catch((cause) =>
+        setProviderSwitchError(
+          cause instanceof Error ? cause.message : "Could not load the Provider switch.",
+        ),
+      );
+  }, []);
+
+  async function writeSwitch(on: boolean) {
+    setProviderSwitchSaving(true);
+    setProviderSwitchError(null);
+    try {
+      setProviderSwitch(await writeOperatorProviderSwitch(on));
+    } catch (cause) {
+      setProviderSwitchError(
+        cause instanceof Error ? cause.message : "Could not write the Provider switch.",
+      );
+    } finally {
+      setProviderSwitchSaving(false);
+    }
+  }
 
   useEffect(() => {
     getOperatorPilotEmails()
@@ -520,12 +647,21 @@ export function AccessDesk() {
       </p>
       <h2 className="mt-2 text-2xl font-semibold text-text-primary">Learner access</h2>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
-        Look up a learner by email, manage audited access grants, and inspect the
-        read-only monthly cost pool.
+        Look up a learner by email, manage audited access grants, set the Provider
+        switch, and inspect the read-only monthly cost pool.
       </p>
 
       <div className="mt-6">
         <CostStrip pool={pool} error={poolError} />
+      </div>
+
+      <div className="mt-6 max-w-4xl">
+        <ProviderSwitchPanel
+          choice={providerSwitch}
+          saving={providerSwitchSaving}
+          error={providerSwitchError}
+          onWrite={(on) => void writeSwitch(on)}
+        />
       </div>
 
       <div className="mt-6 max-w-4xl">

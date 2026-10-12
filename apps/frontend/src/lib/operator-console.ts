@@ -41,6 +41,13 @@ export type OperatorPilotEmail = {
   created_by_operator_id: number | null;
 };
 
+export type OperatorProviderSwitch = {
+  on: boolean;
+  run_provider: "direct" | "gateway";
+  operator_email: string | null;
+  written_at: string | null;
+};
+
 export type OperatorAccessPatch = {
   operator_membership_label?: "base" | "psp" | null;
   billing_entitled?: boolean;
@@ -176,6 +183,17 @@ export function signOutOperator(): Promise<void> {
 
 export function getOperatorCostPool(): Promise<OperatorCostPool> {
   return operatorFetch<OperatorCostPool>("/operator/access/cost-pool");
+}
+
+export function getOperatorProviderSwitch(): Promise<OperatorProviderSwitch> {
+  return operatorFetch<OperatorProviderSwitch>("/operator/access/provider-switch");
+}
+
+export function writeOperatorProviderSwitch(on: boolean): Promise<OperatorProviderSwitch> {
+  return operatorFetch<OperatorProviderSwitch>("/operator/access/provider-switch", {
+    method: "PUT",
+    body: JSON.stringify({ on }),
+  });
 }
 
 export async function getOperatorPilotEmails(): Promise<OperatorPilotEmail[]> {

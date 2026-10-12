@@ -9,7 +9,10 @@ import {
   getOperatorLearnerAccess,
   getOperatorLearnerAccessAudit,
   getOperatorPilotEmails,
+  getOperatorProviderSwitch,
+  OperatorApiError,
   removeOperatorPilotEmail,
+  writeOperatorProviderSwitch,
   removeOperatorEmbedHost,
   patchOperatorContentSkill,
   patchOperatorLearnerAccess,
@@ -156,6 +159,100 @@ describe("Access desk API", () => {
         body: JSON.stringify({ operator_membership_label: "base" }),
       }),
     );
+  });
+
+  it("loads the Provider switch with no writer when nothing is stored", async () => {
+    const choice = {
+      on: false,
+      run_provider: "direct" as const,
+      operator_email: null,
+      written_at: null,
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => choice,
+      }),
+    );
+
+    await expect(getOperatorProviderSwitch()).resolves.toEqual(choice);
+    expect(fetch).toHaveBeenCalledWith(
+      "/career-forge/operator/access/provider-switch",
+      expect.objectContaining({ credentials: "include" }),
+    );
+  });
+
+  it("arms and disarms the Provider switch through the guarded write", async () => {
+    const armed = {
+      on: true,
+      run_provider: "gateway" as const,
+      operator_email: "access@borderless.com",
+      written_at: "2026-10-12T14:30:00Z",
+    };
+    const disarmed = {
+      on: false,
+      run_provider: "direct" as const,
+      operator_email: "both@borderless.com",
+      written_at: "2026-10-12T15:00:00Z",
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => armed,
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => disarmed,
+        }),
+    );
+
+    await expect(writeOperatorProviderSwitch(true)).resolves.toEqual(armed);
+    await expect(writeOperatorProviderSwitch(false)).resolves.toEqual(disarmed);
+    expect(fetch).toHaveBeenNthCalledWith(
+      1,
+      "/career-forge/operator/access/provider-switch",
+      expect.objectContaining({
+        method: "PUT",
+        body: JSON.stringify({ on: true }),
+      }),
+    );
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      "/career-forge/operator/access/provider-switch",
+      expect.objectContaining({
+        method: "PUT",
+        body: JSON.stringify({ on: false }),
+      }),
+    );
+  });
+
+  it("surfaces a refused Provider switch write", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 409,
+        json: async () => ({
+          detail:
+            "The Model gateway is not configured. Set OPENROUTER_API_KEY before turning the Provider switch on.",
+        }),
+      }),
+    );
+
+    const refused = writeOperatorProviderSwitch(true);
+    await expect(refused).rejects.toBeInstanceOf(OperatorApiError);
+    await expect(refused).rejects.toMatchObject({
+      status: 409,
+      message:
+        "The Model gateway is not configured. Set OPENROUTER_API_KEY before turning the Provider switch on.",
+    });
   });
 
   it("returns the learner audit entries from the list envelope", async () => {
