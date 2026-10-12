@@ -8,6 +8,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, model_validator
 
 from career_forge.ai.llm.client import StructuredToolClient
+from career_forge.ai.llm.model_chat import ModelGatewayKeyMissing, bound_run_provider
 from career_forge.ai.tracing import LlmTraceContext, llm_trace_context
 from career_forge.schemas.mock_interview import (
     MockInterviewOption,
@@ -24,6 +25,7 @@ from career_forge.services.mock_interview_session import (
 from career_forge.services.forge_context import LearnerForgeContext
 from career_forge.services.forge_locale import is_portuguese
 from career_forge.services.learner_locale import account_output_locale
+from career_forge.services.provider_switch import read_provider_switch
 from career_forge.learner_text import MOCK_FIELDS, with_learner_instruction
 
 MCQ_LETTERS = ("A", "B", "C", "D")
@@ -255,15 +257,19 @@ async def generate_mcq_mock_interview(
         graph_name="mock_interview",
         run_input={"node_id": node_id, "node_title": node_title},
     )
+    provider = read_provider_switch(session_db).run_provider
     try:
-        generator = OpenAiMockInterviewMcqGenerator()
-        draft = await generator.generate(
-            study_block=study_block,
-            learner=learner,
-            trace=trace,
-            locale=locale,
-        )
-        public, answer_key, rubric = _draft_to_public(node_id, node_title, node_icon, draft)
+        with bound_run_provider(provider):
+            generator = OpenAiMockInterviewMcqGenerator()
+            draft = await generator.generate(
+                study_block=study_block,
+                learner=learner,
+                trace=trace,
+                locale=locale,
+            )
+            public, answer_key, rubric = _draft_to_public(node_id, node_title, node_icon, draft)
+    except ModelGatewayKeyMissing:
+        raise
     except RuntimeError:
         public = _fallback_mcq_from_templates(node_id, session_db, locale=locale)
         answer_key = {

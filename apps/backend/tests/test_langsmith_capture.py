@@ -37,6 +37,29 @@ def test_apply_langsmith_capture_sets_cost_from_usage() -> None:
     assert run.actual_cost_usd == 0.10
 
 
+def test_capture_groups_gateway_prefix_with_the_bare_model() -> None:
+    run = GraphRun(graph_name="roadmap_forge", user_id="u1", input={})
+    apply_langsmith_capture(
+        run,
+        usage_by_model={
+            "openai/gpt-5.4": {
+                "input_tokens": 100,
+                "output_tokens": 10,
+                "input_token_details": {"cache_read": 4},
+            },
+            "gpt-5.4": {
+                "input_tokens": 50,
+                "output_tokens": 1,
+                "input_token_details": {"cache_read": 2},
+            },
+        },
+    )
+    assert list(run.token_usage) == ["gpt-5.4"]
+    assert run.token_usage["gpt-5.4"]["input_tokens"] == 150
+    assert run.token_usage["gpt-5.4"]["output_tokens"] == 11
+    assert run.token_usage["gpt-5.4"]["input_token_details"]["cache_read"] == 6
+
+
 def test_attach_usage_callback_adds_handler() -> None:
     bag = UsageCaptureBag()
     config: dict = {"metadata": {"user_id": "u1"}}

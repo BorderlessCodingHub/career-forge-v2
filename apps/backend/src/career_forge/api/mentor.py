@@ -22,6 +22,7 @@ from career_forge.schemas.mentor import (
 )
 from career_forge.services import mentor as mentor_service
 from career_forge.services.learner_locale import account_output_locale
+from career_forge.services.provider_switch import stamp_run_provider
 
 router = APIRouter()
 
@@ -47,14 +48,17 @@ async def chat_with_mentor(
     context = mentor_service.load_mentor_context(db, external_id, payload.node_id)
 
     store = get_graph_run_store()
-    run = GraphRun(
-        graph_name="mentor",
-        user_id=external_id,
-        input={
-            **payload.model_dump(),
-            "context_snapshot": context.model_dump(),
-            "output_locale": account_output_locale(external_id, db),
-        },
+    run = stamp_run_provider(
+        GraphRun(
+            graph_name="mentor",
+            user_id=external_id,
+            input={
+                **payload.model_dump(),
+                "context_snapshot": context.model_dump(),
+                "output_locale": account_output_locale(external_id, db),
+            },
+        ),
+        db,
     )
     store.save(run)
 

@@ -29,6 +29,7 @@ from career_forge.services import mock_interview as mock_interview_service
 from career_forge.services import planning as planning_service
 from career_forge.services import validation as validation_service
 from career_forge.services.learner_locale import account_output_locale
+from career_forge.services.provider_switch import stamp_run_provider
 from career_forge.services.mock_interview_session import (
     MockInterviewSessionRecord,
     consume_mock_interview_session,
@@ -38,10 +39,14 @@ from career_forge.services.mock_interview_session import (
 async def _execute_graph(
     graph_name: str,
     body: ValidationRequest | MockInterviewRequest,
+    db: Session,
 ) -> tuple[str, str, list[dict], ValidationResponse]:
     """Run a deterministic assessment graph; return run metadata + validation."""
     store = get_graph_run_store()
-    run = GraphRun(graph_name=graph_name, user_id=body.user_id, input=body.model_dump())
+    run = stamp_run_provider(
+        GraphRun(graph_name=graph_name, user_id=body.user_id, input=body.model_dump()),
+        db,
+    )
     store.save(run)
 
     executor = get_graph_executor()
@@ -114,7 +119,7 @@ async def run_validation(db: Session, body: ValidationRequest) -> ValidationRunR
             update={"rubric": [question.rubric_criterion for question in questions.questions]},
         )
 
-    run_id, status, events, validation = await _execute_graph("validation", body)
+    run_id, status, events, validation = await _execute_graph("validation", body, db)
 
     node_status, mastery_score = validation.status.value, validation.score
     persisted_status, persisted_score = _persist(
@@ -164,7 +169,7 @@ async def run_mock_interview(
             body = body.model_copy(
                 update={"rubric": [question.rubric_criterion for question in questions.questions]},
             )
-        run_id, status, events, validation = await _execute_graph("mock_interview", body)
+        run_id, status, events, validation = await _execute_graph("mock_interview", body, db)
 
     node_status, mastery_score = validation.status.value, validation.score
     persisted_status, persisted_score = _persist(

@@ -58,6 +58,7 @@ def test_graph_run_record_roundtrip_fields() -> None:
     restored = record_to_graph_run(record)
     assert restored.id == run.id
     assert restored.graph_name == "roadmap_forge"
+    assert restored.run_provider == "direct"
     assert restored.status == "completed"
     assert restored.normalized_events[0]["type"] == "step_complete"
 

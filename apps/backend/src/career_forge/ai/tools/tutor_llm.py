@@ -9,6 +9,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from career_forge.ai.llm.client import StructuredToolClient
+from career_forge.ai.llm.model_chat import ModelGatewayKeyMissing
 from career_forge.ai.tracing import LlmTraceContext
 from career_forge.schemas.tutor import TutorContext, TutorMessage
 from career_forge.services.forge_locale import is_portuguese
@@ -133,6 +134,8 @@ def generate_tutor_reply(
     """Synchronous tutor reply — LLM when configured, else deterministic fallback."""
     try:
         tutor = OpenAiTutor()
+    except ModelGatewayKeyMissing:
+        raise
     except RuntimeError:
         return _fallback_reply(message, context, locale=locale)
     try:

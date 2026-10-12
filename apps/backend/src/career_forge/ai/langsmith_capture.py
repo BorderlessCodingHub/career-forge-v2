@@ -9,7 +9,10 @@ from typing import Any
 from uuid import UUID
 
 from career_forge.ai.run import GraphRun
-from career_forge.services.cost_gate_report import cost_usd_from_usage
+from career_forge.services.cost_gate_report import (
+    cost_usd_from_usage,
+    group_usage_by_configured_model,
+)
 
 
 def is_langsmith_tracing_enabled(env: Mapping[str, str] | None = None) -> bool:
@@ -32,7 +35,9 @@ def apply_langsmith_capture(
     if langsmith_trace_id:
         run.langsmith_trace_id = str(langsmith_trace_id)
     if usage_by_model:
-        cleaned = {str(model): dict(usage) for model, usage in usage_by_model.items()}
+        cleaned = group_usage_by_configured_model(
+            {str(model): dict(usage) for model, usage in usage_by_model.items()}
+        )
         run.token_usage = cleaned
         run.actual_cost_usd = float(cost_usd_from_usage(cleaned))
 

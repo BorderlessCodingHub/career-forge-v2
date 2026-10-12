@@ -27,6 +27,7 @@ from career_forge.schemas.forge import (
     ForgeStreamTicketResponse,
 )
 from career_forge.services.entitlement import authorize_forge_start
+from career_forge.services.provider_switch import stamp_run_provider
 from career_forge.services.forge_locale import stamp_forge_output_locale
 from career_forge.services.forge_persistence import extract_goal_id, persist_graph_ready
 from career_forge.services.lean_forge import apply_lean_forge_input
@@ -104,13 +105,16 @@ async def forge_run(
     stored_locale = account.ui_locale if account is not None else None
     store = get_graph_run_store()
     run = with_trace_input(
-        GraphRun(
-            graph_name="roadmap_forge",
-            user_id=external_id,
-            input=stamp_forge_output_locale(
-                _build_forge_input(body, motor_input),
-                stored_locale,
+        stamp_run_provider(
+            GraphRun(
+                graph_name="roadmap_forge",
+                user_id=external_id,
+                input=stamp_forge_output_locale(
+                    _build_forge_input(body, motor_input),
+                    stored_locale,
+                ),
             ),
+            db,
         )
     )
     authorize_forge_start(db, run)
