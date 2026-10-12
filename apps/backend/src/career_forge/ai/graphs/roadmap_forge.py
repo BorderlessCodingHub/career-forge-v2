@@ -15,10 +15,10 @@ from career_forge.ai.streaming.langchain_events import (
     emit_chain_stream,
     new_run_id,
 )
+from career_forge.ai.tools.forge_search import build_forge_search_client
 from career_forge.ai.tools.openai_web_search import (
     WebSearchClient,
     WebSearchResult,
-    build_openai_web_search_client_from_env,
 )
 from career_forge.ai.tracing import require_trace_from_input
 from career_forge.ai.tools.study_plan_evaluator import (
@@ -402,7 +402,7 @@ class RoadmapForgeGraphRunnable:
                 {"forge_event": payload},
             )
 
-        search_client = self._search_client or build_openai_web_search_client_from_env()
+        search_client = self._search_client or build_forge_search_client()
         research_events: list[dict[str, Any]] = []
         async for payload in iter_research_enrichment_events(context, search_client):
             research_events.append(payload)
