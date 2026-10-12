@@ -5,7 +5,7 @@
 | **Status** | **Accepted** — grill 2026-10-11 |
 | **Date** | 2026-10-11 |
 | **Deciders** | Pedro Alano |
-| **Linear (v2)** | Epic [CAR-134](https://linear.app/one-percent-better/issue/CAR-134) · [CAR-135](https://linear.app/one-percent-better/issue/CAR-135) guard · [CAR-136](https://linear.app/one-percent-better/issue/CAR-136) model chat · [CAR-137](https://linear.app/one-percent-better/issue/CAR-137) diagnosis pin · [CAR-138](https://linear.app/one-percent-better/issue/CAR-138) Forge search · [CAR-139](https://linear.app/one-percent-better/issue/CAR-139) Access desk. Parked. Do not pull ahead of V3a. |
+| **Linear (v2)** | Epic [CAR-134](https://linear.app/one-percent-better/issue/CAR-134) **Done** 2026-10-12 · [CAR-135](https://linear.app/one-percent-better/issue/CAR-135) guard · [CAR-136](https://linear.app/one-percent-better/issue/CAR-136) model chat · [CAR-137](https://linear.app/one-percent-better/issue/CAR-137) diagnosis pin · [CAR-138](https://linear.app/one-percent-better/issue/CAR-138) Forge search · [CAR-139](https://linear.app/one-percent-better/issue/CAR-139) Access desk. Learner error redaction is [CAR-140](https://linear.app/one-percent-better/issue/CAR-140). |
 | **Glossary** | [CONTEXT.md](../../CONTEXT.md) — **Direct provider**, **Model gateway**, **Model chat**, **Provider switch**, **Run provider**, **Forge search**, **Forge source** |
 | **Does not supersede** | LangChain `ChatOpenAI`, GraphExecutor, LangSmith traces on GraphRuns |
 
