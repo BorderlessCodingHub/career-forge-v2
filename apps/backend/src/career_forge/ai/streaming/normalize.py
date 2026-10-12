@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
+from career_forge.ai.llm.errors import public_stream_error
 from career_forge.ai.streaming.langchain_events import (
     LangChainStreamEvent,
     chain_end_output,
@@ -59,9 +60,13 @@ def _default_normalizer(
             return GraphCompleteEvent(graph_name=graph_name, output=_as_dict(output))
 
     if event_type == "on_chain_error":
-        return ForgeErrorEvent(message=chain_error_message(lc_event))
+        return _public_error_event(lc_event)
 
     return None
+
+
+def _public_error_event(lc_event: LangChainStreamEvent) -> ForgeErrorEvent:
+    return ForgeErrorEvent(message=public_stream_error(chain_error_message(lc_event)))
 
 
 def _normalize_forge(lc_event: LangChainStreamEvent) -> StreamEvent | None:
@@ -74,7 +79,7 @@ def _normalize_forge(lc_event: LangChainStreamEvent) -> StreamEvent | None:
             return parse_forge_event(forge_payload)
 
     if event_type == "on_chain_error":
-        return ForgeErrorEvent(message=chain_error_message(lc_event))
+        return _public_error_event(lc_event)
 
     return None
 
@@ -96,7 +101,7 @@ def _normalize_diagnosis_interview(lc_event: LangChainStreamEvent) -> StreamEven
             )
 
     if event_type == "on_chain_error":
-        return ForgeErrorEvent(message=chain_error_message(lc_event))
+        return _public_error_event(lc_event)
 
     return None
 

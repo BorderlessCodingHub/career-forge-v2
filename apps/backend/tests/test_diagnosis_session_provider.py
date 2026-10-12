@@ -369,3 +369,51 @@ def test_postgres_session_keeps_the_provider_from_its_start() -> None:
         )
         db.commit()
         db.close()
+
+
+@pytest.mark.asyncio
+async def test_failed_graph_does_not_forward_the_provider_dump() -> None:
+    from unittest.mock import patch
+
+    from career_forge.ai.llm.errors import RETRY_MESSAGE
+    from career_forge.ai.run import GraphRunResult, InMemoryGraphRunStore
+
+    dump = (
+        "Error code: 402 - {'error': {'message': 'need credits', "
+        "'user_id': 'user_example', "
+        "'url': 'https://openrouter.ai/workspaces/default/keys/"
+        + ("c" * 64)
+        + "'}}"
+    )
+
+    class _FailedExecutor:
+        async def execute(self, run, *, stream=False):
+            del stream
+            run.status = "failed"
+            run.error = dump
+            return GraphRunResult(run=run, events=[])
+
+    session = DiagnosisSession(
+        session_id="22222222-2222-2222-2222-222222222222",
+        intake=DiagnosisIntake(
+            user_id="learner-140",
+            goal_id="rag-engineer",
+            motivation="I want a concrete path into retrieval systems.",
+        ),
+    )
+    service = DiagnosisSessionService(
+        session_store=InMemoryDiagnosisSessionStore(),
+        graph_store=InMemoryGraphRunStore(),
+        executor=_FailedExecutor(),  # type: ignore[arg-type]
+    )
+
+    with patch(
+        "career_forge.services.diagnosis_session.account_output_locale",
+        return_value="en",
+    ):
+        with pytest.raises(DiagnosisInterviewLlmError) as caught:
+            await service._execute_graph(phase="interview", session=session, answers=None)
+
+    assert caught.value.retry_message == RETRY_MESSAGE
+    assert "openrouter" not in str(caught.value)
+    assert "402" not in str(caught.value)

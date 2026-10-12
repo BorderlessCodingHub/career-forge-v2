@@ -433,7 +433,7 @@ class DiagnosisSessionService:
             raise
         assert isinstance(result, GraphRunResult)
         if result.run.status == "failed":
-            raise DiagnosisInterviewLlmError(result.run.error or DiagnosisInterviewLlmError().retry_message)
+            raise DiagnosisInterviewLlmError()
         return _extract_graph_output(result)
 
 

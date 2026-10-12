@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import AsyncIterator
 from typing import Any
 
 from career_forge.ai.factory import AgentFactory, get_agent_factory
+from career_forge.ai.llm.errors import public_stream_error, redact_provider_secrets
 from career_forge.ai.llm.model_chat import bound_run_provider
 from career_forge.ai.graphs.base import GraphRunnable
 from career_forge.ai.langsmith_capture import (
@@ -28,6 +30,8 @@ from career_forge.schemas.forge import ForgeErrorEvent
 from career_forge.schemas.stream_events import dump_stream_event
 from career_forge.services.cost_guard import CostGuard, get_cost_guard
 
+logger = logging.getLogger(__name__)
+
 
 class GraphExecutor:
     """Always consumes LangChain astream_events v2; one code path for stream/collect."""
@@ -41,6 +45,11 @@ class GraphExecutor:
         self._factory = factory or get_agent_factory()
         self._store = store or get_graph_run_store()
         self._cost_guard_override = cost_guard
+
+    def _fail_run(self, run: GraphRun, exc: Exception) -> None:
+        redacted = redact_provider_secrets(str(exc))
+        logger.error("graph run failed for %s: %s", run.graph_name, redacted)
+        finalize_run(run, error=redacted)
 
     def _cost_guard(self) -> CostGuard:
         return self._cost_guard_override if self._cost_guard_override is not None else get_cost_guard()
@@ -67,7 +76,7 @@ class GraphExecutor:
             finalize_run(run)
             self._cost_guard().record(run)
         except Exception as exc:  # noqa: BLE001 — record run failure centrally
-            finalize_run(run, error=str(exc))
+            self._fail_run(run, exc)
             self._store.save(run)
             raise
 
@@ -86,8 +95,8 @@ class GraphExecutor:
                 finalize_run(run)
                 self._cost_guard().record(run)
             except Exception as exc:  # noqa: BLE001
-                finalize_run(run, error=str(exc))
-                yield dump_stream_event(ForgeErrorEvent(message=str(exc)))
+                self._fail_run(run, exc)
+                yield dump_stream_event(ForgeErrorEvent(message=public_stream_error(str(exc))))
                 raise
             finally:
                 self._store.save(run)

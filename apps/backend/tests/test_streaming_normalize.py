@@ -107,6 +107,32 @@ def test_normalize_default_graph_progress_and_error() -> None:
     assert error.message == "boom"
 
 
+_PROVIDER_KEY = "a" * 64
+_PROVIDER_DUMP = (
+    "Error code: 402 - {'error': {'message': "
+    '"This request requires more credits, or fewer max_tokens. '
+    "Visit https://openrouter.ai/workspaces/default/keys/"
+    f"{_PROVIDER_KEY} and adjust the key total limit\", "
+    "'code': 402, 'user_id': 'user_example'}}"
+)
+
+
+@pytest.mark.parametrize("graph_name", ["roadmap_forge", "diagnosis_interview", "diagnosis"])
+def test_provider_dump_becomes_a_public_stream_error(graph_name: str) -> None:
+    from career_forge.ai.llm.errors import PUBLIC_STREAM_ERROR
+
+    error = normalize_langchain_event(
+        emit_chain_error(graph_name, "run-1", _PROVIDER_DUMP),
+        graph_name,
+    )
+    assert isinstance(error, ForgeErrorEvent)
+    assert error.message == PUBLIC_STREAM_ERROR
+    assert "openrouter" not in error.message
+    assert "user_id" not in error.message
+    assert _PROVIDER_KEY not in error.message
+    assert "402" not in error.message
+
+
 def test_parse_langchain_event_rejects_unknown_event() -> None:
     with pytest.raises(ValueError, match="unsupported LangChain stream event"):
         parse_langchain_event({"event": "on_unknown", "name": "x", "run_id": "1", "data": {}})

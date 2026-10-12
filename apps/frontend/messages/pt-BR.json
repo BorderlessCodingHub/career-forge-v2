@@ -233,6 +233,7 @@
     "mintFailed": "Não foi possível criar o link para retomar",
     "startFailed": "Não foi possível iniciar o forge",
     "endedEarly": "O forge encerrou antes de gerar o grafo. Tente novamente.",
+    "streamInterrupted": "Não conseguimos terminar sua trilha agora. Tente novamente em alguns minutos.",
     "statusIdle": "Aguardando",
     "statusStarting": "Iniciando",
     "statusStreaming": "Ao vivo",

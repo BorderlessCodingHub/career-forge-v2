@@ -233,6 +233,7 @@
     "mintFailed": "Failed to mint resume link",
     "startFailed": "Failed to start forge",
     "endedEarly": "The forge ended before building the graph. Try again.",
+    "streamInterrupted": "We couldn't finish your trail just now. Try again in a few minutes.",
     "statusIdle": "Idle",
     "statusStarting": "Starting",
     "statusStreaming": "Streaming",

@@ -74,7 +74,7 @@ function ForgePageContent() {
   const connectStream = useCallback(
     async (runId: string) => {
       setStatus("streaming");
-      let streamMessage: string | null = null;
+      let sawStreamError = false;
 
       try {
         const collected = await streamForgeRun(runId, {
@@ -84,12 +84,15 @@ function ForgePageContent() {
           onComplete: (allEvents) => {
             finishForge(allEvents);
           },
-          onError: (message) => {
-            streamMessage = message;
-            setError(message);
+          onError: () => {
+            sawStreamError = true;
+            setError(t("streamInterrupted"));
             setStatus("error");
+            if (timerRef.current) clearInterval(timerRef.current);
           },
         });
+
+        if (sawStreamError) return;
 
         if (collected.length > 0 && !collected.some((event) => event.type === "graph_ready")) {
           setError(t("endedEarly"));
@@ -97,9 +100,7 @@ function ForgePageContent() {
           if (timerRef.current) clearInterval(timerRef.current);
         }
       } catch (err) {
-        // SSE abort after a typed error event often surfaces as a generic
-        // network failure — prefer the server message when we already have it.
-        if (streamMessage) throw new Error(streamMessage);
+        if (sawStreamError) return;
         throw err;
       }
     },
@@ -140,13 +141,12 @@ function ForgePageContent() {
         if (timerRef.current) clearInterval(timerRef.current);
         return;
       }
-      const message =
-        err instanceof Error ? err.message : t("startFailed");
+      const message = err instanceof Error ? err.message : "";
       if (message.includes("404")) {
         router.replace("/onboarding/edit");
         return;
       }
-      setError(message);
+      setError(t("streamInterrupted"));
       setStatus("error");
       if (timerRef.current) clearInterval(timerRef.current);
     }

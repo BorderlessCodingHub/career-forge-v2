@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 import type { RoadmapForgeEvent } from "@/types/contracts";
 
 import { ForgeStep } from "./ForgeStep";
@@ -8,6 +10,7 @@ type ForgeEventLineProps = {
 };
 
 export function ForgeEventLine({ event, index }: ForgeEventLineProps) {
+  const t = useTranslations("forge");
   if (event.type === "reasoning_delta") {
     return (
       <ForgeStep step={`${index + 1} · ${event.step}`}>
@@ -87,7 +90,7 @@ export function ForgeEventLine({ event, index }: ForgeEventLineProps) {
   if (event.type === "error") {
     return (
       <ForgeStep step={`${index + 1} · erro`}>
-        <p className="text-danger">{event.message}</p>
+        <p className="text-danger">{t("streamInterrupted")}</p>
       </ForgeStep>
     );
   }
