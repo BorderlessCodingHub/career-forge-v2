@@ -64,7 +64,10 @@ def test_normalize_rubric_dimension_fills_note_from_evidence() -> None:
 
 
 @pytest.mark.asyncio
-async def test_structured_llm_client_validates_model_output() -> None:
+async def test_structured_llm_client_validates_model_output(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-openai")
     mock_result = JudgeBeliefOutput(
         motivation_goal=_sample_dimension("motivation_goal", confidence=0.8, status="mapped"),
         background_transfer=_sample_dimension("background_transfer", confidence=0.4, status="pending"),
@@ -88,7 +91,10 @@ async def test_structured_llm_client_validates_model_output() -> None:
 
 
 @pytest.mark.asyncio
-async def test_structured_llm_client_wraps_validation_errors() -> None:
+async def test_structured_llm_client_wraps_validation_errors(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-openai")
     mock_runnable = MagicMock()
     mock_runnable.ainvoke = AsyncMock(return_value={"motivation_goal": "invalid"})
 
