@@ -1,8 +1,9 @@
-"""Run provider bound for one model chat life (CAR-136).
+"""Run provider bound for one model chat life (CAR-136, CAR-137).
 
 Forge, tutor, and mock interview read the provider captured when that life
-starts. The binding does not follow a later flip of the Provider switch.
-Diagnosis interview does not read it.
+starts. A diagnosis interview reads the provider copied from its session onto
+that turn's GraphRun. The binding does not follow a later flip of the
+Provider switch.
 """
 
 from __future__ import annotations

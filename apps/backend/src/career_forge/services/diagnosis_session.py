@@ -13,6 +13,7 @@ from career_forge.ai.run import GraphRun, GraphRunResult, GraphRunStore, get_gra
 from career_forge.ai.streaming.sse import events_to_sse
 from career_forge.persistence.store_mode import resolve_persistence_backend
 from career_forge.db.models.diagnosis_session import DiagnosisSessionRecord
+from career_forge.db.models.provider_switch import RunProvider
 from career_forge.db.session import SessionLocal
 from career_forge.schemas.diagnosis_interview import (
     MAX_INTERVIEW_ROUNDS,
@@ -28,6 +29,7 @@ from career_forge.schemas.diagnosis_interview import (
 )
 from career_forge.services.cv import attach_extracted_text
 from career_forge.services.learner_locale import account_output_locale
+from career_forge.services.provider_switch import read_provider_switch
 
 
 class DiagnosisSessionNotFoundError(Exception):
@@ -109,6 +111,7 @@ def _session_to_record_fields(session: DiagnosisSession) -> dict:
         "transcript": [turn.model_dump() for turn in session.transcript],
         "round_count": session.round_count,
         "diagnosis": session.diagnosis.model_dump() if session.diagnosis else None,
+        "run_provider": session.run_provider,
     }
 
 
@@ -122,6 +125,7 @@ def _record_to_session(record: DiagnosisSessionRecord) -> DiagnosisSession:
         status=record.status,
         round_count=record.round_count,
         diagnosis=record.diagnosis,
+        run_provider=record.run_provider,  # type: ignore[arg-type]
     )
 
 
@@ -165,6 +169,23 @@ def _extract_graph_output(result: GraphRunResult) -> dict:
     raise DiagnosisInterviewLlmError(msg)
 
 
+def _run_provider_at_start() -> RunProvider:
+    """Read the Provider switch once, when a diagnosis session begins."""
+    db = SessionLocal()
+    try:
+        return read_provider_switch(db).run_provider
+    finally:
+        db.close()
+
+
+def _keep_pinned_provider(
+    session: DiagnosisSession,
+    updated: DiagnosisSession,
+) -> DiagnosisSession:
+    """The session row holds the pin. A graph payload must not replace it."""
+    return updated.model_copy(update={"run_provider": session.run_provider})
+
+
 def _graph_input(
     *,
     phase: str,
@@ -178,6 +199,24 @@ def _graph_input(
         "answers": [answer.model_dump() for answer in answers or []],
         "output_locale": account_output_locale(session.intake.user_id),
     }
+
+
+def _graph_run(
+    *,
+    phase: str,
+    session: DiagnosisSession,
+    answers: list | None,
+) -> GraphRun:
+    """One GraphRun for this turn. Its provider is a copy of the session pin.
+
+    The session row is the pin. This copy only binds model chat for the turn.
+    """
+    return GraphRun(
+        graph_name="diagnosis_interview",
+        user_id=session.intake.user_id,
+        input=_graph_input(phase=phase, session=session, answers=answers),
+        run_provider=session.run_provider,
+    )
 
 
 def _session_to_turn_response(session: DiagnosisSession) -> InterviewTurnResponse:
@@ -235,6 +274,7 @@ class DiagnosisSessionService:
         session = DiagnosisSession(
             session_id=session_id,
             intake=intake,
+            run_provider=_run_provider_at_start(),
         )
         self._sessions.save(session)
 
@@ -243,7 +283,10 @@ class DiagnosisSessionService:
             session=session,
             answers=None,
         )
-        updated = DiagnosisSession.model_validate(graph_output["session"])
+        updated = _keep_pinned_provider(
+            session,
+            DiagnosisSession.model_validate(graph_output["session"]),
+        )
         self._sessions.save(updated)
         return _graph_output_to_response(graph_output)
 
@@ -259,6 +302,7 @@ class DiagnosisSessionService:
         session = DiagnosisSession(
             session_id=session_id,
             intake=intake,
+            run_provider=_run_provider_at_start(),
         )
         self._sessions.save(session)
 
@@ -296,11 +340,7 @@ class DiagnosisSessionService:
         session: DiagnosisSession,
         answers: list | None,
     ) -> AsyncIterator[str]:
-        run = GraphRun(
-            graph_name="diagnosis_interview",
-            user_id=session.intake.user_id,
-            input=_graph_input(phase=phase, session=session, answers=answers),
-        )
+        run = _graph_run(phase=phase, session=session, answers=answers)
         self._graph_store.save(run)
         event_iter = await self._executor.execute(run, stream=True)
         assert not isinstance(event_iter, GraphRunResult)
@@ -310,7 +350,10 @@ class DiagnosisSessionService:
                 if event.get("type") == "graph_complete":
                     graph_output = event.get("output") or {}
                     if isinstance(graph_output, dict) and "session" in graph_output:
-                        updated = DiagnosisSession.model_validate(graph_output["session"])
+                        updated = _keep_pinned_provider(
+                            session,
+                            DiagnosisSession.model_validate(graph_output["session"]),
+                        )
                         self._sessions.save(updated)
                 yield event
 
@@ -341,7 +384,10 @@ class DiagnosisSessionService:
             session=session,
             answers=body.answers,
         )
-        updated = DiagnosisSession.model_validate(graph_output["session"])
+        updated = _keep_pinned_provider(
+            session,
+            DiagnosisSession.model_validate(graph_output["session"]),
+        )
         self._sessions.save(updated)
         return _graph_output_to_response(graph_output)
 
@@ -379,11 +425,7 @@ class DiagnosisSessionService:
         session: DiagnosisSession,
         answers: list | None,
     ) -> dict:
-        run = GraphRun(
-            graph_name="diagnosis_interview",
-            user_id=session.intake.user_id,
-            input=_graph_input(phase=phase, session=session, answers=answers),
-        )
+        run = _graph_run(phase=phase, session=session, answers=answers)
         self._graph_store.save(run)
         try:
             result = await self._executor.execute(run, stream=False)

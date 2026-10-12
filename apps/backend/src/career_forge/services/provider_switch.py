@@ -67,8 +67,10 @@ _MODEL_CHAT_GRAPHS = frozenset({"roadmap_forge", "tutor", "mock_interview"})
 def stamp_run_provider(run: GraphRun, session: Session) -> GraphRun:
     """Capture the Provider switch onto a forge, tutor, or mock interview run.
 
-    Diagnosis interview, mentor, rubric validation, and the rule-based diagnosis
-    graph stay on the Direct provider. A later flip does not rewrite ``run``.
+    A diagnosis interview does not use this stamp. The session row holds that
+    pin, and the session service copies it onto the turn's GraphRun. Mentor,
+    rubric validation, and the rule-based diagnosis graph stay on the Direct
+    provider. A later flip does not rewrite ``run``.
     """
     if run.graph_name not in _MODEL_CHAT_GRAPHS:
         return run.model_copy(update={"run_provider": DIRECT_PROVIDER})

@@ -47,9 +47,27 @@ class StructuredLlmClient:
         self._model = configured_model_name(cleaned)
         self._temperature = temperature
         self._method = method
-        # Diagnosis interview stays on the Direct provider until the session pin.
-        self._chat = ChatOpenAI(
+        self._chat = self._build_chat()
+
+    def _build_chat(self) -> ChatOpenAI:
+        """Wire follows the provider bound for this turn. No fallback."""
+        provider = current_run_provider()
+        if provider == GATEWAY_PROVIDER:
+            gateway_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+            if not gateway_key:
+                raise ModelGatewayKeyMissing()
+            return ChatOpenAI(
+                model=wire_model_name(self._model, GATEWAY_PROVIDER),
+                api_key=gateway_key,
+                base_url=OPENROUTER_BASE_URL,
+                temperature=self._temperature,
+            )
+        direct_key = os.getenv("OPENAI_API_KEY", "").strip()
+        if not direct_key:
+            raise RuntimeError(DEFAULT_KEY_ERROR)
+        return ChatOpenAI(
             model=wire_model_name(self._model, DIRECT_PROVIDER),
+            api_key=direct_key,
             temperature=self._temperature,
         )
 

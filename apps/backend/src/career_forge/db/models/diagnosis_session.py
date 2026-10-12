@@ -6,17 +6,24 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, Integer, String, func
+from sqlalchemy import CheckConstraint, DateTime, Integer, String, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from career_forge.db.base import Base
+from career_forge.db.models.provider_switch import DIRECT_PROVIDER
 
 
 class DiagnosisSessionRecord(Base):
     """Persisted DiagnosisSession between API turns."""
 
     __tablename__ = "diagnosis_sessions"
+    __table_args__ = (
+        CheckConstraint(
+            "run_provider IN ('direct', 'gateway')",
+            name="ck_diagnosis_sessions_run_provider",
+        ),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -24,6 +31,12 @@ class DiagnosisSessionRecord(Base):
         default=uuid.uuid4,
     )
     user_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    run_provider: Mapped[str] = mapped_column(
+        String(16),
+        nullable=False,
+        default=DIRECT_PROVIDER,
+        server_default=DIRECT_PROVIDER,
+    )
     status: Mapped[str] = mapped_column(String(16), nullable=False, default="asking")
     intake: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)
     belief_state: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False, default=dict)

@@ -4,7 +4,7 @@ Seams:
 - ChatOpenAI wire (prefix, base URL, key) for a captured Run provider
 - Cost-burn grouping key
 - A flip during the run does not change that capture
-- diagnosis_interview stays on the Direct provider
+- diagnosis_interview client follows the provider bound for that turn
 """
 
 from __future__ import annotations
@@ -256,7 +256,7 @@ def test_diagnosis_mentor_and_rubric_graphs_stay_on_the_direct_provider(
     assert second.run_provider == "direct"
 
 
-def test_diagnosis_interview_client_ignores_a_gateway_binding(
+def test_diagnosis_interview_client_follows_the_bound_provider(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", "sk-openai")
@@ -264,11 +264,10 @@ def test_diagnosis_interview_client_ignores_a_gateway_binding(
 
     with bound_run_provider("gateway"):
         with patch("career_forge.ai.llm.client.ChatOpenAI") as chat:
-            StructuredLlmClient("gpt-5.4")
-            StructuredLlmClient("gpt-4.1-nano")
+            client = StructuredLlmClient("gpt-5.4")
 
-    assert chat.call_count == 2
-    for call in chat.call_args_list:
-        assert call.kwargs["model"] in {"gpt-5.4", "gpt-4.1-nano"}
-        assert "base_url" not in call.kwargs
-        assert call.kwargs.get("api_key") in {None, "sk-openai"}
+    assert client.model == "gpt-5.4"
+    kwargs = chat.call_args.kwargs
+    assert kwargs["model"] == "openai/gpt-5.4"
+    assert kwargs["api_key"] == "sk-or"
+    assert kwargs["base_url"] == "https://openrouter.ai/api/v1"

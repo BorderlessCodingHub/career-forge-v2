@@ -260,9 +260,14 @@ def build_rubric_map(
 
 
 class DiagnosisSession(BaseModel):
-    """Multi-turn diagnosis interview persisted between API turns."""
+    """Multi-turn diagnosis interview persisted between API turns.
+
+    ``run_provider`` is the pin for this session's life. It is stored on the
+    session row and kept off learner payloads.
+    """
 
     session_id: str = Field(min_length=1)
+    run_provider: Literal["direct", "gateway"] = Field(default="direct", exclude=True)
     intake: DiagnosisIntake
     belief: BeliefState = Field(default_factory=BeliefState.empty)
     cv_signals: CvSignals | None = None

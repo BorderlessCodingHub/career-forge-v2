@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import logging
-import os
 from typing import Protocol, runtime_checkable
 from uuid import uuid4
 
-from career_forge.ai.llm.client import StructuredLlmClient
+from career_forge.ai.llm.client import DEFAULT_KEY_ERROR, StructuredLlmClient
 from career_forge.ai.llm.errors import DiagnosisInterviewLlmError, RETRY_MESSAGE
+from career_forge.ai.llm.model_chat import ModelGatewayKeyMissing
 from career_forge.ai.payloads.diagnosis_interview import (
     apply_transcript_overrides,
     build_interviewer_user_message,
@@ -38,6 +38,11 @@ from career_forge.schemas.llm_outputs import (
 )
 
 logger = logging.getLogger(__name__)
+
+_GATEWAY_KEY_MISSING = "The Model gateway key is missing. This turn cannot continue."
+_DIRECT_KEY_MISSING = (
+    "OPENAI_API_KEY is not configured. Set the key in .env before using diagnosis."
+)
 
 
 @runtime_checkable
@@ -239,12 +244,14 @@ def get_diagnosis_interview_llm() -> DiagnosisInterviewLlm:
     if _override_llm is not None:
         return _override_llm
 
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    if not api_key:
-        raise DiagnosisInterviewLlmError(
-            "OPENAI_API_KEY is not configured. Set the key in .env before using diagnosis.",
-        )
-    return OpenAiDiagnosisInterviewLlm(model=settings.diagnosis_interview_model)
+    try:
+        return OpenAiDiagnosisInterviewLlm(model=settings.diagnosis_interview_model)
+    except ModelGatewayKeyMissing as exc:
+        raise DiagnosisInterviewLlmError(_GATEWAY_KEY_MISSING) from exc
+    except RuntimeError as exc:
+        if str(exc) != DEFAULT_KEY_ERROR:
+            raise
+        raise DiagnosisInterviewLlmError(_DIRECT_KEY_MISSING) from exc
 
 
 def new_question_id(prefix: str = "q") -> str:
