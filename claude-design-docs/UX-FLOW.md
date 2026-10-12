@@ -45,7 +45,7 @@ Fixed bottom **deploy badge** on every screen (not in prototype): short git SHA 
 
 ## Screen-by-screen
 
-### 0d. Operator console (`/operator`) — CAR-76 / CAR-78 / CAR-79 / CAR-88
+### 0d. Operator console (`/operator`) — CAR-76 / CAR-78 / CAR-79 / CAR-88 / CAR-139
 
 Independent workspace on the same Next app and Labs origin. An HttpOnly, path-scoped
 Operator session gates the route; learner sessions never open it.
@@ -54,7 +54,7 @@ Operator session gates the route; learner sessions never open it.
 |---|---|
 | **Entry** | Separate Operator email OTP (`data-screen="operator-login"`) |
 | **Shell** | Operator lockup, role-filtered desk tabs **Access \| Content**, role-agnostic seat email list, sign out |
-| **Access room** | Read-only monthly cost strip → pilot billing email list (add/remove shortcut) → learner email lookup → Access card. The `pilot list` badge appears on list rows and listed learner cards; removing a list row does not change `billing_entitled`. Card also exposes effective Membership, BASE/PSP override (or clear to Borderless), billing entitlement, Stripe-active read-only lock, and per-learner audit |
+| **Access room** | Read-only monthly cost strip → Provider switch (current Run provider, last writer only, arm/disarm) → pilot billing email list (add/remove shortcut) → learner email lookup → Access card. Nothing stored reads as the Direct provider with no writer. A refused write leaves that choice and shows why. The `pilot list` badge appears on list rows and listed learner cards; removing a list row does not change `billing_entitled`. Card also exposes effective Membership, BASE/PSP override (or clear to Borderless), billing entitlement, Stripe-active read-only lock, and per-learner audit. Editor alone does not open this room |
 | **Content room** | Searchable 40-ID catalog inventory; inline title/URL/published annotations; read-only git body status; plus live Reference host proof queue: pending host groups show one recent sample + distinct URL count, sandbox preview + explicit confirmation gates Liberate, and liberated hosts can be revoked |
 | **Route** | `/operator` under `basePath=/career-forge` · `data-screen="operator-console"` |
 | **Forbidden** | Learner product chrome, Mentor chrome, Welcome scenery, third Cost desk, role labels in seat list, impersonation |
