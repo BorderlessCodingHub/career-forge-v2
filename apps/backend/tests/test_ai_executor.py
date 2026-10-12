@@ -200,3 +200,53 @@ async def test_execute_collect_diagnosis_graph(executor: GraphExecutor) -> None:
     assert result.run.output is not None
     assert result.run.output["graph_name"] == "diagnosis"
     assert result.run.output["output"]["profile"]["track_id"] == "rag-engineer-beginner"
+
+
+_PROVIDER_KEY = "b" * 64
+_PROVIDER_DUMP = (
+    "Error code: 402 - {'error': {'message': "
+    '"This request requires more credits. '
+    "Visit https://openrouter.ai/workspaces/default/keys/"
+    f"{_PROVIDER_KEY}\", 'code': 402, 'user_id': 'user_example'}}"
+)
+
+
+class _RaisingRunnable:
+    graph_name = "roadmap_forge"
+
+    def astream_events(self, input_data, *, version="v2", config=None):
+        del input_data, version, config
+
+        async def _events():
+            for _ in ():
+                yield {}
+            raise RuntimeError(_PROVIDER_DUMP)
+
+        return _events()
+
+
+@pytest.mark.asyncio
+async def test_stream_failure_hides_the_provider_dump(caplog: pytest.LogCaptureFixture) -> None:
+    from career_forge.ai.llm.errors import PUBLIC_STREAM_ERROR
+
+    factory = AgentFactory()
+    factory.register("roadmap_forge", _RaisingRunnable)
+    executor = GraphExecutor(factory=factory, store=InMemoryGraphRunStore())
+    run = GraphRun(graph_name="roadmap_forge", user_id="learner-1", input={})
+
+    event_iter = await executor.execute(run, stream=True)
+    collected: list[dict] = []
+    with caplog.at_level("ERROR", logger="career_forge.ai.executor"):
+        with pytest.raises(RuntimeError):
+            async for event in event_iter:
+                collected.append(event)
+
+    assert collected == [{"type": "error", "message": PUBLIC_STREAM_ERROR}]
+    assert run.status == "failed"
+    assert run.error is not None
+    assert "402" in run.error
+    assert "[redacted-key-url]" in run.error
+    assert "openrouter.ai" not in run.error
+    assert _PROVIDER_KEY not in run.error
+    assert "openrouter.ai" not in caplog.text
+    assert _PROVIDER_KEY not in caplog.text
