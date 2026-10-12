@@ -36,6 +36,7 @@ Career Forge v2 reposiciona o motor AI-native de aprendizado para **LLM engineer
 | 13 | **Forge recovery (ADR-003):** lista histórica via `forge_artifacts`; deep-links `share` (read-only) + `resume` (single-use/~7d); open = promote snapshot; freeze-before-promote. |
 | 14 | **Auth wire:** `Authorization: Bearer`; SSE via **stream ticket**. Paralelo a F2; CAR-21 só bloqueia path Labs do stream. |
 | 15 | Email opcional (Slice 2) — store only. **Amend 2026-08-20:** F3b verifies email via OTP ([CAR-44](https://linear.app/career-forge-v2/issue/CAR-44)); send resume = [CAR-47](https://linear.app/career-forge-v2/issue/CAR-47). Diagnosis mid-flight fora; diagnosis **result** reutilizável = Slice 2. |
+| 16 | **Provider switch (ADR-009):** LangChain stays. One Access desk control sends model chat and Forge search to OpenRouter or keeps OpenAI. Default OpenAI. A diagnosis session and a forge each keep the provider they started with. **Done** — [CAR-134](https://linear.app/one-percent-better/issue/CAR-134) closed 2026-10-12 (CAR-135–CAR-139; learner error redaction [CAR-140](https://linear.app/one-percent-better/issue/CAR-140)). |
 
 ---
 
