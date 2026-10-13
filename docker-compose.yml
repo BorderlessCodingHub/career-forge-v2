@@ -48,6 +48,7 @@ services:
       STRIPE_PRICE_ID: ${STRIPE_PRICE_ID:-}
       MAILER_BACKEND: ${MAILER_BACKEND:-log}
       MAIL_FROM: ${MAIL_FROM:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       AWS_SES_REGION: ${AWS_SES_REGION:-}
       JWT_SECRET: ${JWT_SECRET:-career-forge-dev-jwt-secret-change-me-32b+}
