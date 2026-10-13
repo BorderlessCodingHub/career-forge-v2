@@ -1,13 +1,13 @@
 """Learner email copy (CAR-131).
 
-English is the reviewed catalog. The pt-BR strings are a machine draft.
-Add ``"pt-BR"`` to ``REVIEWED_LOCALES`` only after a person edits that draft.
-Until then a stored pt-BR locale still sends English.
+English and pt-BR are reviewed catalogs.
+A missing or unknown locale sends English.
+The Operator console letter stays English.
 """
 
 from __future__ import annotations
 
-REVIEWED_LOCALES = frozenset({"en"})
+REVIEWED_LOCALES = frozenset({"en", "pt-BR"})
 
 _OTP = {
     "en": (

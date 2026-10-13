@@ -5,7 +5,6 @@ from __future__ import annotations
 import pytest
 
 from career_forge.services.learner_mail import (
-    REVIEWED_LOCALES,
     billing_letter,
     confirm_letter,
     continuity_idle_letter,
@@ -22,6 +21,13 @@ def test_no_stored_locale_is_english() -> None:
     assert email_locale(None) == "en"
     assert email_locale("") == "en"
     assert email_locale("fr") == "en"
+    subject, text = reset_letter(
+        url="https://labs.example/account/reset?token=abc",
+        hours=24,
+        locale=None,
+    )
+    assert subject == "Choose a new Career Forge password"
+    assert "https://labs.example/account/reset?token=abc" in text
 
 
 def test_stored_english_stays_english() -> None:
@@ -31,39 +37,28 @@ def test_stored_english_stays_english() -> None:
     assert text == "Your verification code is 424242. It expires in 10 minutes."
 
 
-def test_account_link_copy_stays_english_until_pt_br_is_reviewed() -> None:
+def test_account_links_follow_the_reviewed_locale() -> None:
     subject, text = confirm_letter(
         url="https://labs.example/account/confirm?token=abc",
         hours=24,
         locale="pt-BR",
     )
-    assert subject == "Confirm your Career Forge email"
+    assert subject == "Confirme seu e-mail do Career Forge"
     assert "24" in text
     assert "https://labs.example/account/confirm?token=abc" in text
+    assert "ignore este e-mail" in text
+
     reset_subject, reset_text = reset_letter(
         url="https://labs.example/account/reset?token=abc",
         hours=24,
-        locale=None,
+        locale="pt-BR",
     )
-    assert reset_subject == "Choose a new Career Forge password"
+    assert reset_subject == "Escolha uma nova senha do Career Forge"
     assert "https://labs.example/account/reset?token=abc" in reset_text
 
 
-def test_unreviewed_pt_br_stays_english() -> None:
-    assert "pt-BR" not in REVIEWED_LOCALES
-    assert email_locale("pt-BR") == "en"
-    subject, _text = billing_letter(
-        url="http://localhost:3300/career-forge/billing/card",
-        locale="pt-BR",
-    )
-    assert subject == "A charge for Career Forge failed"
-
-
-def test_reviewed_pt_br_uses_the_brazilian_draft(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(
-        "career_forge.services.learner_mail.REVIEWED_LOCALES",
-        frozenset({"en", "pt-BR"}),
-    )
+def test_stored_pt_br_sends_the_reviewed_portuguese_copy() -> None:
+    assert email_locale("pt-BR") == "pt-BR"
 
     otp_subject, otp_text = otp_letter(code="424242", minutes=10, locale="pt-BR")
     assert otp_subject == "Seu código do Career Forge"
@@ -110,10 +105,6 @@ def test_prod_mailers_send_the_resolved_letter_and_keep_operator_english(
 ) -> None:
     from career_forge.services.mailer import ResendMailer, SesMailer, SmtpMailer
 
-    monkeypatch.setattr(
-        "career_forge.services.learner_mail.REVIEWED_LOCALES",
-        frozenset({"en", "pt-BR"}),
-    )
     for mailer in (ResendMailer(), SesMailer(), SmtpMailer()):
         seen: dict[str, str] = {}
 
@@ -151,9 +142,7 @@ def test_prod_mailers_send_the_resolved_letter_and_keep_operator_english(
         assert "https://labs.example/account/confirm?token=abc" in seen["text"]
 
 
-def test_otp_and_billing_and_continuity_read_the_stored_locale(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_otp_and_billing_and_continuity_read_the_stored_locale() -> None:
     from career_forge.db.repositories.user import ensure_user
     from career_forge.db.session import SessionLocal
     from career_forge.services.billing_email import apply_billing_email
@@ -168,10 +157,6 @@ def test_otp_and_billing_and_continuity_read_the_stored_locale(
         ) -> None:
             otp_seen["locale"] = locale
 
-    monkeypatch.setattr(
-        "career_forge.services.learner_mail.REVIEWED_LOCALES",
-        frozenset({"en", "pt-BR"}),
-    )
     billing_seen: list[str] = []
 
     class _BillingMailer:
