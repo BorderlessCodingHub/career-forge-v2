@@ -88,7 +88,7 @@ def test_locale_does_not_change_whether_the_stretch_is_due() -> None:
     assert is_due(_stretch(locale="pt-BR"), PRESENCE) is False
 
 
-def test_unreviewed_locale_keeps_the_english_letter() -> None:
+def test_reviewed_locale_sends_the_portuguese_letter() -> None:
     node = SpineNode("retrieval", "Retrieval", "em_estudo")
     subject, text, url = continuity_message(
         node,
@@ -96,8 +96,8 @@ def test_unreviewed_locale_keeps_the_english_letter() -> None:
         locale="pt-BR",
     )
 
-    assert subject == "Continue with Retrieval"
-    assert "Retrieval is the next node on your roadmap." in text
+    assert subject == "Continue com Retrieval"
+    assert "Retrieval é o próximo nó da sua trilha." in text
     assert url == "http://localhost:3300/career-forge/roadmap?from=continuity&node=retrieval"
 
 
@@ -153,13 +153,7 @@ def test_rejected_send_does_not_spend_the_stretch() -> None:
     assert mailer.sent == []
 
 
-def test_accepted_send_uses_the_locale_carried_on_the_stretch(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setattr(
-        "career_forge.services.learner_mail.REVIEWED_LOCALES",
-        frozenset({"en", "pt-BR"}),
-    )
+def test_accepted_send_uses_the_locale_carried_on_the_stretch() -> None:
     mailer = _Mailer()
 
     _updated, accepted = try_send(

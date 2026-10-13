@@ -180,14 +180,14 @@ def test_portal_returns_to_the_roadmap_or_to_product_entry() -> None:
     assert portal_return_url(has_roadmap=False, frontend_url=f"{origin}/") == f"{origin}/"
 
 
-def test_unreviewed_locale_keeps_the_english_billing_letter() -> None:
+def test_reviewed_locale_sends_the_portuguese_billing_letter() -> None:
     subject, text, url = billing_message(
         "http://localhost:3300/career-forge/",
         locale="pt-BR",
     )
 
-    assert subject == "A charge for Career Forge failed"
-    assert "You can keep using Career Forge." in text
+    assert subject == "Uma cobrança do Career Forge falhou"
+    assert "Você pode continuar usando o Career Forge." in text
     assert url == "http://localhost:3300/career-forge/billing/card"
 
 
@@ -231,13 +231,7 @@ def test_rejected_send_does_not_spend_the_spell() -> None:
     assert updated.spell_open is False
 
 
-def test_reviewed_locale_changes_the_letter_and_still_opens_the_spell(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setattr(
-        "career_forge.services.learner_mail.REVIEWED_LOCALES",
-        frozenset({"en", "pt-BR"}),
-    )
+def test_reviewed_locale_changes_the_letter_and_still_opens_the_spell() -> None:
     mailer = _Mailer()
 
     updated, accepted = try_send(

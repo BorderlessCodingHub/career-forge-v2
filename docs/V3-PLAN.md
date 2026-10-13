@@ -28,7 +28,7 @@ Epic: [V3a](https://linear.app/career-forge-v2/issue/CAR-122).
 | Freemium | **Done** | [V3a: One forge, then the subscription](https://linear.app/career-forge-v2/issue/CAR-130) — PR #99. Alembic `027_lifetime_forge_started_at` |
 | Senha do Career Forge | **Done** | [V3a: Career Forge password](https://linear.app/career-forge-v2/issue/CAR-129) — PR #98. Alembic `025_career_forge_password` e `026_email_confirmed_at`. A sessão abre no link |
 | Dual language — interface | **Done** | [pt-BR learner interface (i18n)](https://linear.app/career-forge-v2/issue/CAR-37) — PR #100 (`a088da6`) catálogos do chrome; PR #92 o switch e Alembic `023_ui_locale`. O texto que o modelo devolve está **Done** — [CAR-133](https://linear.app/career-forge-v2/issue/CAR-133) PR #101 (`59e26da`) |
-| Emails no idioma | **Merged** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — PR #93. O rascunho pt-BR não é enviado; a issue não fecha antes da revisão humana |
+| Emails no idioma | **Reviewed** | [V3a: Learner emails follow the stored locale](https://linear.app/career-forge-v2/issue/CAR-131) — PR #93 ligou o locale. Uma pessoa revisou a cópia pt-BR e `REVIEWED_LOCALES` inclui `pt-BR`. Sem locale gravado, o e-mail sai em inglês |
 | Roadmap no idioma | **Done** | [V3a: Forge roadmap in the learner locale](https://linear.app/career-forge-v2/issue/CAR-132) — PR #94. O prompt fica em inglês e, na largada, pede o idioma da conta |
 | Chaves live | **[S]** | [Provision Stripe Price and keys for Labs](https://linear.app/career-forge-v2/issue/CAR-121) e um Checkout sandbox. Não bloqueia os trilhos acima. |
 
@@ -139,7 +139,7 @@ A interface do learner entra nos catálogos, inclusive a casca de `/learn` e de 
 
 O texto que a pessoa lê do modelo (pergunta, nota da barra, validação, mentor, tutor, frase de pesquisa do forge) está entregue em [CAR-133](https://linear.app/career-forge-v2/issue/CAR-133) — PR #101 (`59e26da`). O corpo do prompt continua em inglês, com uma instrução de idioma. Um artefato já gerado não é reescrito. A welcome de retorno e a lista de forges usam os catálogos.
 
-Os emails do learner (código, continuidade, cobrança, resume) usam o idioma gravado na conta. O email do Operator fica em inglês. Mesma regra de rascunho e revisão.
+Os emails do learner (código, continuidade, cobrança, resume, confirmar a conta, trocar a senha) usam o idioma gravado na conta. A cópia pt-BR foi revisada e é enviada. Sem locale gravado, o e-mail sai em inglês. O email do Operator fica em inglês.
 
 O prompt do forge continua em inglês e, na largada, pede o roadmap no idioma da conta. Trocar no meio do stream não reescreve esse forge. O próximo usa o idioma novo. Um roadmap já existente não é traduzido. O texto em pt-BR é português do Brasil. Entregue no PR #94 (`151cfe8`).
 
