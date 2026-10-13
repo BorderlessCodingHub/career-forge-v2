@@ -110,6 +110,8 @@ check grep -q 'OPERATOR_ALLOWLIST' docker-compose.yml
 check grep -q 'OPERATOR_ALLOWLIST' docker-compose.prod.yml
 check grep -q 'RESEND_API_KEY' docker-compose.yml
 check grep -q 'RESEND_API_KEY' docker-compose.prod.yml
+check grep -q 'SMTP_PASSWORD' docker-compose.yml
+check grep -q 'SMTP_PASSWORD' docker-compose.prod.yml
 check grep -q 'MAILER_BACKEND' docker-compose.prod.yml
 check grep -q 'JWT_SECRET' docker-compose.yml
 check grep -q 'JWT_SECRET' docker-compose.prod.yml

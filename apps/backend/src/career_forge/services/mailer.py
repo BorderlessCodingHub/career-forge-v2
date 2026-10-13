@@ -1,9 +1,12 @@
-"""Outbound mail adapters — log (dev) · Resend · SES (CAR-44 / CAR-47)."""
+"""Outbound mail adapters — log (dev) · Gmail SMTP · Resend · SES (CAR-44 / CAR-141)."""
 
 from __future__ import annotations
 
 import json
 import logging
+import smtplib
+from email.message import EmailMessage
+from email.utils import parseaddr
 from typing import Protocol, runtime_checkable
 from urllib import error, request
 
@@ -21,6 +24,9 @@ logger = logging.getLogger(__name__)
 # Cloudflare in front of api.resend.com returns 1010 for Python-urllib's default UA (CAR-84).
 RESEND_USER_AGENT = "CareerForge/1.0 (+https://labs.borderlesscoding.com/career-forge)"
 _MAX_ERROR_BODY = 300
+# Gmail SMTP until a verified sending domain exists (CAR-141). Host and port stay in code.
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = 587
 
 
 def _otp_minutes() -> int:
@@ -141,6 +147,73 @@ class LogMailer:
             subject,
             text,
         )
+
+
+def _smtp_user(mail_from: str) -> str:
+    """Login name is the address inside ``MAIL_FROM``, not the display name."""
+    _display, address = parseaddr(mail_from)
+    address = address.strip()
+    if "@" not in address:
+        raise RuntimeError("MAIL_FROM must include an email address when mailer_backend=smtp")
+    return address
+
+
+class SmtpMailer:
+    """Labs mail via Gmail SMTP (STARTTLS). A failed send stays failed."""
+
+    def send_otp(self, *, to_email: str, code: str, locale: str | None = None) -> None:
+        subject, text = otp_letter(code=code, minutes=_otp_minutes(), locale=locale)
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_operator_otp(self, *, to_email: str, code: str) -> None:
+        subject, text = operator_otp_letter(code=code, minutes=_otp_minutes())
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_resume_link(
+        self, *, to_email: str, resume_url: str, locale: str | None = None
+    ) -> None:
+        subject, text = resume_letter(
+            url=resume_url,
+            days=settings.jwt_resume_ttl_days,
+            locale=locale,
+        )
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_continuity(self, *, to_email: str, subject: str, text: str) -> None:
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_billing(self, *, to_email: str, subject: str, text: str) -> None:
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_account_link(
+        self,
+        *,
+        to_email: str,
+        url: str,
+        kind: str,
+        hours: int,
+        locale: str | None = None,
+    ) -> None:
+        subject, text = _account_letter(kind, url, hours, locale)
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def _send(self, *, to_email: str, subject: str, text: str) -> None:
+        password = settings.smtp_password.strip()
+        if not password:
+            raise RuntimeError("SMTP_PASSWORD is required when mailer_backend=smtp")
+        user = _smtp_user(settings.mail_from)
+        message = EmailMessage()
+        message["From"] = settings.mail_from
+        message["To"] = to_email
+        message["Subject"] = subject
+        message.set_content(text)
+        try:
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=15) as client:
+                client.starttls()
+                client.login(user, password)
+                client.send_message(message)
+        except (smtplib.SMTPException, OSError) as exc:
+            raise RuntimeError(f"SMTP send failed: {exc}") from exc
 
 
 class ResendMailer:
@@ -274,6 +347,8 @@ class SesMailer:
 
 def get_mailer() -> Mailer:
     backend = settings.mailer_backend.strip().lower()
+    if backend == "smtp":
+        return SmtpMailer()
     if backend == "resend":
         return ResendMailer()
     if backend == "ses":

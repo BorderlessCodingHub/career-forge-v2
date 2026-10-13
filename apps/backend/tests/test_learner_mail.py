@@ -108,13 +108,13 @@ def test_reviewed_pt_br_uses_the_brazilian_draft(monkeypatch: pytest.MonkeyPatch
 def test_prod_mailers_send_the_resolved_letter_and_keep_operator_english(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from career_forge.services.mailer import ResendMailer, SesMailer
+    from career_forge.services.mailer import ResendMailer, SesMailer, SmtpMailer
 
     monkeypatch.setattr(
         "career_forge.services.learner_mail.REVIEWED_LOCALES",
         frozenset({"en", "pt-BR"}),
     )
-    for mailer in (ResendMailer(), SesMailer()):
+    for mailer in (ResendMailer(), SesMailer(), SmtpMailer()):
         seen: dict[str, str] = {}
 
         def _capture(**kwargs: str) -> None:

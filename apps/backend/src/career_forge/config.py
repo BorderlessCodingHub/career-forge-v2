@@ -58,8 +58,9 @@ class Settings(BaseSettings):
     otp_rate_limit_per_email: int = 5
     otp_rate_limit_per_ip: int = 20
     otp_rate_limit_window_seconds: int = 600
-    mailer_backend: str = "log"  # log | resend | ses
+    mailer_backend: str = "log"  # log | smtp | resend | ses
     mail_from: str = "Career Forge <noreply@careerforge.local>"
+    smtp_password: str = ""
     resend_api_key: str = ""
     aws_ses_region: str = ""
     # CAR-45 — membership soft label (stub allowlist until Borderless HTTP is live)
