@@ -11,16 +11,472 @@
     "membersIncluded": "Membros: o Career Forge está incluído. Comece o diagnóstico com o e-mail de membro.",
     "startDiagnosis": "Começar diagnóstico",
     "startHere": "Comece aqui",
-    "pillars": "4 pilares centrais",
-    "sandbox": "Sandbox de IA ao vivo",
     "sandboxDemo": "Demo do sandbox de IA ao vivo",
     "calculator": "Calculadora de ROI",
     "calculatorFull": "Calculadora de salário e ROI",
-    "stories": "Histórias",
     "access": "Acesso",
-    "faq": "FAQ",
     "openNavigation": "Abrir navegação",
-    "closeNavigation": "Fechar navegação"
+    "closeNavigation": "Fechar navegação",
+    "meta": {
+      "title": "Bem-vindo · Career Forge",
+      "description": "Uma trilha que só anda quando você prova. Career Forge para BASE e PSP da Borderless — forge ao vivo, domínio validado."
+    },
+    "hero": {
+      "included": "Incluído para membros",
+      "headlineBefore": "De engenheiro de software a",
+      "headlineAccent": "engenheiro de IA de elite",
+      "leadBefore": "Domine os 4 pilares inegociáveis da engenharia de IA em produção:",
+      "leadAnd": " e ",
+      "leadAfter": ". Diagnostique seu ponto de partida, forje uma trilha ao vivo e valide o domínio.",
+      "tracks": "4 trilhas",
+      "diagnosis": "Diagnóstico",
+      "diagnosisHint": "Antes de qualquer trilha",
+      "liveForge": "Forge ao vivo",
+      "liveForgeHint": "Veja tomar forma",
+      "memberHint": "Incluído com o e-mail de membro",
+      "run": "Rodar simulação",
+      "executing": "Executando...",
+      "copy": "Copiar",
+      "copied": "Copiado",
+      "console": "Saída do console:",
+      "techStack": "Stack que você domina:"
+    },
+    "social": {
+      "heading": "Empresas onde trabalham talentos BASE e PSP da Borderless"
+    },
+    "problem": {
+      "eyebrow": "O imperativo da engenharia de IA em 2026",
+      "titleBefore": "Wrappers básicos de API morreram.",
+      "titleAccent": "As empresas exigem engenheiros de sistemas de IA.",
+      "lead": "Em 2026, colar uma chamada `openai.ChatCompletion` com a configuração padrão não te contrata nem te promove. As melhores empresas de tecnologia precisam de engenheiros que reduzam a conta de GPU na nuvem, evitem alucinações, façam fine-tune de modelos de domínio e escalem a inferência.",
+      "genericTitle": "Engenheiro de software genérico",
+      "genericSubtitle": "Preso no nível de wrapper de API",
+      "genericAvg": "Média: $130k - $160k",
+      "certified": "CAREER FORGE CERTIFICADO",
+      "forgeTitle": "Engenheiro de sistemas de IA do Forge",
+      "forgeSubtitle": "Domínio de RAG, Fine-Tuning, Evals e OpsLLM",
+      "forgeAvg": "Média: $240k - $380k+",
+      "generic": {
+        "0": {
+          "lead": "Prompt ingênuo e busca vetorial ingênua:",
+          "body": " alta taxa de alucinação, dificuldade com raciocínio em várias etapas e baixa precisão."
+        },
+        "1": {
+          "lead": "Teste \"no feeling\":",
+          "body": " rodar o prompt de novo na interface do ChatGPT para ver se \"parece bom\", em vez de montar suítes contínuas de avaliação em CI/CD."
+        },
+        "2": {
+          "lead": "100% preso ao custo de API comercial:",
+          "body": " pagar $40,000/mês em tokens de API fechada sem saber fazer fine-tune de modelos abertos para cortar cerca de 80% do custo."
+        },
+        "3": {
+          "lead": "Endpoints lentos e sem escala:",
+          "body": " bloqueado por rate limit, latência de mais de 2 segundos, sem continuous batching nem gestão de KV cache."
+        }
+      },
+      "forge": {
+        "0": {
+          "lead": "Arquiteturas híbridas de GraphRAG:",
+          "body": " indexação densa + esparsa com RRF, Cohere Rerank v3 e recuperação agentic autocorretiva com 98%+ de precisão."
+        },
+        "1": {
+          "lead": "Fine-tuning com Unsloth, SFT e DPO:",
+          "body": " fine-tune de pesos Llama 3 e DeepSeek com QLoRA 4-bit, alinhamento de preferência e curadoria de dataset sintético."
+        },
+        "2": {
+          "lead": "Quality gates automáticos com DeepEval no CI/CD:",
+          "body": " medir Faithfulness, score de alucinação, toxicidade e regressão de PR antes do código ir para produção."
+        },
+        "3": {
+          "lead": "Operação de alto throughput com vLLM e Ray Serve:",
+          "body": " publicar nós multi-GPU com PagedAttention, continuous batching e latência TTFT abaixo de 40 ms."
+        }
+      }
+    },
+    "track": {
+      "rag": {
+        "badge": "Orquestração de retrieval e contexto",
+        "subtitle": "Domine busca híbrida, GraphRAG e sistemas de query agentic",
+        "description": "Construa arquiteturas de Retrieval-Augmented Generation em nível empresarial que lidam com milhões de embeddings vetoriais, indexação híbrida densa/esparsa, reranking e compressão dinâmica de contexto sem vazamento de alucinação.",
+        "skills": {
+          "0": "Retrieval híbrido denso e esparso (BM25 + Cohere Rerank v3)",
+          "1": "RAG agentic e GraphRAG hierárquico com Neo4j",
+          "2": "Compressão de contexto, estratégias de chunking e indexação parent-child",
+          "3": "Cache semântico com Redis e Qdrant para queda de 10x na latência",
+          "4": "Embeddings vetoriais multimodais e pipeline de PDF/OCR"
+        },
+        "capstoneTitle": "Engine GraphRAG de produção sobre 50.000 filings SEC 10-K",
+        "capstoneDescription": "Arquitetar um pipeline agentic de retrieval de ponta a ponta com reciprocal rank fusion (RRF) e loops autocorretivos, chegando a 98.4% de precisão de contexto.",
+        "deliverables": {
+          "0": "Cluster Qdrant self-hosted",
+          "1": "Score RAGAS >0.92",
+          "2": "API com latência p95 abaixo de 300 ms"
+        },
+        "flow": {
+          "0": {
+            "title": "Reescrita da query",
+            "description": "HyDE (Hypothetical Document Embeddings) e expansão multi-query"
+          },
+          "1": {
+            "title": "Retrieval híbrido",
+            "description": "Busca paralela BM25 esparsa + vetor denso HNSW com filtros de metadata"
+          },
+          "2": {
+            "title": "Reciprocal Rank Fusion",
+            "description": "Fusão de scores com o algoritmo RRF e reranking Cohere v3"
+          },
+          "3": {
+            "title": "Compressão de contexto",
+            "description": "Sumarização de contexto longo e poda de tokens antes da geração"
+          }
+        }
+      },
+      "finetuner": {
+        "badge": "PEFT, LoRA e pós-treino",
+        "subtitle": "Treine modelos open-weights com Unsloth e DPO",
+        "description": "Assuma o controle de pesos open-source (Llama 3, DeepSeek-R1, Mistral). Domine Supervised Fine-Tuning (SFT), Direct Preference Optimization (DPO), quantização QLoRA 4-bit e geração de dataset sintético.",
+        "skills": {
+          "0": "Fine-tuning 2x mais rápido com Unsloth e Axolotl e 60% menos memória",
+          "1": "PEFT, QLoRA, Rank-Stabilized LoRA (rsLoRA) e merge de adapters",
+          "2": "Direct Preference Optimization (DPO) e alinhamento (RLHF/ORPO)",
+          "3": "Curadoria de dataset sintético e destilação com DeepSeek-R1",
+          "4": "Quantização de modelo (GGUF, AWQ, EXL2) para edge e servidor"
+        },
+        "capstoneTitle": "Modelo de síntese de código especializado, fine-tuned em uma GPU A100",
+        "capstoneDescription": "Destilar trajetórias de raciocínio do DeepSeek-R1 em Llama-3-8B com QLoRA e DPO. Comparar com GPT-4o em tarefas HumanEval.",
+        "deliverables": {
+          "0": "Pesos próprios em GGUF/AWQ",
+          "1": "84.2% de HumanEval Pass@1",
+          "2": "Pipeline de treino SFT + DPO totalmente automatizado"
+        },
+        "flow": {
+          "0": {
+            "title": "Curadoria de dados",
+            "description": "Deduplicação, filtro de toxicidade e geração de prompts sintéticos semente"
+          },
+          "1": {
+            "title": "Treino SFT",
+            "description": "Supervised Fine-Tuning com QLoRA 4-bit e FlashAttention-2"
+          },
+          "2": {
+            "title": "Alinhamento (DPO)",
+            "description": "Direct Preference Optimization para tom de domínio e controle de precisão"
+          },
+          "3": {
+            "title": "Quantização",
+            "description": "Exportar o adapter treinado para FP16, AWQ e GGML nos engines de inferência"
+          }
+        }
+      },
+      "evals": {
+        "badge": "Avaliação e guardrails",
+        "subtitle": "Automatize testes de LLM, checagem de alucinação e red teaming",
+        "description": "Saia do desenvolvimento de IA \"no feeling\" e entre em engenharia rigorosa. Monte pipelines de avaliação, frameworks de juiz, suítes de asserção e guardrails contínuos que bloqueiam saídas ruins antes de chegarem ao usuário.",
+        "skills": {
+          "0": "Frameworks de métricas Ragas, DeepEval e TruLens",
+          "1": "Desenho de LLM-as-a-Judge e redução de viés nos modelos de avaliação",
+          "2": "Red teaming automatizado e defesa contra jailbreak adversarial",
+          "3": "Suítes de regressão de prompt e peso em CI/CD no GitHub Actions",
+          "4": "Filtragem em tempo real com NeMo Guardrails e Llama Guard"
+        },
+        "capstoneTitle": "Suíte de qualidade e guardrail de IA empresarial no pipeline de CI/CD",
+        "capstoneDescription": "Implementar testes de regressão automáticos para alucinação, relevância da resposta, toxicidade e vazamento de PII, disparados a cada push de PR.",
+        "deliverables": {
+          "0": "Quality gates que bloqueiam o PR",
+          "1": "Dashboard com drift em tempo real",
+          "2": "Mais de 100 suítes sintéticas de red teaming"
+        },
+        "flow": {
+          "0": {
+            "title": "Geração de casos de teste",
+            "description": "Curadoria de datasets golden e prompts adversariais de borda"
+          },
+          "1": {
+            "title": "Benchmark multimétrica",
+            "description": "Rodar métricas de Faithfulness, Answer Relevancy e Context Recall"
+          },
+          "2": {
+            "title": "LLM-as-a-Judge",
+            "description": "Usar modelos de júri calibrados com verificação chain-of-thought"
+          },
+          "3": {
+            "title": "Aplicação de guardrail",
+            "description": "Varredura de saída em tempo real com regex, classificadores vetoriais e filtros de toxicidade"
+          }
+        }
+      },
+      "opsllm": {
+        "badge": "Latência e escala em produção",
+        "subtitle": "Publique nós de alto throughput com vLLM e Ray",
+        "description": "Escale o serving de LLM em produção para milhares de requests por segundo. Domine continuous batching do vLLM, PagedAttention, TensorRT-LLM, clusters Ray Serve, otimização de latência de streaming, redução de custo de GPU e throttling por token bucket.",
+        "skills": {
+          "0": "Deploy de engine vLLM e TensorRT-LLM com continuous batching",
+          "1": "PagedAttention e gestão de memória de KV cache",
+          "2": "Orquestração de cluster multi-GPU com Ray Serve e Kubernetes (K8s)",
+          "3": "Otimização de TTFT (Time-To-First-Token) e latência de inferência (<40 ms)",
+          "4": "Limite de taxa de tokens, orçamento de custo e roteamento inteligente de modelo"
+        },
+        "capstoneTitle": "Cluster vLLM multi-nó de alto throughput com escala dinâmica",
+        "capstoneDescription": "Publicar um cluster resiliente que atende 1.200 requests/segundo com latência TTFT abaixo de 50 ms e nós de GPU com autoscaling no Kubernetes.",
+        "deliverables": {
+          "0": "Configs de deploy de produção em K8s + Helm",
+          "1": "Dashboards de telemetria Prometheus e Grafana",
+          "2": "Benchmark de 70% de redução de custo de GPU"
+        },
+        "flow": {
+          "0": {
+            "title": "Empacotamento do modelo",
+            "description": "Carga de pesos AWQ/GPTQ e configuração de KV cache com PagedAttention"
+          },
+          "1": {
+            "title": "Paralelismo de tensor",
+            "description": "Particionar parâmetros do modelo entre GPUs usando NVLink"
+          },
+          "2": {
+            "title": "Batching dinâmico",
+            "description": "Continuous batching e chunked prefill para saturar o núcleo da GPU"
+          },
+          "3": {
+            "title": "Telemetria e rota",
+            "description": "Respostas SSE em streaming, métricas Prometheus e fallback de rota de tokens"
+          }
+        }
+      }
+    },
+    "roi": {
+      "eyebrow": "CALCULADORA INTERATIVA DE SALÁRIO E ROI",
+      "titleBefore": "Calcule o salto de remuneração",
+      "titleAccent": "em engenharia de IA",
+      "leadBefore": "Conta de brinquedo de payback contra uma assinatura mensal de ",
+      "leadPrice": "USD $7/mês",
+      "leadAfter": ". Salto de salário inventado — não são dados de colocação do Career Forge.",
+      "role": "CARGO ATUAL / ESPECIALIZAÇÃO:",
+      "mid": "SWE pleno",
+      "senior": "SWE sênior",
+      "staff": "Staff / tech lead",
+      "data": "Eng. de dados / ML",
+      "junior": "Júnior / associado",
+      "region": "REGIÃO / FAIXA DE REMUNERAÇÃO:",
+      "usHub": "Hub de tech nos EUA (SF/NY)",
+      "usRemote": "Remoto nos EUA",
+      "eu": "Europa / Reino Unido",
+      "apac": "APAC / LATAM",
+      "yearsLabel": "ANOS DE EXPERIÊNCIA EM SOFTWARE:",
+      "years": "{count} anos",
+      "projected": "REMUNERAÇÃO ANUAL PROJETADA",
+      "lift": "+${amount} / ano (+{percent}%)",
+      "current": "Estimativa atual de mercado:",
+      "payback": "Payback da assinatura USD $7/mês:",
+      "paybackUnderOne": "< 1 dia de trabalho",
+      "paybackDays": "{count} dias de trabalho"
+    },
+    "mentors": {
+      "eyebrow": "EQUIPE BORDERLESS",
+      "titleBefore": "A equipe do ecossistema por trás do",
+      "titleAccent": "Career Forge",
+      "lead": "Feito para você ver seu ponto de partida, acompanhar uma trilha ao vivo tomando forma e provar o que sabe fazer.",
+      "yuriRole": "Fundador e advisor estratégico de tecnologia",
+      "yuriBio": "Fundou a Borderless Coding em 2023. Advisor estratégico de tecnologia do ecossistema BASE e PSP em que o Career Forge está.",
+      "yuriSpecialty": "Fundador",
+      "pedroRole": "Engenheiro fundador",
+      "pedroBio": "Engenheiro de software. Constrói o Career Forge com a equipe Borderless.",
+      "pedroSpecialty": "Career Forge"
+    },
+    "pricing": {
+      "eyebrow": "ACESSO",
+      "titleBefore": "Incluído para membros.",
+      "titlePrice": "USD $7/mês",
+      "titleAfter": "nos demais casos.",
+      "lead": "Quem estuda no BASE e no PSP começa com o e-mail de membro. Quem é externo e ainda não paga vê USD $7/mês depois da identidade por e-mail, cobrado dentro do produto.",
+      "included": "INCLUÍDO NESTE PLANO:",
+      "membersBadge": "Membros",
+      "membersPrice": "Incluído",
+      "membersPeriod": "com o seu e-mail de membro",
+      "membersDescription": "O Career Forge está incluído para quem estuda no BASE e no PSP. Comece o diagnóstico com o e-mail de membro.",
+      "membersFeatures": {
+        "0": "Diagnóstico antes de qualquer trilha",
+        "1": "Forge ao vivo da trilha para a sua track",
+        "2": "Validação de domínio na trilha",
+        "3": "Quatro trilhas de LLM: RAG, Fine-Tuning, Evals, OpsLLM",
+        "4": "Sem Stripe para membros BASE e PSP"
+      },
+      "externalName": "Externo",
+      "externalBadge": "Caminho mais comum",
+      "externalPrice": "USD $7",
+      "externalPeriod": "por mês, cobrado no produto depois da identidade por e-mail",
+      "externalDescription": "Quem é externo e ainda não paga vê USD $7/mês depois da identidade por e-mail. A cobrança fica no produto — não nesta página.",
+      "externalFeatures": {
+        "0": "O mesmo ciclo do produto depois da identidade por e-mail",
+        "1": "USD $7/mês cobrado no ciclo (sem Stripe no Welcome)",
+        "2": "Cobrado no ciclo depois do OTP — sem Stripe no Welcome",
+        "3": "BASE e PSP continuam incluídos se você for membro"
+      }
+    },
+    "cta": {
+      "titleBefore": "Pronto para forjar sua carreira em",
+      "titleAccent": "engenharia de IA em produção?",
+      "lead": "Pare de colar chamadas básicas de wrapper da OpenAI. Domine RAG, Fine-Tuning, Evals e OpsLLM para construir aplicações de IA em nível empresarial.",
+      "members": "BASE · PSP incluído",
+      "price": "USD $7/mês",
+      "priceFor": "para os demais"
+    },
+    "footer": {
+      "blurb": "Aprendizado adaptativo de LLM para BASE e PSP: trilhas ao vivo forjadas a partir do diagnóstico e da validação de domínio.",
+      "chip": "BASE · PSP incluído · USD $7/mês para os demais",
+      "pillars": "Pilares centrais",
+      "pillarRag": "RAG Engineering e GraphRAG",
+      "pillarTune": "Fine-Tuning com Unsloth, SFT e DPO",
+      "pillarEvals": "LLM Evals com DeepEval e CI/CD",
+      "pillarOps": "Infraestrutura OpsLLM com vLLM e Ray",
+      "resources": "Recursos",
+      "sandbox": "Sandbox de IA interativo",
+      "calculator": "Calculadora de remuneração em IA",
+      "getStarted": "Começar",
+      "admissions": "FAQ de entrada",
+      "legal": "© 2026 Borderless Coding LLC. Todos os direitos reservados. Domine RAG, Fine-Tuning, Evals e OpsLLM.",
+      "privacy": "Política de privacidade",
+      "terms": "Termos de serviço",
+      "security": "Segurança"
+    },
+    "mastery": {
+      "eyebrow": "OS 4 PILARES DE COMPETÊNCIA",
+      "titleBefore": "O que você vai dominar no",
+      "titleAccent": "Career Forge",
+      "lead": "Quatro trilhas de IA em produção: RAG, Fine-Tuning, Evals e OpsLLM — diagnosticar, forjar e então validar o domínio.",
+      "blueprint": "PLANTA DETALHADA DO PILAR",
+      "skills": "HABILIDADES DE ENGENHARIA QUE VOCÊ VAI ADQUIRIR:",
+      "pipeline": "ARQUITETURA DO PIPELINE EM PRODUÇÃO:",
+      "step": "PASSO {step}",
+      "capstone": "PROJETO PRÁTICO DO PILAR",
+      "deliverables": "ENTREGAS DE PORTFÓLIO:",
+      "tools": "FRAMEWORKS E FERRAMENTAS QUE VOCÊ VAI USAR:"
+    },
+    "pillars": "4 pilares centrais",
+    "playground": {
+      "eyebrow": "PLAYGROUND INTERATIVO AO VIVO",
+      "titleBefore": "Teste engenharia de sistemas de IA",
+      "titleAccent": "em tempo real",
+      "lead": "Simule como as arquiteturas do Career Forge se comportam sob carga, teste precisão de busca vetorial, redução de memória no fine-tuning e suítes de asserção.",
+      "tabRag": "1. Simulador de RAG",
+      "tabTune": "2. Estimador de Fine-Tuning",
+      "tabEvals": "3. Suíte de asserção DeepEval",
+      "tabOps": "4. Banco de latência OpsLLM",
+      "ragTitle": "Benchmark de RAG agentic contra busca vetorial ingênua",
+      "ragLead": "Compare reciprocal rank fusion (RRF) + reranking Cohere com similaridade de cosseno de um único vetor.",
+      "naive": "Busca densa ingênua",
+      "hybrid": "⚡ GraphRAG híbrido do Forge",
+      "queryLabel": "QUERY FINANCEIRA / REGULATÓRIA DE TESTE:",
+      "defaultQuery": "Qual foi a margem líquida de lucro de cloud da Acme Corp no Q3 de 2025?",
+      "precision": "Precisão @ K=5:",
+      "precisionGood": "Nenhum contexto perdido",
+      "precisionBad": "Documento relevante caiu para o rank 12",
+      "latency": "Latência de retrieval:",
+      "latencyGood": "Execução paralela HNSW + BM25",
+      "latencyBad": "Varredura vetorial sequencial única",
+      "hallucination": "Risco de alucinação:",
+      "hallucinationGood": "Protegido com citações",
+      "hallucinationBad": "Alucinação de contexto não verificável",
+      "tuneTitle": "Calculadora de memória e VRAM Unsloth QLoRA (Llama 3 / DeepSeek 8B)",
+      "tuneLead": "Veja como a quantização 4-bit e o rank LoRA permitem fine-tuning em uma única GPU de consumidor.",
+      "loraRank": "LoRA Rank (r):",
+      "loraAlpha": "Escala LoRA Alpha:",
+      "quant": "Precisão da quantização:",
+      "q4": "4-bit (QLoRA)",
+      "q8": "8-bit",
+      "fp16": "FP16 (completo)",
+      "vram": "VRAM DE GPU NECESSÁRIA",
+      "vramFit": "Cabe em 1x Nvidia RTX 4090 ou A10G (24 GB de VRAM)",
+      "throughput": "Throughput de treino:",
+      "speed4": "2.4x mais rápido (Unsloth)",
+      "speed8": "1.5x de velocidade",
+      "speed16": "1.0x de velocidade",
+      "adapter": "Parâmetros do adapter alvo:",
+      "million": "{count} milhões",
+      "evalsTitle": "Teste de regressão automatizado DeepEval no CI/CD",
+      "evalsLead": "Rode asserções automáticas para bloquear saídas alucinadas ou tóxicas antes do deploy em produção.",
+      "defaultEval": "Gerar resumo do relatório financeiro do Q3",
+      "running": "Rodando DeepEval...",
+      "execute": "Executar suíte de testes",
+      "faithfulness": "Métrica de Faithfulness",
+      "hallucinationRate": "Taxa de alucinação",
+      "toxicity": "Toxicidade / vazamento de PII",
+      "faithfulnessThreshold": "Limite: >0.90 (passou)",
+      "hallucinationThreshold": "Limite: <0.05 (passou)",
+      "toxicityThreshold": "Limite: 0.00 (passou)",
+      "evalsEmpty": "Clique em \"Executar suíte de testes\" para disparar as asserções LLM-as-a-Judge do DeepEval.",
+      "opsTitle": "Simulador de latência vLLM de alto throughput do OpsLLM",
+      "opsLead": "Teste continuous batching e PagedAttention contra serving sequencial ingênuo em PyTorch.",
+      "hf": "HuggingFace padrão",
+      "vllm": "⚡ vLLM continuous batching",
+      "load": "Carga concorrente (requests por segundo):",
+      "ttft": "Time-To-First-Token (TTFT):",
+      "ttftGood": "Chunked prefill abaixo de 50 ms",
+      "ttftBad": "Bloqueio alto de cabeça de fila",
+      "output": "Throughput de saída:",
+      "outputGood": "Saturação total do núcleo da GPU",
+      "outputBad": "30% de fragmentação de memória da GPU",
+      "kv": "Utilização de KV cache:",
+      "kvGood": "Memória sem desperdício com PagedAttention",
+      "kvBad": "Alto risco de OOM"
+    },
+    "sandbox": "Sandbox de IA ao vivo",
+    "testimonials": {
+      "eyebrow": "HISTÓRIAS DE SUCESSO BASE · PSP",
+      "titleBefore": "Veja como engenheiros",
+      "titleAccent": "transformaram a carreira",
+      "titleAfter": "com a",
+      "lead": "Mentorados nomeados do BASE e do PSP da Borderless — o ecossistema para o qual o Career Forge foi feito. Esses resultados vêm da mentoria e estão publicados em borderlesscoding.com.",
+      "prior": "Antes: {role}",
+      "trajectory": "Trajetória:",
+      "arthurRole": "Especialista em IA",
+      "arthurFormer": "Bartender (Canadá)",
+      "arthurStory": "Arthur trabalhava como bartender no Canadá antes de entrar no Base Mentorship Program. Hoje trabalha com inteligência artificial de forma remota. Saiu de um salário de R$5,000 como bartender para um salário de R$15,000 trabalhando remoto.",
+      "eduardoRole": "Desenvolvedor de IA/LLM (low-code)",
+      "eduardoFormer": "Lead Developer (low-code)",
+      "eduardoStory": "Eduardo saiu de Lead Developer (low-code) a cerca de US$7.50/hr (~US$1,300) para desenvolvedor de IA/LLM (low-code) a US$18/hr (~US$2,900) em cerca de seis meses de mentoria no Base.",
+      "gelsonRole": "Front End · US$9,000/month",
+      "gelsonFormer": "Desempregado após layoff em outsourcing",
+      "gelsonStory": "Gelson ficou desempregado depois de um layoff em outsourcing, onde ganhava R$20K no Brasil. Hoje recebe US$9,000/month depois de internacionalizar a carreira com um mês de mentoria, aplicando o método Go Global ensinado no PSP Mentorship Program.",
+      "thiagoRole": "Desenvolvedor Web3 / backend",
+      "thiagoFormer": "Desenvolvedor backend",
+      "thiagoStory": "Em um mês de mentoria no PSP, Thiago saiu de desenvolvedor backend (USD 13k) para desenvolvedor Web3 / backend ($22k). Passou na triagem inicial de 19 processos e recusou 3 ofertas abaixo da sua taxa ou que eram web2."
+    },
+    "stories": "Histórias",
+    "questions": {
+      "eyebrow": "PERGUNTAS FREQUENTES",
+      "title": "Tudo o que você precisa saber",
+      "lead": "Associação, como começar e o que o produto de fato faz — sem calendário de turma nem garantia de carreira.",
+      "search": "Buscar no FAQ (ex.: associação, diagnóstico, laptop)...",
+      "ready": "Pronto para ver onde você está?",
+      "readyLead": "Comece o diagnóstico — a identidade por e-mail acontece no produto, não aqui.",
+      "items": {
+        "0": {
+          "question": "Para quem é o Career Forge?",
+          "answer": "Membros BASE e PSP: o Career Forge está incluído. Comece o diagnóstico com o e-mail de membro. Os demais (externos sem pagamento) veem USD $7/mês depois da identidade por e-mail, cobrado no produto — não como checkout nesta página."
+        },
+        "1": {
+          "question": "Por que isto não é um curso de prompt?",
+          "answer": "Não. Não é um curso de prompt. O Career Forge diagnostica seu ponto de partida, forja uma trilha ao vivo para uma track de IA em produção (RAG, Fine-Tuning, Evals ou OpsLLM) e valida o domínio antes de você avançar."
+        },
+        "2": {
+          "question": "Como eu começo?",
+          "answer": "Clique em Comece aqui. Você confirma a identidade por e-mail (OTP) na entrada do produto, e o ciclo é objetivo → diagnóstico → Forge ao vivo → trilha → validar domínio."
+        },
+        "3": {
+          "question": "O que o produto faz?",
+          "answer": "O diagnóstico mapeia onde você está antes de existir qualquer trilha. O Forge ao vivo deixa você ver essa trilha tomar forma. Validar o domínio confere o que você de fato sabe fazer; a trilha reage à evidência."
+        },
+        "4": {
+          "question": "Preciso de GPU ou créditos NVIDIA?",
+          "answer": "Não. Você trabalha do seu laptop. O Career Forge não inclui créditos NVIDIA nem de GPU na nuvem."
+        },
+        "5": {
+          "question": "Existe garantia de emprego ou de reembolso?",
+          "answer": "Não. O Career Forge não garante emprego, salto de salário nem reembolso."
+        }
+      }
+    },
+    "faq": "FAQ"
   },
   "learn": {
     "loading": "Carregando…",

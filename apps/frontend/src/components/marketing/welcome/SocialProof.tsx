@@ -2,13 +2,15 @@
 
 import { EMPLOYERS } from "./data/curriculumData";
 import { welcomeAssetPath } from "@/lib/welcome-assets";
+import { useWelcomeText } from "./useWelcomeText";
 
 export function SocialProof() {
+  const { text } = useWelcomeText();
   return (
     <section className="py-12 bg-slate-950/90 border-y border-slate-800/80 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p className="text-center text-xs font-semibold uppercase tracking-widest text-slate-400 mb-8">
-          Companies where Borderless BASE & PSP talents work
+          {text("social.heading")}
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 items-center justify-center opacity-80 hover:opacity-100 transition-opacity">

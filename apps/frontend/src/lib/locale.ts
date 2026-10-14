@@ -72,6 +72,10 @@ export function mergeMessages(base: MessageTree, overlay: MessageTree): MessageT
   const merged: MessageTree = { ...base };
   for (const [key, value] of Object.entries(overlay)) {
     const current = merged[key];
+    if (Array.isArray(value)) {
+      if (value.length > 0) (merged as Record<string, unknown>)[key] = value;
+      continue;
+    }
     if (isTree(value) && isTree(current)) {
       merged[key] = mergeMessages(current, value);
       continue;
@@ -107,6 +111,6 @@ export async function syncStoredLocale(io: {
   if (stored.display !== DEFAULT_LOCALE) io.refresh();
 }
 
-function isTree(value: string | MessageTree | undefined): value is MessageTree {
-  return typeof value === "object" && value !== null;
+function isTree(value: MessageTree[string] | undefined): value is MessageTree {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

@@ -5,6 +5,7 @@ import {
   buildLocaleCookie,
   localeAfterSignIn,
   mergeMessages,
+  type MessageTree,
   parseLocaleCookie,
   resolveLocale,
   syncStoredLocale,
@@ -83,6 +84,14 @@ describe("mergeMessages", () => {
     expect(merged).toEqual({
       chrome: { signOut: "Sair", language: "Language" },
     });
+  });
+
+  it("replaces a translated list instead of merging it into an object", () => {
+    const merged = mergeMessages(
+      { welcome: { items: ["Keep this"] } } as unknown as MessageTree,
+      { welcome: { items: ["Troca isto"] } } as unknown as MessageTree,
+    );
+    expect(merged).toEqual({ welcome: { items: ["Troca isto"] } });
   });
 });
 

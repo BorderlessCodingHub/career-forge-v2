@@ -1,29 +1,51 @@
 "use client";
 
 import Link from "next/link";
-import { PRICING_PLANS } from "./data/curriculumData";
 import { Sparkles, ArrowRight } from "lucide-react";
+import { useWelcomeText } from "./useWelcomeText";
 
 export function Pricing() {
+  const { text, list } = useWelcomeText();
+  const plans = [
+    {
+      id: "members",
+      popular: false,
+      name: "BASE · PSP",
+      badge: text("pricing.membersBadge"),
+      price: text("pricing.membersPrice"),
+      period: text("pricing.membersPeriod"),
+      description: text("pricing.membersDescription"),
+      features: list<string>("pricing.membersFeatures"),
+    },
+    {
+      id: "external",
+      popular: true,
+      name: text("pricing.externalName"),
+      badge: text("pricing.externalBadge"),
+      price: text("pricing.externalPrice"),
+      period: text("pricing.externalPeriod"),
+      description: text("pricing.externalDescription"),
+      features: list<string>("pricing.externalFeatures"),
+    },
+  ];
   return (
     <section id="pricing" className="py-24 bg-slate-950 border-t border-slate-900 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-bold uppercase tracking-wider mb-4 font-mono">
             <Sparkles className="w-3.5 h-3.5" />
-            ACCESS
+            {text("pricing.eyebrow")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-            Included for members. <span className="gradient-text-orange">USD $7/mo</span> otherwise.
+            {text("pricing.titleBefore")} <span className="gradient-text-orange">{text("pricing.titlePrice")}</span> {text("pricing.titleAfter")}
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
-            BASE and PSP learners start with their member email. Unpaid external learners see USD
-            $7/mo after Email identity, billed in the product.
+            {text("pricing.lead")}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
-          {PRICING_PLANS.map((plan) => {
+          {plans.map((plan) => {
             const isPopular = plan.popular;
             return (
               <div
@@ -64,7 +86,7 @@ export function Pricing() {
 
                   <div className="space-y-3 mb-8">
                     <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
-                      INCLUDED IN THIS PLAN:
+                      {text("pricing.included")}
                     </div>
                     {plan.features.map((feat) => (
                       <div key={feat} className="flex items-start gap-3 text-xs text-slate-200">
@@ -85,14 +107,14 @@ export function Pricing() {
                   <Link
                     href="/"
                     data-testid="welcome-cta-start"
-                    aria-label="Start diagnosis"
+                    aria-label={text("startDiagnosis")}
                     className={`w-full py-4 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       isPopular
                         ? "bg-gradient-to-r from-orange-500 via-amber-500 to-indigo-600 text-white hover:shadow-orange-500/30"
                         : "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700"
                     }`}
                   >
-                    <span>{plan.ctaText}</span>
+                    <span>{text("startHere")}</span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>

@@ -3,8 +3,10 @@
 import Link from "next/link";
 
 import { BrandMark } from "@/components/ui/BrandMark";
+import { useWelcomeText } from "./useWelcomeText";
 
 export function Footer() {
+  const { text } = useWelcomeText();
   return (
     <footer className="bg-slate-950 border-t border-slate-900 pt-16 pb-12 text-slate-400 text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,39 +20,38 @@ export function Footer() {
             </div>
 
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm mb-4">
-              Adaptive LLM learning for BASE & PSP: live roadmaps forged from diagnosis and mastery
-              validation.
+              {text("footer.blurb")}
             </p>
 
             <div className="inline-flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono text-emerald-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>BASE · PSP included · USD $7/mo for others</span>
+              <span>{text("footer.chip")}</span>
             </div>
           </div>
 
           <div>
             <h4 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
-              Core Pillars
+              {text("footer.pillars")}
             </h4>
             <ul className="space-y-2.5 text-slate-400">
               <li>
                 <a href="#pillars" className="hover:text-orange-400 transition-colors">
-                  RAG Engineering & GraphRAG
+                  {text("footer.pillarRag")}
                 </a>
               </li>
               <li>
                 <a href="#pillars" className="hover:text-purple-400 transition-colors">
-                  Unsloth SFT & DPO Fine-Tuning
+                  {text("footer.pillarTune")}
                 </a>
               </li>
               <li>
                 <a href="#pillars" className="hover:text-cyan-400 transition-colors">
-                  DeepEval LLM Evals & CI/CD
+                  {text("footer.pillarEvals")}
                 </a>
               </li>
               <li>
                 <a href="#pillars" className="hover:text-emerald-400 transition-colors">
-                  vLLM & Ray OpsLLM Infrastructure
+                  {text("footer.pillarOps")}
                 </a>
               </li>
             </ul>
@@ -58,22 +59,22 @@ export function Footer() {
 
           <div>
             <h4 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
-              Resources
+              {text("footer.resources")}
             </h4>
             <ul className="space-y-2.5 text-slate-400">
               <li>
                 <a href="#sandbox" className="hover:text-white transition-colors">
-                  Interactive AI Sandbox
+                  {text("footer.sandbox")}
                 </a>
               </li>
               <li>
                 <a href="#calculator" className="hover:text-white transition-colors">
-                  AI Compensation Calculator
+                  {text("footer.calculator")}
                 </a>
               </li>
               <li>
                 <a href="#testimonials" className="hover:text-white transition-colors">
-                  Stories
+                  {text("stories")}
                 </a>
               </li>
             </ul>
@@ -81,26 +82,26 @@ export function Footer() {
 
           <div>
             <h4 className="font-mono text-xs font-bold text-white uppercase tracking-wider mb-4">
-              Get started
+              {text("footer.getStarted")}
             </h4>
             <ul className="space-y-2.5 text-slate-400">
               <li>
                 <Link
                   href="/"
-                  aria-label="Start diagnosis"
+                  aria-label={text("startDiagnosis")}
                   className="hover:text-orange-400 font-bold transition-colors cursor-pointer text-left"
                 >
-                  Start here
+                  {text("startHere")}
                 </Link>
               </li>
               <li>
                 <a href="#pricing" className="hover:text-white transition-colors">
-                  Access
+                  {text("access")}
                 </a>
               </li>
               <li>
                 <a href="#faq" className="hover:text-white transition-colors">
-                  Admissions FAQ
+                  {text("footer.admissions")}
                 </a>
               </li>
             </ul>
@@ -109,20 +110,20 @@ export function Footer() {
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono">
           <div>
-            © 2026 Borderless Coding LLC. All rights reserved. Master RAG, Fine-Tuning, Evals & OpsLLM.
+            {text("footer.legal")}
           </div>
 
           <div className="flex items-center gap-4">
             <a href="#" className="hover:text-slate-300 transition-colors">
-              Privacy Policy
+              {text("footer.privacy")}
             </a>
             <span>•</span>
             <a href="#" className="hover:text-slate-300 transition-colors">
-              Terms of Service
+              {text("footer.terms")}
             </a>
             <span>•</span>
             <a href="#" className="hover:text-slate-300 transition-colors">
-              Security
+              {text("footer.security")}
             </a>
           </div>
         </div>

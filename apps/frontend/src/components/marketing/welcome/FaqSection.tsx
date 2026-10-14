@@ -2,14 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FAQS } from "./data/curriculumData";
 import { HelpCircle, ChevronDown, ChevronUp, Search, MessageSquare } from "lucide-react";
+import { useWelcomeText } from "./useWelcomeText";
+
+type FaqItem = { question: string; answer: string };
 
 export function FaqSection() {
+  const { text, list } = useWelcomeText();
+  const faqs = list<FaqItem>("questions.items");
   const [openIndex, setOpenIndex] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredFaqs = FAQS.filter(
+  const filteredFaqs = faqs.filter(
     (faq) =>
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       faq.answer.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -21,14 +25,13 @@ export function FaqSection() {
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4 font-mono">
             <HelpCircle className="w-3.5 h-3.5" />
-            FREQUENTLY ASKED QUESTIONS
+            {text("questions.eyebrow")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-            Everything You Need To Know
+            {text("questions.title")}
           </h2>
           <p className="text-slate-400 text-base">
-            Membership, how to start, and what the product actually does — no cohort schedules or
-            career guarantees.
+            {text("questions.lead")}
           </p>
         </div>
 
@@ -38,7 +41,7 @@ export function FaqSection() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search FAQ (e.g. membership, diagnosis, laptop)..."
+            placeholder={text("questions.search")}
             className="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-11 pr-4 py-3.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 font-mono focus:outline-none focus:border-cyan-500 shadow-inner"
           />
         </div>
@@ -85,19 +88,19 @@ export function FaqSection() {
               <MessageSquare className="w-5 h-5 text-indigo-400" />
             </div>
             <div>
-              <div className="text-sm font-bold text-white">Ready to see where you stand?</div>
+              <div className="text-sm font-bold text-white">{text("questions.ready")}</div>
               <p className="text-xs text-slate-400">
-                Start diagnosis — Email identity happens in the product, not here.
+                {text("questions.readyLead")}
               </p>
             </div>
           </div>
           <Link
             href="/"
             data-testid="welcome-cta-start"
-            aria-label="Start diagnosis"
+            aria-label={text("startDiagnosis")}
             className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono font-bold text-xs rounded-xl border border-slate-700 transition-colors cursor-pointer"
           >
-            Start here
+            {text("startHere")}
           </Link>
         </div>
       </div>
