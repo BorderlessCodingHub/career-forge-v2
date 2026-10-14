@@ -11,16 +11,473 @@
     "membersIncluded": "Members: Career Forge is included. Start diagnosis with your member email.",
     "startDiagnosis": "Start diagnosis",
     "startHere": "Start here",
-    "pillars": "4 Core Pillars",
-    "sandbox": "Live AI Sandbox",
     "sandboxDemo": "Live AI Sandbox Demo",
     "calculator": "ROI Calculator",
     "calculatorFull": "Salary & ROI Calculator",
-    "stories": "Stories",
     "access": "Access",
-    "faq": "FAQ",
     "openNavigation": "Open navigation",
-    "closeNavigation": "Close navigation"
+    "closeNavigation": "Close navigation",
+    "meta": {
+      "title": "Welcome · Career Forge",
+      "description": "A roadmap that only moves when you prove it. Career Forge for Borderless BASE & PSP — live forge, mastery gated."
+    },
+    "hero": {
+      "included": "Included for members",
+      "headlineBefore": "From Software Engineer to",
+      "headlineAccent": "Elite AI Engineer",
+      "leadBefore": "Master the 4 non-negotiable pillars of production AI engineering:",
+      "leadAnd": ", and",
+      "leadAfter": ". Diagnose your starting point, forge a live roadmap, and validate mastery.",
+      "tracks": "4 tracks",
+      "diagnosis": "Diagnosis",
+      "diagnosisHint": "Before any roadmap",
+      "liveForge": "Live Forge",
+      "liveForgeHint": "Watch it take shape",
+      "memberHint": "Included with member email",
+      "run": "Run Simulation",
+      "executing": "Executing...",
+      "copy": "Copy",
+      "copied": "Copied",
+      "console": "Console Output:",
+      "techStack": "Tech Stack Mastered:"
+    },
+    "social": {
+      "heading": "Companies where Borderless BASE & PSP talents work"
+    },
+    "problem": {
+      "eyebrow": "The 2026 AI Engineering Imperative",
+      "titleBefore": "Basic API Wrappers Are Dead.",
+      "titleAccent": "Companies Demand AI Systems Engineers.",
+      "lead": "In 2026, gluing together a quick `openai.ChatCompletion` call with default settings won't get you hired or promoted. Top tech companies need engineers who can lower cloud GPU bills, prevent hallucinations, fine-tune custom domain models, and scale inference.",
+      "genericTitle": "Generic Software Engineer",
+      "genericSubtitle": "Stuck at API Wrapper Tier",
+      "genericAvg": "Avg: $130k - $160k",
+      "certified": "CAREER FORGE CERTIFIED",
+      "forgeTitle": "Forge AI Systems Engineer",
+      "forgeSubtitle": "Master of RAG, Fine-Tuning, Evals & OpsLLM",
+      "forgeAvg": "Avg: $240k - $380k+",
+      "generic": {
+        "0": {
+          "lead": "Naive Prompting & Naive Vector Search:",
+          "body": " High hallucination rate, struggles with complex multi-step reasoning, poor precision."
+        },
+        "1": {
+          "lead": "\"Vibes-Based\" Testing:",
+          "body": " Manually re-running prompts in ChatGPT UI to see if it \"looks good\" instead of building continuous CI/CD evaluation suites."
+        },
+        "2": {
+          "lead": "100% Locked to Commercial API Costs:",
+          "body": " Paying $40,000/month for closed API tokens without knowing how to fine-tune open models for 80% cost savings."
+        },
+        "3": {
+          "lead": "Slow & Unscalable Endpoints:",
+          "body": " Blocked by API rate limits, slow 2+ second latency, no continuous batching or KV cache management."
+        }
+      },
+      "forge": {
+        "0": {
+          "lead": "Hybrid GraphRAG Architectures:",
+          "body": " Dense + Sparse RRF indexing, Cohere Rerank v3, and agentic self-corrective retrieval with 98%+ precision."
+        },
+        "1": {
+          "lead": "Unsloth SFT & DPO Fine-Tuning:",
+          "body": " Fine-tune Llama 3 & DeepSeek weights with 4-bit QLoRA, custom preference alignment, and synthetic dataset curation."
+        },
+        "2": {
+          "lead": "Automated DeepEval CI/CD Quality Gates:",
+          "body": " Measure Faithfulness, Hallucination score, Toxicity, and PR regression before code hits production."
+        },
+        "3": {
+          "lead": "High-Throughput vLLM & Ray Serve Ops:",
+          "body": " Deploy multi-GPU engine nodes with PagedAttention, continuous batching, and sub-40ms TTFT latency."
+        }
+      }
+    },
+    "track": {
+      "rag": {
+        "badge": "Retrieval & Context Orchestration",
+        "subtitle": "Master Hybrid Search, GraphRAG, & Agentic Query Systems",
+        "description": "Build enterprise-grade Retrieval-Augmented Generation architectures that handle millions of vector embeddings, hybrid dense/sparse indexing, reranking, and dynamic context compression with zero hallucination leaks.",
+        "skills": {
+          "0": "Hybrid Dense & Sparse Retrieval (BM25 + Cohere Rerank v3)",
+          "1": "Agentic RAG & Hierarchical GraphRAG with Neo4j",
+          "2": "Context Compression, Chunking Strategies & Parent-Child Indexing",
+          "3": "Semantic Caching with Redis & Qdrant for 10x Latency Drop",
+          "4": "Multi-modal Vector Embeddings & PDF/OCR Pipeline Processing"
+        },
+        "capstoneTitle": "Production GraphRAG Engine over 50,000 SEC 10-K Filings",
+        "capstoneDescription": "Architect an end-to-end agentic retrieval pipeline with reciprocal rank fusion (RRF) and dynamic self-corrective retrieval loops achieving 98.4% context precision.",
+        "deliverables": {
+          "0": "Self-hosted Qdrant cluster",
+          "1": "RAGAS benchmark score >0.92",
+          "2": "Sub-300ms p95 latency API"
+        },
+        "flow": {
+          "0": {
+            "title": "Query Rewriting",
+            "description": "HyDE (Hypothetical Document Embeddings) & Multi-Query expansion"
+          },
+          "1": {
+            "title": "Hybrid Retrieval",
+            "description": "Parallel BM25 sparse + HNSW dense vector search with metadata filters"
+          },
+          "2": {
+            "title": "Reciprocal Rank Fusion",
+            "description": "Score merging with RRF algorithm & Cohere v3 reranking"
+          },
+          "3": {
+            "title": "Context Compression",
+            "description": "Long-context summarization & token pruning before generation"
+          }
+        }
+      },
+      "finetuner": {
+        "badge": "PEFT, LoRA & Post-Training",
+        "subtitle": "Train Custom Open-Weights Models with Unsloth & DPO",
+        "description": "Take full control of open-source weights (Llama 3, DeepSeek-R1, Mistral). Master Supervised Fine-Tuning (SFT), Direct Preference Optimization (DPO), QLoRA 4-bit quantization, and synthetic dataset generation.",
+        "skills": {
+          "0": "Unsloth & Axolotl 2x Faster Fine-tuning with 60% Memory Reduction",
+          "1": "PEFT, QLoRA, Rank-Stabilized LoRA (rsLoRA) & Adapters Merging",
+          "2": "Direct Preference Optimization (DPO) & Alignment Tuning (RLHF/ORPO)",
+          "3": "Synthetic Dataset Curation & Distillation using DeepSeek-R1",
+          "4": "Model Quantization (GGUF, AWQ, EXL2) for Edge & Server Deployment"
+        },
+        "capstoneTitle": "Fine-Tuned Specialized Code Synthesis Model on Single A100 GPU",
+        "capstoneDescription": "Distill DeepSeek-R1 reasoning trajectories into Llama-3-8B using QLoRA & DPO. Benchmark against GPT-4o on HumanEval coding tasks.",
+        "deliverables": {
+          "0": "Custom GGUF/AWQ model weight weights",
+          "1": "84.2% HumanEval Pass@1 score",
+          "2": "Fully automated SFT + DPO training pipeline"
+        },
+        "flow": {
+          "0": {
+            "title": "Data Curation",
+            "description": "De-duplication, toxicity filtering & synthetic seed prompt generation"
+          },
+          "1": {
+            "title": "SFT Training",
+            "description": "Supervised Fine-Tuning with 4-bit QLoRA and FlashAttention-2"
+          },
+          "2": {
+            "title": "Alignment (DPO)",
+            "description": "Direct Preference Optimization for domain tone and accuracy control"
+          },
+          "3": {
+            "title": "Quantization",
+            "description": "Exporting trained adapter to FP16, AWQ & GGML for inference engines"
+          }
+        }
+      },
+      "evals": {
+        "badge": "Evaluation & Guardrails",
+        "subtitle": "Automate LLM Testing, Hallucination Checks & Red-Teaming",
+        "description": "Transition from \"vibes-based\" AI development to rigorous engineering. Build automated evaluation pipelines, custom judge frameworks, assertion suites, and continuous guardrails that block bad outputs before users ever see them.",
+        "skills": {
+          "0": "Ragas, DeepEval & TruLens Metrics Frameworks",
+          "1": "LLM-as-a-Judge Design & De-biasing Evaluation Models",
+          "2": "Automated Red-Teaming & Adversarial Jailbreak Defense",
+          "3": "CI/CD Prompt & Weight Regression Suites in GitHub Actions",
+          "4": "NeMo Guardrails & Llama Guard Real-Time Content Filtering"
+        },
+        "capstoneTitle": "Enterprise AI Quality & Guardrail Suite in CI/CD Pipeline",
+        "capstoneDescription": "Implement automated regression testing for hallucination, answer relevancy, toxicity, and PII leakage that triggers on every PR push.",
+        "deliverables": {
+          "0": "Automated PR blocking quality gates",
+          "1": "Dashboard with real-time drift tracking",
+          "2": "100+ synthetic red-teaming test suites"
+        },
+        "flow": {
+          "0": {
+            "title": "Test Case Generation",
+            "description": "Curating golden datasets and edge-case adversarial prompts"
+          },
+          "1": {
+            "title": "Multi-Metric Benchmarking",
+            "description": "Running Faithfulness, Answer Relevancy & Context Recall metrics"
+          },
+          "2": {
+            "title": "LLM-as-a-Judge",
+            "description": "Employing calibrated jury models with chain-of-thought verification"
+          },
+          "3": {
+            "title": "Guardrail Enforcement",
+            "description": "Real-time output scanning with regex, vector classifiers & toxic filters"
+          }
+        }
+      },
+      "opsllm": {
+        "badge": "Production Latency & Scaling",
+        "subtitle": "Deploy High-Throughput Engine Nodes with vLLM & Ray",
+        "description": "Scale LLM production serving to thousands of requests per second. Master vLLM continuous batching, PagedAttention, TensorRT-LLM, Ray Serve clusters, streaming latency optimization, GPU cost reduction, and token token-bucket throttling.",
+        "skills": {
+          "0": "vLLM & TensorRT-LLM Engine Deployment with Continuous Batching",
+          "1": "PagedAttention & KV Cache Memory Management",
+          "2": "Multi-GPU Cluster Orchestration with Ray Serve & Kubernetes (K8s)",
+          "3": "TTFT (Time-To-First-Token) & Inference Latency Optimization (<40ms)",
+          "4": "Token Rate Limiting, Cost Budgeting & Intelligent Model Routing"
+        },
+        "capstoneTitle": "High-Throughput Multi-Node vLLM Cluster with Dynamic Scaling",
+        "capstoneDescription": "Deploy a resilient model cluster handling 1,200 requests/second under sub-50ms TTFT latency with autoscaling GPU nodes on Kubernetes.",
+        "deliverables": {
+          "0": "Production K8s + Helm deployment configs",
+          "1": "Prometheus & Grafana telemetry dashboards",
+          "2": "70% GPU cost reduction benchmark"
+        },
+        "flow": {
+          "0": {
+            "title": "Model Packaging",
+            "description": "AWQ/GPTQ weight loading & PagedAttention KV cache configuration"
+          },
+          "1": {
+            "title": "Tensor Parallelism",
+            "description": "Sharding model parameters across multiple GPU devices using NVLink"
+          },
+          "2": {
+            "title": "Dynamic Batching",
+            "description": "Continuous batching & chunked prefill for optimal GPU core saturation"
+          },
+          "3": {
+            "title": "Telemetry & Route",
+            "description": "Streaming SSE responses, prometheus metrics & token fallback routing"
+          }
+        }
+      }
+    },
+    "roi": {
+      "eyebrow": "INTERACTIVE SALARY & ROI CALCULATOR",
+      "titleBefore": "Calculate Your AI Engineering",
+      "titleAccent": "Compensation Lift",
+      "leadBefore": "Toy payback math against a ",
+      "leadPrice": "USD $7/mo",
+      "leadAfter": " monthly subscription. Invented salary lift — not Career Forge placement data.",
+      "role": "CURRENT ROLE / SPECIALIZATION:",
+      "mid": "Mid SWE",
+      "senior": "Senior SWE",
+      "staff": "Staff / Tech Lead",
+      "data": "Data / ML Eng",
+      "junior": "Junior / Associate",
+      "region": "REGION / COMPENSATION TIER:",
+      "usHub": "US Tech Hub (SF/NY)",
+      "usRemote": "US Remote",
+      "eu": "Europe / UK",
+      "apac": "APAC / LATAM",
+      "yearsLabel": "YEARS OF SOFTWARE EXPERIENCE:",
+      "years": "{count} Years",
+      "projected": "PROJECTED ANNUAL COMPENSATION",
+      "lift": "+${amount} / year (+{percent}%)",
+      "current": "Current Market Estimate:",
+      "payback": "USD $7/mo subscription payback:",
+      "paybackUnderOne": "< 1 day of work",
+      "paybackDays": "{count} days of work"
+    },
+    "mentors": {
+      "eyebrow": "BORDERLESS TEAM",
+      "titleBefore": "The ecosystem team behind",
+      "titleAccent": "Career Forge",
+      "lead": "Built so you can see your starting point, watch a live roadmap take shape, and prove what you can do.",
+      "yuriRole": "Founder and Strategic Tech Advisor",
+      "yuriBio": "Founded Borderless Coding in 2023. Strategic tech advisor for the BASE and PSP ecosystem that Career Forge sits in.",
+      "yuriSpecialty": "Founder",
+      "pedroRole": "Founder Engineer",
+      "pedroBio": "Software engineer. Builds Career Forge with the Borderless team.",
+      "pedroSpecialty": "Career Forge"
+    },
+    "pricing": {
+      "eyebrow": "ACCESS",
+      "titleBefore": "Included for members.",
+      "titlePrice": "USD $7/mo",
+      "titleAfter": "otherwise.",
+      "lead": "BASE and PSP learners start with their member email. Unpaid external learners see USD $7/mo after Email identity, billed in the product.",
+      "included": "INCLUDED IN THIS PLAN:",
+      "membersBadge": "Members",
+      "membersPrice": "Included",
+      "membersPeriod": "with your member email",
+      "membersDescription": "Career Forge is included for BASE and PSP learners. Start diagnosis with your member email.",
+      "membersFeatures": {
+        "0": "Diagnosis before any roadmap",
+        "1": "Live Roadmap Forge for your track",
+        "2": "Mastery validation on the trail",
+        "3": "Four LLM tracks: RAG, Fine-Tuning, Evals, OpsLLM",
+        "4": "No Stripe for BASE and PSP members"
+      },
+      "externalName": "External",
+      "externalBadge": "Most common path",
+      "externalPrice": "USD $7",
+      "externalPeriod": "per month, billed in-product after Email identity",
+      "externalDescription": "Unpaid external learners see USD $7/mo after Email identity. Billing stays in the product — not on this page.",
+      "externalFeatures": {
+        "0": "Same product loop after Email identity",
+        "1": "USD $7/mo billed in-loop (not Stripe on Welcome)",
+        "2": "Billed in-loop after OTP — not Stripe on Welcome",
+        "3": "BASE and PSP stay included if you are a member"
+      }
+    },
+    "cta": {
+      "titleBefore": "Ready to Forge Your Career in",
+      "titleAccent": "Production AI Engineering?",
+      "lead": "Stop gluing together basic OpenAI wrapper calls. Master RAG, Fine-Tuning, Evals, and OpsLLM to build enterprise-grade AI applications.",
+      "members": "BASE · PSP included",
+      "price": "USD $7/mo",
+      "priceFor": "for others"
+    },
+    "footer": {
+      "blurb": "Adaptive LLM learning for BASE & PSP: live roadmaps forged from diagnosis and mastery validation.",
+      "chip": "BASE · PSP included · USD $7/mo for others",
+      "pillars": "Core Pillars",
+      "pillarRag": "RAG Engineering & GraphRAG",
+      "pillarTune": "Unsloth SFT & DPO Fine-Tuning",
+      "pillarEvals": "DeepEval LLM Evals & CI/CD",
+      "pillarOps": "vLLM & Ray OpsLLM Infrastructure",
+      "resources": "Resources",
+      "sandbox": "Interactive AI Sandbox",
+      "calculator": "AI Compensation Calculator",
+      "getStarted": "Get started",
+      "admissions": "Admissions FAQ",
+      "legal": "© 2026 Borderless Coding LLC. All rights reserved. Master RAG, Fine-Tuning, Evals & OpsLLM.",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "security": "Security"
+    },
+    "mastery": {
+      "eyebrow": "THE 4 CORE COMPETENCY PILLARS",
+      "titleBefore": "What You Will Master at",
+      "titleAccent": "Career Forge",
+      "lead": "Four production-AI tracks: RAG, Fine-Tuning, Evals, and OpsLLM — diagnose, forge, then validate mastery.",
+      "blueprint": "PILLAR DETAILED BLUEPRINT",
+      "skills": "KEY ENGINEERING SKILLS YOU WILL ACQUIRE:",
+      "pipeline": "PRODUCTION SYSTEM PIPELINE ARCHITECTURE:",
+      "step": "STEP {step}",
+      "capstone": "PILLAR HANDS-ON CAPSTONE PROJECT",
+      "deliverables": "PORTFOLIO DELIVERABLES:",
+      "tools": "FRAMEWORKS & TOOLS YOU WILL USE:"
+    },
+    "pillars": "4 Core Pillars",
+    "playground": {
+      "eyebrow": "LIVE INTERACTIVE PLAYGROUND",
+      "titleBefore": "Test AI Systems Engineering",
+      "titleAccent": "In Real-Time",
+      "lead": "Simulate how Career Forge architectures perform under load, test vector search precision, fine-tuning memory reduction, and evaluation assertion suites.",
+      "tabRag": "1. RAG Simulator",
+      "tabTune": "2. Fine-Tuning Estimator",
+      "tabEvals": "3. DeepEval Assertion Suite",
+      "tabOps": "4. OpsLLM Latency Bench",
+      "ragTitle": "Agentic RAG vs Naive Vector Search Benchmark",
+      "ragLead": "Compare reciprocal rank fusion (RRF) + Cohere reranking against single-vector cosine similarity.",
+      "naive": "Naive Dense Search",
+      "hybrid": "⚡ Forge Hybrid GraphRAG",
+      "queryLabel": "TEST FINANCIAL / REGULATORY QUERY:",
+      "retrieved": "RETRIEVED CONTEXT DOCUMENTS:",
+      "defaultQuery": "What was Acme Corp's net cloud profit margin in Q3 2025?",
+      "precision": "Precision @ K=5:",
+      "precisionGood": "Zero context miss",
+      "precisionBad": "Relevant doc dropped at rank 12",
+      "latency": "Retrieval Latency:",
+      "latencyGood": "Parallel HNSW + BM25 execution",
+      "latencyBad": "Single sequential vector scan",
+      "hallucination": "Hallucination Risk:",
+      "hallucinationGood": "Guarded with citation claims",
+      "hallucinationBad": "Unverifiable context hallucination",
+      "tuneTitle": "Unsloth QLoRA Memory & VRAM Calculator (Llama 3 / DeepSeek 8B)",
+      "tuneLead": "See how 4-bit quantization and LoRA rank configuration allow fine-tuning on a single consumer GPU.",
+      "loraRank": "LoRA Rank (r):",
+      "loraAlpha": "LoRA Alpha Scaling:",
+      "quant": "Quantization Precision:",
+      "q4": "4-bit (QLoRA)",
+      "q8": "8-bit",
+      "fp16": "FP16 (Full)",
+      "vram": "REQUIRED GPU VRAM",
+      "vramFit": "Fits on 1x Nvidia RTX 4090 or A10G (24 GB VRAM)",
+      "throughput": "Training Throughput:",
+      "speed4": "2.4x Faster (Unsloth)",
+      "speed8": "1.5x Speed",
+      "speed16": "1.0x Speed",
+      "adapter": "Target Adapter Parameters:",
+      "million": "{count} Million",
+      "evalsTitle": "DeepEval Automated CI/CD Regression Test",
+      "evalsLead": "Run automated assertion tests to block hallucinated or toxic outputs before production deployment.",
+      "defaultEval": "Generate financial report summary for Q3",
+      "running": "Running DeepEval...",
+      "execute": "Execute Test Suite",
+      "faithfulness": "Faithfulness Metric",
+      "hallucinationRate": "Hallucination Rate",
+      "toxicity": "Toxicity / PII Leak",
+      "faithfulnessThreshold": "Threshold: >0.90 (Passed)",
+      "hallucinationThreshold": "Threshold: <0.05 (Passed)",
+      "toxicityThreshold": "Threshold: 0.00 (Passed)",
+      "evalsEmpty": "Click \"Execute Test Suite\" to trigger DeepEval LLM-as-a-Judge test assertions.",
+      "opsTitle": "OpsLLM High-Throughput vLLM Latency Simulator",
+      "opsLead": "Test continuous batching & PagedAttention against naive sequential PyTorch serving.",
+      "hf": "Standard HuggingFace",
+      "vllm": "⚡ vLLM Continuous Batching",
+      "load": "Concurrent Load (Requests Per Second):",
+      "ttft": "Time-To-First-Token (TTFT):",
+      "ttftGood": "Sub-50ms chunked prefill",
+      "ttftBad": "High queue head-of-line blocking",
+      "output": "Output Throughput:",
+      "outputGood": "Full GPU core saturation",
+      "outputBad": "30% GPU memory fragmentation",
+      "kv": "KV Cache Utilization:",
+      "kvGood": "PagedAttention zero-waste memory",
+      "kvBad": "High OOM risk"
+    },
+    "sandbox": "Live AI Sandbox",
+    "testimonials": {
+      "eyebrow": "BASE · PSP SUCCESS STORIES",
+      "titleBefore": "See How Engineers",
+      "titleAccent": "Transformed Their Careers",
+      "titleAfter": "with",
+      "lead": "Named mentees from Borderless BASE and PSP — the ecosystem Career Forge is built for. These outcomes are from mentorship, published on borderlesscoding.com.",
+      "prior": "Prior: {role}",
+      "trajectory": "Trajectory:",
+      "arthurRole": "AI Specialist",
+      "arthurFormer": "Bartender (Canada)",
+      "arthurStory": "Arthur used to work as a bartender in Canada before entering the Base Mentorship Program. He currently works with Artificial Intelligence remotely. He went from a salary of R$5,000 as a bartender to a salary of R$15,000 working remotely.",
+      "eduardoRole": "AI/LLM Developer (Low-Code)",
+      "eduardoFormer": "Lead Developer (Low-Code)",
+      "eduardoStory": "Eduardo moved from Lead Developer (Low-Code) at about US$7.50/hr (~US$1,300) to AI/LLM Developer (Low-Code) at US$18/hr (~US$2,900) over about six months in Base mentorship.",
+      "gelsonRole": "Front End · US$9,000/month",
+      "gelsonFormer": "Unemployed after outsourcing layoff",
+      "gelsonStory": "Gelson was unemployed after a layoff in outsourcing, where he was making R$20K in Brazil. Currently he receives US$9,000/month after internationalizing his career with one month of mentorship, applying the Go Global method taught in the PSP Mentorship Program.",
+      "thiagoRole": "Web3 / Backend Developer",
+      "thiagoFormer": "Backend Developer",
+      "thiagoStory": "In one month of PSP mentorship, Thiago went from Backend Developer (USD 13k) to Web3 / Backend Developer ($22k). He passed initial screening in 19 processes and declined 3 offers that were below his rate or were web2."
+    },
+    "stories": "Stories",
+    "questions": {
+      "eyebrow": "FREQUENTLY ASKED QUESTIONS",
+      "title": "Everything You Need To Know",
+      "lead": "Membership, how to start, and what the product actually does — no cohort schedules or career guarantees.",
+      "search": "Search FAQ (e.g. membership, diagnosis, laptop)...",
+      "ready": "Ready to see where you stand?",
+      "readyLead": "Start diagnosis — Email identity happens in the product, not here.",
+      "items": {
+        "0": {
+          "question": "Who is Career Forge for?",
+          "answer": "BASE and PSP members: Career Forge is included. Start diagnosis with your member email. Others (unpaid external) see USD $7/mo after Email identity, billed in the product — not as checkout on this page."
+        },
+        "1": {
+          "question": "Why is this not a prompt course?",
+          "answer": "No. It is not a prompt course. Career Forge diagnoses your starting point, forges a live roadmap for a production-AI track (RAG, Fine-Tuning, Evals, or OpsLLM), and validates mastery before you move on."
+        },
+        "2": {
+          "question": "How do I start?",
+          "answer": "Click Start here. You confirm Email identity (OTP) at product entry, then the loop is goal → diagnosis → Live Forge → roadmap → validate mastery."
+        },
+        "3": {
+          "question": "What does the product do?",
+          "answer": "Diagnosis maps where you are before any roadmap exists. Live Forge lets you watch that roadmap take shape. Validate mastery checks what you can actually do; the trail reacts to evidence."
+        },
+        "4": {
+          "question": "Do I need a GPU or NVIDIA credits?",
+          "answer": "No. You work from your laptop. Career Forge does not include NVIDIA or cloud GPU credits."
+        },
+        "5": {
+          "question": "Is there a job or refund guarantee?",
+          "answer": "No. Career Forge does not guarantee a job, a salary lift, or a refund."
+        }
+      }
+    },
+    "faq": "FAQ"
   },
   "learn": {
     "loading": "Loading…",

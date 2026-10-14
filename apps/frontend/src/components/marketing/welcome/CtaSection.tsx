@@ -4,8 +4,10 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { BrandMark } from "@/components/ui/BrandMark";
+import { useWelcomeText } from "./useWelcomeText";
 
 export function CtaSection() {
+  const { text } = useWelcomeText();
   return (
     <section className="py-24 bg-slate-950 relative overflow-hidden border-t border-slate-900">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-gradient-to-tr from-orange-600/20 via-indigo-600/20 to-purple-600/15 rounded-full blur-[140px] pointer-events-none"></div>
@@ -17,27 +19,26 @@ export function CtaSection() {
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-6 leading-tight">
-            Ready to Forge Your Career in <br className="hidden sm:inline" />
-            <span className="gradient-text-hero">Production AI Engineering?</span>
+            {text("cta.titleBefore")} <br className="hidden sm:inline" />
+            <span className="gradient-text-hero">{text("cta.titleAccent")}</span>
           </h2>
 
           <p className="text-slate-300 text-base sm:text-xl max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
-            Stop gluing together basic OpenAI wrapper calls. Master RAG, Fine-Tuning, Evals, and
-            OpsLLM to build enterprise-grade AI applications.
+            {text("cta.lead")}
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 text-xs sm:text-sm font-mono text-slate-300 mb-10">
             <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
               <span className="w-2 h-2 rounded-full bg-orange-400 animate-ping"></span>
-              <span>BASE · PSP included</span>
+              <span>{text("cta.members")}</span>
             </div>
             <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
               <span>
-                <strong>USD $7/mo</strong> for others
+                <strong>{text("cta.price")}</strong> {text("cta.priceFor")}
               </span>
             </div>
             <div className="flex items-center gap-1.5 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
-              <span>Start diagnosis</span>
+              <span>{text("startDiagnosis")}</span>
             </div>
           </div>
 
@@ -45,10 +46,10 @@ export function CtaSection() {
             <Link
               href="/"
               data-testid="welcome-cta-start"
-              aria-label="Start diagnosis"
+              aria-label={text("startDiagnosis")}
               className="w-full relative group px-8 py-4 rounded-xl font-extrabold text-base text-white shimmer-button shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Start here</span>
+              <span>{text("startHere")}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>

@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Calculator, TrendingUp, ArrowRight } from 'lucide-react';
+import { useWelcomeText } from "./useWelcomeText";
 
 const MONTHLY_SUBSCRIPTION_USD = 7;
 
 export function RoiCalculator() {
+  const { text } = useWelcomeText();
   const [currentRole, setCurrentRole] = useState<'junior' | 'mid' | 'senior' | 'staff' | 'data'>('senior');
   const [region, setRegion] = useState<'us-hub' | 'us-remote' | 'eu' | 'apac'>('us-hub');
   const [yoe, setYoe] = useState(5);
@@ -35,7 +37,10 @@ export function RoiCalculator() {
   const dailyIncrease = salaryIncrease / 365;
   const rawPaybackDays = MONTHLY_SUBSCRIPTION_USD / dailyIncrease;
   const paybackLabel =
-    rawPaybackDays < 1 ? "< 1 day of work" : `${Math.round(rawPaybackDays)} days of work`;
+    rawPaybackDays < 1
+      ? text("roi.paybackUnderOne")
+      : text("roi.paybackDays", { count: Math.round(rawPaybackDays) });
+  const money = (amount: number) => amount.toLocaleString("en-US");
 
   return (
     <section id="calculator" className="py-24 bg-slate-950 border-t border-slate-900 relative">
@@ -45,14 +50,13 @@ export function RoiCalculator() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-bold uppercase tracking-wider mb-4 font-mono">
             <Calculator className="w-3.5 h-3.5" />
-            INTERACTIVE SALARY & ROI CALCULATOR
+            {text("roi.eyebrow")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-            Calculate Your AI Engineering <span className="gradient-text-purple">Compensation Lift</span>
+            {text("roi.titleBefore")} <span className="gradient-text-purple">{text("roi.titleAccent")}</span>
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
-            Toy payback math against a <strong className="text-slate-200">USD $7/mo</strong> monthly
-            subscription. Invented salary lift — not Career Forge placement data.
+            {text("roi.leadBefore")}<strong className="text-slate-200">{text("roi.leadPrice")}</strong>{text("roi.leadAfter")}
           </p>
         </div>
 
@@ -66,15 +70,15 @@ export function RoiCalculator() {
               {/* Current Role Select */}
               <div>
                 <label className="block text-xs font-mono font-bold text-slate-300 mb-2 uppercase tracking-wider">
-                  CURRENT ROLE / SPECIALIZATION:
+                  {text("roi.role")}
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {[
-                    { id: 'mid', label: 'Mid SWE' },
-                    { id: 'senior', label: 'Senior SWE' },
-                    { id: 'staff', label: 'Staff / Tech Lead' },
-                    { id: 'data', label: 'Data / ML Eng' },
-                    { id: 'junior', label: 'Junior / Associate' }
+                    { id: 'mid', label: text("roi.mid") },
+                    { id: 'senior', label: text("roi.senior") },
+                    { id: 'staff', label: text("roi.staff") },
+                    { id: 'data', label: text("roi.data") },
+                    { id: 'junior', label: text("roi.junior") }
                   ].map((role) => (
                     <button
                       key={role.id}
@@ -94,14 +98,14 @@ export function RoiCalculator() {
               {/* Location Select */}
               <div>
                 <label className="block text-xs font-mono font-bold text-slate-300 mb-2 uppercase tracking-wider">
-                  REGION / COMPENSATION TIER:
+                  {text("roi.region")}
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { id: 'us-hub', label: 'US Tech Hub (SF/NY)' },
-                    { id: 'us-remote', label: 'US Remote' },
-                    { id: 'eu', label: 'Europe / UK' },
-                    { id: 'apac', label: 'APAC / LATAM' }
+                    { id: 'us-hub', label: text("roi.usHub") },
+                    { id: 'us-remote', label: text("roi.usRemote") },
+                    { id: 'eu', label: text("roi.eu") },
+                    { id: 'apac', label: text("roi.apac") }
                   ].map((loc) => (
                     <button
                       key={loc.id}
@@ -121,8 +125,8 @@ export function RoiCalculator() {
               {/* YOE Slider */}
               <div>
                 <div className="flex justify-between text-xs font-mono font-bold text-slate-300 mb-2">
-                  <span>YEARS OF SOFTWARE EXPERIENCE:</span>
-                  <span className="text-purple-400 font-extrabold text-sm">{yoe} Years</span>
+                  <span>{text("roi.yearsLabel")}</span>
+                  <span className="text-purple-400 font-extrabold text-sm">{text("roi.years", { count: yoe })}</span>
                 </div>
                 <input
                   type="range"
@@ -140,25 +144,28 @@ export function RoiCalculator() {
             <div className="lg:col-span-5 bg-gradient-to-br from-slate-950 via-purple-950/40 to-slate-950 p-6 sm:p-8 rounded-2xl border border-purple-500/40 text-center shadow-2xl relative overflow-hidden">
               
               <div className="text-xs font-mono font-extrabold text-purple-400 uppercase tracking-wider mb-2">
-                PROJECTED ANNUAL COMPENSATION
+                {text("roi.projected")}
               </div>
 
               <div className="text-4xl sm:text-5xl font-extrabold font-mono text-white mb-2">
-                ${projectedSalary.toLocaleString()}
+                ${money(projectedSalary)}
               </div>
 
               <div className="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-400 font-mono font-extrabold text-sm px-3 py-1 rounded-full border border-emerald-500/30 mb-6">
                 <TrendingUp className="w-4 h-4" />
-                +${salaryIncrease.toLocaleString()} / year (+{Math.round((BOOST_MULTIPLIER[currentRole] - 1) * 100)}%)
+                {text("roi.lift", {
+                  amount: money(salaryIncrease),
+                  percent: Math.round((BOOST_MULTIPLIER[currentRole] - 1) * 100),
+                })}
               </div>
 
               <div className="space-y-3 text-xs font-mono text-left border-t border-slate-800/80 pt-4 mb-6">
                 <div className="flex justify-between text-slate-300">
-                  <span className="text-slate-400">Current Market Estimate:</span>
-                  <span className="font-bold text-slate-200">${currentSalary.toLocaleString()}</span>
+                  <span className="text-slate-400">{text("roi.current")}</span>
+                  <span className="font-bold text-slate-200">${money(currentSalary)}</span>
                 </div>
                 <div className="flex justify-between text-slate-300">
-                  <span className="text-slate-400">USD $7/mo subscription payback:</span>
+                  <span className="text-slate-400">{text("roi.payback")}</span>
                   <span className="font-bold text-emerald-400">{paybackLabel}</span>
                 </div>
               </div>
@@ -166,10 +173,10 @@ export function RoiCalculator() {
               <Link
                 href="/"
                 data-testid="welcome-cta-start"
-                aria-label="Start diagnosis"
+                aria-label={text("startDiagnosis")}
                 className="w-full py-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-orange-500 rounded-xl text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:shadow-purple-500/30 transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>Start here</span>
+                <span>{text("startHere")}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
 

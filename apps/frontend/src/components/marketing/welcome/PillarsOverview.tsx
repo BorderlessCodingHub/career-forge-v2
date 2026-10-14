@@ -4,8 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { PILLARS } from './data/curriculumData';
 import { Database, Cpu, ShieldCheck, Server, ArrowRight, Layers, Sparkles, BookOpen } from 'lucide-react';
+import { useWelcomeText } from "./useWelcomeText";
+
+type FlowStep = { title: string; description: string };
 
 export function PillarsOverview() {
+  const { text, list } = useWelcomeText();
   const [selectedPillarId, setSelectedPillarId] = useState<'rag' | 'finetuner' | 'evals' | 'opsllm'>('rag');
 
   const activePillar = PILLARS.find(p => p.id === selectedPillarId) || PILLARS[0];
@@ -28,14 +32,13 @@ export function PillarsOverview() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-4">
             <Sparkles className="w-3 h-3 text-indigo-400" />
-            THE 4 CORE COMPETENCY PILLARS
+            {text("mastery.eyebrow")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-            What You Will Master at <span className="gradient-text-hero">Career Forge</span>
+            {text("mastery.titleBefore")} <span className="gradient-text-hero">{text("mastery.titleAccent")}</span>
           </h2>
           <p className="text-slate-400 text-base sm:text-lg">
-            Four production-AI tracks: RAG, Fine-Tuning, Evals, and OpsLLM — diagnose, forge, then
-            validate mastery.
+            {text("mastery.lead")}
           </p>
         </div>
 
@@ -68,7 +71,7 @@ export function PillarsOverview() {
                   {p.title}
                 </h3>
                 <p className={`text-xs ${isActive ? p.accentColor : 'text-slate-400'} font-medium line-clamp-1`}>
-                  {p.badge}
+                  {text(`track.${p.id}.badge`)}
                 </p>
               </button>
             );
@@ -84,23 +87,23 @@ export function PillarsOverview() {
             <div className="lg:col-span-7 space-y-8">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 text-xs font-mono font-bold text-slate-300 border border-slate-700 mb-3">
-                  PILLAR DETAILED BLUEPRINT
+                  {text("mastery.blueprint")}
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
                   {activePillar.title}
                 </h3>
                 <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                  {activePillar.description}
+                  {text(`track.${activePillar.id}.description`)}
                 </p>
               </div>
 
               {/* Core Skills Mastered */}
               <div>
                 <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-4 font-mono">
-                  KEY ENGINEERING SKILLS YOU WILL ACQUIRE:
+                  {text("mastery.skills")}
                 </h4>
                 <div className="space-y-2.5">
-                  {activePillar.skills.map((skill, i) => (
+                  {list<string>(`track.${activePillar.id}.skills`).map((skill, i) => (
                     <div key={i} className="flex items-start gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-xs sm:text-sm text-slate-200">
                       <div className={`w-5 h-5 rounded-full ${activePillar.accentColor} bg-slate-900 flex items-center justify-center shrink-0 mt-0.5 font-bold`}>
                         ✓
@@ -114,13 +117,13 @@ export function PillarsOverview() {
               {/* Architectural Step-by-Step Pipeline */}
               <div>
                 <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-4 font-mono">
-                  PRODUCTION SYSTEM PIPELINE ARCHITECTURE:
+                  {text("mastery.pipeline")}
                 </h4>
                 <div className="grid sm:grid-cols-2 gap-3">
-                  {activePillar.architectureFlow.map((flow, i) => (
-                    <div key={i} className="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                  {list<FlowStep>(`track.${activePillar.id}.flow`).map((flow, i) => (
+                    <div key={flow.title} className="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
                       <div className="flex items-center gap-2 text-xs font-mono font-bold text-orange-400 mb-1">
-                        <span>STEP {flow.step}</span>
+                        <span>{text("mastery.step", { step: activePillar.architectureFlow[i]?.step ?? "" })}</span>
                       </div>
                       <div className="text-xs font-bold text-white mb-1">{flow.title}</div>
                       <div className="text-[11px] text-slate-400 leading-snug">{flow.description}</div>
@@ -137,21 +140,21 @@ export function PillarsOverview() {
               <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/50 p-6 rounded-2xl border border-indigo-500/30 shadow-xl">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-400 font-mono mb-2">
                   <BookOpen className="w-4 h-4 text-indigo-400" />
-                  PILLAR HANDS-ON CAPSTONE PROJECT
+                  {text("mastery.capstone")}
                 </div>
                 <h4 className="text-base sm:text-lg font-bold text-white mb-2">
-                  {activePillar.capstoneProject.title}
+                  {text(`track.${activePillar.id}.capstoneTitle`)}
                 </h4>
                 <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                  {activePillar.capstoneProject.description}
+                  {text(`track.${activePillar.id}.capstoneDescription`)}
                 </p>
                 <div className="border-t border-slate-800/80 pt-3">
                   <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-mono">
-                    PORTFOLIO DELIVERABLES:
+                    {text("mastery.deliverables")}
                   </div>
                   <ul className="space-y-1.5 text-xs text-slate-300 font-mono">
-                    {activePillar.capstoneProject.deliverables.map((d, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
+                    {list<string>(`track.${activePillar.id}.deliverables`).map((d) => (
+                      <li key={d} className="flex items-center gap-2">
                         <span className="text-emerald-400">⚡</span>
                         <span>{d}</span>
                       </li>
@@ -163,7 +166,7 @@ export function PillarsOverview() {
               {/* Stack Badges */}
               <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800">
                 <div className="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3 font-mono">
-                  FRAMEWORKS & TOOLS YOU WILL USE:
+                  {text("mastery.tools")}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {activePillar.techStack.map((tech, i) => (
@@ -183,10 +186,10 @@ export function PillarsOverview() {
                 <Link
                   href="/"
                   data-testid="welcome-cta-start"
-                  aria-label="Start diagnosis"
+                  aria-label={text("startDiagnosis")}
                   className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-indigo-600 rounded-xl text-white font-extrabold text-xs uppercase tracking-wider shadow-lg hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Start here</span>
+                  <span>{text("startHere")}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

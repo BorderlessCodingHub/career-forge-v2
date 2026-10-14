@@ -4,8 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Terminal, Copy, Check, Play, Zap } from "lucide-react";
 import { PILLARS } from "./data/curriculumData";
+import { useWelcomeText } from "./useWelcomeText";
 
 export function Hero() {
+  const { text } = useWelcomeText();
   const [activeTabId, setActiveTabId] = useState<"rag" | "finetuner" | "evals" | "opsllm">("rag");
   const [copied, setCopied] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
@@ -50,25 +52,26 @@ export function Hero() {
             </span>
             <span className="font-semibold text-orange-400 font-mono">BASE · PSP</span>
             <span className="text-slate-600">|</span>
-            <span className="text-slate-200">Included for members</span>
+            <span className="text-slate-200">{text("hero.included")}</span>
           </div>
         </div>
 
         <div className="text-center max-w-4xl mx-auto mb-10">
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15] mb-6">
-            From Software Engineer to{" "}
+            {text("hero.headlineBefore")}{" "}
             <span className="gradient-text-hero underline decoration-orange-500/40 underline-offset-8">
-              Elite AI Engineer
+              {text("hero.headlineAccent")}
             </span>
           </h1>
 
           <p className="text-base sm:text-xl text-slate-300 leading-relaxed max-w-3xl mx-auto font-normal">
-            Master the 4 non-negotiable pillars of production AI engineering:{" "}
+            {text("hero.leadBefore")}{" "}
             <strong className="text-orange-400 font-semibold">RAG Engineering</strong>,{" "}
             <strong className="text-purple-400 font-semibold">Fine-Tuning</strong>,{" "}
-            <strong className="text-cyan-400 font-semibold">LLM Evals</strong>, and{" "}
-            <strong className="text-emerald-400 font-semibold">OpsLLM</strong>. Diagnose your
-            starting point, forge a live roadmap, and validate mastery.
+            <strong className="text-cyan-400 font-semibold">LLM Evals</strong>
+            {text("hero.leadAnd")}
+            <strong className="text-emerald-400 font-semibold">OpsLLM</strong>
+            {text("hero.leadAfter")}
           </p>
         </div>
 
@@ -76,32 +79,32 @@ export function Hero() {
           <Link
             href="/"
             data-testid="welcome-cta-start"
-            aria-label="Start diagnosis"
+            aria-label={text("startDiagnosis")}
             className="w-full sm:w-auto relative group px-8 py-4 rounded-xl text-base font-extrabold text-white shimmer-button shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 cursor-pointer"
           >
-            <span>Start here</span>
+            <span>{text("startHere")}</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto mb-14">
           <div className="glass-panel p-3.5 rounded-xl text-center border border-slate-800">
-            <div className="text-xl sm:text-2xl font-extrabold text-orange-400 font-mono">4 tracks</div>
+            <div className="text-xl sm:text-2xl font-extrabold text-orange-400 font-mono">{text("hero.tracks")}</div>
             <div className="text-xs text-slate-400 font-medium mt-0.5">
               RAG · Fine-Tuning · Evals · OpsLLM
             </div>
           </div>
           <div className="glass-panel p-3.5 rounded-xl text-center border border-slate-800">
-            <div className="text-xl sm:text-2xl font-extrabold text-indigo-400 font-mono">Diagnosis</div>
-            <div className="text-xs text-slate-400 font-medium mt-0.5">Before any roadmap</div>
+            <div className="text-xl sm:text-2xl font-extrabold text-indigo-400 font-mono">{text("hero.diagnosis")}</div>
+            <div className="text-xs text-slate-400 font-medium mt-0.5">{text("hero.diagnosisHint")}</div>
           </div>
           <div className="glass-panel p-3.5 rounded-xl text-center border border-slate-800">
-            <div className="text-xl sm:text-2xl font-extrabold text-cyan-400 font-mono">Live Forge</div>
-            <div className="text-xs text-slate-400 font-medium mt-0.5">Watch it take shape</div>
+            <div className="text-xl sm:text-2xl font-extrabold text-cyan-400 font-mono">{text("hero.liveForge")}</div>
+            <div className="text-xs text-slate-400 font-medium mt-0.5">{text("hero.liveForgeHint")}</div>
           </div>
           <div className="glass-panel p-3.5 rounded-xl text-center border border-slate-800">
             <div className="text-xl sm:text-2xl font-extrabold text-emerald-400 font-mono">BASE · PSP</div>
-            <div className="text-xs text-slate-400 font-medium mt-0.5">Included with member email</div>
+            <div className="text-xs text-slate-400 font-medium mt-0.5">{text("hero.memberHint")}</div>
           </div>
         </div>
 
@@ -153,9 +156,9 @@ export function Hero() {
                 <span
                   className={`px-2 py-0.5 rounded font-bold font-mono text-[11px] bg-slate-800 border ${activePillar.borderColor} ${activePillar.accentColor}`}
                 >
-                  {activePillar.badge}
+                  {text(`track.${activePillar.id}.badge`)}
                 </span>
-                <span className="text-slate-300 font-medium hidden sm:inline">{activePillar.subtitle}</span>
+                <span className="text-slate-300 font-medium hidden sm:inline">{text(`track.${activePillar.id}.subtitle`)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -164,14 +167,14 @@ export function Hero() {
                   className="px-3 py-1 bg-emerald-600/90 hover:bg-emerald-500 text-white font-mono font-bold text-[11px] rounded flex items-center gap-1 shadow cursor-pointer transition-colors"
                 >
                   <Play className={`w-3 h-3 ${isRunning ? "animate-spin" : ""}`} />
-                  {isRunning ? "Executing..." : "Run Simulation"}
+                  {isRunning ? text("hero.executing") : text("hero.run")}
                 </button>
                 <button
                   onClick={handleCopy}
                   className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-mono text-[11px] rounded flex items-center gap-1 border border-slate-700 transition-colors cursor-pointer"
                 >
                   {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                  {copied ? "Copied" : "Copy"}
+                  {copied ? text("hero.copied") : text("hero.copy")}
                 </button>
               </div>
             </div>
@@ -184,7 +187,7 @@ export function Hero() {
               {(logs.length > 0 || isRunning) && (
                 <div className="mt-4 pt-4 border-t border-slate-800 font-mono text-xs">
                   <div className="text-slate-500 font-semibold mb-1 flex items-center gap-1">
-                    <Zap className="w-3 h-3 text-amber-400" /> Console Output:
+                    <Zap className="w-3 h-3 text-amber-400" /> {text("hero.console")}
                   </div>
                   {logs.map((log, i) => (
                     <div
@@ -203,7 +206,7 @@ export function Hero() {
             </div>
 
             <div className="bg-slate-900/90 px-5 py-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <span className="text-slate-400 font-mono">Tech Stack Mastered:</span>
+              <span className="text-slate-400 font-mono">{text("hero.techStack")}</span>
               <div className="flex flex-wrap items-center gap-2">
                 {activePillar.techStack.map((tech, idx) => (
                   <span

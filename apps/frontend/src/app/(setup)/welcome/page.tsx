@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { getTranslations } from "next-intl/server";
 
 import { WelcomeShell } from "@/components/marketing/welcome/WelcomeShell";
 
@@ -9,11 +10,13 @@ const plusJakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Welcome · Career Forge",
-  description:
-    "A roadmap that only moves when you prove it. Career Forge for Borderless BASE & PSP — live forge, mastery gated.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("welcome.meta");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export default function WelcomePage() {
   return (

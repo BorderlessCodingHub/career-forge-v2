@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { Sparkles, CheckCircle, Cpu, Database, Shield, Zap } from 'lucide-react';
+import { useWelcomeText } from "./useWelcomeText";
 
 export function InteractiveSandbox() {
+  const locale = useLocale();
+  const { text } = useWelcomeText();
   const [activeSandbox, setActiveSandbox] = useState<'rag' | 'finetune' | 'evals' | 'opsllm'>('rag');
 
   // RAG Simulator state
   const [ragMode, setRagMode] = useState<'naive' | 'hybrid'>('hybrid');
-  const [queryText, setQueryText] = useState("What was Acme Corp's net cloud profit margin in Q3 2025?");
+  const defaultQuery = text("playground.defaultQuery");
+  const [queryText, setQueryText] = useState(defaultQuery);
 
   // Fine-tuning state
   const [loraRank, setLoraRank] = useState(32);
@@ -16,7 +21,8 @@ export function InteractiveSandbox() {
   const [quantization, setQuantization] = useState<'4bit' | '8bit' | 'fp16'>('4bit');
 
   // Evals state
-  const [evalPrompt, setEvalPrompt] = useState('Generate financial report summary for Q3');
+  const defaultEval = text("playground.defaultEval");
+  const [evalPrompt, setEvalPrompt] = useState(defaultEval);
   const [evalRunning, setEvalRunning] = useState(false);
   const [evalResults, setEvalRunningResults] = useState<{
     faithfulness: number;
@@ -29,11 +35,16 @@ export function InteractiveSandbox() {
   const [concurrentRps, setConcurrentRps] = useState(250);
   const [engineType, setEngineType] = useState<'vllm' | 'pytorch'>('vllm');
 
+  useEffect(() => {
+    setQueryText(defaultQuery);
+    setEvalPrompt(defaultEval);
+  }, [locale, defaultQuery, defaultEval]);
+
   // Calculations for Fine-tuning
   const baseVram = quantization === '4bit' ? 12 : quantization === '8bit' ? 22 : 48;
   const loraVram = (loraRank / 32) * 2.2;
   const totalVram = (baseVram + loraVram).toFixed(1);
-  const trainingSpeed = quantization === '4bit' ? '2.4x Faster (Unsloth)' : quantization === '8bit' ? '1.5x Speed' : '1.0x Speed';
+  const trainingSpeed = quantization === '4bit' ? text("playground.speed4") : quantization === '8bit' ? text("playground.speed8") : text("playground.speed16");
 
   // Calculations for OpsLLM
   const ttft = engineType === 'vllm' ? Math.round(28 + (concurrentRps / 50)) : Math.round(450 + (concurrentRps * 1.8));
@@ -65,23 +76,23 @@ export function InteractiveSandbox() {
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4">
             <Sparkles className="w-3.5 h-3.5" />
-            LIVE INTERACTIVE PLAYGROUND
+            {text("playground.eyebrow")}
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-            Test AI Systems Engineering <span className="gradient-text-cyan">In Real-Time</span>
+            {text("playground.titleBefore")} <span className="gradient-text-cyan">{text("playground.titleAccent")}</span>
           </h2>
           <p className="text-slate-400 text-sm sm:text-base">
-            Simulate how Career Forge architectures perform under load, test vector search precision, fine-tuning memory reduction, and evaluation assertion suites.
+            {text("playground.lead")}
           </p>
         </div>
 
         {/* Sandbox Navigation Tabs */}
         <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
           {[
-            { id: 'rag', label: '1. RAG Simulator', icon: Database, color: 'text-orange-400', border: 'border-orange-500/40' },
-            { id: 'finetune', label: '2. Fine-Tuning Estimator', icon: Cpu, color: 'text-purple-400', border: 'border-purple-500/40' },
-            { id: 'evals', label: '3. DeepEval Assertion Suite', icon: Shield, color: 'text-cyan-400', border: 'border-cyan-500/40' },
-            { id: 'opsllm', label: '4. OpsLLM Latency Bench', icon: Zap, color: 'text-emerald-400', border: 'border-emerald-500/40' }
+            { id: 'rag', label: text("playground.tabRag"), icon: Database, color: 'text-orange-400', border: 'border-orange-500/40' },
+            { id: 'finetune', label: text("playground.tabTune"), icon: Cpu, color: 'text-purple-400', border: 'border-purple-500/40' },
+            { id: 'evals', label: text("playground.tabEvals"), icon: Shield, color: 'text-cyan-400', border: 'border-cyan-500/40' },
+            { id: 'opsllm', label: text("playground.tabOps"), icon: Zap, color: 'text-emerald-400', border: 'border-emerald-500/40' }
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeSandbox === tab.id;
@@ -112,10 +123,10 @@ export function InteractiveSandbox() {
                 <div>
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
                     <Database className="w-5 h-5 text-orange-400" />
-                    Agentic RAG vs Naive Vector Search Benchmark
+                    {text("playground.ragTitle")}
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Compare reciprocal rank fusion (RRF) + Cohere reranking against single-vector cosine similarity.
+                    {text("playground.ragLead")}
                   </p>
                 </div>
 
@@ -126,7 +137,7 @@ export function InteractiveSandbox() {
                       ragMode === 'naive' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'text-slate-400'
                     }`}
                   >
-                    Naive Dense Search
+                    {text("playground.naive")}
                   </button>
                   <button
                     onClick={() => setRagMode('hybrid')}
@@ -134,7 +145,7 @@ export function InteractiveSandbox() {
                       ragMode === 'hybrid' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' : 'text-slate-400'
                     }`}
                   >
-                    ⚡ Forge Hybrid GraphRAG
+                    {text("playground.hybrid")}
                   </button>
                 </div>
               </div>
@@ -142,7 +153,7 @@ export function InteractiveSandbox() {
               {/* Input Query */}
               <div>
                 <label className="block text-xs font-mono text-slate-400 mb-2 font-bold">
-                  TEST FINANCIAL / REGULATORY QUERY:
+                  {text("playground.queryLabel")}
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -157,39 +168,39 @@ export function InteractiveSandbox() {
               {/* Simulation Result */}
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="text-[11px] font-mono text-slate-400 mb-1">Precision @ K=5:</div>
+                  <div className="text-[11px] font-mono text-slate-400 mb-1">{text("playground.precision")}</div>
                   <div className={`text-2xl font-extrabold font-mono ${ragMode === 'hybrid' ? 'text-emerald-400' : 'text-red-400'}`}>
                     {ragMode === 'hybrid' ? '98.4%' : '61.2%'}
                   </div>
                   <div className="text-[10px] text-slate-500 mt-1">
-                    {ragMode === 'hybrid' ? 'Zero context miss' : 'Relevant doc dropped at rank 12'}
+                    {ragMode === 'hybrid' ? text("playground.precisionGood") : text("playground.precisionBad")}
                   </div>
                 </div>
 
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="text-[11px] font-mono text-slate-400 mb-1">Retrieval Latency:</div>
+                  <div className="text-[11px] font-mono text-slate-400 mb-1">{text("playground.latency")}</div>
                   <div className="text-2xl font-extrabold font-mono text-cyan-400">
                     {ragMode === 'hybrid' ? '184 ms' : '310 ms'}
                   </div>
                   <div className="text-[10px] text-slate-500 mt-1">
-                    {ragMode === 'hybrid' ? 'Parallel HNSW + BM25 execution' : 'Single sequential vector scan'}
+                    {ragMode === 'hybrid' ? text("playground.latencyGood") : text("playground.latencyBad")}
                   </div>
                 </div>
 
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="text-[11px] font-mono text-slate-400 mb-1">Hallucination Risk:</div>
+                  <div className="text-[11px] font-mono text-slate-400 mb-1">{text("playground.hallucination")}</div>
                   <div className={`text-2xl font-extrabold font-mono ${ragMode === 'hybrid' ? 'text-emerald-400' : 'text-orange-400'}`}>
                     {ragMode === 'hybrid' ? '0.01 %' : '18.4 %'}
                   </div>
                   <div className="text-[10px] text-slate-500 mt-1">
-                    {ragMode === 'hybrid' ? 'Guarded with citation claims' : 'Unverifiable context hallucination'}
+                    {ragMode === 'hybrid' ? text("playground.hallucinationGood") : text("playground.hallucinationBad")}
                   </div>
                 </div>
               </div>
 
               {/* Code/Pipeline Visual */}
               <div className="bg-[#0b0f19] p-4 rounded-xl border border-slate-800 text-xs font-mono text-slate-300">
-                <div className="text-slate-500 font-bold mb-2">RETRIEVED CONTEXT DOCUMENTS:</div>
+                <div className="text-slate-500 font-bold mb-2">{text("playground.retrieved")}</div>
                 {ragMode === 'hybrid' ? (
                   <div className="space-y-1.5 text-emerald-300/90">
                     <div>[Match 1] SEC 10-K Filing p.42: "Q3 Cloud profit margin stood at 28.1% on $420M revenue..." (Score: 0.984)</div>
@@ -211,10 +222,10 @@ export function InteractiveSandbox() {
               <div className="pb-4 border-b border-slate-800">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
                   <Cpu className="w-5 h-5 text-purple-400" />
-                  Unsloth QLoRA Memory & VRAM Calculator (Llama 3 / DeepSeek 8B)
+                  {text("playground.tuneTitle")}
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  See how 4-bit quantization and LoRA rank configuration allow fine-tuning on a single consumer GPU.
+                  {text("playground.tuneLead")}
                 </p>
               </div>
 
@@ -224,7 +235,7 @@ export function InteractiveSandbox() {
                 <div className="space-y-4 md:col-span-2 bg-slate-950 p-5 rounded-2xl border border-slate-800">
                   <div>
                     <div className="flex justify-between text-xs font-mono mb-1">
-                      <span className="text-slate-300 font-bold">LoRA Rank (r):</span>
+                      <span className="text-slate-300 font-bold">{text("playground.loraRank")}</span>
                       <span className="text-purple-400 font-bold font-mono">r = {loraRank}</span>
                     </div>
                     <input
@@ -240,7 +251,7 @@ export function InteractiveSandbox() {
 
                   <div>
                     <div className="flex justify-between text-xs font-mono mb-1">
-                      <span className="text-slate-300 font-bold">LoRA Alpha Scaling:</span>
+                      <span className="text-slate-300 font-bold">{text("playground.loraAlpha")}</span>
                       <span className="text-indigo-400 font-bold font-mono">α = {loraAlpha}</span>
                     </div>
                     <input
@@ -256,7 +267,7 @@ export function InteractiveSandbox() {
 
                   <div>
                     <div className="text-xs font-mono text-slate-300 font-bold mb-2">
-                      Quantization Precision:
+                      {text("playground.quant")}
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       {(['4bit', '8bit', 'fp16'] as const).map((q) => (
@@ -269,7 +280,7 @@ export function InteractiveSandbox() {
                               : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
                           }`}
                         >
-                          {q === '4bit' ? '4-bit (QLoRA)' : q === '8bit' ? '8-bit' : 'FP16 (Full)'}
+                          {q === '4bit' ? text("playground.q4") : q === '8bit' ? text("playground.q8") : text("playground.fp16")}
                         </button>
                       ))}
                     </div>
@@ -280,24 +291,24 @@ export function InteractiveSandbox() {
                 <div className="bg-slate-950 p-5 rounded-2xl border border-purple-500/30 flex flex-col justify-between">
                   <div>
                     <div className="text-xs font-mono text-purple-400 font-bold uppercase tracking-wider mb-2">
-                      REQUIRED GPU VRAM
+                      {text("playground.vram")}
                     </div>
                     <div className="text-4xl font-extrabold font-mono text-white mb-1">
                       {totalVram} <span className="text-lg text-purple-400">GB</span>
                     </div>
                     <p className="text-xs text-slate-400">
-                      Fits on 1x Nvidia RTX 4090 or A10G (24 GB VRAM)
+                      {text("playground.vramFit")}
                     </p>
                   </div>
 
                   <div className="pt-4 border-t border-slate-800 space-y-2 text-xs font-mono">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Training Throughput:</span>
+                      <span className="text-slate-400">{text("playground.throughput")}</span>
                       <span className="text-emerald-400 font-bold">{trainingSpeed}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Target Adapter Parameters:</span>
-                      <span className="text-purple-300 font-bold">{(loraRank * 1.8).toFixed(1)} Million</span>
+                      <span className="text-slate-400">{text("playground.adapter")}</span>
+                      <span className="text-purple-300 font-bold">{text("playground.million", { count: (loraRank * 1.8).toFixed(1) })}</span>
                     </div>
                   </div>
                 </div>
@@ -312,10 +323,10 @@ export function InteractiveSandbox() {
               <div className="pb-4 border-b border-slate-800">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
                   <Shield className="w-5 h-5 text-cyan-400" />
-                  DeepEval Automated CI/CD Regression Test
+                  {text("playground.evalsTitle")}
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Run automated assertion tests to block hallucinated or toxic outputs before production deployment.
+                  {text("playground.evalsLead")}
                 </p>
               </div>
 
@@ -332,7 +343,7 @@ export function InteractiveSandbox() {
                     disabled={evalRunning}
                     className="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-mono font-bold text-xs rounded-xl shadow cursor-pointer transition-colors"
                   >
-                    {evalRunning ? 'Running DeepEval...' : 'Execute Test Suite'}
+                    {evalRunning ? text("playground.running") : text("playground.execute")}
                   </button>
                 </div>
 
@@ -341,40 +352,40 @@ export function InteractiveSandbox() {
                   <div className="grid sm:grid-cols-3 gap-3 pt-2">
                     <div className="bg-slate-950 p-3.5 rounded-xl border border-emerald-500/30">
                       <div className="flex items-center justify-between text-xs font-mono text-slate-300 mb-1">
-                        <span>Faithfulness Metric</span>
+                        <span>{text("playground.faithfulness")}</span>
                         <CheckCircle className="w-4 h-4 text-emerald-400" />
                       </div>
                       <div className="text-2xl font-extrabold font-mono text-emerald-400">
                         {evalResults.faithfulness}
                       </div>
-                      <div className="text-[10px] text-slate-500 mt-1">Threshold: &gt;0.90 (Passed)</div>
+                      <div className="text-[10px] text-slate-500 mt-1">{text("playground.faithfulnessThreshold")}</div>
                     </div>
 
                     <div className="bg-slate-950 p-3.5 rounded-xl border border-emerald-500/30">
                       <div className="flex items-center justify-between text-xs font-mono text-slate-300 mb-1">
-                        <span>Hallucination Rate</span>
+                        <span>{text("playground.hallucinationRate")}</span>
                         <CheckCircle className="w-4 h-4 text-emerald-400" />
                       </div>
                       <div className="text-2xl font-extrabold font-mono text-emerald-400">
                         {evalResults.hallucination}
                       </div>
-                      <div className="text-[10px] text-slate-500 mt-1">Threshold: &lt;0.05 (Passed)</div>
+                      <div className="text-[10px] text-slate-500 mt-1">{text("playground.hallucinationThreshold")}</div>
                     </div>
 
                     <div className="bg-slate-950 p-3.5 rounded-xl border border-emerald-500/30">
                       <div className="flex items-center justify-between text-xs font-mono text-slate-300 mb-1">
-                        <span>Toxicity / PII Leak</span>
+                        <span>{text("playground.toxicity")}</span>
                         <CheckCircle className="w-4 h-4 text-emerald-400" />
                       </div>
                       <div className="text-2xl font-extrabold font-mono text-emerald-400">
                         {evalResults.toxicity}
                       </div>
-                      <div className="text-[10px] text-slate-500 mt-1">Threshold: 0.00 (Passed)</div>
+                      <div className="text-[10px] text-slate-500 mt-1">{text("playground.toxicityThreshold")}</div>
                     </div>
                   </div>
                 ) : (
                   <div className="bg-slate-950 p-6 rounded-xl text-center text-xs font-mono text-slate-500 border border-slate-800">
-                    Click "Execute Test Suite" to trigger DeepEval LLM-as-a-Judge test assertions.
+                    {text("playground.evalsEmpty")}
                   </div>
                 )}
               </div>
@@ -388,10 +399,10 @@ export function InteractiveSandbox() {
                 <div>
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
                     <Zap className="w-5 h-5 text-emerald-400" />
-                    OpsLLM High-Throughput vLLM Latency Simulator
+                    {text("playground.opsTitle")}
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Test continuous batching & PagedAttention against naive sequential PyTorch serving.
+                    {text("playground.opsLead")}
                   </p>
                 </div>
 
@@ -402,7 +413,7 @@ export function InteractiveSandbox() {
                       engineType === 'pytorch' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'text-slate-400'
                     }`}
                   >
-                    Standard HuggingFace
+                    {text("playground.hf")}
                   </button>
                   <button
                     onClick={() => setEngineType('vllm')}
@@ -410,7 +421,7 @@ export function InteractiveSandbox() {
                       engineType === 'vllm' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400'
                     }`}
                   >
-                    ⚡ vLLM Continuous Batching
+                    {text("playground.vllm")}
                   </button>
                 </div>
               </div>
@@ -418,7 +429,7 @@ export function InteractiveSandbox() {
               {/* Slider for RPS */}
               <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800">
                 <div className="flex justify-between text-xs font-mono mb-2">
-                  <span className="text-slate-300 font-bold">Concurrent Load (Requests Per Second):</span>
+                  <span className="text-slate-300 font-bold">{text("playground.load")}</span>
                   <span className="text-emerald-400 font-bold font-mono text-sm">{concurrentRps} RPS</span>
                 </div>
                 <input
@@ -435,32 +446,32 @@ export function InteractiveSandbox() {
               {/* Calculated Metrics */}
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="text-[11px] font-mono text-slate-400 mb-1">Time-To-First-Token (TTFT):</div>
+                  <div className="text-[11px] font-mono text-slate-400 mb-1">{text("playground.ttft")}</div>
                   <div className={`text-2xl font-extrabold font-mono ${ttft < 100 ? 'text-emerald-400' : 'text-red-400'}`}>
                     {ttft} ms
                   </div>
                   <div className="text-[10px] text-slate-500 mt-1">
-                    {engineType === 'vllm' ? 'Sub-50ms chunked prefill' : 'High queue head-of-line blocking'}
+                    {engineType === 'vllm' ? text("playground.ttftGood") : text("playground.ttftBad")}
                   </div>
                 </div>
 
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="text-[11px] font-mono text-slate-400 mb-1">Output Throughput:</div>
+                  <div className="text-[11px] font-mono text-slate-400 mb-1">{text("playground.output")}</div>
                   <div className="text-2xl font-extrabold font-mono text-cyan-400">
                     {throughput} tok/sec
                   </div>
                   <div className="text-[10px] text-slate-500 mt-1">
-                    {engineType === 'vllm' ? 'Full GPU core saturation' : '30% GPU memory fragmentation'}
+                    {engineType === 'vllm' ? text("playground.outputGood") : text("playground.outputBad")}
                   </div>
                 </div>
 
                 <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                  <div className="text-[11px] font-mono text-slate-400 mb-1">KV Cache Utilization:</div>
+                  <div className="text-[11px] font-mono text-slate-400 mb-1">{text("playground.kv")}</div>
                   <div className="text-2xl font-extrabold font-mono text-purple-400">
                     {memoryUtilization} %
                   </div>
                   <div className="text-[10px] text-slate-500 mt-1">
-                    {engineType === 'vllm' ? 'PagedAttention zero-waste memory' : 'High OOM risk'}
+                    {engineType === 'vllm' ? text("playground.kvGood") : text("playground.kvBad")}
                   </div>
                 </div>
               </div>
