@@ -125,6 +125,7 @@ describe("IdentityGate password", () => {
       />,
     );
 
+    fireEvent.click(screen.getByTestId("identity-gate-borderless"));
     fireEvent.change(screen.getByTestId("identity-gate-email"), {
       target: { value: "ada@example.com" },
     });
@@ -160,6 +161,7 @@ describe("IdentityGate password", () => {
     );
 
     expect(screen.queryByTestId("identity-gate-signup-modal")).toBeNull();
+    fireEvent.click(screen.getByTestId("identity-gate-borderless"));
     fireEvent.click(screen.getByTestId("identity-gate-signup"));
     expect(screen.getByTestId("identity-gate-signup-modal")).toBeTruthy();
 
@@ -180,6 +182,7 @@ describe("IdentityGate password", () => {
         onVerified={vi.fn()}
       />,
     );
+    fireEvent.click(screen.getByTestId("identity-gate-borderless"));
     expect(screen.getByTestId("identity-gate-password")).toBeTruthy();
     expect(screen.queryByTestId("identity-gate-forgot")).toBeNull();
     expect(screen.queryByTestId("identity-gate-signup")).toBeNull();
@@ -207,7 +210,6 @@ describe("IdentityGate password", () => {
       />,
     );
 
-    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
     fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
       target: { value: "ada@example.com" },
     });
@@ -272,7 +274,6 @@ describe("IdentityGate password", () => {
       />,
     );
 
-    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
     fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
     fireEvent.change(screen.getByTestId("identity-gate-career-forge-name"), {
       target: { value: "Ada Lovelace" },
@@ -294,7 +295,7 @@ describe("IdentityGate password", () => {
     expect(screen.getByTestId("identity-gate-error").textContent).toBe(
       "This email already has an account.",
     );
-    expect(screen.getByTestId("identity-gate-back-borderless")).toBeTruthy();
+    expect(screen.getByTestId("identity-gate-borderless")).toBeTruthy();
   });
 
   it("offers a resend when the Career Forge password is not confirmed yet", async () => {
@@ -312,7 +313,6 @@ describe("IdentityGate password", () => {
       />,
     );
 
-    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
     fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
       target: { value: "ada@example.com" },
     });
@@ -346,7 +346,6 @@ describe("IdentityGate password", () => {
       />,
     );
 
-    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
     fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
     fireEvent.change(screen.getByTestId("identity-gate-career-forge-name"), {
       target: { value: "Ada Lovelace" },
@@ -387,7 +386,6 @@ describe("IdentityGate password", () => {
       />,
     );
 
-    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
     fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
       target: { value: "ada@example.com" },
     });
@@ -418,7 +416,6 @@ describe("IdentityGate password", () => {
       />,
     );
 
-    fireEvent.click(screen.getByTestId("identity-gate-career-forge"));
     fireEvent.click(screen.getByTestId("identity-gate-career-forge-forgot"));
     fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
       target: { value: "ada@example.com" },
@@ -441,6 +438,7 @@ describe("IdentityGate password", () => {
         onVerified={vi.fn()}
       />,
     );
+    fireEvent.click(screen.getByTestId("identity-gate-borderless"));
     const field = screen.getByTestId("identity-gate-password");
     expect(field.getAttribute("type")).toBe("password");
     fireEvent.click(screen.getByTestId("identity-gate-toggle-password"));
