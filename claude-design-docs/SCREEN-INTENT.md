@@ -91,11 +91,11 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Constraint | Detail |
 |------------|--------|
 | Surface | `ProductEntryGate` overlay — **no** `/sign-in` route; Welcome public |
-| Password layout | Email, Password, Sign in, Forgot, Don’t have an account? Sign up. CF tokens. No GitHub/Google. No EN/PT radio. English |
+| Password layout | Career Forge email, password, Sign in, Forgot, Don’t have an account? Sign up. Divider, then outlined **Continue with Borderless** (BrandMark + label) opens the Borderless password form. CF tokens. No GitHub/Google OAuth. No EN/PT radio. English |
 | Chrome | Product topbar (same chrome as `/roadmap` artifact bar): `BrandLockup` once + Back to Welcome → `/welcome`. Logo not in the card. Backdrop = Welcome hero (`bg-slate-950` + indigo dots + soft blobs). Shared by OTP/pilot and password |
-| Forgot | `forgot_password_url` from identity-mode, new tab; hide if empty |
-| Sign up | Modal (does not navigate immediately); primary opens Borderless signup `_blank`; secondary closes modal |
-| API | Browser calls CF `POST /auth/signin` only |
+| Forgot | Career Forge forgot stays on the card. Borderless `forgot_password_url` from identity-mode, new tab; hide if empty |
+| Sign up | Career Forge sign-up stays on the card. Borderless sign-up is a modal (does not navigate immediately); primary opens Borderless signup `_blank`; secondary closes modal |
+| API | Career Forge password: `POST /auth/account/signin`. Borderless password: `POST /auth/signin` |
 
 **Can evolve:** Labs ops sets `IDENTITY_METHOD=borderless_password` ([DEPLOY-LABS-MANUAL §2.5](../docs/DEPLOY-LABS-MANUAL.md) · CAR-107). Repo default stays empty.
 

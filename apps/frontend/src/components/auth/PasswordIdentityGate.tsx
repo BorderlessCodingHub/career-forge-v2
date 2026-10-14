@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { IdentityGateShell } from "@/components/auth/IdentityGateShell";
 import { Button } from "@/components/ui";
+import { BrandMark } from "@/components/ui/BrandMark";
 import {
   AccountExistsError,
   EmailUnconfirmedError,
@@ -40,7 +41,7 @@ export function PasswordIdentityGate({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [signupOpen, setSignupOpen] = useState(false);
-  const [door, setDoor] = useState<"borderless" | "career_forge">("borderless");
+  const [door, setDoor] = useState<"borderless" | "career_forge">("career_forge");
   const [view, setView] = useState<CareerView>("signin");
   const [sentTo, setSentTo] = useState("");
   const [canResend, setCanResend] = useState(false);
@@ -192,7 +193,7 @@ export function PasswordIdentityGate({
     }
   }
 
-  function backToBorderless() {
+  function openBorderless() {
     setDoor("borderless");
     setView("signin");
     resetFeedback();
@@ -352,17 +353,38 @@ export function PasswordIdentityGate({
           ) : null}
 
           {view === "signin" ? (
-            <button
-              type="button"
-              className="mt-4 text-sm text-accent underline-offset-2 hover:underline"
-              data-testid="identity-gate-career-forge-create"
-              onClick={() => {
-                setView("signup");
-                resetFeedback();
-              }}
-            >
-              {t("createCareerForgeAccount")}
-            </button>
+            <>
+              <p className="mt-4 text-sm text-text-secondary">
+                {t("noAccount")}{" "}
+                <button
+                  type="button"
+                  className="text-accent underline-offset-2 hover:underline"
+                  data-testid="identity-gate-career-forge-create"
+                  onClick={() => {
+                    setView("signup");
+                    resetFeedback();
+                  }}
+                >
+                  {t("signUp")}
+                </button>
+              </p>
+              <div className="mt-6 flex items-center gap-3">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-xs uppercase tracking-wide text-text-muted">
+                  {t("orDivider")}
+                </span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+              <button
+                type="button"
+                className="mt-4 flex w-full items-center justify-center gap-3 rounded-md border border-border bg-bg px-4 py-2.5 text-sm font-medium text-text-primary hover:bg-surface"
+                data-testid="identity-gate-borderless"
+                onClick={openBorderless}
+              >
+                <BrandMark size={18} />
+                {t("continueWithBorderless")}
+              </button>
+            </>
           ) : (
             <button
               type="button"
@@ -388,15 +410,6 @@ export function PasswordIdentityGate({
               {t("resendConfirmation")}
             </button>
           ) : null}
-
-          <button
-            type="button"
-            className="mt-3 block text-sm text-text-secondary underline-offset-2 hover:underline"
-            data-testid="identity-gate-back-borderless"
-            onClick={backToBorderless}
-          >
-            {t("backToBorderless")}
-          </button>
           {notice && view !== "forgot" ? (
             <p className="mt-3 text-sm text-text-primary" data-testid="identity-gate-career-forge-notice">
               {notice}
@@ -490,7 +503,7 @@ export function PasswordIdentityGate({
 
         <button
           type="button"
-          className="mt-4 text-sm text-accent underline-offset-2 hover:underline"
+          className="mt-4 block text-sm text-text-secondary underline-offset-2 hover:underline"
           data-testid="identity-gate-career-forge"
           onClick={() => {
             setDoor("career_forge");
@@ -498,7 +511,7 @@ export function PasswordIdentityGate({
             resetFeedback();
           }}
         >
-          {t("useCareerForgePassword")}
+          {t("backToCareerForge")}
         </button>
 
         {error ? (
