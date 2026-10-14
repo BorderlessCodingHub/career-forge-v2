@@ -295,7 +295,7 @@
       "membersDescription": "O Career Forge está incluído para quem estuda no BASE e no PSP. Comece o diagnóstico com o e-mail de membro.",
       "membersFeatures": {
         "0": "Diagnóstico antes de qualquer trilha",
-        "1": "Forge ao vivo da trilha para a sua track",
+        "1": "Forge ao vivo para a sua trilha",
         "2": "Validação de domínio na trilha",
         "3": "Quatro trilhas de LLM: RAG, Fine-Tuning, Evals, OpsLLM",
         "4": "Sem Stripe para membros BASE e PSP"
@@ -365,7 +365,8 @@
       "ragLead": "Compare reciprocal rank fusion (RRF) + reranking Cohere com similaridade de cosseno de um único vetor.",
       "naive": "Busca densa ingênua",
       "hybrid": "⚡ GraphRAG híbrido do Forge",
-      "queryLabel": "QUERY FINANCEIRA / REGULATÓRIA DE TESTE:",
+      "queryLabel": "CONSULTA FINANCEIRA / REGULATÓRIA DE TESTE:",
+      "retrieved": "DOCUMENTOS DE CONTEXTO RECUPERADOS:",
       "defaultQuery": "Qual foi a margem líquida de lucro de cloud da Acme Corp no Q3 de 2025?",
       "precision": "Precisão @ K=5:",
       "precisionGood": "Nenhum contexto perdido",
@@ -378,7 +379,7 @@
       "hallucinationBad": "Alucinação de contexto não verificável",
       "tuneTitle": "Calculadora de memória e VRAM Unsloth QLoRA (Llama 3 / DeepSeek 8B)",
       "tuneLead": "Veja como a quantização 4-bit e o rank LoRA permitem fine-tuning em uma única GPU de consumidor.",
-      "loraRank": "LoRA Rank (r):",
+      "loraRank": "Rank do LoRA (r):",
       "loraAlpha": "Escala LoRA Alpha:",
       "quant": "Precisão da quantização:",
       "q4": "4-bit (QLoRA)",
@@ -409,7 +410,7 @@
       "hf": "HuggingFace padrão",
       "vllm": "⚡ vLLM continuous batching",
       "load": "Carga concorrente (requests por segundo):",
-      "ttft": "Time-To-First-Token (TTFT):",
+      "ttft": "Tempo até o primeiro token (TTFT):",
       "ttftGood": "Chunked prefill abaixo de 50 ms",
       "ttftBad": "Bloqueio alto de cabeça de fila",
       "output": "Throughput de saída:",
@@ -430,13 +431,13 @@
       "trajectory": "Trajetória:",
       "arthurRole": "Especialista em IA",
       "arthurFormer": "Bartender (Canadá)",
-      "arthurStory": "Arthur trabalhava como bartender no Canadá antes de entrar no Base Mentorship Program. Hoje trabalha com inteligência artificial de forma remota. Saiu de um salário de R$5,000 como bartender para um salário de R$15,000 trabalhando remoto.",
+      "arthurStory": "Arthur trabalhava como bartender no Canadá antes de entrar no programa de mentoria do BASE. Hoje trabalha com inteligência artificial de forma remota. Saiu de um salário de R$5,000 como bartender para um salário de R$15,000 trabalhando remoto.",
       "eduardoRole": "Desenvolvedor de IA/LLM (low-code)",
-      "eduardoFormer": "Lead Developer (low-code)",
-      "eduardoStory": "Eduardo saiu de Lead Developer (low-code) a cerca de US$7.50/hr (~US$1,300) para desenvolvedor de IA/LLM (low-code) a US$18/hr (~US$2,900) em cerca de seis meses de mentoria no Base.",
-      "gelsonRole": "Front End · US$9,000/month",
-      "gelsonFormer": "Desempregado após layoff em outsourcing",
-      "gelsonStory": "Gelson ficou desempregado depois de um layoff em outsourcing, onde ganhava R$20K no Brasil. Hoje recebe US$9,000/month depois de internacionalizar a carreira com um mês de mentoria, aplicando o método Go Global ensinado no PSP Mentorship Program.",
+      "eduardoFormer": "Desenvolvedor líder (low-code)",
+      "eduardoStory": "Eduardo saiu de desenvolvedor líder (low-code) a cerca de US$7.50/hr (~US$1,300) para desenvolvedor de IA/LLM (low-code) a US$18/hr (~US$2,900) em cerca de seis meses de mentoria no BASE.",
+      "gelsonRole": "Front-end · US$9,000/month",
+      "gelsonFormer": "Desempregado após demissão em terceirização",
+      "gelsonStory": "Gelson ficou desempregado depois de uma demissão em terceirização, onde ganhava R$20K no Brasil. Hoje recebe US$9,000/month depois de internacionalizar a carreira com um mês de mentoria, aplicando o método Go Global ensinado no programa de mentoria do PSP.",
       "thiagoRole": "Desenvolvedor Web3 / backend",
       "thiagoFormer": "Desenvolvedor backend",
       "thiagoStory": "Em um mês de mentoria no PSP, Thiago saiu de desenvolvedor backend (USD 13k) para desenvolvedor Web3 / backend ($22k). Passou na triagem inicial de 19 processos e recusou 3 ofertas abaixo da sua taxa ou que eram web2."
@@ -456,7 +457,7 @@
         },
         "1": {
           "question": "Por que isto não é um curso de prompt?",
-          "answer": "Não. Não é um curso de prompt. O Career Forge diagnostica seu ponto de partida, forja uma trilha ao vivo para uma track de IA em produção (RAG, Fine-Tuning, Evals ou OpsLLM) e valida o domínio antes de você avançar."
+          "answer": "Não. Não é um curso de prompt. O Career Forge diagnostica seu ponto de partida, forja uma trilha ao vivo para uma AI Track em produção (RAG, Fine-Tuning, Evals ou OpsLLM) e valida o domínio antes de você avançar."
         },
         "2": {
           "question": "Como eu começo?",

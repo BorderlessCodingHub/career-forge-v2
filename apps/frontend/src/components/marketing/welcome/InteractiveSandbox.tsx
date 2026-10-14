@@ -1,16 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { Sparkles, CheckCircle, Cpu, Database, Shield, Zap } from 'lucide-react';
 import { useWelcomeText } from "./useWelcomeText";
 
 export function InteractiveSandbox() {
+  const locale = useLocale();
   const { text } = useWelcomeText();
   const [activeSandbox, setActiveSandbox] = useState<'rag' | 'finetune' | 'evals' | 'opsllm'>('rag');
 
   // RAG Simulator state
   const [ragMode, setRagMode] = useState<'naive' | 'hybrid'>('hybrid');
-  const [queryText, setQueryText] = useState(() => text("playground.defaultQuery"));
+  const defaultQuery = text("playground.defaultQuery");
+  const [queryText, setQueryText] = useState(defaultQuery);
 
   // Fine-tuning state
   const [loraRank, setLoraRank] = useState(32);
@@ -18,7 +21,8 @@ export function InteractiveSandbox() {
   const [quantization, setQuantization] = useState<'4bit' | '8bit' | 'fp16'>('4bit');
 
   // Evals state
-  const [evalPrompt, setEvalPrompt] = useState(() => text("playground.defaultEval"));
+  const defaultEval = text("playground.defaultEval");
+  const [evalPrompt, setEvalPrompt] = useState(defaultEval);
   const [evalRunning, setEvalRunning] = useState(false);
   const [evalResults, setEvalRunningResults] = useState<{
     faithfulness: number;
@@ -30,6 +34,11 @@ export function InteractiveSandbox() {
   // OpsLLM state
   const [concurrentRps, setConcurrentRps] = useState(250);
   const [engineType, setEngineType] = useState<'vllm' | 'pytorch'>('vllm');
+
+  useEffect(() => {
+    setQueryText(defaultQuery);
+    setEvalPrompt(defaultEval);
+  }, [locale, defaultQuery, defaultEval]);
 
   // Calculations for Fine-tuning
   const baseVram = quantization === '4bit' ? 12 : quantization === '8bit' ? 22 : 48;
@@ -191,7 +200,7 @@ export function InteractiveSandbox() {
 
               {/* Code/Pipeline Visual */}
               <div className="bg-[#0b0f19] p-4 rounded-xl border border-slate-800 text-xs font-mono text-slate-300">
-                <div className="text-slate-500 font-bold mb-2">RETRIEVED CONTEXT DOCUMENTS:</div>
+                <div className="text-slate-500 font-bold mb-2">{text("playground.retrieved")}</div>
                 {ragMode === 'hybrid' ? (
                   <div className="space-y-1.5 text-emerald-300/90">
                     <div>[Match 1] SEC 10-K Filing p.42: "Q3 Cloud profit margin stood at 28.1% on $420M revenue..." (Score: 0.984)</div>

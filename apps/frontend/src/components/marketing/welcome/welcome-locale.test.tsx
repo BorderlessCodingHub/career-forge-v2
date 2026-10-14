@@ -10,6 +10,7 @@ vi.mock("next/navigation", () => ({
 import en from "../../../../messages/en.json";
 import pt from "../../../../messages/pt-BR.json";
 import { Hero } from "./Hero";
+import { InteractiveSandbox } from "./InteractiveSandbox";
 import { Pricing } from "./Pricing";
 import { WelcomeShell } from "./WelcomeShell";
 
@@ -47,6 +48,9 @@ describe("welcome locale (CAR-143)", () => {
     expect(screen.getByText("R$5,000")).toBeTruthy();
     expect(screen.getByText("US$18/hr")).toBeTruthy();
     expect(screen.getByText(/Go Global/)).toBeTruthy();
+    expect(screen.getByText(/programa de mentoria do BASE/)).toBeTruthy();
+    expect(screen.getAllByText(/Desenvolvedor líder \(low-code\)/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/Lead Developer|Mentorship Program|sua track/)).toBeNull();
     expect(screen.getByText("Fine-Tuning Mastery")).toBeTruthy();
     expect(screen.getByText("LLM Evals & Quality")).toBeTruthy();
     expect(screen.getByText("OpsLLM & Infrastructure")).toBeTruthy();
@@ -66,5 +70,20 @@ describe("welcome locale (CAR-143)", () => {
     expect(screen.getByText("USD $7")).toBeTruthy();
     expect(screen.getAllByText(/USD \$7\/mês/).length).toBeGreaterThan(0);
     expect(screen.queryByText(/R\$|BRL/)).toBeNull();
+  });
+
+  it("translates simulator chrome and refreshes seeded inputs with the locale", () => {
+    portuguese();
+    const { rerender } = render(<InteractiveSandbox />);
+
+    expect(screen.getByText("CONSULTA FINANCEIRA / REGULATÓRIA DE TESTE:")).toBeTruthy();
+    expect(screen.getByText("DOCUMENTOS DE CONTEXTO RECUPERADOS:")).toBeTruthy();
+    expect(screen.getByDisplayValue(/margem líquida de lucro/)).toBeTruthy();
+
+    delete (globalThis as { __cfLocale?: string }).__cfLocale;
+    rerender(<InteractiveSandbox />);
+
+    expect(screen.getByText("TEST FINANCIAL / REGULATORY QUERY:")).toBeTruthy();
+    expect(screen.getByDisplayValue(/Acme Corp's net cloud profit margin/)).toBeTruthy();
   });
 });

@@ -366,6 +366,7 @@
       "naive": "Naive Dense Search",
       "hybrid": "⚡ Forge Hybrid GraphRAG",
       "queryLabel": "TEST FINANCIAL / REGULATORY QUERY:",
+      "retrieved": "RETRIEVED CONTEXT DOCUMENTS:",
       "defaultQuery": "What was Acme Corp's net cloud profit margin in Q3 2025?",
       "precision": "Precision @ K=5:",
       "precisionGood": "Zero context miss",
