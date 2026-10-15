@@ -2,7 +2,7 @@
 
 **Entry:** [AGENTS.md](../AGENTS.md) · **Plan:** [V2-PLAN.md](./V2-PLAN.md) · **V3:** [V3-PLAN.md](./V3-PLAN.md)
 
-Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). Linear team **Career Forge V2** (`CAR`).
+Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). Linear workspace [borderless-coding](https://linear.app/borderless-coding) · team **Borderless Labs** (`BOR2`) · project **Career Forge**.
 
 ---
 
