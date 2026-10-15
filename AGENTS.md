@@ -3,7 +3,7 @@
 **Career Forge v2** — AI-native learning system for BASE/PSP: adaptive skill graph, Live Roadmap Forge with streaming, AI-driven mastery validation. Deployed at `labs.borderlesscoding.com/career-forge`.
 
 **Stack:** Next.js · FastAPI · PostgreSQL · LangGraph + LangChain + LangSmith  
-**Linear:** [Career Forge V2](https://linear.app/career-forge-v2) · team key **`CAR`**
+**Linear:** [borderless-coding](https://linear.app/borderless-coding) · team **Borderless Labs** (`BOR2`) · project **Career Forge**
 
 This file is the **table of contents**. Details live under [`docs/`](./docs/README.md) and [`claude-design-docs/`](./claude-design-docs/README.md).
 
@@ -13,14 +13,14 @@ This file is the **table of contents**. Details live under [`docs/`](./docs/READ
 
 | Task | Read in order | Then do |
 |------|---------------|---------|
-| **Implement a Linear issue** | [V2-PLAN](./docs/V2-PLAN.md) → [ROADMAP](./docs/ROADMAP.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Branch `CAR-XX-title-slug` · triple gate · merge · **end-task** |
+| **Implement a Linear issue** | [V2-PLAN](./docs/V2-PLAN.md) → [ROADMAP](./docs/ROADMAP.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) → issue scope → [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) | Branch `BOR2-XX-title-slug` · triple gate · merge · **end-task** |
 | **AI / LangGraph work** | [EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) → [AI-EXECUTION](./docs/engineering/AI-EXECUTION.md) → [REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) § AI layer | Use `GraphExecutor` + `AgentFactory` — no per-graph streaming |
 | **Debug LLM / traces** | [langsmith-inspect skill](./.cursor/skills/langsmith-inspect/SKILL.md) → [langsmith-inspect rule](./.cursor/rules/langsmith-inspect.mdc) | `./scripts/langsmith-env.sh` loads `.env` · inspect traces before changing prompts/graphs |
 | **Local runtime / failed to fetch** | [local-debug skill](./.cursor/skills/local-debug/SKILL.md) → [local-debug rule](./.cursor/rules/local-debug.mdc) | Docker logs · CORS · `logs/backend.log` when `ENV=local` |
 | **Diagnosis / onboarding AI** | [ADR-001](./docs/decisions/ADR-001-adaptive-diagnosis-ctrr.md) → [DIAGNOSIS-INTERVIEW](./docs/product/DIAGNOSIS-INTERVIEW.md) → [diagnosis-interview rule](./.cursor/rules/diagnosis-interview.mdc) | Multi-turn CTRR · ≤2 Q/turn · FE dumb renderer · soft gate in v2 pilot |
 | **Bootstrap / first session** | [V2-PLAN](./docs/V2-PLAN.md) → [ROADMAP](./docs/ROADMAP.md) → [STATUS](./docs/STATUS.md) → [CHECKPOINT](./docs/CHECKPOINT.md) | Paste block below · `make smoke` when apps exist |
 | **Understand full application** | [CHECKPOINT](./docs/CHECKPOINT.md) → [engineering/REPO-STRUCTURE](./docs/engineering/REPO-STRUCTURE.md) → [engineering/EXECUTION-FLOW](./docs/engineering/EXECUTION-FLOW.md) | Canonical product + runtime overview |
-| **Cloud agent / Linear** | [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Linear Cursor plugin · workspace career-forge-v2 |
+| **Cloud agent / Linear** | [CURSOR-CLOUD](./docs/CURSOR-CLOUD.md) | Linear Cursor plugin · team Borderless Labs · project Career Forge |
 | **Agent lifecycle / planning** | [AGENT-LIFECYCLE](./docs/engineering/AGENT-LIFECYCLE.md) → [ROADMAP](./docs/ROADMAP.md) | Classify P/S/B · parallel dispatch for [P] batches |
 | **UI from Claude Design** | [PRODUCT-SOURCE-OF-TRUTH](./claude-design-docs/PRODUCT-SOURCE-OF-TRUTH.md) → [claude-design-docs/README.md](./claude-design-docs/README.md) | Map prototype → Next.js; sync docs after paradigm change |
 | **Delivery / merge** | [AGENT-DELIVERY](./docs/AGENT-DELIVERY.md) → [end-task-workflow](./.cursor/rules/end-task-workflow.mdc) | `SHIP + PASS + VERIFIED` then **manual Done in Linear** |
@@ -35,7 +35,7 @@ Paste as first agent message if hooks unavailable:
 ```
 Repo: career-forge-v2 (Career Forge v2 · Borderless Labs).
 Read AGENTS.md → V2-PLAN → ROADMAP → STATUS → CHECKPOINT → EXECUTION-FLOW (AI work).
-Pick current ROADMAP phase only. Branch: CAR-XX-title-slug.
+Pick current ROADMAP phase only. Linear: team Borderless Labs, project Career Forge. Branch: BOR2-XX-title-slug.
 Before merge: triple gate (docs/AGENT-DELIVERY.md). make test && make smoke when runtime touched.
 After merge: end-task — manually set Linear issue to Done (no GitHub↔Linear automation).
 Update docs/STATUS.md + ROADMAP.
@@ -49,9 +49,9 @@ Update docs/STATUS.md + ROADMAP.
 Repo: career-forge-v2. Base: origin/main (pull latest).
 
 Read AGENTS.md → docs/V2-PLAN.md → docs/ROADMAP.md → docs/STATUS.md → docs/CHECKPOINT.md before coding.
-Scope: single issue CAR-XX only.
+Scope: single issue BOR2-XX only. Team Borderless Labs, project Career Forge.
 
-Branch: CAR-XX-title-slug
+Branch: BOR2-XX-title-slug
 Acceptance: <from Linear get_issue>
 
 Before merge: triple gate — SHIP + PASS + VERIFIED.
@@ -67,10 +67,10 @@ Report: merge summary, gate verdicts, blockers.
 sessionStart hook
   → AGENTS.md
   → V2-PLAN.md         phases, locked decisions
-  → ROADMAP.md         current phase, CAR issues, [P]/[S]/[B]
+  → ROADMAP.md         current phase, open BOR2 issues, [P]/[S]/[B]
   → STATUS.md          parity matrix, last merge
   → CHECKPOINT.md      product, stack, wow features
-  → issue scope        Linear MCP (CAR-XX)
+  → issue scope        Linear MCP (BOR2-XX, team Borderless Labs, project Career Forge)
   → claude-design-docs/  UI intent (when front-end)
       PRODUCT-SOURCE-OF-TRUTH.md first
   → AGENT-DELIVERY.md  triple QA gate
@@ -145,10 +145,11 @@ Full bootstrap: [docs/CURSOR-CLOUD.md](./docs/CURSOR-CLOUD.md).
 
 | Item | Value |
 |------|-------|
-| Linear workspace | [career-forge-v2](https://linear.app/career-forge-v2) |
-| Team key | `CAR` |
+| Linear workspace | [borderless-coding](https://linear.app/borderless-coding) |
+| Team | Borderless Labs (`BOR2`) |
+| Project | Career Forge |
 | Preferred MCP | Cursor **Linear** plugin (OAuth) |
-| Branch format | `CAR-XX-title-slug` (no username prefix) |
+| Branch format | `BOR2-XX-title-slug` (no username prefix) |
 | Push / PR | **SSH local** (`git@github.com:…` + `~/.ssh`) — see [git-push-ssh](./.cursor/rules/git-push-ssh.mdc). Do not use GitHub MCP for org pushes. |
 
 Do **not** commit API keys.
@@ -158,12 +159,12 @@ Do **not** commit API keys.
 ## Linear branch naming
 
 ```
-CAR-XX-title-slug
+BOR2-XX-title-slug
 ```
 
-Example: `CAR-5-swap-goals-minimal-catalog-seeds-llm-tracks`
+Example: `BOR2-90-v3a-video-references`
 
-Branch name is for **git hygiene only** — status transitions are **manual** (see end-task-workflow).
+List and create issues on team **Borderless Labs**, project **Career Forge**. Merged `CAR-*` branches stay as history. Branch name is for **git hygiene only** — status transitions are **manual** (see end-task-workflow).
 
 ---
 

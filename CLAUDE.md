@@ -2,7 +2,7 @@
 
 **Career Forge v2** — AI-native learning system for BASE/PSP: adaptive skill graph, Live Roadmap Forge with streaming, AI-driven mastery validation.
 
-Borderless Labs · `labs.borderlesscoding.com/career-forge` · Linear team **CAR** · plan: [docs/V2-PLAN.md](./docs/V2-PLAN.md)
+Borderless Labs · `labs.borderlesscoding.com/career-forge` · Linear workspace [borderless-coding](https://linear.app/borderless-coding) · team **Borderless Labs** (`BOR2`) · project **Career Forge** · plan: [docs/V2-PLAN.md](./docs/V2-PLAN.md)
 
 ## Stack
 
@@ -74,7 +74,7 @@ claude-design-docs/ prototype + design tokens
 
 ### Git workflow
 
-- Branch format: `CAR-XX-title-slug` (strip any `username/` prefix from Linear)
+- Branch format: `BOR2-XX-title-slug` (strip any `username/` prefix from Linear). Team **Borderless Labs**, project **Career Forge**.
 - One issue = one branch = one merge
 - Target 200–500 LOC per merge
 - Before merge: triple QA gate (see below)
@@ -182,10 +182,10 @@ At the start of a session involving implementation work, read in order:
 
 1. This file (CLAUDE.md) / [AGENTS.md](./AGENTS.md)
 2. [V2-PLAN.md](./docs/V2-PLAN.md) — phases, locked decisions
-3. [ROADMAP.md](./docs/ROADMAP.md) — current phase, CAR issues, [P]/[S]/[B]
+3. [ROADMAP.md](./docs/ROADMAP.md) — current phase, open BOR2 issues, [P]/[S]/[B]
 4. [STATUS.md](./docs/STATUS.md) — parity matrix, last merge
 5. [CHECKPOINT.md](./docs/CHECKPOINT.md) — product, stack, wow features
-6. Issue scope via Linear MCP (`CAR-XX`)
+6. Issue scope via Linear MCP (`BOR2-XX`, team Borderless Labs, project Career Forge)
 7. [claude-design-docs/](./claude-design-docs/) when doing frontend work
 
 ## Documentation index

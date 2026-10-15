@@ -9,7 +9,9 @@ Trigger for every implementation block (issue, milestone, multi-task feature).
 
 **Important:** Linear status is **manual** — see [end-task-workflow.mdc](./end-task-workflow.mdc).
 
-Linear workspace: **Career Forge V2** · team key **`CAR`**.
+Linear workspace: [borderless-coding](https://linear.app/borderless-coding) · team **Borderless Labs** (`BOR2`) · project **Career Forge**.
+
+Query and create issues on that team and project. `CAR-*` links in living docs are the pre-migration archive.
 
 ---
 
@@ -28,7 +30,7 @@ Linear workspace: **Career Forge V2** · team key **`CAR`**.
 ## 1. Branch naming
 
 ```
-CAR-XX-title-slug
+BOR2-XX-title-slug
 ```
 
 - Lowercase, hyphens only
@@ -48,7 +50,7 @@ Start:
 ```bash
 git checkout main && git pull origin main
 # start-task: Linear → In Progress
-git checkout -b CAR-XX-short-slug
+git checkout -b BOR2-XX-short-slug
 ```
 
 Before merge:
@@ -61,7 +63,7 @@ Merge:
 
 ```bash
 git checkout main
-git merge --no-ff CAR-XX-short-slug -m "CAR-XX: concise title"
+git merge --no-ff BOR2-XX-short-slug -m "BOR2-XX: concise title"
 git push origin main
 ```
 
@@ -103,7 +105,7 @@ Merge only: **SHIP + PASS + VERIFIED**
 
 - **Start:** `In Progress` via MCP
 - **End:** `Done` via [end-task-workflow](./end-task-workflow.mdc)
-- Commit message: `CAR-XX: title`
+- Commit message: `BOR2-XX: title`
 - Refactor findings → new Linear issue
 
 ---
@@ -112,6 +114,6 @@ Merge only: **SHIP + PASS + VERIFIED**
 
 - ❌ Assuming merge auto-closes Linear
 - ❌ Skipping end-task checklist
-- ❌ Wrong branch format (`HAC-XX` or `username/` prefix)
+- ❌ Wrong branch format (`CAR-XX` for new work, `HAC-XX`, or `username/` prefix)
 - ❌ Skipping triple gate on code PRs
 - ❌ Serializing parallel-safe work

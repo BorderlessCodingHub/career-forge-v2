@@ -29,5 +29,5 @@ alwaysApply: true
 
 ```bash
 git push -u origin HEAD
-gh pr create --title "CAR-XX: …" --body "…"
+gh pr create --title "BOR2-XX: …" --body "…"
 ```

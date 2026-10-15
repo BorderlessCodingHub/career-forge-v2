@@ -35,15 +35,17 @@ Copy from `.env.example`. Do **not** commit `.env` or secrets.
 
 ---
 
-## 3. Linear (Career Forge V2)
+## 3. Linear (Borderless Labs)
 
-Workspace: [career-forge-v2](https://linear.app/career-forge-v2) · Team key: **`CAR`**
+Workspace: [borderless-coding](https://linear.app/borderless-coding) · Team: **Borderless Labs** (`BOR2`) · Project: **Career Forge**
+
+Query and create issues on that team and project. `CAR-*` links in living docs are the pre-migration archive.
 
 **Preferred (local + Cloud):** enable the **Linear** Cursor plugin / MCP (`plugin-linear-linear`). Authenticate via Cursor’s Linear OAuth — no repo secret required.
 
-Issue / branch format: `CAR-XX-title-slug` (no username prefix).
+Issue / branch format: `BOR2-XX-title-slug` (no username prefix).
 
-Optional legacy: if using HTTP Bearer MCP via [`.cursor/mcp.json.example`](../.cursor/mcp.json.example), set a personal API key in Cursor secrets and point it at the Career Forge V2 workspace. Do not commit keys.
+Optional legacy: if using HTTP Bearer MCP via [`.cursor/mcp.json.example`](../.cursor/mcp.json.example), set a personal API key in Cursor secrets and point it at the borderless-coding workspace. Do not commit keys.
 
 ---
 
@@ -70,7 +72,7 @@ make smoke
 3. [ROADMAP.md](./ROADMAP.md)
 4. [STATUS.md](./STATUS.md)
 5. [CHECKPOINT.md](./CHECKPOINT.md)
-6. Linear issue (`CAR-XX`)
+6. Linear issue (`BOR2-XX`, team Borderless Labs, project Career Forge)
 7. [AGENT-DELIVERY.md](./AGENT-DELIVERY.md) before merge
 
 AI work: also [engineering/EXECUTION-FLOW.md](./engineering/EXECUTION-FLOW.md) → [engineering/AI-EXECUTION.md](./engineering/AI-EXECUTION.md)

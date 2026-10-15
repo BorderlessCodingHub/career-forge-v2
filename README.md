@@ -12,7 +12,7 @@ Borderless Labs · [labs.borderlesscoding.com/career-forge](https://labs.borderl
 | AI | LangGraph + LangChain + LangSmith |
 | Deploy | GHCR + VPS (Docker Compose + reverse proxy) |
 
-**Audience (v2):** BASE and PSP learners — spectrum from ~6 months XP to decades. Goals target **LLM engineer** tracks (RAG, Agents, Evals, Fine-tuning).
+**Audience:** BASE and PSP learners are included (two completed forges per UTC month). An unpaid `external` learner — Borderless FREE, or no Borderless account — gets one forge on the account, then USD $7/mo. Welcome does not host checkout. Goals target **LLM engineer** tracks (RAG, Agents, Evals, Fine-tuning).
 
 ---
 
@@ -37,7 +37,11 @@ Full product and architecture overview: [docs/CHECKPOINT.md](./docs/CHECKPOINT.m
 - **MCQ mock interview** — agent-generated questions with deterministic, server-side scoring.
 - **Chapter Q&A tutor** — grounded tutor per roadmap node (key concepts + official references).
 - **Contextual mentor + evidence report** — chat with full progress context and a mentor-facing evidence report.
-- **Forge recovery + auth scaffold** — anonymous JWT, saved forges, share/resume tokens, and `/forges` list (pre-Borderless login).
+- **Welcome** — marketing landpage at `/welcome`. The body follows the locale cookie; with no cookie it stays English.
+- **Identity and paywall** — Career Forge password, or Continue with Borderless. An unpaid `external` forges once; the next diagnosis or forge start is 402 until USD $7/mo. BASE/PSP stay included.
+- **Learner locale** — English and pt-BR for chrome, learner-facing model text, emails, and the forged roadmap.
+- **Canonical lesson** — published skill content at `/learn`.
+- **Node Reference** — in-product viewer at `/reference`.
 
 ---
 
@@ -54,13 +58,14 @@ Full product and architecture overview: [docs/CHECKPOINT.md](./docs/CHECKPOINT.m
 
 ## What the app does (flow)
 
-1. **Goal** — choose a target and motivation (+ optional PDF CV).
-2. **Diagnosis interview (CTRR)** — the AI asks up to 2 questions per round, with an adaptive rubric.
-3. **Editable diagnosis** — adjust gaps and strengths before generating the roadmap.
-4. **Live Roadmap Forge** — streaming in **timeline only** mode (no graph preview during generation).
-5. **Vertical roadmap (artifact mode)** — post-forge steady state, vertical roadmap style.
-6. **Validate with AI** — mastery interview; the roadmap reacts to the result.
-7. **Contextual mentor + report** — chat with progress context and evidence for Borderless mentors.
+1. **Welcome and identity** — Career Forge password, or Continue with Borderless. An unpaid `external` hits the paywall after one forge.
+2. **Goal** — choose a target and motivation (+ optional PDF CV).
+3. **Diagnosis interview (CTRR)** — the AI asks up to 2 questions per round, with an adaptive rubric.
+4. **Editable diagnosis** — adjust gaps and strengths before generating the roadmap.
+5. **Live Roadmap Forge** — streaming in **timeline only** mode (no graph preview during generation).
+6. **Vertical roadmap (artifact mode)** — post-forge steady state, vertical roadmap style.
+7. **Validate with AI** — mastery interview; the roadmap reacts to the result.
+8. **Contextual mentor + report** — chat with progress context and evidence for Borderless mentors.
 
 ---
 
@@ -140,12 +145,15 @@ Labs production: [docs/DEPLOY-LABS-MANUAL.md](./docs/DEPLOY-LABS-MANUAL.md).
 With the stack running (`make up`):
 
 1. Open the frontend (`make status` → URL with `/career-forge`).
-2. Set your goal and motivation; optionally attach a CV.
-3. Complete the diagnosis interview (pills/text from the API).
-4. In **editable diagnosis**, adjust gaps and click **Generate roadmap**.
-5. Watch the **Forge** (SSE timeline) until the reveal → vertical roadmap.
-6. Open a node → **Validate with AI** → watch the score and the roadmap react.
-7. (Optional) Mentor / report on the roadmap.
+2. From **Welcome**, sign in with a Career Forge password or **Continue with Borderless**.
+3. Set your goal and motivation; optionally attach a CV.
+4. Complete the diagnosis interview (pills/text from the API).
+5. In **editable diagnosis**, adjust gaps and click **Generate roadmap**.
+6. Watch the **Forge** (SSE timeline) until the reveal → vertical roadmap.
+7. Open a node → **Validate with AI** → watch the score and the roadmap react.
+8. (Optional) Mentor / report on the roadmap.
+
+An unpaid `external` account can start one forge. The next diagnosis or forge start asks for USD $7/mo. BASE and PSP stay included (two completed forges per UTC month).
 
 Script aligned with [docs/CHECKPOINT.md](./docs/CHECKPOINT.md) § Demo script.
 
@@ -211,6 +219,7 @@ Full runbook: [docs/DEPLOY-LABS-MANUAL.md](./docs/DEPLOY-LABS-MANUAL.md).
 |-----------|----------------|
 | **New to the project** | [docs/CHECKPOINT.md](./docs/CHECKPOINT.md) — complete overview |
 | **v2 plan & decisions** | [docs/V2-PLAN.md](./docs/V2-PLAN.md) |
+| **v3 plan** | [docs/V3-PLAN.md](./docs/V3-PLAN.md) |
 | **Current work** | [docs/ROADMAP.md](./docs/ROADMAP.md) · [docs/STATUS.md](./docs/STATUS.md) |
 | **Architecture (diagrams)** | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) |
 | **Docs index** | [docs/README.md](./docs/README.md) |
@@ -218,6 +227,8 @@ Full runbook: [docs/DEPLOY-LABS-MANUAL.md](./docs/DEPLOY-LABS-MANUAL.md).
 | **AI / LangGraph** | [docs/engineering/EXECUTION-FLOW.md](./docs/engineering/EXECUTION-FLOW.md) |
 | **CTRR diagnosis** | [docs/product/DIAGNOSIS-INTERVIEW.md](./docs/product/DIAGNOSIS-INTERVIEW.md) |
 | **Design / UI** | [claude-design-docs/](./claude-design-docs/) (prototype + tokens) |
+
+Open on Linear, team **Borderless Labs**, project **Career Forge**: [Video References](https://linear.app/borderless-coding/issue/BOR2-90) and [Provision Stripe Price and keys for Labs](https://linear.app/borderless-coding/issue/BOR2-97). Map: [Career Forge V3](https://linear.app/borderless-coding/issue/BOR2-110). Epic: [V3a](https://linear.app/borderless-coding/issue/BOR2-96).
 
 ### UI prototype (visual reference)
 
@@ -255,8 +266,6 @@ Career Forge v2 is maintained as part of the Borderless learning platform for BA
 | Area | Lead |
 |------|------|
 | v2 product & engineering | [Pedro Alano](https://github.com/pedroalano) |
-| AI / LangGraph motor | [Matheus Oliveira](https://github.com/MatheusOliveiraSilva) |
-| Frontend (original app) | [Arthur Araujo](https://github.com/Tute24) |
 
 ## Origins
 
