@@ -5,7 +5,7 @@ alwaysApply: true
 
 # End-task workflow (mandatory)
 
-**Context:** Linear workspace [borderless-coding](https://linear.app/borderless-coding), team **Borderless Labs**, project **Career Forge**, has **no GitHub app integration**. Merging a branch named `BOR2-XX-...` does **NOT** auto-move issues to Done.
+**Context:** Linear workspace [borderless-coding](https://linear.app/borderless-coding), team **Borderless Labs**, project **Career Forge**, has **no GitHub app integration**. Merging a branch named `LABS01-XX-...` does **NOT** auto-move issues to Done.
 
 Agents MUST run this checklist **after every completed issue**.
 
@@ -29,7 +29,7 @@ git pull origin main
 git log -1 --oneline
 ```
 
-Confirm the merge commit references `BOR2-XX` in message or branch.
+Confirm the merge commit references `LABS01-XX` in message or branch.
 
 ### 2. Move Linear issue → Done (manual)
 
@@ -37,7 +37,7 @@ Use Linear MCP:
 
 ```
 save_issue({
-  id: "BOR2-XX",
+  id: "LABS01-XX",
   state: "Done"
 })
 ```
@@ -47,14 +47,14 @@ Or ask the user to drag to Done if MCP unavailable.
 **Also verify:** issue was `In Progress` while working. Set at start:
 
 ```
-save_issue({ id: "BOR2-XX", state: "In Progress" })
+save_issue({ id: "LABS01-XX", state: "In Progress" })
 ```
 
 ### 3. Update living docs
 
 | File | Update |
 |------|--------|
-| `docs/STATUS.md` | Parity matrix row, current phase, last merge = BOR2-XX |
+| `docs/STATUS.md` | Parity matrix row, current phase, last merge = LABS01-XX |
 | `docs/ROADMAP.md` | Mark issue done / update phase checklist |
 
 ### 4. Self-critique before merge
@@ -70,7 +70,7 @@ Before reporting end-task complete, scan the diff for structural drift:
 ### 5. Report to user
 
 ```
-End-task complete: BOR2-XX
+End-task complete: LABS01-XX
 - Merge: <commit sha / summary>
 - Linear: Done
 - STATUS + ROADMAP updated
@@ -85,7 +85,7 @@ Before coding on an issue:
 
 1. `get_issue` — read acceptance criteria
 2. `save_issue` state **`In Progress`**
-3. Branch: `BOR2-XX-title-slug`
+3. Branch: `LABS01-XX-title-slug`
 4. Read V2-PLAN → ROADMAP → STATUS → CHECKPOINT
 
 ---

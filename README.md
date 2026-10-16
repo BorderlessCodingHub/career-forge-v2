@@ -228,7 +228,7 @@ Full runbook: [docs/DEPLOY-LABS-MANUAL.md](./docs/DEPLOY-LABS-MANUAL.md).
 | **CTRR diagnosis** | [docs/product/DIAGNOSIS-INTERVIEW.md](./docs/product/DIAGNOSIS-INTERVIEW.md) |
 | **Design / UI** | [claude-design-docs/](./claude-design-docs/) (prototype + tokens) |
 
-Open on Linear, team **Borderless Labs**, project **Career Forge**: [Video References](https://linear.app/borderless-coding/issue/BOR2-90) and [Provision Stripe Price and keys for Labs](https://linear.app/borderless-coding/issue/BOR2-97). Map: [Career Forge V3](https://linear.app/borderless-coding/issue/BOR2-110). Epic: [V3a](https://linear.app/borderless-coding/issue/BOR2-96).
+Open on Linear, team **Borderless Labs**, project **Career Forge**: [Video References](https://linear.app/borderless-coding/issue/LABS01-90) and [Provision Stripe Price and keys for Labs](https://linear.app/borderless-coding/issue/LABS01-97). Map: [Career Forge V3](https://linear.app/borderless-coding/issue/LABS01-110). Epic: [V3a](https://linear.app/borderless-coding/issue/LABS01-96).
 
 ### UI prototype (visual reference)
 
