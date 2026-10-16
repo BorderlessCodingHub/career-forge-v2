@@ -30,6 +30,7 @@ from career_forge.services.roadmap.assembler import (
     build_roadmap_from_catalog,
 )
 from career_forge.services.roadmap.catalog import load_roadmap_catalog
+from career_forge.services.roadmap.evidence import read_evidence
 from career_forge.services.roadmap.repository import (
     _delete_stale_generated_rows,
     _ensure_skill_node,
@@ -133,6 +134,14 @@ def get_user_roadmap(session: Session, user_id: str = "demo-ana") -> RoadmapResp
     )
 
 
+def _has_stored_checklist(row: UserSkillNodeRow) -> bool:
+    """True when the stored envelope already holds study-plan tasks or references."""
+    return any(
+        item.get("type") in ("task", "reference")
+        for item in read_evidence(row.evidence).checklist
+    )
+
+
 def sync_user_graph(
     session: Session,
     user_id: str,
@@ -158,6 +167,13 @@ def sync_user_graph(
             "rationale": node.rationale,
             "evidence": _evidence_from_node(node, sort_order=index),
         }
+        if (
+            row is not None
+            and not node.tasks
+            and not node.references
+            and _has_stored_checklist(row)
+        ):
+            del payload["evidence"]
         if row:
             for key, value in payload.items():
                 if key == "checklist_progress":
