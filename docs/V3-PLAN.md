@@ -2,10 +2,10 @@
 
 > Borderless · labs.borderlesscoding.com/career-forge  
 > **Atualizado:** 2026-10-10  
-> **Mapa:** [Career Forge V3](https://linear.app/borderless-coding/issue/BOR2-110)  
+> **Mapa:** [Career Forge V3](https://linear.app/borderless-coding/issue/LABS01-110)  
 > Cada decisão mora no ticket. Este arquivo é o corte para construir.
 
-> **Linear (trabalho aberto):** time **Borderless Labs** (`BOR2`), projeto **Career Forge**, workspace [borderless-coding](https://linear.app/borderless-coding). Links `linear.app/career-forge-v2/issue/CAR-*` são o arquivo da entrega antiga. Não renumerar.
+> **Linear (trabalho aberto):** time **Borderless Labs** (`LABS01`), projeto **Career Forge**, workspace [borderless-coding](https://linear.app/borderless-coding). Links `linear.app/career-forge-v2/issue/CAR-*` são o arquivo da entrega antiga. `BOR2-*` foi a chave anterior do mesmo time; o identificador atual é `LABS01` com o mesmo número. Não renumerar.
 
 V3 devolve o learner a um Roadmap que já existe, deixa o `external` forjar uma vez e depois cobra **USD $7/mo**, pendura um Video Reference em cada Node, e abre a interface do learner em pt-BR além do inglês. Não abre mercado, não cria V3b, e não constrói o que está na névoa.
 
@@ -17,7 +17,7 @@ V3 devolve o learner a um Roadmap que já existe, deixa o `external` forjar uma 
 
 Trilhos **[P]** começam juntos. Sequências **[S]**: o gate freemium depois da leitura do perfil, a copy do paywall depois desse gate, e os emails e o roadmap no idioma depois da interface. A virada live do Stripe também é **[S]** e não segura os demais.
 
-Epic: [V3a](https://linear.app/borderless-coding/issue/BOR2-96).
+Epic: [V3a](https://linear.app/borderless-coding/issue/LABS01-96).
 
 | Trilho | Classe | Issue |
 |--------|--------|-------|
