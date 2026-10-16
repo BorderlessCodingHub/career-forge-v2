@@ -14,7 +14,7 @@ import {
   listForges,
   mintResumeLink,
 } from "@/lib/api-client";
-import { getForgeGraph, setForgeGraph, type ForgeGraphNode } from "@/lib/forge-session";
+import { getForgeGraph, type ForgeGraphNode } from "@/lib/forge-session";
 
 function ForgeCompleteContent() {
   const t = useTranslations("forge");
@@ -63,7 +63,6 @@ function ForgeCompleteContent() {
           prerequisites: node.prerequisites,
         }));
         if (nodes.length) {
-          setForgeGraph(nodes);
           setGraph(nodes);
         } else {
           setGraph(null);

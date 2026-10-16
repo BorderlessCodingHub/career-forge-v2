@@ -445,3 +445,134 @@ def test_patch_checklist_rejects_unknown_item(client) -> None:
     )
     assert response.status_code == 400
 
+
+def _stored_evidence(user_id: str, node_id: str) -> dict:
+    from sqlalchemy import select
+
+    from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
+    from career_forge.db.repositories.user import get_by_external_id
+    from career_forge.db.session import SessionLocal
+
+    with SessionLocal() as session:
+        user = get_by_external_id(session, user_id)
+        assert user is not None
+        row = session.scalar(
+            select(UserSkillNodeRow).where(
+                UserSkillNodeRow.user_id == user.id,
+                UserSkillNodeRow.skill_node_id == node_id,
+            )
+        )
+        assert row is not None
+        return dict(row.evidence)
+
+
+def test_sync_with_empty_checklist_keeps_stored_evidence(client) -> None:
+    """A thin session graph must not wipe a checklist the server already stored."""
+    from career_forge.db.models.user_skill_node import UserSkillNode as UserSkillNodeRow
+    from career_forge.db.repositories.user import get_by_external_id
+    from career_forge.db.session import SessionLocal
+    from sqlalchemy import select
+
+    user_id = "sync-keep-checklist"
+    node_id = "agent-tool-use"
+    first = UserSkillNode(
+        node_id=node_id,
+        title="Tool use",
+        status=SkillStatus.BLOQUEADO,
+        mastery_score=10,
+        priority=Priority.LOW,
+        rationale="original rationale",
+        tasks=[{"id": "task-0", "title": "Practice tools", "outcome": "Call a tool"}],
+        references=[{"id": "ref-0", "title": "Docs", "url": "https://example.com/docs"}],
+    )
+    seeded = client.post(
+        "/roadmap/sync",
+        json={"user_id": user_id, "nodes": [first.model_dump()]},
+    )
+    assert seeded.status_code == 200
+
+    with SessionLocal() as session:
+        user = get_by_external_id(session, user_id)
+        assert user is not None
+        row = session.scalar(
+            select(UserSkillNodeRow).where(
+                UserSkillNodeRow.user_id == user.id,
+                UserSkillNodeRow.skill_node_id == node_id,
+            )
+        )
+        assert row is not None
+        evidence = dict(row.evidence)
+        evidence["validation"] = {
+            "strengths": ["tools"],
+            "gaps": [],
+            "next_action": "ship",
+        }
+        evidence["remediation"] = [
+            {"type": "task", "id": "gap-rem-1", "title": "Reinforce tools"}
+        ]
+        row.evidence = evidence
+        session.commit()
+        stored = dict(evidence)
+
+    thin = UserSkillNode(
+        node_id=node_id,
+        title="Tool use",
+        status=SkillStatus.RECOMENDADO,
+        mastery_score=40,
+        priority=Priority.HIGH,
+        rationale="updated rationale",
+        tasks=[],
+        references=[],
+    )
+    response = client.post(
+        "/roadmap/sync",
+        json={"user_id": user_id, "nodes": [thin.model_dump()]},
+    )
+    assert response.status_code == 200
+    node = next(item for item in response.json()["nodes"] if item["node_id"] == node_id)
+    assert node["status"] == "recomendado"
+    assert node["mastery_score"] == 40
+    assert node["rationale"] == "updated rationale"
+    assert node["tasks"][0]["title"] == "Practice tools"
+    assert node["references"][0]["url"] == "https://example.com/docs"
+    assert _stored_evidence(user_id, node_id) == stored
+
+
+def test_sync_with_tasks_and_no_references_replaces_checklist(client) -> None:
+    """A forge that sends exercises still replaces the checklist, even with no references."""
+    user_id = "sync-replace-checklist"
+    node_id = "agent-memory"
+    first = UserSkillNode(
+        node_id=node_id,
+        title="Memory",
+        status=SkillStatus.BLOQUEADO,
+        mastery_score=0,
+        rationale="old",
+        tasks=[{"id": "task-0", "title": "Old exercise", "outcome": "Old outcome"}],
+        references=[{"id": "ref-0", "title": "Old docs", "url": "https://example.com/old"}],
+    )
+    seeded = client.post(
+        "/roadmap/sync",
+        json={"user_id": user_id, "nodes": [first.model_dump()]},
+    )
+    assert seeded.status_code == 200
+
+    replacement = UserSkillNode(
+        node_id=node_id,
+        title="Memory",
+        status=SkillStatus.RECOMENDADO,
+        mastery_score=15,
+        rationale="new plan",
+        tasks=[{"id": "task-0", "title": "New exercise", "outcome": "Show it"}],
+        references=[],
+    )
+    response = client.post(
+        "/roadmap/sync",
+        json={"user_id": user_id, "nodes": [replacement.model_dump()]},
+    )
+    assert response.status_code == 200
+    node = next(item for item in response.json()["nodes"] if item["node_id"] == node_id)
+    assert node["status"] == "recomendado"
+    assert [task["title"] for task in node["tasks"]] == ["New exercise"]
+    assert node["references"] == []
+
