@@ -35,6 +35,24 @@ Supersedes CAR-35 screen-intent for this route. Spec lock: CAR-54.
 
 **Can evolve:** pt-BR (CAR-37); CAR-93 pilot testimonial quotes
 
+Footer legal links open `/legal/privacy`, `/legal/terms`, and `/legal/security`. No signup checkbox and no cookie banner on Welcome.
+
+---
+
+## 0r. Legal pages (`/legal/*`) — MUST match (LABS01-142)
+
+Public. No auth. Locale is `cf_locale` (`en` and `pt-BR`). No `/legal/cookies`, no `/legal/vendors`, no cookie banner.
+
+| Constraint | Detail |
+|------------|--------|
+| Routes | `/legal/privacy` · `/legal/terms` · `/legal/security` |
+| Hook | `data-screen="legal-privacy"` · `legal-terms` · `legal-security` |
+| Terms §6 | Refund text lives here: external USD $7/month via Stripe; BASE and PSP are not charged; first external forge is included; amounts already charged are not refunded; the Borderless 7-day cohort window does not apply; cancellation is the Stripe customer portal |
+| Privacy | Account, billing ids, learning records, `cf_locale`, access token in `localStorage`, and the named processors only |
+| Security | HTTPS in transit, password hashes, Stripe card data, operator access, no method completely secure |
+| Cross-links | Terms → Privacy. Security → Privacy. Terms §6 is the refund text |
+| Out | Mentorship cohorts, Discord, Vimeo, Google Meet, Appmax, PandaVideo, Go Global, audit-log program, backup program, vendor assessments, certification |
+
 ---
 
 ## 0b. Marketing welcome PLG (`/welcome/plg`) — MUST match (exploration)

@@ -120,7 +120,8 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `ChatBubble` | Onboarding + mentor |
 | `PrimaryButton` / `GhostButton` | Actions |
 | `LandingRecoveryGate` | CAR-27/29 — `/` return-visit gate; Continue / View all / New forge; **Forge again from last diagnosis** when `GET /me/profile` has diagnosis; empty+diagnosis gate; falls open to `GoalPicker` when empty or API error |
-| `WelcomeShell` + `marketing/welcome/` | CAR-56/92 — `/welcome` Premium B honesty pass; Start diagnosis→`/`; no scenery modals or confetti; pt-BR CAR-37 |
+| `WelcomeShell` + `marketing/welcome/` | CAR-56/92 — `/welcome` Premium B honesty pass; Start diagnosis→`/`; no scenery modals or confetti; pt-BR CAR-37; footer opens `/legal/*` |
+| `LegalDocument` | LABS01-142 — public `/legal/privacy`, `/legal/terms`, `/legal/security` in `cf_locale` |
 | `PlgLanding` | Exploration at `/welcome/plg` — EN product-led; CTA→`/`; not linked from default `/welcome` |
 | Premium A HTML | CAR-41 bake-off — `/welcome/premium-a` static rewrite; **not** Next components; not linked; not the funnel. B → `/welcome` |
 | `PlgStackScroll` | PLG first fold stays in view; trail / phases / features slide into the remaining viewport on wheel/touch |
