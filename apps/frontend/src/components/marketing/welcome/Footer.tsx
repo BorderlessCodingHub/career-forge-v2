@@ -114,17 +114,17 @@ export function Footer() {
           </div>
 
           <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-slate-300 transition-colors">
+            <Link href="/legal/privacy" className="hover:text-slate-300 transition-colors">
               {text("footer.privacy")}
-            </a>
+            </Link>
             <span>•</span>
-            <a href="#" className="hover:text-slate-300 transition-colors">
+            <Link href="/legal/terms" className="hover:text-slate-300 transition-colors">
               {text("footer.terms")}
-            </a>
+            </Link>
             <span>•</span>
-            <a href="#" className="hover:text-slate-300 transition-colors">
+            <Link href="/legal/security" className="hover:text-slate-300 transition-colors">
               {text("footer.security")}
-            </a>
+            </Link>
           </div>
         </div>
       </div>
