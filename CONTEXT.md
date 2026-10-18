@@ -75,8 +75,8 @@ The control that opens the host in a new tab when embed is refused or the learne
 _Avoid_: top-level navigate to the host, “open in app browser”
 
 **Forge source**:
-A research hit on the Live Roadmap Forge timeline. Not a Reference until it is attached to a Node.
-_Avoid_: reference, citation
+A research hit on the Live Roadmap Forge timeline: a title, a URL, and a snippet. Forge search that returns no URL fails that forge. Not a Reference until it is attached to a Node.
+_Avoid_: reference, citation, a summary with no URL
 
 **Canonical skill content**:
 The one published deep-dive per catalog skill (N learners → 1 piece). Not a per-forge article and not a Node Reference.
@@ -142,6 +142,32 @@ _Avoid_: quiet stretch, retry, dunning sequence
 Capturing product, API, and UI failures for engineers (Sentry FE+BE). Distinct from LangSmith, which traces LLM GraphRuns only.
 _Avoid_: calling LangSmith “observability” alone; learner-facing error desk; Operator error strip (deferred)
 
+### Model supply
+
+**Direct provider**:
+OpenAI, reached by Career Forge itself for model chat.
+_Avoid_: the OpenAI library, LangChain, “the SDK”
+
+**Model gateway**:
+OpenRouter — the single front Career Forge uses for model chat and Forge search while the Provider switch is on. The graph runtime stays.
+_Avoid_: Open Route, a second LLM stack, a library swap
+
+**Model chat**:
+A structured model call behind the diagnosis interview, forge planning, gap classification, tutoring, plan evaluation, and mock interview.
+_Avoid_: Forge web search, embeddings, the mentor reply, rubric validation, the rule-based diagnosis graph
+
+**Provider switch**:
+The one live control on the Access desk, written by the Access role, that chooses the Run provider for model chat and Forge search. One switch for the whole product. Remembered across restarts. No stored choice means the Direct provider. It can be turned on only when the Model gateway is configured, and turned off only when the Direct provider is configured. A missing key after that does not fall back to the other provider. The last write records which Operator did it and when. Cost burn still groups by the configured model name. Not per learner, not per graph, and not automatic failover.
+_Avoid_: feature flag, model router, a deploy-time env change, an Editor-only write, a click history
+
+**Run provider**:
+The provider a diagnosis session, a forge, or a single-shot model chat holds for its whole life. A diagnosis session takes it at start, and every turn uses it until the session is complete. A forge takes it when that forge is created; model chat and Forge search in that forge use it. Tutor and mock interview take it when that call is created. The Provider switch does not change a life that has already started.
+_Avoid_: per-turn routing inside one diagnosis, per-request routing inside one forge, automatic failover
+
+**Forge search**:
+The research inside one Live Roadmap Forge that proposes Forge sources. It uses that forge's Run provider. On the Direct provider it is OpenAI's native web search. On the Model gateway it is the gateway's web search.
+_Avoid_: model chat, a Reference, a Video Reference
+
 ### Operator console
 
 **Operator**:
@@ -161,8 +187,8 @@ Staff-only surface outside the product loop: Access desk + Content desk, one Ope
 _Avoid_: admin panel, dashboard OPS, Staff console
 
 **Access desk**:
-The Operator console desk that writes pilot access (Membership stub and billing entitlement) and shows cost burn read-only, plus Access cards.
-_Avoid_: user admin, impersonation, live kill-switch
+The Operator console desk that writes pilot access (Membership stub and billing entitlement) and the Provider switch, shows cost burn read-only, plus Access cards. An Operator who holds both desks may write it. Editor alone may not.
+_Avoid_: user admin, impersonation, live kill-switch of Entitlement
 
 **Content desk**:
 The Operator console desk for canonical skill metadata (published, title, URL) in Postgres. Markdown body stays in git. Not a CMS.
