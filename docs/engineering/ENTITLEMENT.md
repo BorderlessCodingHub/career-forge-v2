@@ -56,7 +56,7 @@ SQL.
 | `STRIPE_SECRET_KEY` | Checkout + retrieve session |
 | `STRIPE_WEBHOOK_SECRET` | `Stripe-Signature` HMAC |
 | `STRIPE_PRICE_ID` | Subscription price for Checkout |
-| `FRONTEND_URL` | Success/cancel URLs (`/forge?billing=success&session_id={CHECKOUT_SESSION_ID}`) |
+| `FRONTEND_URL` | Success/cancel URLs (`/billing/return?billing=success&session_id={CHECKOUT_SESSION_ID}`) |
 
 Stripe is **off** until all three `STRIPE_*` values are set. Database pilot grants
 still work.
