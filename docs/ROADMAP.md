@@ -24,6 +24,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Done:** [LABS01-140](https://linear.app/borderless-coding/issue/LABS01-140) — PR #116 (`111ea98`). A sync with empty exercises and references keeps the stored checklist. The forge complete page does not write a thin graph back into the session.
 
+**Done:** PR #121 (`65ae316`). Learner letters carry an absolute URL. No Linear issue. On Labs, `FRONTEND_URL=https://labs.borderlesscoding.com/career-forge`.
+
 ---
 
 ## Phase 3a (Rebrand + landing + pilots) — ✅ Completed
