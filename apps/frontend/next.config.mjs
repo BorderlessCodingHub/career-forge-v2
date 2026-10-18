@@ -1,33 +1,13 @@
 import { createRequire } from "node:module";
 import createNextIntlPlugin from "next-intl/plugin";
 
+import { apiPrefixRewrites } from "./api-proxy-rewrites.mjs";
+
 const { withSentryConfig } = createRequire(import.meta.url)("@sentry/nextjs/config");
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /** Public path when served behind labs.borderlesscoding.com (or similar). */
 const BASE_PATH = "/career-forge";
-
-/**
- * API path prefixes proxied to the backend when API_INTERNAL_URL is set (prod compose).
- * With basePath, Next.js automatically prefixes rewrite `source` (e.g. /career-forge/diagnosis/...).
- * External `destination` URLs are not prefixed.
- */
-const API_PREFIXES = [
-  "auth",
-  "operator",
-  "me",
-  "public",
-  "diagnosis",
-  "forge",
-  "roadmap",
-  "validation",
-  "mentor",
-  "mentor-report",
-  "mock-interview",
-  "demo",
-  "knowledge-gaps",
-  "tutor",
-];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -91,16 +71,7 @@ const nextConfig = {
           destination: `${internal}/learn/:skillId/content`,
         },
         // Exact prefix roots first — POST /forge, POST /validation, etc. do not match /:path*
-        ...API_PREFIXES.flatMap((prefix) => [
-          {
-            source: `/${prefix}`,
-            destination: `${internal}/${prefix}`,
-          },
-          {
-            source: `/${prefix}/:path*`,
-            destination: `${internal}/${prefix}/:path*`,
-          },
-        ]),
+        ...apiPrefixRewrites(internal),
         // Exact health check (footer badge).
         {
           source: "/health",

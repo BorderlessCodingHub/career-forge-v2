@@ -105,7 +105,7 @@ check test -f apps/frontend/src/components/operator/AccessDesk.tsx
 check test -f apps/frontend/src/components/operator/ContentDesk.tsx
 check grep -q 'operator-access-card' apps/frontend/src/components/operator/AccessDesk.tsx
 check grep -q 'operator-content-list' apps/frontend/src/components/operator/ContentDesk.tsx
-check grep -q '"operator"' apps/frontend/next.config.mjs
+check grep -q '"operator"' apps/frontend/api-proxy-rewrites.mjs
 check grep -q 'OPERATOR_ALLOWLIST' docker-compose.yml
 check grep -q 'OPERATOR_ALLOWLIST' docker-compose.prod.yml
 check grep -q 'RESEND_API_KEY' docker-compose.yml
