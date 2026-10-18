@@ -594,3 +594,110 @@ def test_an_expired_confirmation_link_is_refused(
     expired = raw_client.post("/auth/account/confirm", json={"token": _token(url)})
     assert expired.status_code == 400
     assert expired.json()["detail"] == "This link has expired"
+
+
+_LABS = "https://labs.borderlesscoding.com/career-forge"
+_LOCAL = "http://localhost:3300/career-forge"
+
+
+def test_smtp_signup_sends_the_labs_confirm_url(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    monkeypatch.setattr(settings, "mailer_backend", "smtp")
+    monkeypatch.setattr(settings, "frontend_url", _LABS)
+
+    url = _signup(raw_client, box, "cf-labs-link@example.com")
+
+    assert url.startswith(f"{_LABS}/account/confirm?token=")
+    assert len(box.sent) == 1
+
+
+def test_empty_frontend_url_does_not_send_confirmation(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    monkeypatch.setattr(settings, "frontend_url", "")
+
+    failed = raw_client.post(
+        "/auth/account/signup",
+        json={"name": "Ada Lovelace", "email": "cf-empty-base@example.com", "password": _PASSWORD},
+    )
+
+    assert failed.status_code == 503
+    assert failed.json()["detail"] == "Could not send the email"
+    assert box.sent == []
+    with SessionLocal() as session:
+        user = session.scalar(select(User).where(User.email == "cf-empty-base@example.com"))
+        assert user is not None
+        assert user.email_confirmed_at is None
+
+
+def test_smtp_localhost_http_does_not_send_confirmation(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    monkeypatch.setattr(settings, "mailer_backend", "smtp")
+    monkeypatch.setattr(settings, "frontend_url", _LOCAL)
+
+    failed = raw_client.post(
+        "/auth/account/signup",
+        json={"name": "Ada Lovelace", "email": "cf-http-smtp@example.com", "password": _PASSWORD},
+    )
+
+    assert failed.status_code == 503
+    assert box.sent == []
+
+
+def test_host_without_career_forge_does_not_send_confirmation(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    monkeypatch.setattr(settings, "frontend_url", "https://labs.borderlesscoding.com")
+
+    failed = raw_client.post(
+        "/auth/account/signup",
+        json={"name": "Ada Lovelace", "email": "cf-no-base@example.com", "password": _PASSWORD},
+    )
+
+    assert failed.status_code == 503
+    assert box.sent == []
+
+
+def test_resend_with_an_empty_base_returns_503(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    monkeypatch.setattr(settings, "frontend_url", _LOCAL)
+    _signup(raw_client, box, "cf-resend-empty@example.com")
+    monkeypatch.setattr(settings, "frontend_url", "")
+
+    failed = raw_client.post(
+        "/auth/account/resend",
+        json={"email": "cf-resend-empty@example.com"},
+    )
+
+    assert failed.status_code == 503
+    assert len(box.sent) == 1
+
+
+def test_reset_with_an_illegal_base_still_answers_ok(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    monkeypatch.setattr(settings, "frontend_url", _LABS)
+    email = "cf-reset-illegal@example.com"
+    _confirm(raw_client, _signup(raw_client, box, email))
+    monkeypatch.setattr(settings, "frontend_url", "")
+
+    asked = raw_client.post("/auth/account/forgot", json={"email": email})
+
+    assert asked.status_code == 200
+    assert asked.json() == {"ok": True}
+    assert len(box.sent) == 1

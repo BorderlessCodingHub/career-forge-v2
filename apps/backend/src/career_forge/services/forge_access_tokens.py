@@ -26,6 +26,7 @@ from career_forge.services.forge_artifacts import (
     ForgeArtifactNotFoundError,
     roadmap_from_snapshot,
 )
+from career_forge.services.learner_letter_url import learner_letter_url
 from career_forge.services.mailer import Mailer, get_mailer
 
 _DEMO_EMAIL_SUFFIX = "@demo.careerforge.local"
@@ -140,16 +141,20 @@ def email_resume_link(
     artifact = _owned_artifact(session, external_id, public_id)
     raw = _mint_raw_token()
     path = f"/resume/{raw}"
-    resume_url = f"{settings.frontend_url.rstrip('/')}{path}"
     row = ForgeAccessToken(
         artifact_id=artifact.id,
         role=ROLE_RESUME,
         token_hash=_hash_token(raw),
         expires_at=datetime.now(UTC) + timedelta(days=settings.jwt_resume_ttl_days),
     )
-    session.add(row)
-    session.flush()
     try:
+        resume_url = learner_letter_url(
+            path,
+            base=settings.frontend_url,
+            mailer_backend=settings.mailer_backend,
+        )
+        session.add(row)
+        session.flush()
         (mailer or get_mailer()).send_resume_link(
             to_email=email,
             resume_url=resume_url,

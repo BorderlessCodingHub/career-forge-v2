@@ -52,6 +52,7 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | [ADR-004 canonical skill content](./decisions/ADR-004-canonical-skill-content.md) | Canônico por skill; forge só referencia (N:1) |
 | [ADR-005 identity gate](./decisions/ADR-005-identity-gate-product-entry.md) | Email identity at product entry · paywall before diagnosis |
 | [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) | Engineering spec · API · sequence |
+| [product/learner-mail-absolute-links.md](./product/learner-mail-absolute-links.md) | Learner letters carry an absolute URL · grill lock 2026-10-18 |
 
 ## Research
 

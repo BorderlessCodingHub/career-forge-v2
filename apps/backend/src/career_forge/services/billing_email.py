@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from career_forge.config import settings
 from career_forge.db.models.user import User
+from career_forge.services.learner_letter_url import learner_letter_url
 from career_forge.services.learner_mail import billing_letter
 
 logger = logging.getLogger(__name__)
@@ -111,7 +112,11 @@ def billing_message(
     locale: str | None = None,
 ) -> tuple[str, str, str]:
     """Subject, body, and the Career Forge card URL. No opt-out."""
-    url = f"{frontend_url.rstrip('/')}{CARD_PATH}"
+    url = learner_letter_url(
+        CARD_PATH,
+        base=frontend_url,
+        mailer_backend=settings.mailer_backend,
+    )
     subject, text = billing_letter(url=url, locale=locale)
     return subject, text, url
 
@@ -135,8 +140,8 @@ def try_send(
     if not spell_should_send(charge):
         raise ValueError("failed-charge spell should not send")
     email = (charge.email or "").strip()
-    subject, text, _url = billing_message(frontend_url, locale=locale)
     try:
+        subject, text, _url = billing_message(frontend_url, locale=locale)
         mailer.send_billing(to_email=email, subject=subject, text=text)
     except Exception:
         logger.warning("billing email rejected for %s", email, exc_info=True)

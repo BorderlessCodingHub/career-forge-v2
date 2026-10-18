@@ -35,6 +35,7 @@ from career_forge.errors import (
 )
 from career_forge.identity_method import BORDERLESS_PASSWORD
 from career_forge.services import otp as otp_service
+from career_forge.services.learner_letter_url import learner_letter_url
 from career_forge.services.mailer import get_mailer
 
 logger = logging.getLogger(__name__)
@@ -141,8 +142,11 @@ def _store_link(session: Session, *, email: str, provider: str) -> str:
 
 
 def _link_url(path: str, raw: str) -> str:
-    base = settings.frontend_url.rstrip("/")
-    return f"{base}{path}?token={quote(raw, safe='')}"
+    return learner_letter_url(
+        f"{path}?token={quote(raw, safe='')}",
+        base=settings.frontend_url,
+        mailer_backend=settings.mailer_backend,
+    )
 
 
 def _deliver(
