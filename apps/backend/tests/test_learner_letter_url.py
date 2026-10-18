@@ -32,7 +32,7 @@ def test_smtp_confirm_link_is_the_labs_url_on_its_own_line() -> None:
 
 
 @pytest.mark.parametrize("backend", ["smtp", "resend", "ses"])
-def test_leaving_mailers_use_the_labs_origin_for_every_letter(backend: str) -> None:
+def test_https_mailers_use_the_labs_origin_for_every_letter(backend: str) -> None:
     confirm = learner_letter_url("/account/confirm?token=abc", base=_LABS + "/", mailer_backend=backend)
     reset = learner_letter_url("/account/reset?token=abc", base=_LABS, mailer_backend=backend)
     resume = learner_letter_url("/resume/raw-token", base=_LABS, mailer_backend=backend)
@@ -95,8 +95,13 @@ def test_log_line_contains_the_localhost_confirm_url(
         "https://labs.borderlesscoding.com",
         "https://labs.borderlesscoding.com/career-forge/extra",
         "https://user:secret@labs.borderlesscoding.com/career-forge",
+        "https://@labs.borderlesscoding.com/career-forge",
+        "https://:@labs.borderlesscoding.com/career-forge",
         "https://labs.borderlesscoding.com/career-forge?next=/",
+        "https://labs.borderlesscoding.com/career-forge?",
         "https://labs.borderlesscoding.com/career-forge#top",
+        "https://labs.borderlesscoding.com/career-forge#",
+        "https://labs.borderlesscoding.com/career-forge//",
     ],
 )
 def test_an_illegal_base_is_refused_before_a_url_exists(backend: str, base: str) -> None:
@@ -105,7 +110,7 @@ def test_an_illegal_base_is_refused_before_a_url_exists(backend: str, base: str)
 
 
 @pytest.mark.parametrize("backend", ["smtp", "resend", "ses"])
-def test_http_localhost_does_not_leave_through_a_real_mailer(backend: str) -> None:
+def test_http_localhost_is_refused_for_https_mailers(backend: str) -> None:
     with pytest.raises(MailDeliveryError):
         learner_letter_url(
             "/account/confirm?token=abc",

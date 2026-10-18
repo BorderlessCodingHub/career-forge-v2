@@ -77,20 +77,17 @@ def continuity_message(
     """Subject, body, and absolute URL. Copy does not say the learner is behind."""
     if node is None:
         letter_path = "/roadmap?from=continuity"
-        url = learner_letter_url(
-            letter_path,
-            base=frontend_url,
-            mailer_backend=settings.mailer_backend,
-        )
-        subject, text = continuity_idle_letter(url=url, locale=locale)
-        return subject, text, url
-
-    query = urlencode({"from": "continuity", "node": node.node_id})
+    else:
+        query = urlencode({"from": "continuity", "node": node.node_id})
+        letter_path = f"/roadmap?{query}"
     url = learner_letter_url(
-        f"/roadmap?{query}",
+        letter_path,
         base=frontend_url,
         mailer_backend=settings.mailer_backend,
     )
+    if node is None:
+        subject, text = continuity_idle_letter(url=url, locale=locale)
+        return subject, text, url
     subject, text = continuity_node_letter(title=node.title, url=url, locale=locale)
     return subject, text, url
 
