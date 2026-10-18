@@ -190,6 +190,46 @@ def test_accepted_send_records_the_presence_it_covered() -> None:
     assert "behind" not in text.lower()
 
 
+def test_https_labs_origin_is_the_continuity_link(monkeypatch: pytest.MonkeyPatch) -> None:
+    from career_forge.config import settings
+
+    monkeypatch.setattr(settings, "mailer_backend", "smtp")
+    mailer = _Mailer()
+
+    _updated, accepted = try_send(
+        _stretch(),
+        None,
+        mailer,
+        frontend_url="https://labs.borderlesscoding.com/career-forge",
+    )
+
+    assert accepted is True
+    assert (
+        "https://labs.borderlesscoding.com/career-forge/roadmap?from=continuity"
+        in mailer.sent[0][2]
+    )
+
+
+def test_illegal_continuity_base_does_not_spend_the_stretch(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from career_forge.config import settings
+
+    monkeypatch.setattr(settings, "mailer_backend", "smtp")
+    mailer = _Mailer()
+
+    updated, accepted = try_send(
+        _stretch(),
+        None,
+        mailer,
+        frontend_url="http://localhost:3300/career-forge",
+    )
+
+    assert accepted is False
+    assert updated.accepted_presence_at is None
+    assert mailer.sent == []
+
+
 def test_try_send_refuses_a_stretch_that_is_not_due() -> None:
     stretch = _stretch(accepted_presence_at=PRESENCE)
     mailer = _Mailer()

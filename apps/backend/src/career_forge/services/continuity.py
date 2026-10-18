@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from career_forge.config import settings
 from career_forge.db.models.forge_artifact import ForgeArtifact
+from career_forge.services.learner_letter_url import learner_letter_url
 from career_forge.services.learner_mail import (
     continuity_idle_letter,
     continuity_node_letter,
@@ -74,14 +75,22 @@ def continuity_message(
     locale: str | None = None,
 ) -> tuple[str, str, str]:
     """Subject, body, and absolute URL. Copy does not say the learner is behind."""
-    base = frontend_url.rstrip("/")
     if node is None:
-        url = f"{base}/roadmap?from=continuity"
+        letter_path = "/roadmap?from=continuity"
+        url = learner_letter_url(
+            letter_path,
+            base=frontend_url,
+            mailer_backend=settings.mailer_backend,
+        )
         subject, text = continuity_idle_letter(url=url, locale=locale)
         return subject, text, url
 
     query = urlencode({"from": "continuity", "node": node.node_id})
-    url = f"{base}/roadmap?{query}"
+    url = learner_letter_url(
+        f"/roadmap?{query}",
+        base=frontend_url,
+        mailer_backend=settings.mailer_backend,
+    )
     subject, text = continuity_node_letter(title=node.title, url=url, locale=locale)
     return subject, text, url
 
@@ -98,12 +107,12 @@ def try_send(
     if now is not None and not is_due(stretch, now):
         raise ValueError("continuity stretch is not due")
     email = (stretch.email or "").strip()
-    subject, text, _url = continuity_message(
-        node,
-        frontend_url=frontend_url,
-        locale=stretch.locale,
-    )
     try:
+        subject, text, _url = continuity_message(
+            node,
+            frontend_url=frontend_url,
+            locale=stretch.locale,
+        )
         mailer.send_continuity(to_email=email, subject=subject, text=text)
     except Exception:
         logger.warning("continuity email rejected for %s", email, exc_info=True)

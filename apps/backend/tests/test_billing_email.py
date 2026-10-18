@@ -262,6 +262,37 @@ def test_accepted_send_opens_the_spell() -> None:
     assert "http://localhost:3300/career-forge/billing/card" in mailer.sent[0][2]
 
 
+def test_https_labs_origin_is_the_billing_link(monkeypatch: pytest.MonkeyPatch) -> None:
+    from career_forge.config import settings
+
+    monkeypatch.setattr(settings, "mailer_backend", "resend")
+    mailer = _Mailer()
+
+    updated, accepted = try_send(
+        _charge(),
+        mailer,
+        frontend_url="https://labs.borderlesscoding.com/career-forge",
+    )
+
+    assert accepted is True
+    assert updated.spell_open is True
+    assert "https://labs.borderlesscoding.com/career-forge/billing/card" in mailer.sent[0][2]
+
+
+def test_illegal_billing_base_does_not_spend_the_spell() -> None:
+    mailer = _Mailer()
+
+    updated, accepted = try_send(
+        _charge(),
+        mailer,
+        frontend_url="https://labs.borderlesscoding.com",
+    )
+
+    assert accepted is False
+    assert updated.spell_open is False
+    assert mailer.sent == []
+
+
 def test_try_send_refuses_a_charge_that_should_not_mail() -> None:
     with pytest.raises(ValueError):
         try_send(

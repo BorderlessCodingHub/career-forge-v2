@@ -227,6 +227,108 @@ def test_email_resume_rolls_back_when_mailer_fails(
         assert after == before
 
 
+def test_email_resume_with_an_illegal_base_leaves_no_token(
+    raw_client: TestClient,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(otp_service, "_generate_otp_code", lambda: "121212")
+    sent: list[str] = []
+
+    class _CaptureMailer:
+        def send_resume_link(
+            self, *, to_email: str, resume_url: str, locale: str | None = None
+        ) -> None:
+            sent.append(resume_url)
+
+    monkeypatch.setattr(
+        "career_forge.services.forge_access_tokens.get_mailer",
+        lambda: _CaptureMailer(),
+    )
+
+    owner = "resume-email-illegal-base"
+    artifact = _persist(owner, "run-resume-email-illegal")
+    assert artifact is not None
+    headers = _promote_email(
+        raw_client,
+        external_id=owner,
+        email="illegal-base@example.com",
+        code="121212",
+    )
+    monkeypatch.setattr(settings, "frontend_url", "https://labs.borderlesscoding.com")
+    monkeypatch.setattr(settings, "mailer_backend", "smtp")
+    with SessionLocal() as session:
+        before = len(
+            list(
+                session.scalars(
+                    select(ForgeAccessToken).where(ForgeAccessToken.role == ROLE_RESUME),
+                ),
+            ),
+        )
+
+    res = raw_client.post(
+        f"/me/forges/{artifact.public_id}/resume/email",
+        headers=headers,
+    )
+
+    assert res.status_code == 400
+    assert "failed to send" in res.json()["detail"].lower()
+    assert sent == []
+    with SessionLocal() as session:
+        after = len(
+            list(
+                session.scalars(
+                    select(ForgeAccessToken).where(ForgeAccessToken.role == ROLE_RESUME),
+                ),
+            ),
+        )
+        assert after == before
+
+
+def test_email_resume_uses_the_labs_origin(
+    raw_client: TestClient,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(otp_service, "_generate_otp_code", lambda: "343434")
+    sent: list[str] = []
+
+    class _CaptureMailer:
+        def send_resume_link(
+            self, *, to_email: str, resume_url: str, locale: str | None = None
+        ) -> None:
+            sent.append(resume_url)
+
+    monkeypatch.setattr(
+        "career_forge.services.forge_access_tokens.get_mailer",
+        lambda: _CaptureMailer(),
+    )
+
+    owner = "resume-email-labs-origin"
+    artifact = _persist(owner, "run-resume-email-labs")
+    assert artifact is not None
+    headers = _promote_email(
+        raw_client,
+        external_id=owner,
+        email="labs-origin@example.com",
+        code="343434",
+    )
+    monkeypatch.setattr(
+        settings,
+        "frontend_url",
+        "https://labs.borderlesscoding.com/career-forge",
+    )
+    monkeypatch.setattr(settings, "mailer_backend", "ses")
+
+    res = raw_client.post(
+        f"/me/forges/{artifact.public_id}/resume/email",
+        headers=headers,
+    )
+
+    assert res.status_code == 200, res.text
+    assert sent == [
+        f"https://labs.borderlesscoding.com/career-forge{res.json()['path']}"
+    ]
+
+
 def test_email_resume_link_consumable(
     raw_client: TestClient,
     monkeypatch,
