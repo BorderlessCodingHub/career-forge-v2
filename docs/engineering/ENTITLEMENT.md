@@ -56,7 +56,7 @@ SQL.
 | `STRIPE_SECRET_KEY` | Checkout + retrieve session |
 | `STRIPE_WEBHOOK_SECRET` | `Stripe-Signature` HMAC |
 | `STRIPE_PRICE_ID` | Subscription price for Checkout |
-| `FRONTEND_URL` | Success/cancel URLs (`/billing/return?billing=success&session_id={CHECKOUT_SESSION_ID}`) |
+| `FRONTEND_URL` | Checkout return base. Success and cancel are `/billing/return`, not `/forge`. |
 
 Stripe is **off** until all three `STRIPE_*` values are set. Database pilot grants
 still work.
@@ -74,12 +74,25 @@ When `IDENTITY_EMAIL_OTP=false` (CAR-100 freeze) **and** `IDENTITY_METHOD` is em
 | Method | Path | Auth |
 |--------|------|------|
 | `POST` | `/billing/checkout` | Bearer |
-| `POST` | `/billing/sync` | Bearer — polling after success_url |
+| `POST` | `/billing/sync` | Bearer — paid Checkout return confirms the session. Does not start a forge. |
 | `POST` | `/billing/portal` | Bearer — fresh Customer Portal session (`payment_method_update`). Not Roadmap presence. No Stripe action in the Operator console. |
 | `POST` | `/billing/stripe/webhook` | Public + `Stripe-Signature` |
 | `GET` | `/operator/access/pilot-emails` | Operator `access` / `both` |
 | `POST` | `/operator/access/pilot-emails` | Operator `access` / `both` |
 | `DELETE` | `/operator/access/pilot-emails/{email}` | Operator `access` / `both` |
+
+## Checkout return
+
+Stripe sends the browser to `{FRONTEND_URL}/billing/return`, not to `/forge`.
+
+| Query | What the page does |
+|-------|--------------------|
+| `billing=success` and `session_id` | `POST /billing/sync`. When that succeeds, the page says the purchase is complete and links to `/forges`. When it fails, the page shows the error and does not offer that link. |
+| `billing=cancel` | Says nothing was charged and links to `/forges`. It does not sync a payment. |
+
+Copy follows `cf_locale`: English “Thank you for your purchase.” / “Nothing was charged.”; Portuguese “Obrigado pela compra.” / “Nada foi cobrado.” The link label is “See your forges” / “Ver seus forges”. On Labs the list is `https://labs.borderlesscoding.com/career-forge/forges`.
+
+`/forges` lists existing forges. Opening it does not start one. `/forge` does not read `billing` or `session_id`. Opening `/forge` on purpose still starts or resumes a forge. A Checkout session created before this return page still uses the success and cancel URLs stored on that session.
 
 Webhook events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`.
 

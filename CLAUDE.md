@@ -210,7 +210,7 @@ At the start of a session involving implementation work, read in order:
 | `/health` | Health probe |
 | `/diagnosis/interview/start`, `/{session_id}/turn` | Multi-turn CTRR diagnosis |
 | `/forge`, `/forge/stream`, `/forge/{run_id}/stream` | Forge run + SSE; **402 paywall** after free forge for `external` |
-| `/billing/checkout`, `/billing/sync`, `/billing/stripe/webhook` | CAR-46 Stripe (allowlist until keys exist) |
+| `/billing/checkout`, `/billing/sync`, `/billing/stripe/webhook` | Stripe Checkout, paid-return sync, webhook. Sync does not start a forge. |
 | `/roadmap/`, `/roadmap/sync` | Steady-state trail |
 | `/validation/questions`, `/validation` | Mastery validation |
 | `/mentor/context`, `/mentor` | Contextual mentor |
@@ -230,7 +230,9 @@ At the start of a session involving implementation work, read in order:
 | `(setup)/` | Goal entry |
 | `(setup)/onboarding` | Adaptive diagnosis interview |
 | `(setup)/onboarding/edit` | Editable diagnosis |
-| `(setup)/forge` | Live forge timeline SSE |
+| `(setup)/forge` | Live forge timeline SSE. Does not handle Checkout return. |
+| `/billing/return` | Checkout success or cancel. Syncs a paid session, then links to `/forges`. Does not start a forge. |
+| `(setup)/forges` | Forge list. Destination after Checkout return. |
 | `(setup)/forge/complete` | Post-forge transition |
 | `(artifact)/roadmap` | Vertical roadmap |
 | `(artifact)/learn/[skillId]` | CAR-94 Canonical skill content (ADR-004) |
