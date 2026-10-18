@@ -23,6 +23,7 @@ from career_forge.db.session import SessionLocal
 from career_forge.errors import BadRequestError
 from career_forge.services.stripe_billing import (
     apply_stripe_event,
+    checkout_urls,
     set_stripe_client,
     verify_webhook_signature,
 )
@@ -217,6 +218,20 @@ class _FakeStripe:
             "customer": "cus_sync",
             "subscription": "sub_sync",
         }
+
+
+def test_checkout_return_urls_do_not_open_the_forge(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "frontend_url", "https://labs.example/career-forge/")
+    success, cancel = checkout_urls()
+    assert success == (
+        "https://labs.example/career-forge/billing/return"
+        "?billing=success&session_id={CHECKOUT_SESSION_ID}"
+    )
+    assert cancel == "https://labs.example/career-forge/billing/return?billing=cancel"
+    assert "/forge?" not in success
+    assert "/forge?" not in cancel
 
 
 def test_checkout_returns_url_when_configured(

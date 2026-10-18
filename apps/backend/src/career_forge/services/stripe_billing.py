@@ -307,6 +307,8 @@ def apply_checkout_session(session: Session, payload: dict[str, Any]) -> None:
 
 def checkout_urls() -> tuple[str, str]:
     base = settings.frontend_url.rstrip("/")
-    success = f"{base}/forge?billing=success&session_id={{CHECKOUT_SESSION_ID}}"
-    cancel = f"{base}/forge?billing=cancel"
+    success = (
+        f"{base}/billing/return?billing=success&session_id={{CHECKOUT_SESSION_ID}}"
+    )
+    cancel = f"{base}/billing/return?billing=cancel"
     return success, cancel

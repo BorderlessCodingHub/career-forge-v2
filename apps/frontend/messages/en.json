@@ -505,7 +505,11 @@
   },
   "billing": {
     "opening": "Opening card update…",
-    "unavailable": "Card update is unavailable right now."
+    "unavailable": "Card update is unavailable right now.",
+    "thanks": "Thank you for your purchase.",
+    "nothingCharged": "Nothing was charged.",
+    "seeForges": "See your forges",
+    "confirmFailed": "The purchase could not be confirmed."
   },
   "product": {
     "loading": "Loading…",
