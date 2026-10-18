@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-careerforge}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -19,6 +20,7 @@ services:
       dockerfile: Dockerfile
       target: production
     image: ${GHCR_IMAGE_NAMESPACE:-ghcr.io/local}/career-forge-backend:${IMAGE_TAG:-local}
+    restart: unless-stopped
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-careerforge}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-careerforge}
       CORS_ORIGINS: ${CORS_ORIGINS}
@@ -100,6 +102,7 @@ services:
         SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN:-}
         API_INTERNAL_URL: ${API_INTERNAL_URL:-http://backend:8000}
     image: ${GHCR_IMAGE_NAMESPACE:-ghcr.io/local}/career-forge-frontend:${IMAGE_TAG:-local}
+    restart: unless-stopped
     environment:
       API_INTERNAL_URL: http://backend:8000
       # Override Docker container hostname so Next listens on all interfaces.
