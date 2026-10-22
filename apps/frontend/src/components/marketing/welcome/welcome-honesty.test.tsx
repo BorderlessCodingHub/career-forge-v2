@@ -58,20 +58,58 @@ describe("welcome honesty — navbar bar (CAR-91)", () => {
     expect(screen.queryByText("12-Week Syllabus")).toBeNull();
   });
 
-  it("header CTAs do not overlap: shimmer is lg-only and drawer has no Start", () => {
+  it("keeps the phone header to brand and menu, and parks actions in the drawer", () => {
     render(<Navbar />);
+
+    const sentence = screen.getByText(
+      "Members: Career Forge is included. Start diagnosis with your member email.",
+    );
+    expect(sentence.className).toContain("hidden");
+    expect(sentence.className).toContain("sm:inline");
+    expect(screen.getByTestId("welcome-bar-cta").parentElement?.className).toContain(
+      "flex-nowrap",
+    );
+    expect(screen.getByTestId("welcome-bar-cta").parentElement?.className).toContain(
+      "sm:flex-wrap",
+    );
 
     const headerStarts = screen.getAllByTestId("welcome-cta-start");
     expect(headerStarts).toHaveLength(2);
     expect(headerStarts[0].parentElement?.className).toContain("lg:flex");
     expect(headerStarts[0].parentElement?.className).not.toContain("md:flex");
-    expect(headerStarts[1].parentElement?.className).toContain("lg:hidden");
-    expect(headerStarts[1].textContent?.trim()).toBe("Start here");
-    expect(headerStarts[1].getAttribute("aria-label")).toBe("Start diagnosis");
+    expect(headerStarts[1].parentElement?.className).toContain("hidden");
+    expect(headerStarts[1].parentElement?.className).toContain("sm:flex");
+    expect(headerStarts[1].parentElement?.parentElement?.className).toContain("lg:hidden");
+
+    expect(screen.getByText("AI Track").className).toContain("hidden");
+    expect(screen.getByText("AI Track").className).toContain("sm:inline");
+    const brandTracks = screen.getByText("RAG • Fine-Tuning • Evals • OpsLLM");
+    expect(brandTracks.className).toContain("hidden");
+    expect(brandTracks.className).toContain("sm:block");
 
     fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
     expect(screen.getByText("Live AI Sandbox Demo")).toBeTruthy();
-    expect(screen.getAllByTestId("welcome-cta-start")).toHaveLength(2);
+
+    const starts = screen.getAllByTestId("welcome-cta-start");
+    expect(starts).toHaveLength(3);
+    const drawerStart = starts[2];
+    expect(drawerStart.textContent?.trim()).toBe("Start here");
+    expect(drawerStart.getAttribute("aria-label")).toBe("Start diagnosis");
+    expect(isProductEntryHref(drawerStart.getAttribute("href"))).toBe(true);
+    expect(drawerStart.className).toContain("w-full");
+    expect(drawerStart.parentElement?.className).toContain("sm:hidden");
+
+    expect(
+      screen
+        .getAllByTestId("locale-switch")
+        .some((node) => node.parentElement?.className.includes("sm:hidden")),
+    ).toBe(true);
+    expect(
+      screen
+        .getAllByText("RAG • Fine-Tuning • Evals • OpsLLM")
+        .some((node) => node.parentElement?.className.includes("sm:hidden")),
+    ).toBe(true);
+    expect(screen.getAllByText("AI Track")).toHaveLength(1);
   });
 });
 

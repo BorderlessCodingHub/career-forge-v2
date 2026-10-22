@@ -8,6 +8,8 @@ import { useTranslations } from "next-intl";
 import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
 import { BrandMark } from "@/components/ui/BrandMark";
 
+const TRACK_LINE = "RAG • Fine-Tuning • Evals • OpsLLM";
+
 export function Navbar() {
   const t = useTranslations("welcome");
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,20 +33,20 @@ export function Navbar() {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-orange-900/90 via-indigo-950 to-slate-900 border-b border-orange-500/20 text-xs font-medium py-2 px-4 text-center text-slate-200 flex flex-wrap items-center justify-center gap-2 sm:gap-4 relative z-50">
-        <span className="inline-flex items-center gap-1.5 bg-orange-500/20 text-orange-400 font-semibold px-2 py-0.5 rounded-full border border-orange-500/30">
+      <div className="bg-gradient-to-r from-orange-900/90 via-indigo-950 to-slate-900 border-b border-orange-500/20 text-xs font-medium py-2 px-4 text-center text-slate-200 flex flex-nowrap sm:flex-wrap items-center justify-center gap-2 sm:gap-4 relative z-50">
+        <span className="inline-flex items-center gap-1.5 bg-orange-500/20 text-orange-400 font-semibold px-2 py-0.5 rounded-full border border-orange-500/30 whitespace-nowrap">
           <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
           BASE · PSP
         </span>
         <span className="hidden sm:inline text-slate-400">•</span>
-        <span className="text-slate-300">
+        <span className="hidden sm:inline text-slate-300">
           {t("membersIncluded")}
         </span>
         <Link
           href="/"
           data-testid="welcome-bar-cta"
           aria-label={t("startDiagnosis")}
-          className="underline hover:text-white font-semibold text-orange-300 ml-1 transition-colors flex items-center gap-0.5 cursor-pointer"
+          className="underline hover:text-white font-semibold text-orange-300 ml-1 transition-colors flex items-center gap-0.5 cursor-pointer whitespace-nowrap"
         >
           {t("startHere")} <ChevronRight className="w-3 h-3 inline" />
         </Link>
@@ -71,12 +73,12 @@ export function Navbar() {
                 <span className="font-extrabold text-xl tracking-tight text-white font-mono">
                   CAREER<span className="text-orange-400">FORGE</span>
                 </span>
-                <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded">
+                <span className="hidden sm:inline bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded">
                   AI Track
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 -mt-1 font-mono">
-                RAG • Fine-Tuning • Evals • OpsLLM
+              <p className="hidden sm:block text-[10px] text-slate-400 -mt-1 font-mono">
+                {TRACK_LINE}
               </p>
             </div>
           </div>
@@ -135,15 +137,17 @@ export function Navbar() {
           </div>
 
           <div className="flex lg:hidden items-center gap-2">
-            <LocaleSwitch tone="dark" />
-            <Link
-              href="/"
-              data-testid="welcome-cta-start"
-              aria-label={t("startDiagnosis")}
-              className="text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-orange-500 to-indigo-600 rounded-md text-white cursor-pointer"
-            >
-              {t("startHere")}
-            </Link>
+            <div className="hidden sm:flex items-center gap-2">
+              <LocaleSwitch tone="dark" />
+              <Link
+                href="/"
+                data-testid="welcome-cta-start"
+                aria-label={t("startDiagnosis")}
+                className="text-xs font-bold px-3 py-1.5 bg-gradient-to-r from-orange-500 to-indigo-600 rounded-md text-white cursor-pointer"
+              >
+                {t("startHere")}
+              </Link>
+            </div>
             <button
               type="button"
               aria-label={mobileMenuOpen ? t("closeNavigation") : t("openNavigation")}
@@ -157,6 +161,19 @@ export function Navbar() {
 
         {mobileMenuOpen && (
           <div className="lg:hidden glass-panel bg-slate-950/95 border-b border-slate-800 px-4 pt-3 pb-6 mt-2 space-y-3 shadow-2xl animate-in slide-in-from-top duration-200">
+            <div className="sm:hidden space-y-3 pb-3 border-b border-slate-800">
+              <Link
+                href="/"
+                data-testid="welcome-cta-start"
+                aria-label={t("startDiagnosis")}
+                className="text-xs font-bold px-3 py-2.5 w-full bg-gradient-to-r from-orange-500 to-indigo-600 rounded-md text-white cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <span>{t("startHere")}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <LocaleSwitch tone="dark" />
+              <p className="text-[10px] text-slate-400 font-mono">{TRACK_LINE}</p>
+            </div>
             <button
               onClick={() => scrollToSection("pillars")}
               className="block w-full text-left py-2 text-sm text-slate-200 hover:text-orange-400 font-medium"
