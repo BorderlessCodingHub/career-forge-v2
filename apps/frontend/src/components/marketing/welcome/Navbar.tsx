@@ -8,8 +8,6 @@ import { useTranslations } from "next-intl";
 import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
 import { BrandMark } from "@/components/ui/BrandMark";
 
-const TRACK_LINE = "RAG • Fine-Tuning • Evals • OpsLLM";
-
 export function Navbar() {
   const t = useTranslations("welcome");
   const [isScrolled, setIsScrolled] = useState(false);
@@ -77,8 +75,8 @@ export function Navbar() {
                   AI Track
                 </span>
               </div>
-              <p className="hidden sm:block text-[10px] text-slate-400 -mt-1 font-mono">
-                {TRACK_LINE}
+              <p className="text-[10px] text-slate-400 -mt-1 font-mono">
+                RAG • Fine-Tuning • Evals • OpsLLM
               </p>
             </div>
           </div>
@@ -172,7 +170,6 @@ export function Navbar() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <LocaleSwitch tone="dark" />
-              <p className="text-[10px] text-slate-400 font-mono">{TRACK_LINE}</p>
             </div>
             <button
               onClick={() => scrollToSection("pillars")}

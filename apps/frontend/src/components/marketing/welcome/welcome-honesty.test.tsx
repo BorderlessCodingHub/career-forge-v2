@@ -84,8 +84,8 @@ describe("welcome honesty — navbar bar (CAR-91)", () => {
     expect(screen.getByText("AI Track").className).toContain("hidden");
     expect(screen.getByText("AI Track").className).toContain("sm:inline");
     const brandTracks = screen.getByText("RAG • Fine-Tuning • Evals • OpsLLM");
-    expect(brandTracks.className).toContain("hidden");
-    expect(brandTracks.className).toContain("sm:block");
+    expect(brandTracks.className).not.toContain("hidden");
+    expect(brandTracks.className).toContain("-mt-1");
 
     fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
     expect(screen.getByText("Live AI Sandbox Demo")).toBeTruthy();
@@ -104,11 +104,7 @@ describe("welcome honesty — navbar bar (CAR-91)", () => {
         .getAllByTestId("locale-switch")
         .some((node) => node.parentElement?.className.includes("sm:hidden")),
     ).toBe(true);
-    expect(
-      screen
-        .getAllByText("RAG • Fine-Tuning • Evals • OpsLLM")
-        .some((node) => node.parentElement?.className.includes("sm:hidden")),
-    ).toBe(true);
+    expect(screen.getAllByText("RAG • Fine-Tuning • Evals • OpsLLM")).toHaveLength(1);
     expect(screen.getAllByText("AI Track")).toHaveLength(1);
   });
 });
