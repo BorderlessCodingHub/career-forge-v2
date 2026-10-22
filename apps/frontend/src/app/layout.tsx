@@ -39,7 +39,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${inter.variable} ${jetbrains.variable} font-sans pb-8`}>
+      <body className={`${inter.variable} ${jetbrains.variable} font-sans`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <LocaleHydrator />
           {children}
