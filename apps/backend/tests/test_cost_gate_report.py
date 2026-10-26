@@ -32,6 +32,17 @@ def test_gateway_prefix_and_bare_name_are_one_cost_row() -> None:
     assert cost_usd_from_usage(usage) == pytest.approx(2 * 2.50)
 
 
+def test_luna_prices_match_list_and_retired_nano_still_prices() -> None:
+    luna = {
+        "gpt-5.6-luna": {"input_tokens": 1_000_000, "output_tokens": 1_000_000},
+    }
+    assert cost_usd_from_usage(luna) == pytest.approx(0.20 + 1.20)
+    nano = {
+        "gpt-4.1-nano": {"input_tokens": 1_000_000, "output_tokens": 0},
+    }
+    assert cost_usd_from_usage(nano) == pytest.approx(0.10)
+
+
 def test_cost_usd_accounts_for_cache() -> None:
     usage = {
         "gpt-5.4-2026-03-05": {

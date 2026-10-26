@@ -61,6 +61,20 @@ def llm() -> OpenAiDiagnosisInterviewLlm:
         return OpenAiDiagnosisInterviewLlm(model="gpt-4.1-nano")
 
 
+def test_diagnosis_client_omits_temperature_for_luna(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-openai")
+    with patch("career_forge.ai.llm.client.ChatOpenAI") as chat:
+        OpenAiDiagnosisInterviewLlm(model="gpt-5.6-luna")
+
+    kwargs = chat.call_args.kwargs
+    assert kwargs["model"] == "gpt-5.6-luna"
+    assert kwargs["reasoning_effort"] == "none"
+    assert kwargs["max_tokens"] == 8192
+    assert "temperature" not in kwargs
+
+
 @pytest.mark.asyncio
 async def test_initialize_belief_invokes_judge_schema(llm: OpenAiDiagnosisInterviewLlm) -> None:
     expected = _judge_output(
