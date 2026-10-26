@@ -12,9 +12,11 @@ from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
-# OpenAI list prices USD / 1M tokens (docs 2026-07 — gpt-5.4 family + nano).
+# OpenAI list prices USD / 1M tokens (docs 2026-10 — gpt-5.6-luna + gpt-5.4).
 # Keys match model name prefixes (longest match wins).
+# gpt-4.1-* stays for historical GraphRuns (nano retired 2026-10-23).
 MODEL_PRICING_USD_PER_1M: dict[str, dict[str, float]] = {
+    "gpt-5.6-luna": {"input": 0.20, "cached_input": 0.02, "output": 1.20},
     "gpt-5.4-mini": {"input": 0.75, "cached_input": 0.075, "output": 4.50},
     "gpt-5.4-nano": {"input": 0.20, "cached_input": 0.02, "output": 1.25},
     "gpt-5.4": {"input": 2.50, "cached_input": 0.25, "output": 15.00},

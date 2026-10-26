@@ -167,7 +167,7 @@ SEED_DEMO_ANA=false
 ROADMAP_JSON_PATH=/data/roadmap.json
 DIAGNOSIS_SESSION_STORE=postgres
 GRAPH_RUN_STORE=postgres
-DIAGNOSIS_INTERVIEW_MODEL=gpt-4.1-nano
+DIAGNOSIS_INTERVIEW_MODEL=gpt-5.6-luna
 
 # --- AI providers ---
 OPENAI_API_KEY=<your-key>                      # CHANGE

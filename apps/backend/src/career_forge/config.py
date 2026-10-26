@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     env: str = "production"
     debug: bool = False
     log_dir: str = "logs"
-    diagnosis_interview_model: str = "gpt-4.1-nano"
+    diagnosis_interview_model: str = "gpt-5.6-luna"
 
     # Cost instrumentation (CAR-6) — hard stop pool + per-user forge cap
     monthly_api_budget_brl: float = 500.0

@@ -37,7 +37,9 @@ class StructuredLlmClient:
         self,
         model: str,
         *,
-        temperature: float = 0.2,
+        temperature: float | None = 0.2,
+        reasoning_effort: str | None = None,
+        max_tokens: int | None = None,
         method: StructuredMethod = "json_schema",
     ) -> None:
         cleaned = model.strip()
@@ -46,8 +48,27 @@ class StructuredLlmClient:
             raise ValueError(msg)
         self._model = configured_model_name(cleaned)
         self._temperature = temperature
+        self._reasoning_effort = reasoning_effort
+        self._max_tokens = max_tokens
         self._method = method
         self._chat = self._build_chat()
+
+    def _chat_kwargs(self, *, model: str, api_key: str, base_url: str | None = None) -> dict:
+        """Sampling params are omitted when unset. Luna rejects a non-default temperature.
+
+        An unset completion cap lets the gateway reserve the model maximum
+        (65536 for Luna) and refuse the call when the key cannot cover it.
+        """
+        kwargs: dict = {"model": model, "api_key": api_key}
+        if base_url is not None:
+            kwargs["base_url"] = base_url
+        if self._temperature is not None:
+            kwargs["temperature"] = self._temperature
+        if self._reasoning_effort is not None:
+            kwargs["reasoning_effort"] = self._reasoning_effort
+        if self._max_tokens is not None:
+            kwargs["max_tokens"] = self._max_tokens
+        return kwargs
 
     def _build_chat(self) -> ChatOpenAI:
         """Wire follows the provider bound for this turn. No fallback."""
@@ -57,18 +78,20 @@ class StructuredLlmClient:
             if not gateway_key:
                 raise ModelGatewayKeyMissing()
             return ChatOpenAI(
-                model=wire_model_name(self._model, GATEWAY_PROVIDER),
-                api_key=gateway_key,
-                base_url=OPENROUTER_BASE_URL,
-                temperature=self._temperature,
+                **self._chat_kwargs(
+                    model=wire_model_name(self._model, GATEWAY_PROVIDER),
+                    api_key=gateway_key,
+                    base_url=OPENROUTER_BASE_URL,
+                )
             )
         direct_key = os.getenv("OPENAI_API_KEY", "").strip()
         if not direct_key:
             raise RuntimeError(DEFAULT_KEY_ERROR)
         return ChatOpenAI(
-            model=wire_model_name(self._model, DIRECT_PROVIDER),
-            api_key=direct_key,
-            temperature=self._temperature,
+            **self._chat_kwargs(
+                model=wire_model_name(self._model, DIRECT_PROVIDER),
+                api_key=direct_key,
+            )
         )
 
     @property

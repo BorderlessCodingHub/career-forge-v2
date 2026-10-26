@@ -114,7 +114,12 @@ class OpenAiDiagnosisInterviewLlm:
 
     def __init__(self, model: str) -> None:
         try:
-            self._client = StructuredLlmClient(model)
+            self._client = StructuredLlmClient(
+                model,
+                temperature=None,
+                reasoning_effort="none",
+                max_tokens=8192,
+            )
         except ValueError as exc:
             raise DiagnosisInterviewLlmError(
                 "DIAGNOSIS_INTERVIEW_MODEL is not configured. Set it in .env.",
