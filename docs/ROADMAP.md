@@ -26,6 +26,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Done:** PR #121 (`65ae316`). Learner letters carry an absolute URL. No Linear issue. On Labs, `FRONTEND_URL=https://labs.borderlesscoding.com/career-forge`.
 
+**Done:** [LABS01-165](https://linear.app/borderless-coding/issue/LABS01-165) — PR #123 (`d7dc694`). Diagnosis calls `gpt-5.6-luna` after OpenAI retired `gpt-4.1-nano` on 2026-10-23. No migration. Deployed to Labs.
+
 ---
 
 ## Phase 3a (Rebrand + landing + pilots) — ✅ Completed
