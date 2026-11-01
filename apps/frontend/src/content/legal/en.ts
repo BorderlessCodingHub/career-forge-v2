@@ -209,7 +209,7 @@ export const enLegal: LegalPack = {
       title: "Privacy Policy",
       description:
         "What Career Forge stores about an account, billing, learning, and the browser, and which processors it uses.",
-      updated: "Last updated: October 17, 2026.",
+      updated: "Last updated: November 1, 2026.",
       sections: [
         {
           id: "intro",
@@ -228,6 +228,7 @@ export const enLegal: LegalPack = {
             list(
               "Name.",
               "Email.",
+              "Phone, when you give one.",
               "Password hash.",
               "Locale.",
               "The Borderless account link, when you sign in with a Borderless account.",
@@ -289,6 +290,9 @@ export const enLegal: LegalPack = {
           blocks: [
             para(
               "We use this data to create and sign in your account, run the diagnosis and the forge, keep your roadmap and validation answers, bill an external subscription through Stripe, and send account email through Resend.",
+            ),
+            para(
+              "When you give a phone number, we use it to reach you about your account.",
             ),
           ],
         },

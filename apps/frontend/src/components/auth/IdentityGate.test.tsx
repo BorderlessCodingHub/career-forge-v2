@@ -4,6 +4,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ReactNode } from "react";
 
+import { getCountries } from "libphonenumber-js";
+
 import { IdentityGate } from "./IdentityGate";
 import {
   AccountExistsError,
@@ -443,5 +445,139 @@ describe("IdentityGate password", () => {
     expect(field.getAttribute("type")).toBe("password");
     fireEvent.click(screen.getByTestId("identity-gate-toggle-password"));
     expect(field.getAttribute("type")).toBe("text");
+  });
+
+  function fillCareerForgeSignup() {
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-name"), {
+      target: { value: "Ada Lovelace" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-password"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-confirm"), {
+      target: { value: "career-forge-secret" },
+    });
+  }
+
+  it("sends a Brazilian number as E.164 and keeps a blank phone off the request", async () => {
+    vi.mocked(registerCareerForgeAccount).mockResolvedValue({
+      ok: true,
+      email: "ada@example.com",
+    });
+    render(
+      <IdentityGate
+        method="borderless_password"
+        forgotPasswordUrl={forgotUrl}
+        signupUrl={signupUrl}
+        onVerified={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
+    const email = screen.getByTestId("identity-gate-career-forge-email");
+    const country = screen.getByTestId("identity-gate-career-forge-phone-country");
+    const national = screen.getByTestId("identity-gate-career-forge-phone");
+    const password = screen.getByTestId("identity-gate-career-forge-password");
+    expect(screen.getByText("Phone (optional)")).toBeTruthy();
+    expect((country as HTMLInputElement).value).toBe("Brazil +55");
+    expect(email.compareDocumentPosition(country) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+    expect(national.compareDocumentPosition(password) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+
+    fireEvent.focus(country);
+    expect(screen.getAllByRole("option")).toHaveLength(getCountries().length);
+    fireEvent.change(country, { target: { value: "zzzz" } });
+    expect(screen.queryAllByRole("option")).toHaveLength(0);
+    fireEvent.blur(country);
+    expect((country as HTMLInputElement).value).toBe("Brazil +55");
+
+    fireEvent.change(national, { target: { value: "6502530000" } });
+    fireEvent.focus(country);
+    fireEvent.change(country, { target: { value: "United States" } });
+    fireEvent.click(screen.getByRole("option", { name: "United States +1" }));
+    expect((national as HTMLInputElement).value).toBe("6502530000");
+    fireEvent.change(national, { target: { value: "(11) 98765-4321" } });
+    fireEvent.focus(country);
+    fireEvent.change(country, { target: { value: "Brazil" } });
+    fireEvent.click(screen.getByRole("option", { name: "Brazil +55" }));
+
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-name"), {
+      target: { value: "Ada Lovelace" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-email"), {
+      target: { value: "ada@example.com" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-password"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-confirm"), {
+      target: { value: "career-forge-secret" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signup"));
+    await waitFor(() => {
+      expect(registerCareerForgeAccount).toHaveBeenCalledWith(
+        "Ada Lovelace",
+        "ada@example.com",
+        "career-forge-secret",
+        "+5511987654321",
+      );
+    });
+  });
+
+  it("rejects an invalid phone and a number for another country before sign-up", () => {
+    render(
+      <IdentityGate
+        method="borderless_password"
+        forgotPasswordUrl={forgotUrl}
+        signupUrl={signupUrl}
+        onVerified={vi.fn()}
+      />,
+    );
+    fillCareerForgeSignup();
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-phone"), {
+      target: { value: "abc" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signup"));
+    expect(registerCareerForgeAccount).not.toHaveBeenCalled();
+    expect(screen.getByTestId("identity-gate-error").textContent).toBe(
+      "Enter a valid phone number.",
+    );
+
+    fireEvent.change(screen.getByTestId("identity-gate-career-forge-phone"), {
+      target: { value: "+1 650 253 0000" },
+    });
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-signup"));
+    expect(registerCareerForgeAccount).not.toHaveBeenCalled();
+    expect(screen.getByTestId("identity-gate-error").textContent).toBe(
+      "Enter a valid phone number.",
+    );
+  });
+
+  it("names the phone field in Portuguese and still starts on Brazil", () => {
+    (globalThis as { __cfLocale?: string }).__cfLocale = "pt-BR";
+    try {
+      render(
+        <IdentityGate
+          method="borderless_password"
+          forgotPasswordUrl={forgotUrl}
+          signupUrl={signupUrl}
+          onVerified={vi.fn()}
+        />,
+      );
+      fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
+      expect(screen.getByText("Telefone (opcional)")).toBeTruthy();
+      expect(
+        (screen.getByTestId("identity-gate-career-forge-phone-country") as HTMLInputElement).value,
+      ).toBe("Brasil +55");
+    } finally {
+      delete (globalThis as { __cfLocale?: string }).__cfLocale;
+    }
   });
 });

@@ -16,6 +16,8 @@ import uuid
 from datetime import UTC, datetime, timedelta
 from urllib.parse import quote
 
+import phonenumbers
+from phonenumbers import NumberParseException, PhoneNumberFormat
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
@@ -102,6 +104,22 @@ def verify_password(password: str, stored: str) -> bool:
 def _require_password_length(password: str) -> None:
     if len(password) < PASSWORD_MIN_LENGTH:
         raise BadRequestError("password must be at least 8 characters")
+
+
+def _canonical_phone(raw: str | None) -> str | None:
+    """Valid E.164 for its own country, or nothing. A bad number rejects signup."""
+    if raw is None:
+        return None
+    cleaned = raw.strip()
+    if not cleaned:
+        return None
+    try:
+        parsed = phonenumbers.parse(cleaned, None)
+    except NumberParseException as exc:
+        raise BadRequestError("phone number is not valid") from exc
+    if not phonenumbers.is_valid_number(parsed):
+        raise BadRequestError("phone number is not valid")
+    return phonenumbers.format_number(parsed, PhoneNumberFormat.E164)
 
 
 def _is_pending(user: User) -> bool:
@@ -197,11 +215,13 @@ def register_account(
     email: str,
     password: str,
     client_ip: str,
+    phone: str | None = None,
 ) -> None:
     """Store a pending account and email a confirmation link. No session."""
     _require_password_mode()
     otp_service._check_rate_limit(email=email, client_ip=client_ip, key_prefix="cf-signup:")
     _require_password_length(password)
+    stored_phone = _canonical_phone(phone)
     user = session.scalar(select(User).where(User.email == email))
     if user is not None and not _is_pending(user):
         raise ConflictError("This email already has an account")
@@ -213,6 +233,7 @@ def register_account(
         user.display_name = name
     user.password_hash = hash_password(password)
     user.email_confirmed_at = None
+    user.phone = stored_phone
     raw = _store_link(session, email=email, provider=CF_CONFIRM)
     locale = user.ui_locale
     session.commit()

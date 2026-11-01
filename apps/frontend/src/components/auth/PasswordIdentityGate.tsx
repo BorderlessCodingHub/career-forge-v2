@@ -1,9 +1,11 @@
 "use client";
 
+import type { CountryCode } from "libphonenumber-js";
 import { Eye, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
+import { PhoneField } from "@/components/auth/PhoneField";
 import { IdentityGateShell } from "@/components/auth/IdentityGateShell";
 import { Button } from "@/components/ui";
 import { BrandMark } from "@/components/ui/BrandMark";
@@ -17,6 +19,7 @@ import {
   signInWithCareerForgePassword,
   signInWithPassword,
 } from "@/lib/api-client";
+import { DEFAULT_PHONE_COUNTRY, signupPhone } from "@/lib/phone";
 
 type PasswordIdentityGateProps = {
   forgotPasswordUrl?: string;
@@ -38,6 +41,8 @@ export function PasswordIdentityGate({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>(DEFAULT_PHONE_COUNTRY);
+  const [phoneNational, setPhoneNational] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [signupOpen, setSignupOpen] = useState(false);
@@ -135,10 +140,17 @@ export function PasswordIdentityGate({
       setError(t("passwordMismatch"));
       return;
     }
+    const phone = signupPhone(phoneCountry, phoneNational);
+    if (!phone.ok) {
+      setError(t("phoneInvalid"));
+      return;
+    }
     setBusy(true);
     resetFeedback();
     try {
-      const ack = await registerCareerForgeAccount(trimmedName, trimmedEmail, password);
+      const ack = phone.e164
+        ? await registerCareerForgeAccount(trimmedName, trimmedEmail, password, phone.e164)
+        : await registerCareerForgeAccount(trimmedName, trimmedEmail, password);
       setSentTo(ack.email);
       setView("check");
     } catch (err) {
@@ -246,6 +258,14 @@ export function PasswordIdentityGate({
                 />
               </label>
               <EmailField email={email} busy={busy} onChange={setEmail} label={t("email")} />
+              <PhoneField
+                country={phoneCountry}
+                national={phoneNational}
+                label={t("phoneOptional")}
+                disabled={busy}
+                onCountry={setPhoneCountry}
+                onNational={setPhoneNational}
+              />
               <SecretField
                 label={t("password")}
                 value={password}
