@@ -28,6 +28,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Done:** [LABS01-165](https://linear.app/borderless-coding/issue/LABS01-165) — PR #123 (`d7dc694`). Diagnosis calls `gpt-5.6-luna` after OpenAI retired `gpt-4.1-nano` on 2026-10-23. No migration. Deployed to Labs.
 
+**Done:** [LABS01-168](https://linear.app/borderless-coding/issue/LABS01-168) — PR #124 (`394f1ba`). Career Forge sign-up stores an optional phone as E.164 on `users.phone`. Run Alembic `031_user_phone`. A blank number stores null. Privacy sections 2 and 7 name the number.
+
 ---
 
 ## Phase 3a (Rebrand + landing + pilots) — ✅ Completed
