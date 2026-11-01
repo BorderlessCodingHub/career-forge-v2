@@ -562,6 +562,8 @@
     "careerForgeDescription": "Use o e-mail e a senha do Career Forge.",
     "createCareerForgeAccount": "Criar uma conta no Career Forge",
     "fullName": "Nome completo",
+    "phoneOptional": "Telefone (opcional)",
+    "phoneInvalid": "Informe um telefone válido.",
     "confirmPassword": "Confirmar senha",
     "enterName": "Informe seu nome completo.",
     "passwordTooShort": "Use pelo menos 8 caracteres.",

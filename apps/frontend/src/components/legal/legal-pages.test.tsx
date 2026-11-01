@@ -126,6 +126,7 @@ describe("legal pages", () => {
     expect(screen.getByRole("heading", { name: "Privacy Policy" })).toBeTruthy();
     expect(screen.getByText("Name.")).toBeTruthy();
     expect(screen.getByText("Email.")).toBeTruthy();
+    expect(screen.getByText("Phone, when you give one.")).toBeTruthy();
     expect(screen.getByText("Password hash.")).toBeTruthy();
     expect(screen.getByText("Locale.")).toBeTruthy();
     expect(
@@ -144,6 +145,9 @@ describe("legal pages", () => {
     expect(screen.getByText(/model provider \(OpenAI\)/)).toBeTruthy();
     expect(screen.getByText(/Sentry, when a DSN is set/)).toBeTruthy();
     expect(screen.getByText(/LangSmith, when tracing is on/)).toBeTruthy();
+    expect(
+      screen.getByText("When you give a phone number, we use it to reach you about your account."),
+    ).toBeTruthy();
     expect(screen.getByText(/at least 18 years old/)).toBeTruthy();
     expect(hrefs("careerforgelabs@gmail.com").every((href) => href.startsWith("mailto:"))).toBe(
       true,
@@ -159,6 +163,7 @@ describe("legal pages", () => {
     expect(screen.getByRole("heading", { name: "Política de privacidade" })).toBeTruthy();
     expect(screen.getByText("Nome.")).toBeTruthy();
     expect(screen.getByText("E-mail.")).toBeTruthy();
+    expect(screen.getByText("Telefone, quando você informa um.")).toBeTruthy();
     expect(screen.getByText("Hash da senha.")).toBeTruthy();
     expect(screen.getByText("Idioma.")).toBeTruthy();
     expect(
@@ -175,6 +180,11 @@ describe("legal pages", () => {
     expect(screen.getByText(/provedor de modelo \(OpenAI\)/)).toBeTruthy();
     expect(screen.getByText(/Sentry, quando um DSN está definido/)).toBeTruthy();
     expect(screen.getByText(/LangSmith, quando o rastreamento está ligado/)).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Quando você informa um telefone, usamos esse número para falar com você sobre a conta.",
+      ),
+    ).toBeTruthy();
     expect(screen.getByText(/pelo menos 18 anos/)).toBeTruthy();
   });
 

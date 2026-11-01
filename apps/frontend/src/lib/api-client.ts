@@ -664,12 +664,11 @@ export async function registerCareerForgeAccount(
   name: string,
   email: string,
   password: string,
+  phone?: string,
 ): Promise<AccountAck> {
-  const res = await postCareerForgeAccount("/auth/account/signup", {
-    name,
-    email,
-    password,
-  });
+  const body: Record<string, string> = { name, email, password };
+  if (phone) body.phone = phone;
+  const res = await postCareerForgeAccount("/auth/account/signup", body);
   if (res.status === 409) throw new AccountExistsError();
   if (res.status === 503) throw new MailDeliveryError();
   if (!res.ok) throw await readApiError(res);

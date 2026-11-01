@@ -79,10 +79,14 @@ def _signup(
     *,
     name: str = "Ada Lovelace",
     password: str = _PASSWORD,
+    phone: str | None = None,
 ) -> str:
+    body: dict[str, str] = {"name": name, "email": email, "password": password}
+    if phone is not None:
+        body["phone"] = phone
     created = raw_client.post(
         "/auth/account/signup",
-        json={"name": name, "email": email, "password": password},
+        json=body,
     )
     assert created.status_code == 200, created.text
     body = created.json()
@@ -99,6 +103,13 @@ def _confirm(raw_client: TestClient, url: str) -> dict:
     opened = raw_client.post("/auth/account/confirm", json={"token": _token(url)})
     assert opened.status_code == 200, opened.text
     return opened.json()
+
+
+def user_phone(email: str) -> str | None:
+    with SessionLocal() as session:
+        user = session.scalar(select(User).where(User.email == email))
+        assert user is not None
+        return user.phone
 
 
 def test_signup_stores_a_pending_account_and_does_not_open_a_session(
@@ -137,6 +148,131 @@ def test_signup_stores_a_pending_account_and_does_not_open_a_session(
     )
     assert blocked.status_code == 401
     assert url
+    assert user_phone(email) is None
+
+
+def test_signup_stores_a_blank_phone_as_nothing(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    for email, phone in (
+        ("cf-phone-missing@example.com", None),
+        ("cf-phone-blank@example.com", ""),
+        ("cf-phone-space@example.com", "   "),
+    ):
+        body: dict[str, str] = {
+            "name": "Ada Lovelace",
+            "email": email,
+            "password": _PASSWORD,
+        }
+        if phone is not None:
+            body["phone"] = phone
+        created = raw_client.post("/auth/account/signup", json=body)
+        assert created.status_code == 200, created.text
+        assert user_phone(email) is None
+        assert box.sent[-1][0] == "confirm"
+
+
+def test_signup_stores_a_valid_national_number_as_e164(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    mobile = raw_client.post(
+        "/auth/account/signup",
+        json={
+            "name": "Ada Lovelace",
+            "email": "cf-phone-mobile@example.com",
+            "password": _PASSWORD,
+            "phone": "+55 11 98765-4321",
+        },
+    )
+    assert mobile.status_code == 200, mobile.text
+    assert user_phone("cf-phone-mobile@example.com") == "+5511987654321"
+
+    landline = raw_client.post(
+        "/auth/account/signup",
+        json={
+            "name": "Grace Hopper",
+            "email": "cf-phone-landline@example.com",
+            "password": _PASSWORD,
+            "phone": "+55 11 3333-4444",
+        },
+    )
+    assert landline.status_code == 200, landline.text
+    assert user_phone("cf-phone-landline@example.com") == "+551133334444"
+    assert box.sent[-1][1] == "cf-phone-landline@example.com"
+
+    shared = raw_client.post(
+        "/auth/account/signup",
+        json={
+            "name": "Katherine Johnson",
+            "email": "cf-phone-shared@example.com",
+            "password": _PASSWORD,
+            "phone": "+5511987654321",
+        },
+    )
+    assert shared.status_code == 200, shared.text
+    assert user_phone("cf-phone-shared@example.com") == "+5511987654321"
+    assert user_phone("cf-phone-mobile@example.com") == "+5511987654321"
+
+
+def test_invalid_phone_rejects_signup_and_does_not_replace_the_account(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    email = "cf-phone-keep@example.com"
+    _signup(raw_client, box, email, phone="+5511987654321")
+    sent = len(box.sent)
+
+    for bad in ("abc", "+5511", "+556502530000"):
+        rejected = raw_client.post(
+            "/auth/account/signup",
+            json={
+                "name": "Grace Hopper",
+                "email": email,
+                "password": "replacement-secret",
+                "phone": bad,
+            },
+        )
+        assert rejected.status_code == 400, rejected.text
+        assert rejected.json()["detail"] == "phone number is not valid"
+        assert user_phone(email) == "+5511987654321"
+        with SessionLocal() as session:
+            user = session.scalar(select(User).where(User.email == email))
+            assert user is not None
+            assert user.display_name == "Ada Lovelace"
+        assert len(box.sent) == sent
+
+    missing = raw_client.post(
+        "/auth/account/signup",
+        json={
+            "name": "Ada Lovelace",
+            "email": "cf-phone-never@example.com",
+            "password": _PASSWORD,
+            "phone": "abc",
+        },
+    )
+    assert missing.status_code == 400, missing.text
+    with SessionLocal() as session:
+        assert session.scalar(select(User).where(User.email == "cf-phone-never@example.com")) is None
+    assert len(box.sent) == sent
+
+
+def test_second_signup_replaces_the_stored_phone(
+    raw_client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    box = _password_mode(monkeypatch)
+    email = "cf-phone-replace@example.com"
+    _signup(raw_client, box, email, phone="+5511987654321")
+    _signup(raw_client, box, email, name="Grace Hopper", phone="+55 11 3333-4444")
+    assert user_phone(email) == "+551133334444"
+
+    _signup(raw_client, box, email, phone="   ")
+    assert user_phone(email) is None
 
 
 def test_confirmation_opens_the_session_and_later_access_uses_the_password(

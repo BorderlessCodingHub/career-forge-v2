@@ -68,6 +68,7 @@ class AccountSignupBody(BaseModel):
     name: str = Field(min_length=1, max_length=200)
     email: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=1, max_length=1024, repr=False)
+    phone: str | None = Field(default=None, max_length=32)
 
     @field_validator("name")
     @classmethod
@@ -83,6 +84,14 @@ class AccountSignupBody(BaseModel):
     @classmethod
     def normalize_email(cls, value: str) -> str:
         return _normalize_identity_email(value)
+
+    @field_validator("phone")
+    @classmethod
+    def normalize_phone(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        cleaned = value.strip()
+        return cleaned or None
 
 
 class AccountEmailBody(BaseModel):

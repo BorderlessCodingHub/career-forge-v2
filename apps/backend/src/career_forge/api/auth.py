@@ -127,6 +127,7 @@ def account_signup(
         name=body.name,
         email=body.email,
         password=body.password,
+        phone=body.phone,
         client_ip=_client_ip(request),
     )
     return AccountAckResponse(email=body.email)

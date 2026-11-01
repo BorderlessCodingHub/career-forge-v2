@@ -209,7 +209,7 @@ export const ptLegal: LegalPack = {
       title: "Política de privacidade",
       description:
         "O que o Career Forge guarda sobre conta, cobrança, aprendizado e navegador, e quais processadores usa.",
-      updated: "Última atualização: 17 de outubro de 2026.",
+      updated: "Última atualização: 1 de novembro de 2026.",
       sections: [
         {
           id: "intro",
@@ -228,6 +228,7 @@ export const ptLegal: LegalPack = {
             list(
               "Nome.",
               "E-mail.",
+              "Telefone, quando você informa um.",
               "Hash da senha.",
               "Idioma.",
               "O vínculo com a conta Borderless, quando você entra com uma conta Borderless.",
@@ -289,6 +290,9 @@ export const ptLegal: LegalPack = {
           blocks: [
             para(
               "Usamos esses dados para criar e autenticar sua conta, rodar o diagnóstico e o forge, guardar sua trilha e as respostas de validação, cobrar uma assinatura externa pela Stripe e enviar e-mail de conta pela Resend.",
+            ),
+            para(
+              "Quando você informa um telefone, usamos esse número para falar com você sobre a conta.",
             ),
           ],
         },
