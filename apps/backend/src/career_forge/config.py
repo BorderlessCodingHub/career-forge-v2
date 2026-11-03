@@ -60,6 +60,8 @@ class Settings(BaseSettings):
     otp_rate_limit_window_seconds: int = 600
     mailer_backend: str = "log"  # log | smtp | resend | ses
     mail_from: str = "Career Forge <noreply@careerforge.local>"
+    # LABS01-170 — empty skips the access-desk notice. A failed notice still keeps the note.
+    feedback_notify_email: str = ""
     smtp_password: str = ""
     resend_api_key: str = ""
     aws_ses_region: str = ""

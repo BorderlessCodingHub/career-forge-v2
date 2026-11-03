@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { SignOutButton } from "@/components/auth/SignOutButton";
+import { FeedbackLink } from "@/components/feedback/FeedbackLink";
 import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 import { shouldShowSetupHeader } from "@/lib/product-chrome";
@@ -27,6 +28,7 @@ export function SetupHeader() {
       <BrandLockup />
       <div className="flex items-center gap-2">
         <LocaleSwitch />
+        <FeedbackLink />
         <SignOutButton />
       </div>
     </header>

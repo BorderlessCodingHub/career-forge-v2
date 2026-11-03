@@ -531,6 +531,39 @@ export async function getMyProfile(): Promise<MeProfileResponse> {
   return apiFetch<MeProfileResponse>("/me/profile");
 }
 
+export class FeedbackLimitError extends Error {
+  readonly name = "FeedbackLimitError";
+}
+
+export async function submitLearnerFeedback(input: {
+  message: string;
+  path: string | null;
+}): Promise<void> {
+  const token = await ensureAccessToken();
+  let res: Response;
+  try {
+    res = await fetch(`${backendUrl}/me/feedback`, {
+      method: "POST",
+      // The note stores cf_locale. Same-origin Labs already sends it; local
+      // calls the API on another port, which needs credentials to include it.
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        message: input.message,
+        path: input.path,
+      }),
+    });
+  } catch (cause) {
+    const message = cause instanceof Error ? cause.message : "Network request failed";
+    throw new Error(`Cannot reach API ${backendUrl}/me/feedback: ${message}.`);
+  }
+  if (res.status === 429) throw new FeedbackLimitError();
+  if (!res.ok) throw await readApiError(res);
+}
+
 export async function updateMyLocale(locale: "en" | "pt-BR"): Promise<void> {
   await apiFetch("/me/locale", {
     method: "PATCH",

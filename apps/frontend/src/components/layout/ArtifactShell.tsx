@@ -6,6 +6,7 @@ import { FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { SignOutButton } from "@/components/auth/SignOutButton";
+import { FeedbackLink } from "@/components/feedback/FeedbackLink";
 import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 
@@ -37,6 +38,7 @@ export function ArtifactShell({
 
         <div className="flex flex-wrap items-end justify-end gap-2 sm:gap-3">
           <LocaleSwitch />
+          <FeedbackLink />
           <SignOutButton />
           <Link href="/report" className={topbarActionClass} data-testid="mentor-report-link">
             <span className={topbarActionIconSlotClass} aria-hidden>

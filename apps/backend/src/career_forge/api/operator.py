@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import uuid
+
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -34,6 +36,11 @@ from career_forge.schemas.operator_access import (
     OperatorLearnerAccessResponse,
     ProviderSwitchResponse,
     ProviderSwitchWrite,
+)
+from career_forge.schemas.learner_feedback import (
+    OperatorFeedbackNoteListResponse,
+    OperatorFeedbackNoteResponse,
+    OperatorFeedbackReplyPatch,
 )
 from career_forge.schemas.operator_content import (
     OperatorContentListResponse,
@@ -68,6 +75,10 @@ from career_forge.services.operator_content import (
 )
 from career_forge.services.operator_otp import request_operator_otp, verify_operator_otp
 from career_forge.services.provider_switch import read_provider_switch, write_provider_switch
+from career_forge.services.learner_feedback import (
+    list_feedback_notes,
+    set_feedback_replied,
+)
 from career_forge.services.embed_allowlist import (
     add_embed_host,
     commit_embed_host_write,
@@ -413,3 +424,38 @@ def get_recent_operator_access_audit(
 ) -> OperatorAccessAuditListResponse:
     require_access_role(principal)
     return _audit_response(list_access_audit(db, actor_type=actor_type, limit=limit))
+
+
+@router.get(
+    "/access/feedback-notes",
+    response_model=OperatorFeedbackNoteListResponse,
+)
+def get_operator_feedback_notes(
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorFeedbackNoteListResponse:
+    rows = list_feedback_notes(db, principal=principal)
+    return OperatorFeedbackNoteListResponse(
+        notes=[OperatorFeedbackNoteResponse.model_validate(row) for row in rows]
+    )
+
+
+@router.patch(
+    "/access/feedback-notes/{note_id}",
+    response_model=OperatorFeedbackNoteResponse,
+)
+def patch_operator_feedback_note(
+    note_id: uuid.UUID,
+    body: OperatorFeedbackReplyPatch,
+    db: Session = Depends(get_db),
+    principal: OperatorPrincipal = Depends(get_operator_principal),
+) -> OperatorFeedbackNoteResponse:
+    row = set_feedback_replied(
+        db,
+        principal=principal,
+        note_id=note_id,
+        replied=body.replied,
+    )
+    db.commit()
+    db.refresh(row)
+    return OperatorFeedbackNoteResponse.model_validate(row)

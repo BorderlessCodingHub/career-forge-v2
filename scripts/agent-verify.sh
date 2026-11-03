@@ -191,6 +191,11 @@ check grep -q 'LocaleSwitch' apps/frontend/src/components/layout/SetupHeader.tsx
 check grep -q 'LocaleSwitch' apps/frontend/src/components/layout/ArtifactShell.tsx
 check grep -q 'locale="en"' apps/frontend/src/app/operator/layout.tsx
 check grep -q 'updateMyLocale' apps/frontend/src/lib/api-client.ts
+check test -f apps/backend/alembic/versions/032_learner_feedback_notes.py
+check grep -q 'learner_feedback_notes' apps/backend/src/career_forge/db/models/learner_feedback.py
+check grep -q '"/feedback"' apps/backend/src/career_forge/api/feedback.py
+check grep -q 'feedback-notes' apps/backend/src/career_forge/api/operator.py
+check grep -q 'FEEDBACK_NOTIFY_EMAIL' docker-compose.yml
 
 # No legacy app paths (exclude harness docs that mention the ban)
 LEGACY_EXCLUDE='(REPO-STRUCTURE|end-task-workflow|AGENT-LIFECYCLE|AGENT-DELIVERY|agent-verify\.sh)'
