@@ -8,20 +8,20 @@
     "backToWelcome": "Voltar para o Welcome"
   },
   "feedback": {
-    "link": "Nota",
-    "title": "Nota sobre o produto",
-    "courtesy": "Uma pessoa responde em até 5 dias úteis.",
+    "link": "Feedback",
+    "title": "Feedback",
+    "courtesy": "Verifique seu e-mail. Em breve respondemos de careerforgelabs@gmail.com.",
     "emailLabel": "E-mail da conta",
     "messageLabel": "Mensagem",
-    "submit": "Enviar nota",
+    "submit": "Enviar feedback",
     "sending": "Enviando…",
-    "thanks": "Obrigado. A nota foi registrada.",
+    "thanks": "Obrigado. O feedback foi registrado.",
     "required": "Escreva uma mensagem.",
-    "limit": "Já há cinco notas desta conta nas últimas 24 horas. Esta ficou na página.",
-    "noEmail": "Esta conta não tem e-mail, então a nota não será enviada.",
-    "signedOut": "Entre com o e-mail da conta para deixar uma nota.",
-    "unavailable": "Não foi possível ler o e-mail da conta, então esta página não envia a nota.",
-    "failed": "A nota não foi enviada. Tente de novo."
+    "limit": "Já há cinco feedbacks desta conta nas últimas 24 horas. Este ficou na página.",
+    "noEmail": "Esta conta não tem e-mail, então o feedback não será enviado.",
+    "signedOut": "Entre com o e-mail da conta para deixar um feedback.",
+    "unavailable": "Não foi possível ler o e-mail da conta, então esta página não envia o feedback.",
+    "failed": "O feedback não foi enviado. Tente de novo."
   },
   "welcome": {
     "membersIncluded": "Membros: o Career Forge está incluído. Comece o diagnóstico com o e-mail de membro.",

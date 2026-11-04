@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { MessageSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -9,7 +10,7 @@ import { getMyProfile } from "@/lib/api-client";
 import { hasEmailIdentity } from "@/lib/user-session";
 
 const linkClass =
-  "text-xs font-medium text-text-secondary underline-offset-2 hover:text-text-primary hover:underline";
+  "inline-flex h-9 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium text-text-secondary transition hover:border-accent/40 hover:bg-surface hover:text-text-primary";
 
 export function FeedbackLink() {
   const t = useTranslations("feedback");
@@ -40,7 +41,8 @@ export function FeedbackLink() {
 
   return (
     <Link href={`/feedback${from}`} className={linkClass} data-testid="feedback-link">
-      {t("link")}
+      <MessageSquare className="h-4 w-4" aria-hidden />
+      <span>{t("link")}</span>
     </Link>
   );
 }

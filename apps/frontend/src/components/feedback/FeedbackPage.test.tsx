@@ -78,7 +78,7 @@ describe("feedback page", () => {
       "ana@example.com",
     );
     expect(screen.getByTestId("feedback-courtesy").textContent).toBe(
-      "A person will reply within 5 business days.",
+      "Check your email. We will reply soon from careerforgelabs@gmail.com.",
     );
     expect(screen.queryByRole("textbox", { name: /email/i })).toBeNull();
 
@@ -93,8 +93,12 @@ describe("feedback page", () => {
         path: "/",
       });
     });
-    expect(screen.getByTestId("feedback-thanks").textContent).toBe("Thank you. The note is in.");
-    expect(screen.getByTestId("feedback-courtesy").textContent).toContain("5 business days");
+    expect(screen.getByTestId("feedback-thanks").textContent).toBe(
+      "Thank you. The feedback is in.",
+    );
+    expect(screen.getByTestId("feedback-courtesy").textContent).toContain(
+      "careerforgelabs@gmail.com",
+    );
     expect((screen.getByTestId("feedback-message") as HTMLTextAreaElement).value).toBe("");
   });
 
@@ -107,7 +111,7 @@ describe("feedback page", () => {
 
     expect(await screen.findByTestId("feedback-error")).toHaveProperty(
       "textContent",
-      "Five notes are already in from this account in the last 24 hours. This one stayed on the page.",
+      "Five feedback messages are already in from this account in the last 24 hours. This one stayed on the page.",
     );
     expect((screen.getByTestId("feedback-message") as HTMLTextAreaElement).value).toBe("Still here");
     expect(screen.queryByTestId("feedback-thanks")).toBeNull();
@@ -132,7 +136,7 @@ describe("feedback page", () => {
     renderWithLocale(<FeedbackPage />);
     expect(await screen.findByTestId("feedback-blocked")).toHaveProperty(
       "textContent",
-      "This account has no email, so a note cannot be sent.",
+      "This account has no email, so feedback cannot be sent.",
     );
     expect(screen.queryByTestId("feedback-message")).toBeNull();
   });
@@ -142,7 +146,7 @@ describe("feedback page", () => {
     renderWithLocale(<FeedbackPage />);
     expect(await screen.findByTestId("feedback-blocked")).toHaveProperty(
       "textContent",
-      "Sign in with an account email to leave a note.",
+      "Sign in with an account email to leave feedback.",
     );
     expect(screen.queryByTestId("feedback-message")).toBeNull();
     expect(screen.queryByTestId("feedback-submit")).toBeNull();
@@ -151,7 +155,7 @@ describe("feedback page", () => {
   it("follows the Portuguese catalog", async () => {
     renderWithLocale(<FeedbackPage />, "pt-BR");
     expect((await screen.findByTestId("feedback-courtesy")).textContent).toBe(
-      "Uma pessoa responde em até 5 dias úteis.",
+      "Verifique seu e-mail. Em breve respondemos de careerforgelabs@gmail.com.",
     );
   });
 });
