@@ -41,6 +41,14 @@ def _account_letter(
     return confirm_letter(url=url, hours=hours, locale=locale)
 
 
+def feedback_notice_letter() -> tuple[str, str]:
+    """Short access-desk notice. No learner email and no note text."""
+    return (
+        "A learner left a product note",
+        "Open the access desk to read it.\n",
+    )
+
+
 def _http_error_detail(exc: error.HTTPError) -> str:
     raw = exc.read()[:_MAX_ERROR_BODY].decode("utf-8", errors="replace").strip()
     if not raw:
@@ -71,6 +79,8 @@ class Mailer(Protocol):
         hours: int,
         locale: str | None = None,
     ) -> None: ...
+
+    def send_feedback_notice(self, *, to_email: str) -> None: ...
 
 
 class LogMailer:
@@ -148,6 +158,15 @@ class LogMailer:
             text,
         )
 
+    def send_feedback_notice(self, *, to_email: str) -> None:
+        subject, text = feedback_notice_letter()
+        logger.info(
+            "Feedback notice for %s — mailer_backend=log\n%s\n%s",
+            to_email,
+            subject,
+            text,
+        )
+
 
 def _smtp_user(mail_from: str) -> str:
     """Login name is the address inside ``MAIL_FROM``, not the display name."""
@@ -195,6 +214,10 @@ class SmtpMailer:
         locale: str | None = None,
     ) -> None:
         subject, text = _account_letter(kind, url, hours, locale)
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_feedback_notice(self, *, to_email: str) -> None:
+        subject, text = feedback_notice_letter()
         self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:
@@ -253,6 +276,10 @@ class ResendMailer:
         locale: str | None = None,
     ) -> None:
         subject, text = _account_letter(kind, url, hours, locale)
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_feedback_notice(self, *, to_email: str) -> None:
+        subject, text = feedback_notice_letter()
         self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:
@@ -323,6 +350,10 @@ class SesMailer:
         locale: str | None = None,
     ) -> None:
         subject, text = _account_letter(kind, url, hours, locale)
+        self._send(to_email=to_email, subject=subject, text=text)
+
+    def send_feedback_notice(self, *, to_email: str) -> None:
+        subject, text = feedback_notice_letter()
         self._send(to_email=to_email, subject=subject, text=text)
 
     def _send(self, *, to_email: str, subject: str, text: str) -> None:

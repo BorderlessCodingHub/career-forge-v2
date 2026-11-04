@@ -93,6 +93,15 @@ export type OperatorLiberatedEmbedHost = {
   created_at: string;
 };
 
+export type OperatorFeedbackNote = {
+  id: string;
+  message: string;
+  email: string;
+  path: string | null;
+  created_at: string;
+  replied_at: string | null;
+};
+
 export type OperatorEmbedHostQueue = {
   pending: OperatorPendingEmbedHost[];
   liberated: OperatorLiberatedEmbedHost[];
@@ -273,6 +282,26 @@ export function addOperatorEmbedHost(host: string): Promise<OperatorLiberatedEmb
     method: "POST",
     body: JSON.stringify({ host }),
   });
+}
+
+export async function getOperatorFeedbackNotes(): Promise<OperatorFeedbackNote[]> {
+  const body = await operatorFetch<{ notes: OperatorFeedbackNote[] }>(
+    "/operator/access/feedback-notes",
+  );
+  return body.notes;
+}
+
+export function setOperatorFeedbackReplied(
+  noteId: string,
+  replied: boolean,
+): Promise<OperatorFeedbackNote> {
+  return operatorFetch<OperatorFeedbackNote>(
+    `/operator/access/feedback-notes/${encodeURIComponent(noteId)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ replied }),
+    },
+  );
 }
 
 export function removeOperatorEmbedHost(host: string): Promise<void> {

@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { LockKeyhole, Plus, Search, Trash2 } from "lucide-react";
 
+import { FeedbackNotes } from "@/components/operator/FeedbackNotes";
 import { Button } from "@/components/ui";
 import {
   addOperatorPilotEmail,
@@ -662,6 +663,10 @@ export function AccessDesk() {
           error={providerSwitchError}
           onWrite={(on) => void writeSwitch(on)}
         />
+      </div>
+
+      <div className="mt-6 max-w-4xl">
+        <FeedbackNotes />
       </div>
 
       <div className="mt-6 max-w-4xl">

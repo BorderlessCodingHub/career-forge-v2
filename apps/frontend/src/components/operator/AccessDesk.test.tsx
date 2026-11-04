@@ -6,12 +6,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   addOperatorPilotEmail,
   getOperatorCostPool,
+  getOperatorFeedbackNotes,
   getOperatorLearnerAccess,
   getOperatorLearnerAccessAudit,
   getOperatorPilotEmails,
   getOperatorProviderSwitch,
   patchOperatorLearnerAccess,
   removeOperatorPilotEmail,
+  setOperatorFeedbackReplied,
   writeOperatorProviderSwitch,
 } from "@/lib/operator-console";
 
@@ -20,12 +22,14 @@ import { AccessDesk } from "./AccessDesk";
 vi.mock("@/lib/operator-console", () => ({
   addOperatorPilotEmail: vi.fn(),
   getOperatorCostPool: vi.fn(),
+  getOperatorFeedbackNotes: vi.fn(),
   getOperatorLearnerAccess: vi.fn(),
   getOperatorLearnerAccessAudit: vi.fn(),
   getOperatorPilotEmails: vi.fn(),
   getOperatorProviderSwitch: vi.fn(),
   patchOperatorLearnerAccess: vi.fn(),
   removeOperatorPilotEmail: vi.fn(),
+  setOperatorFeedbackReplied: vi.fn(),
   writeOperatorProviderSwitch: vi.fn(),
 }));
 
@@ -51,6 +55,7 @@ beforeEach(() => {
     forge_runs: 1,
   });
   vi.mocked(getOperatorPilotEmails).mockResolvedValue([pilot]);
+  vi.mocked(getOperatorFeedbackNotes).mockResolvedValue([]);
   vi.mocked(getOperatorLearnerAccessAudit).mockResolvedValue([]);
   vi.mocked(getOperatorProviderSwitch).mockResolvedValue(unsetSwitch);
 });
@@ -248,5 +253,52 @@ describe("AccessDesk pilot list", () => {
 
     expect((await screen.findByTestId("operator-access-pilot-badge")).textContent).toBe("pilot list");
     expect(screen.getByTestId("operator-access-card").textContent).toContain("Entitled");
+  });
+});
+
+describe("AccessDesk product notes", () => {
+  it("shows the note and toggles Replied without a compose box or delete control", async () => {
+    vi.mocked(getOperatorFeedbackNotes).mockResolvedValue([
+      {
+        id: "note-1",
+        message: "The timeline is the part I trust.",
+        email: "ana@example.com",
+        path: "/roadmap",
+        created_at: "2026-11-03T12:00:00Z",
+        replied_at: null,
+      },
+    ]);
+    vi.mocked(setOperatorFeedbackReplied).mockImplementation(async (id, replied) => ({
+      id,
+      message: "The timeline is the part I trust.",
+      email: "ana@example.com",
+      path: "/roadmap",
+      created_at: "2026-11-03T12:00:00Z",
+      replied_at: replied ? "2026-11-03T15:00:00Z" : null,
+    }));
+
+    render(<AccessDesk />);
+
+    const section = await screen.findByTestId("operator-feedback-notes");
+    expect(section.textContent).toContain("ana@example.com");
+    expect(section.textContent).toContain("/roadmap");
+    expect(section.querySelector("textarea")).toBeNull();
+    expect(section.querySelector("input[type='search']")).toBeNull();
+    expect(section.textContent).not.toContain("Delete");
+
+    const box = screen.getByTestId("operator-feedback-replied-note-1") as HTMLInputElement;
+    expect(box.checked).toBe(false);
+    fireEvent.click(box);
+    await waitFor(() => {
+      expect(setOperatorFeedbackReplied).toHaveBeenCalledWith("note-1", true);
+    });
+    expect((screen.getByTestId("operator-feedback-replied-note-1") as HTMLInputElement).checked).toBe(
+      true,
+    );
+
+    fireEvent.click(screen.getByTestId("operator-feedback-replied-note-1"));
+    await waitFor(() => {
+      expect(setOperatorFeedbackReplied).toHaveBeenCalledWith("note-1", false);
+    });
   });
 });

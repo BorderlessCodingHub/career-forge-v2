@@ -7,6 +7,22 @@
     "language": "Language",
     "backToWelcome": "Back to Welcome"
   },
+  "feedback": {
+    "link": "Feedback",
+    "title": "Feedback",
+    "courtesy": "Check your email. We will reply soon from careerforgelabs@gmail.com.",
+    "emailLabel": "Account email",
+    "messageLabel": "Message",
+    "submit": "Send feedback",
+    "sending": "Sending…",
+    "thanks": "Thank you. The feedback is in.",
+    "required": "Write a message.",
+    "limit": "Five feedback messages are already in from this account in the last 24 hours. This one stayed on the page.",
+    "noEmail": "This account has no email, so feedback cannot be sent.",
+    "signedOut": "Sign in with an account email to leave feedback.",
+    "unavailable": "The account email could not be read, so this page will not send feedback.",
+    "failed": "The feedback was not sent. Try again."
+  },
   "welcome": {
     "membersIncluded": "Members: Career Forge is included. Start diagnosis with your member email.",
     "startDiagnosis": "Start diagnosis",
