@@ -78,7 +78,7 @@ describe("feedback page", () => {
       "ana@example.com",
     );
     expect(screen.getByTestId("feedback-courtesy").textContent).toBe(
-      "A person will reply within 5 business days.",
+      "Check your email. We will reply soon from careerforgelabs@gmail.com.",
     );
     expect(screen.queryByRole("textbox", { name: /email/i })).toBeNull();
 
@@ -96,8 +96,8 @@ describe("feedback page", () => {
     expect(screen.getByTestId("feedback-thanks").textContent).toBe(
       "Thank you. The feedback is in.",
     );
-    expect(screen.getByTestId("feedback-courtesy").textContent).toBe(
-      "A person will reply within 5 business days.",
+    expect(screen.getByTestId("feedback-courtesy").textContent).toContain(
+      "careerforgelabs@gmail.com",
     );
     expect((screen.getByTestId("feedback-message") as HTMLTextAreaElement).value).toBe("");
   });
@@ -155,7 +155,7 @@ describe("feedback page", () => {
   it("follows the Portuguese catalog", async () => {
     renderWithLocale(<FeedbackPage />, "pt-BR");
     expect((await screen.findByTestId("feedback-courtesy")).textContent).toBe(
-      "Uma pessoa responde em até 5 dias úteis.",
+      "Verifique seu e-mail. Em breve respondemos de careerforgelabs@gmail.com.",
     );
   });
 });
