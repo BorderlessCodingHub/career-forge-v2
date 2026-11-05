@@ -30,6 +30,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Done:** [LABS01-168](https://linear.app/borderless-coding/issue/LABS01-168) — PR #124 (`394f1ba`). Career Forge sign-up stores an optional phone as E.164 on `users.phone`. Run Alembic `031_user_phone`. A blank number stores null. Privacy sections 2 and 7 name the number.
 
+**Done:** [LABS01-170](https://linear.app/borderless-coding/issue/LABS01-170) — PR #125 (`d099f42`), recorded 2026-11-05. A signed-in learner with an account email leaves a product note at `/feedback`. The page says a reply comes soon from careerforgelabs@gmail.com. Run Alembic `032_learner_feedback_notes`. An empty `FEEDBACK_NOTIFY_EMAIL` sends no notice. Access operators mark Replied.
+
 ---
 
 ## Phase 3a (Rebrand + landing + pilots) — ✅ Completed
