@@ -32,6 +32,7 @@ type IdentityGateProps = {
   emailOtpRequired?: boolean;
   forgotPasswordUrl?: string;
   signupUrl?: string;
+  borderlessOAuth?: boolean;
   onVerified: () => void;
 };
 
@@ -42,6 +43,7 @@ export function IdentityGate({
   emailOtpRequired = true,
   forgotPasswordUrl = "",
   signupUrl = "",
+  borderlessOAuth = false,
   onVerified,
 }: IdentityGateProps) {
   const t = useTranslations("identity");
@@ -58,6 +60,7 @@ export function IdentityGate({
       <PasswordIdentityGate
         forgotPasswordUrl={forgotPasswordUrl}
         signupUrl={signupUrl}
+        borderlessOAuth={borderlessOAuth}
         onVerified={onVerified}
       />
     );

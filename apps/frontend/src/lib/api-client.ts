@@ -635,24 +635,6 @@ function signInUserMessage(status: number): string {
   return SIGNIN_COPY[503];
 }
 
-/** Public: Borderless password check via Career Forge (CAR-106). CF JWT only. */
-export async function signInWithPassword(
-  email: string,
-  password: string,
-): Promise<SigninResponse> {
-  const res = await fetch(`${backendUrl}/auth/signin`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-  if (!res.ok) {
-    throw new Error(signInUserMessage(res.status));
-  }
-  const data = (await res.json()) as SigninResponse;
-  setSessionFromOtp(data.access_token, data.external_id);
-  return data;
-}
-
 export class EmailUnconfirmedError extends Error {
   constructor() {
     super("Email is not confirmed");
@@ -690,6 +672,45 @@ async function postCareerForgeAccount(
 function storeSignin(data: SigninResponse): SigninResponse {
   setSessionFromOtp(data.access_token, data.external_id);
   return data;
+}
+
+export class BorderlessOAuthError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "BorderlessOAuthError";
+    this.status = status;
+  }
+}
+
+/** Exchange a Borderless authorization code. The browser stores only the Career Forge JWT. */
+export async function completeBorderlessOAuth(
+  code: string,
+  state: string,
+): Promise<SigninResponse> {
+  // Same origin as the start redirect so the HttpOnly state cookies are sent.
+  const res = await fetch(`${sameOriginApiBase()}/auth/borderless/exchange`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code, state }),
+  });
+  if (!res.ok) {
+    let detail = "";
+    try {
+      const body = (await res.json()) as { detail?: unknown };
+      if (typeof body.detail === "string") detail = body.detail;
+    } catch {
+      detail = "";
+    }
+    const specific = res.status === 403 || res.status === 409;
+    throw new BorderlessOAuthError(
+      specific && detail ? detail : "Sign-in with Borderless did not finish",
+      res.status,
+    );
+  }
+  return storeSignin((await res.json()) as SigninResponse);
 }
 
 /** Pending Career Forge account. The confirmation link opens the session. */

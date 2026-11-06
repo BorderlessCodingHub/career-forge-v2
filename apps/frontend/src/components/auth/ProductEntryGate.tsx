@@ -23,6 +23,7 @@ type GateState =
       emailOtpRequired: boolean;
       signupUrl: string;
       forgotPasswordUrl: string;
+      borderlessOAuth: boolean;
     }
   | { status: "in" };
 
@@ -43,6 +44,7 @@ export function ProductEntryGate({ children }: ProductEntryGateProps) {
           emailOtpRequired: mode.email_otp_required,
           signupUrl,
           forgotPasswordUrl,
+          borderlessOAuth: Boolean(mode.borderless_oauth),
         });
         return;
       }
@@ -58,6 +60,7 @@ export function ProductEntryGate({ children }: ProductEntryGateProps) {
           emailOtpRequired: false,
           signupUrl,
           forgotPasswordUrl,
+          borderlessOAuth: Boolean(mode.borderless_oauth),
         });
         return;
       }
@@ -104,6 +107,7 @@ export function ProductEntryGate({ children }: ProductEntryGateProps) {
         emailOtpRequired={state.emailOtpRequired}
         signupUrl={state.signupUrl}
         forgotPasswordUrl={state.forgotPasswordUrl}
+        borderlessOAuth={state.borderlessOAuth}
         onVerified={handleVerified}
       />
     );

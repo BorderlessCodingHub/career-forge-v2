@@ -60,6 +60,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     from career_forge.config import settings
     from career_forge.services.otp import reset_otp_rate_limiter
     from career_forge.services.borderless_profile import set_borderless_profile_client
+    from career_forge.services.borderless_oauth import set_borderless_oauth_client
     from career_forge.services.borderless_signin import (
         reset_signin_rate_limiter,
         set_borderless_signin_client,
@@ -75,9 +76,12 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     settings.identity_email_otp = True
     settings.identity_method = ""
     settings.borderless_token_encryption_key = _TEST_BORDERLESS_TOKEN_KEY
+    settings.borderless_oauth_client_id = ""
+    settings.borderless_oauth_client_secret = ""
     reset_otp_rate_limiter()
     reset_signin_rate_limiter()
     set_borderless_signin_client(None)
+    set_borderless_oauth_client(None)
     set_borderless_profile_client(_OfflineBorderlessProfile())
     reset_operator_otp_rate_limiter()
     yield
@@ -90,6 +94,7 @@ def _diagnosis_test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     reset_otp_rate_limiter()
     reset_signin_rate_limiter()
     set_borderless_signin_client(None)
+    set_borderless_oauth_client(None)
     set_borderless_profile_client(None)
     reset_operator_otp_rate_limiter()
 

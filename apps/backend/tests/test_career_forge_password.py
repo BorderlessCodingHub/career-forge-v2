@@ -14,29 +14,10 @@ from career_forge.db.models.forge_artifact import ForgeArtifact
 from career_forge.db.models.user import User
 from career_forge.db.repositories.user import ensure_user
 from career_forge.db.session import SessionLocal
-from career_forge.services.borderless_profile import ProfileRead, set_borderless_profile_client
-from career_forge.services.borderless_signin import BorderlessIdentity, set_borderless_signin_client
+from tests.borderless_oauth_support import sign_in_with_borderless
 
 _JWT_SECRET = "test-jwt-secret-car-23-long-enough-32b"
 _PASSWORD = "career-forge-secret"
-
-
-class _RecordingProfile:
-    def __init__(self, label: str) -> None:
-        self.label = label
-        self.calls = 0
-
-    def read(self, access_token: str) -> ProfileRead:
-        self.calls += 1
-        return ProfileRead(kind="label", label=self.label)
-
-
-class _FakeSignin:
-    def __init__(self, identity: BorderlessIdentity) -> None:
-        self.identity = identity
-
-    def authenticate(self, email: str, password: str) -> BorderlessIdentity:
-        return self.identity
 
 
 class _Mailbox:
@@ -520,19 +501,12 @@ def test_borderless_sign_in_claims_a_pending_account_and_keeps_a_confirmed_passw
     box = _password_mode(monkeypatch)
     pending_email = "cf-claim@example.com"
     pending_url = _signup(raw_client, box, pending_email, name="Ada Lovelace")
-    set_borderless_signin_client(
-        _FakeSignin(
-            BorderlessIdentity(
-                user_id="borderless-claim-129",
-                name="Other Name",
-                email_verified=True,
-                access_token="borderless-access-claim",
-            )
-        )
-    )
-    claimed = raw_client.post(
-        "/auth/signin",
-        json={"email": pending_email, "password": "borderless-password"},
+    claimed, _ = sign_in_with_borderless(
+        raw_client,
+        email=pending_email,
+        sub="borderless-claim-129",
+        membership="BASE",
+        name="Other Name",
     )
     assert claimed.status_code == 200, claimed.text
     with SessionLocal() as session:
@@ -570,25 +544,15 @@ def test_borderless_sign_in_claims_a_pending_account_and_keeps_a_confirmed_passw
             select(func.count()).select_from(ForgeArtifact).where(ForgeArtifact.user_id == user.id)
         )
 
-    set_borderless_signin_client(
-        _FakeSignin(
-            BorderlessIdentity(
-                user_id="borderless-same-129",
-                name="Same Learner",
-                email_verified=True,
-                access_token="borderless-access-same",
-            )
-        )
-    )
-    profile = _RecordingProfile("base")
-    set_borderless_profile_client(profile)
-    borderless = raw_client.post(
-        "/auth/signin",
-        json={"email": email, "password": "borderless-password"},
+    borderless, _ = sign_in_with_borderless(
+        raw_client,
+        email=email,
+        sub="borderless-same-129",
+        membership="BASE",
+        name="Same Learner",
     )
     assert borderless.status_code == 200, borderless.text
     assert borderless.json()["external_id"] == opened["external_id"]
-    assert profile.calls == 1
 
     diagnosis = raw_client.post(
         "/diagnosis/interview/start",

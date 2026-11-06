@@ -29,7 +29,6 @@ from career_forge.db.models.user import User
 from career_forge.db.repositories.user import ensure_user, get_by_external_id
 from career_forge.errors import MonthlyForgeCeilingError, PaywallError
 from career_forge.identity_method import BORDERLESS_PASSWORD, EMAIL_OTP, IdentityMethod
-from career_forge.services.borderless_profile import sync_borderless_membership
 from career_forge.services.cost_guard import (
     FORGE_GRAPH_NAME,
     current_year_month,
@@ -264,8 +263,10 @@ def _entitlement_for_user(
 ) -> EntitlementDecision:
     user = ensure_user(session, external_id)
     identity_method = settings.resolved_identity_method()
-    if identity_method == BORDERLESS_PASSWORD and user.borderless_access_token:
-        sync_borderless_membership(user)
+    if identity_method == BORDERLESS_PASSWORD and user.borderless_refresh_token:
+        from career_forge.services.borderless_oauth import sync_oauth_membership
+
+        sync_oauth_membership(user)
         session.commit()
     if identity_method == BORDERLESS_PASSWORD:
         membership_label, membership_entitled = _password_mode_label(user)

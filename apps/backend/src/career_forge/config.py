@@ -49,6 +49,9 @@ class Settings(BaseSettings):
     # CAR-128 — Fernet key for the stored Borderless access token. Required
     # when IDENTITY_METHOD=borderless_password. Empty is fine in other modes.
     borderless_token_encryption_key: str = ""
+    # LABS01-199 — confidential Borderless OAuth client. Empty hides the control.
+    borderless_oauth_client_id: str = ""
+    borderless_oauth_client_secret: str = ""
     borderless_signup_url: str = "https://platform.borderlesscoding.com/sign-up"
     borderless_forgot_password_url: str = (
         "https://platform.borderlesscoding.com/forgot-password"

@@ -108,7 +108,7 @@ describe("verifyOtp", () => {
   });
 });
 
-describe("signInWithPassword", () => {
+describe("completeBorderlessOAuth", () => {
   beforeEach(() => {
     vi.resetModules();
     const localStorage = createMemoryStorage();
@@ -118,7 +118,7 @@ describe("signInWithPassword", () => {
     vi.stubGlobal("sessionStorage", sessionStorage);
   });
 
-  it("stores the Career Forge JWT from POST /auth/signin", async () => {
+  it("stores the Career Forge JWT from the code exchange", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -127,67 +127,60 @@ describe("signInWithPassword", () => {
         json: async () => ({
           access_token: "cf-jwt",
           token_type: "bearer",
-          external_id: "user-signin",
+          external_id: "user-oauth",
           provider: "email",
           expires_in: 3600,
         }),
       }),
     );
 
-    const { signInWithPassword } = await import("./api-client");
-    await signInWithPassword("ada@example.com", "secret-pass");
+    const { completeBorderlessOAuth } = await import("./api-client");
+    await completeBorderlessOAuth("auth-code", "state-1");
 
     expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining("/auth/signin"),
+      expect.stringMatching(/\/auth\/borderless\/exchange$/),
       expect.objectContaining({
-        body: JSON.stringify({
-          email: "ada@example.com",
-          password: "secret-pass",
-        }),
+        method: "POST",
+        credentials: "include",
+        body: JSON.stringify({ code: "auth-code", state: "state-1" }),
       }),
     );
     const calledUrl = String(vi.mocked(fetch).mock.calls[0]?.[0]);
-    expect(calledUrl).not.toContain("api.borderlesscoding.com");
+    expect(calledUrl.startsWith("http")).toBe(false);
     expect(localStorage.getItem("career-forge.access-token")).toBe("cf-jwt");
-    expect(localStorage.getItem("career-forge.user-id")).toBe("user-signin");
+    expect(localStorage.getItem("career-forge.user-id")).toBe("user-oauth");
   });
 
-  it("maps signin 401 429 and 503 to distinct copy", async () => {
-    const cases: Array<[number, string]> = [
-      [401, "Invalid email or password"],
-      [429, "Too many sign-in attempts. Try again later."],
-      [503, "Sign-in is temporarily unavailable. Try again in a moment."],
-    ];
-    for (const [status, copy] of cases) {
-      vi.resetModules();
-      vi.stubGlobal(
-        "fetch",
-        vi.fn().mockResolvedValue({
-          ok: false,
-          status,
-          statusText: "Error",
-          json: async () => ({ detail: "upstream leak" }),
-        }),
-      );
-      const { signInWithPassword } = await import("./api-client");
-      await expect(signInWithPassword("ada@example.com", "x")).rejects.toThrow(copy);
-    }
-  });
-
-  it("maps unexpected signin status to generic 401 copy without leaking detail", async () => {
+  it("keeps a 403 detail and hides other failures behind the status", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
         ok: false,
         status: 403,
-        statusText: "Forbidden",
+        json: async () => ({ detail: "Borderless email must be verified" }),
+      }),
+    );
+    const { BorderlessOAuthError, completeBorderlessOAuth } = await import("./api-client");
+    await expect(completeBorderlessOAuth("auth-code", "state-1")).rejects.toMatchObject({
+      message: "Borderless email must be verified",
+      status: 403,
+      name: "BorderlessOAuthError",
+    });
+    expect(BorderlessOAuthError).toBeTruthy();
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 400,
         json: async () => ({ detail: "upstream leak" }),
       }),
     );
-    const { signInWithPassword } = await import("./api-client");
-    await expect(signInWithPassword("ada@example.com", "x")).rejects.toThrow(
-      "Invalid email or password",
-    );
+    const again = await import("./api-client");
+    await expect(again.completeBorderlessOAuth("auth-code", "state-1")).rejects.toMatchObject({
+      message: "Sign-in with Borderless did not finish",
+      status: 400,
+    });
   });
 });
 

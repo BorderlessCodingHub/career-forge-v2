@@ -144,6 +144,7 @@ class IdentityModeResponse(BaseModel):
     method: Literal["email_otp", "pilot_enter", "borderless_password"]
     signup_url: str = ""
     forgot_password_url: str = ""
+    borderless_oauth: bool = False
 
 
 class PilotEnterBody(BaseModel):

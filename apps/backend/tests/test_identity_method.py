@@ -102,7 +102,11 @@ def test_identity_mode_three_methods(
     monkeypatch.setattr(settings, "identity_email_otp", otp_flag)
     res = raw_client.get("/auth/identity-mode")
     assert res.status_code == 200, res.text
-    assert res.json() == {**expected, **_DEFAULT_ACCOUNT_URLS}
+    assert res.json() == {
+        **expected,
+        **_DEFAULT_ACCOUNT_URLS,
+        "borderless_oauth": False,
+    }
 
 
 def test_identity_mode_hides_empty_account_urls(

@@ -123,7 +123,15 @@ check grep -q '"/signin"' apps/backend/src/career_forge/api/auth.py
 check grep -q '"/auth/signin"' apps/backend/src/career_forge/auth/middleware.py
 check grep -q 'raise_if_learner_otp_gone' apps/backend/src/career_forge/services/otp.py
 check grep -q 'raise_if_learner_otp_gone' apps/backend/src/career_forge/services/pilot_enter.py
-check grep -q 'signInWithPassword' apps/frontend/src/lib/api-client.ts
+check file_lacks 'signInWithPassword' apps/frontend/src/lib/api-client.ts
+check grep -q 'completeBorderlessOAuth' apps/frontend/src/lib/api-client.ts
+check grep -q '/auth/borderless/exchange' apps/frontend/src/lib/api-client.ts
+check test -f apps/backend/src/career_forge/services/borderless_oauth.py
+check test -f apps/backend/alembic/versions/033_borderless_refresh_token.py
+check grep -q 'borderless_refresh_token' apps/backend/src/career_forge/db/models/user.py
+check grep -q '"/borderless/start"' apps/backend/src/career_forge/api/auth.py
+check grep -q '"/auth/borderless/exchange"' apps/backend/src/career_forge/auth/middleware.py
+check grep -q 'BORDERLESS_OAUTH_CLIENT_ID' .env.example
 check grep -q 'identity-gate-password' apps/frontend/src/components/auth/PasswordIdentityGate.tsx
 check grep -q 'IdentityGateShell' apps/frontend/src/components/auth/IdentityGateShell.tsx
 check grep -q 'hero-dots' apps/frontend/src/app/globals.css

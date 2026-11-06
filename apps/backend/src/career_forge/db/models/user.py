@@ -36,6 +36,7 @@ class User(Base):
         String(255), nullable=True
     )
     borderless_access_token: Mapped[str | None] = mapped_column(Text, nullable=True)
+    borderless_refresh_token: Mapped[str | None] = mapped_column(Text, nullable=True)
     borderless_access_unrenewable: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False, server_default="false"
     )
