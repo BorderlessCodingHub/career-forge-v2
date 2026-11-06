@@ -118,6 +118,13 @@ class BorderlessIdentityMismatchError(DomainError):
         super().__init__("Borderless account identity mismatch")
 
 
+class BorderlessOAuthFailedError(DomainError):
+    status_code = 400
+
+    def __init__(self) -> None:
+        super().__init__("Sign-in with Borderless did not finish")
+
+
 class BorderlessSigninUnavailableError(DomainError):
     status_code = 503
 

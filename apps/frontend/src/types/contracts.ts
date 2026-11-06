@@ -177,6 +177,7 @@ export type IdentityModeResponse = {
   method: IdentityMethod;
   signup_url?: string;
   forgot_password_url?: string;
+  borderless_oauth?: boolean;
 };
 
 export type SigninResponse = {

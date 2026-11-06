@@ -17,7 +17,6 @@ import {
   requestOtp,
   resendCareerForgeConfirmation,
   signInWithCareerForgePassword,
-  signInWithPassword,
 } from "@/lib/api-client";
 
 vi.mock("next/navigation", () => ({
@@ -47,7 +46,6 @@ vi.mock("@/lib/api-client", () => ({
   requestCareerForgePasswordReset: vi.fn(),
   signInWithCareerForgePassword: vi.fn(),
   verifyOtp: vi.fn(),
-  signInWithPassword: vi.fn(),
   OtpEmailOwnedError: class OtpEmailOwnedError extends Error {},
   AccountExistsError: class AccountExistsError extends Error {
     override name = "AccountExistsError";
@@ -106,88 +104,57 @@ describe("IdentityGate password", () => {
   const signupUrl = "https://platform.borderlesscoding.com/sign-up";
 
   beforeEach(() => {
+    window.history.pushState({}, "", "/");
     vi.clearAllMocks();
-    vi.mocked(signInWithPassword).mockResolvedValue({
-      access_token: "cf-jwt",
-      token_type: "bearer",
-      external_id: "user-password",
-      provider: "email",
-      expires_in: 3600,
+  });
+
+  it("shows one sentence when Borderless sign-in did not finish", async () => {
+    window.history.pushState({}, "", "/?oauth=failed");
+    render(
+      <IdentityGate method="borderless_password" onVerified={vi.fn()} />,
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("identity-gate-error").textContent).toBe(
+        "Sign-in with Borderless did not finish. Try again.",
+      );
     });
   });
 
-  it("signs in via Career Forge and never requests OTP", async () => {
-    const onVerified = vi.fn();
-    render(
+  it("keeps Career Forge password and hides Borderless until OAuth is configured", () => {
+    const { unmount } = render(
       <IdentityGate
         method="borderless_password"
         forgotPasswordUrl={forgotUrl}
         signupUrl={signupUrl}
-        onVerified={onVerified}
+        onVerified={vi.fn()}
       />,
     );
 
-    fireEvent.click(screen.getByTestId("identity-gate-borderless"));
-    fireEvent.change(screen.getByTestId("identity-gate-email"), {
-      target: { value: "ada@example.com" },
-    });
-    fireEvent.change(screen.getByTestId("identity-gate-password"), {
-      target: { value: "secret-pass" },
-    });
-    fireEvent.click(screen.getByTestId("identity-gate-signin"));
-
-    await waitFor(() => {
-      expect(signInWithPassword).toHaveBeenCalledWith("ada@example.com", "secret-pass");
-      expect(onVerified).toHaveBeenCalled();
-    });
-    expect(requestOtp).not.toHaveBeenCalled();
-    expect(enterPilot).not.toHaveBeenCalled();
-    expect(screen.queryByTestId("identity-gate-request")).toBeNull();
+    expect(screen.getByTestId("identity-gate-career-forge-password")).toBeTruthy();
+    expect(screen.queryByTestId("identity-gate-password")).toBeNull();
+    expect(screen.queryByTestId("identity-gate-signup-modal")).toBeNull();
+    expect(screen.queryByTestId("identity-gate-signup")).toBeNull();
+    expect(screen.queryByTestId("identity-gate-forgot")).toBeNull();
+    expect(screen.queryByTestId("identity-gate-borderless")).toBeNull();
     expect(screen.getByTestId("identity-gate-topbar")).toBeTruthy();
     expect(screen.getByTestId("brand-lockup")).toBeTruthy();
     expect(screen.getByTestId("identity-gate-back-welcome").getAttribute("href")).toBe(
       "/welcome",
     );
-    expect(screen.getByTestId("identity-gate-forgot").getAttribute("href")).toBe(forgotUrl);
-    expect(screen.getByTestId("identity-gate-forgot").getAttribute("target")).toBe("_blank");
-  });
+    unmount();
 
-  it("opens signup modal then Borderless sign-up in a new tab", () => {
     render(
       <IdentityGate
         method="borderless_password"
-        forgotPasswordUrl={forgotUrl}
-        signupUrl={signupUrl}
+        borderlessOAuth
         onVerified={vi.fn()}
       />,
     );
-
+    const link = screen.getByTestId("identity-gate-borderless");
+    expect(link.tagName).toBe("A");
+    expect(link.getAttribute("href")).toMatch(/\/auth\/borderless\/start$/);
+    expect(screen.queryByTestId("identity-gate-password")).toBeNull();
     expect(screen.queryByTestId("identity-gate-signup-modal")).toBeNull();
-    fireEvent.click(screen.getByTestId("identity-gate-borderless"));
-    fireEvent.click(screen.getByTestId("identity-gate-signup"));
-    expect(screen.getByTestId("identity-gate-signup-modal")).toBeTruthy();
-
-    const openBorderless = screen.getByTestId("identity-gate-signup-open-borderless");
-    expect(openBorderless.getAttribute("href")).toBe(signupUrl);
-    expect(openBorderless.getAttribute("target")).toBe("_blank");
-
-    fireEvent.click(screen.getByTestId("identity-gate-signup-already"));
-    expect(screen.queryByTestId("identity-gate-signup-modal")).toBeNull();
-  });
-
-  it("hides account links when URLs are empty", () => {
-    render(
-      <IdentityGate
-        method="borderless_password"
-        forgotPasswordUrl=""
-        signupUrl=""
-        onVerified={vi.fn()}
-      />,
-    );
-    fireEvent.click(screen.getByTestId("identity-gate-borderless"));
-    expect(screen.getByTestId("identity-gate-password")).toBeTruthy();
-    expect(screen.queryByTestId("identity-gate-forgot")).toBeNull();
-    expect(screen.queryByTestId("identity-gate-signup")).toBeNull();
   });
 
   it("signs in with a Career Forge password and creates an account without a code", async () => {
@@ -226,7 +193,6 @@ describe("IdentityGate password", () => {
       );
       expect(onVerified).toHaveBeenCalled();
     });
-    expect(signInWithPassword).not.toHaveBeenCalled();
     expect(requestOtp).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByTestId("identity-gate-career-forge-create"));
@@ -297,7 +263,8 @@ describe("IdentityGate password", () => {
     expect(screen.getByTestId("identity-gate-error").textContent).toBe(
       "This email already has an account.",
     );
-    expect(screen.getByTestId("identity-gate-borderless")).toBeTruthy();
+    expect(screen.queryByTestId("identity-gate-borderless")).toBeNull();
+    expect(screen.queryByTestId("identity-gate-signup-modal")).toBeNull();
   });
 
   it("offers a resend when the Career Forge password is not confirmed yet", async () => {
@@ -440,10 +407,9 @@ describe("IdentityGate password", () => {
         onVerified={vi.fn()}
       />,
     );
-    fireEvent.click(screen.getByTestId("identity-gate-borderless"));
-    const field = screen.getByTestId("identity-gate-password");
+    const field = screen.getByTestId("identity-gate-career-forge-password");
     expect(field.getAttribute("type")).toBe("password");
-    fireEvent.click(screen.getByTestId("identity-gate-toggle-password"));
+    fireEvent.click(screen.getByTestId("identity-gate-career-forge-toggle-password"));
     expect(field.getAttribute("type")).toBe("text");
   });
 

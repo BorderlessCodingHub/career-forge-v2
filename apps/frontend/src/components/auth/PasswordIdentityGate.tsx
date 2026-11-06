@@ -17,13 +17,13 @@ import {
   requestCareerForgePasswordReset,
   resendCareerForgeConfirmation,
   signInWithCareerForgePassword,
-  signInWithPassword,
 } from "@/lib/api-client";
 import { DEFAULT_PHONE_COUNTRY, signupPhone } from "@/lib/phone";
 
 type PasswordIdentityGateProps = {
   forgotPasswordUrl?: string;
   signupUrl?: string;
+  borderlessOAuth?: boolean;
   onVerified: () => void;
 };
 
@@ -32,8 +32,7 @@ type CareerView = "signin" | "signup" | "forgot" | "check";
 const PASSWORD_MIN_LENGTH = 8;
 
 export function PasswordIdentityGate({
-  forgotPasswordUrl = "",
-  signupUrl = "",
+  borderlessOAuth = false,
   onVerified,
 }: PasswordIdentityGateProps) {
   const t = useTranslations("identity");
@@ -45,27 +44,25 @@ export function PasswordIdentityGate({
   const [phoneNational, setPhoneNational] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [signupOpen, setSignupOpen] = useState(false);
-  const [door, setDoor] = useState<"borderless" | "career_forge">("career_forge");
   const [view, setView] = useState<CareerView>("signin");
   const [sentTo, setSentTo] = useState("");
   const [canResend, setCanResend] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const forgot = forgotPasswordUrl.trim();
-  const signup = signupUrl.trim();
 
   useEffect(() => {
-    const account = new URLSearchParams(window.location.search).get("account");
+    const params = new URLSearchParams(window.location.search);
+    const account = params.get("account");
     if (account === "signup") {
-      setDoor("career_forge");
       setView("signup");
     } else if (account === "forgot") {
-      setDoor("career_forge");
       setView("forgot");
     }
-  }, []);
+    if (params.get("oauth") === "failed") {
+      setError(t("borderlessOAuthFailed"));
+    }
+  }, [t]);
 
   function resetFeedback() {
     setError(null);
@@ -77,24 +74,6 @@ export function PasswordIdentityGate({
     if (err instanceof MailDeliveryError) return t("couldNotSendEmail");
     if (err instanceof Error && err.message) return err.message;
     return fallback;
-  }
-
-  async function handleSignIn() {
-    const trimmedEmail = email.trim();
-    if (!trimmedEmail || !password) {
-      setError(t("enterEmailPassword"));
-      return;
-    }
-    setBusy(true);
-    resetFeedback();
-    try {
-      await signInWithPassword(trimmedEmail, password);
-      onVerified();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t("invalidPassword"));
-    } finally {
-      setBusy(false);
-    }
   }
 
   async function handleCareerForgeSignIn() {
@@ -205,14 +184,9 @@ export function PasswordIdentityGate({
     }
   }
 
-  function openBorderless() {
-    setDoor("borderless");
-    setView("signin");
-    resetFeedback();
-  }
+  const borderlessStart = `${(process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "")}/auth/borderless/start`;
 
-  if (door === "career_forge") {
-    return (
+  return (
       <IdentityGateShell screen="identity-gate-password">
         <div className="mx-auto max-w-md rounded-md border border-border bg-surface px-6 py-8">
           <h1 className="text-2xl font-semibold text-text-primary">{t("careerForgeTitle")}</h1>
@@ -388,22 +362,25 @@ export function PasswordIdentityGate({
                   {t("signUp")}
                 </button>
               </p>
-              <div className="mt-6 flex items-center gap-3">
-                <div className="h-px flex-1 bg-border" />
-                <span className="text-xs uppercase tracking-wide text-text-muted">
-                  {t("orDivider")}
-                </span>
-                <div className="h-px flex-1 bg-border" />
-              </div>
-              <button
-                type="button"
-                className="mt-4 flex w-full items-center justify-center gap-3 rounded-md border border-border bg-bg px-4 py-2.5 text-sm font-medium text-text-primary hover:bg-surface"
-                data-testid="identity-gate-borderless"
-                onClick={openBorderless}
-              >
-                <BrandMark size={18} />
-                {t("continueWithBorderless")}
-              </button>
+              {borderlessOAuth ? (
+                <>
+                  <div className="mt-6 flex items-center gap-3">
+                    <div className="h-px flex-1 bg-border" />
+                    <span className="text-xs uppercase tracking-wide text-text-muted">
+                      {t("orDivider")}
+                    </span>
+                    <div className="h-px flex-1 bg-border" />
+                  </div>
+                  <a
+                    href={borderlessStart}
+                    className="mt-4 flex w-full items-center justify-center gap-3 rounded-md border border-border bg-bg px-4 py-2.5 text-sm font-medium text-text-primary hover:bg-surface"
+                    data-testid="identity-gate-borderless"
+                  >
+                    <BrandMark size={18} />
+                    {t("continueWithBorderless")}
+                  </a>
+                </>
+              ) : null}
             </>
           ) : (
             <button
@@ -443,145 +420,6 @@ export function PasswordIdentityGate({
         </div>
       </IdentityGateShell>
     );
-  }
-
-  return (
-    <IdentityGateShell screen="identity-gate-password">
-      <div className="mx-auto max-w-md rounded-md border border-border bg-surface px-6 py-8">
-        <h1 className="text-2xl font-semibold text-text-primary">{t("signIn")}</h1>
-        <p className="mt-2 text-sm text-text-secondary">{t("passwordDescription")}</p>
-
-        <form
-          className="mt-6 space-y-4"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void handleSignIn();
-          }}
-        >
-          <EmailField
-            email={email}
-            busy={busy}
-            onChange={setEmail}
-            label={t("email")}
-            testId="identity-gate-email"
-          />
-
-          <label className="block space-y-1">
-            <span className="text-sm text-text-secondary">{t("password")}</span>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                className="w-full rounded-md border border-border bg-bg px-3 py-2 pr-12 text-sm text-text-primary"
-                value={password}
-                disabled={busy}
-                data-testid="identity-gate-password"
-                onChange={(event) => setPassword(event.target.value)}
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-2 flex items-center text-text-muted"
-                data-testid="identity-gate-toggle-password"
-                aria-label={showPassword ? t("hidePassword") : t("showPassword")}
-                onClick={() => setShowPassword((open) => !open)}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </label>
-
-          {forgot ? (
-            <a
-              href={forgot}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block text-sm text-accent underline-offset-2 hover:underline"
-              data-testid="identity-gate-forgot"
-            >
-              {t("forgotPassword")}
-            </a>
-          ) : null}
-
-          <Button type="submit" className="w-full" disabled={busy} data-testid="identity-gate-signin">
-            {busy ? t("signingIn") : t("signIn")}
-          </Button>
-        </form>
-
-        {signup ? (
-          <p className="mt-4 text-sm text-text-secondary">
-            {t("noAccount")}{" "}
-            <button
-              type="button"
-              className="text-accent underline-offset-2 hover:underline"
-              data-testid="identity-gate-signup"
-              onClick={() => setSignupOpen(true)}
-            >
-              {t("signUp")}
-            </button>
-          </p>
-        ) : null}
-
-        <button
-          type="button"
-          className="mt-4 block text-sm text-text-secondary underline-offset-2 hover:underline"
-          data-testid="identity-gate-career-forge"
-          onClick={() => {
-            setDoor("career_forge");
-            setView("signin");
-            resetFeedback();
-          }}
-        >
-          {t("backToCareerForge")}
-        </button>
-
-        {error ? (
-          <p className="mt-3 text-sm text-red-400" data-testid="identity-gate-error">
-            {error}
-          </p>
-        ) : null}
-      </div>
-
-      {signupOpen && signup ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
-          data-testid="identity-gate-signup-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="identity-gate-signup-title"
-        >
-          <div className="w-full max-w-md rounded-md border border-border bg-surface px-6 py-6">
-            <h2 id="identity-gate-signup-title" className="text-lg font-semibold text-text-primary">
-              {t("createAccountTitle")}
-            </h2>
-            <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-text-secondary">
-              <li>{t("signupStep1")}</li>
-              <li>{t("signupStep2")}</li>
-              <li>{t("signupStep3")}</li>
-            </ol>
-            <div className="mt-6 flex flex-col gap-2">
-              <a
-                href={signup}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-md bg-accent px-4 py-2 text-center text-sm font-medium text-white hover:opacity-90"
-                data-testid="identity-gate-signup-open-borderless"
-              >
-                {t("createOnBorderless")}
-              </a>
-              <Button
-                type="button"
-                variant="ghost"
-                data-testid="identity-gate-signup-already"
-                onClick={() => setSignupOpen(false)}
-              >
-                {t("alreadyHaveAccount")}
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-    </IdentityGateShell>
-  );
 }
 
 function EmailField({

@@ -572,6 +572,8 @@
     "alreadyHaveAccount": "I already have an account",
     "useCareerForgePassword": "No Borderless account? Use a Career Forge password",
     "continueWithBorderless": "Continue with Borderless",
+    "borderlessOAuthFailed": "Sign-in with Borderless did not finish. Try again.",
+    "borderlessOAuthWorking": "Finishing sign-in with Borderless.",
     "orDivider": "or",
     "backToCareerForge": "Back to Career Forge",
     "careerForgeTitle": "Sign in",

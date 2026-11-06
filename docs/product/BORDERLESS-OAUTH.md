@@ -38,9 +38,9 @@ Verify the `id_token` with the issuer JWKS: signature, `iss`, `aud` equal to the
 ## Sign-in flow
 
 1. The learner chooses Borderless on the password gate. The browser navigates to `GET /auth/borderless/start`.
-2. The backend creates `state`, `nonce`, and a PKCE verifier, stores them in `HttpOnly`, `Secure`, `SameSite=Lax` cookies with a short lifetime, and redirects to the authorize URL with `response_type=code`, the scopes, `state`, `nonce`, and the S256 `code_challenge`.
+2. The backend creates `state`, `nonce`, and a PKCE verifier, stores them in `HttpOnly`, `SameSite=Lax` cookies with a short lifetime, and redirects to the authorize URL with `response_type=code`, the scopes, `state`, `nonce`, and the S256 `code_challenge`. The cookies are `Secure` outside local and test. Local and test use path `/` so the API test client can send them. Elsewhere the path is `/career-forge`.
 3. Borderless sends the browser to `/career-forge/auth/borderless/callback` with `code` and `state`, or with an error.
-4. The page posts `code` and `state` to `POST /auth/borderless/callback`.
+4. The page posts `code` and `state` to `POST /auth/borderless/exchange` on the same origin as the start redirect, so the cookies are included. The callback path is a Next.js page, so that POST would not reach the API. `POST /auth/borderless/callback` is the same handler for tests that talk to the API directly.
 5. The backend checks `state`, exchanges the code with the verifier and HTTP Basic auth, verifies the `id_token`, binds the account, seals the refresh token, applies the membership claim, and returns the Career Forge JWT.
 6. The page stores that JWT the same way `POST /auth/account/signin` does, and the gate closes.
 

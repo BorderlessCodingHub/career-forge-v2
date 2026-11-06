@@ -37,7 +37,16 @@ from career_forge.schemas.otp import (
     SigninBody,
     SigninResponse,
 )
-from career_forge.services.borderless_signin import signin
+from career_forge.errors import BorderlessOAuthFailedError, GoneError
+from career_forge.services.borderless_oauth import (
+    _COOKIE_NONCE,
+    _COOKIE_STATE,
+    _COOKIE_VERIFIER,
+    authorization_request,
+    complete_authorization,
+    cookie_params,
+    oauth_configured,
+)
 from career_forge.services.career_forge_password import (
     confirm_account,
     register_account,
@@ -112,6 +121,7 @@ def identity_mode() -> IdentityModeResponse:
         method=method,
         signup_url=settings.borderless_signup_url.strip(),
         forgot_password_url=settings.borderless_forgot_password_url.strip(),
+        borderless_oauth=oauth_configured(),
     )
 
 
@@ -189,20 +199,62 @@ def account_signin(
     return SigninResponse(**result)
 
 
-@router.post("/signin", response_model=SigninResponse)
-def borderless_password_signin(
-    body: SigninBody,
+class OAuthCallbackBody(BaseModel):
+    code: str = Field(min_length=1, max_length=2048)
+    state: str = Field(min_length=1, max_length=512)
+
+
+def _set_oauth_cookies(response: Response, values: dict[str, str]) -> None:
+    params = cookie_params()
+    for key, value in values.items():
+        response.set_cookie(key=key, value=value, **params)
+
+
+def _clear_oauth_cookies(response: Response) -> None:
+    params = cookie_params()
+    for key in (_COOKIE_STATE, _COOKIE_NONCE, _COOKIE_VERIFIER):
+        response.delete_cookie(key=key, path=str(params["path"]))
+
+
+@router.get("/borderless/start")
+def borderless_oauth_start() -> Response:
+    """Redirect to Borderless. Absent credentials do not start a redirect."""
+    if not oauth_configured():
+        raise BorderlessOAuthFailedError()
+    url, cookies = authorization_request()
+    response = Response(status_code=302, headers={"location": url})
+    _set_oauth_cookies(response, cookies)
+    return response
+
+
+@router.post("/borderless/callback", response_model=SigninResponse)
+@router.post("/borderless/exchange", response_model=SigninResponse)
+def borderless_oauth_callback(
+    body: OAuthCallbackBody,
     request: Request,
     db: Session = Depends(get_db),
-) -> SigninResponse:
-    """Check Borderless credentials server-side and mint a Career Forge JWT."""
-    result = signin(
+) -> Response:
+    """Exchange the authorization code and return a Career Forge JWT."""
+    result = complete_authorization(
         db,
-        email=body.email,
-        password=body.password,
-        client_ip=_client_ip(request),
+        code=body.code,
+        state=body.state,
+        cookie_state=request.cookies.get(_COOKIE_STATE),
+        cookie_nonce=request.cookies.get(_COOKIE_NONCE),
+        cookie_verifier=request.cookies.get(_COOKIE_VERIFIER),
     )
-    return SigninResponse(**result)
+    response = Response(
+        content=SigninResponse(**result).model_dump_json(),
+        media_type="application/json",
+    )
+    _clear_oauth_cookies(response)
+    return response
+
+
+@router.post("/signin", response_model=SigninResponse)
+def borderless_password_signin() -> SigninResponse:
+    """Borderless email and password sign-in is retired."""
+    raise GoneError("Borderless password sign-in is gone — use Borderless sign-in")
 
 
 def _resolve_enter_external_id(request: Request, body: PilotEnterBody) -> str:
