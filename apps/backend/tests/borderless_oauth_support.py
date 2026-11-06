@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import time
 
+import json
+
 import jwt
-from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import ed25519
 from fastapi.testclient import TestClient
-from jwt.algorithms import RSAAlgorithm
+from jwt.algorithms import OKPAlgorithm
 
 from career_forge.config import settings
 from career_forge.services.borderless_oauth import (
@@ -24,9 +26,11 @@ TOKEN = "https://api.borderlesscoding.com/api/auth/oauth2/token"
 
 class FakeBorderlessOAuth:
     def __init__(self) -> None:
-        self.private = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-        jwk = json_jwk(self.private.public_key())
+        # The live issuer signs id tokens with EdDSA (Ed25519), not RS256.
+        self.private = ed25519.Ed25519PrivateKey.generate()
+        jwk = json.loads(OKPAlgorithm.to_jwk(self.private.public_key()))
         jwk["kid"] = "k1"
+        jwk["alg"] = "EdDSA"
         self.jwk = jwk
         self.claims: dict = {}
         self.refresh_membership: str | None = None
@@ -68,16 +72,10 @@ class FakeBorderlessOAuth:
         token = jwt.encode(
             claims,
             self.private,
-            algorithm="RS256",
+            algorithm="EdDSA",
             headers={"kid": "k1"},
         )
         return token if isinstance(token, str) else token.decode()
-
-
-def json_jwk(public_key) -> dict:
-    import json
-
-    return json.loads(RSAAlgorithm.to_jwk(public_key))
 
 
 def enable_oauth() -> None:

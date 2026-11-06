@@ -210,6 +210,62 @@ def test_mismatched_sub_is_409_and_unverified_email_is_403(
         )
 
 
+def test_rs256_id_token_still_verifies() -> None:
+    import json
+    import time
+
+    import jwt
+    from cryptography.hazmat.primitives.asymmetric import rsa
+    from jwt.algorithms import RSAAlgorithm
+
+    from career_forge.config import settings
+    from career_forge.errors import BorderlessOAuthFailedError
+    from career_forge.services.borderless_oauth import (
+        ISSUER,
+        set_borderless_oauth_client,
+        verify_id_token,
+    )
+
+    private = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    jwk = json.loads(RSAAlgorithm.to_jwk(private.public_key()))
+    jwk["kid"] = "rsa1"
+    jwk["alg"] = "RS256"
+    now = int(time.time())
+    token = jwt.encode(
+        {
+            "iss": ISSUER,
+            "aud": CLIENT_ID,
+            "sub": "borderless-rsa",
+            "iat": now,
+            "exp": now + 3600,
+            "nonce": "n1",
+        },
+        private,
+        algorithm="RS256",
+        headers={"kid": "rsa1"},
+    )
+
+    class _Keys:
+        def jwks(self) -> dict:
+            return {"keys": [jwk]}
+
+    settings.borderless_oauth_client_id = CLIENT_ID
+    set_borderless_oauth_client(_Keys())  # type: ignore[arg-type]
+    claims = verify_id_token(token, nonce="n1")
+    assert claims["sub"] == "borderless-rsa"
+
+    hmac = jwt.encode(
+        {"iss": ISSUER, "aud": CLIENT_ID},
+        "test-hmac-secret-long-enough-32b",
+        algorithm="HS256",
+    )
+    try:
+        verify_id_token(hmac, nonce=None)
+    except BorderlessOAuthFailedError:
+        return
+    raise AssertionError("HS256 id token was accepted")
+
+
 def test_borderless_password_proxy_is_gone(raw_client: TestClient) -> None:
     gone = raw_client.post(
         "/auth/signin",

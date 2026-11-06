@@ -8,15 +8,15 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import logging
 import secrets
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Protocol
+from typing import NoReturn, Protocol
 from urllib import error, parse, request
 
 import jwt
-from jwt.algorithms import RSAAlgorithm
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -38,6 +38,8 @@ from career_forge.services.borderless_profile import (
 )
 from career_forge.services.career_forge_password import claim_pending_signup
 
+logger = logging.getLogger(__name__)
+
 ISSUER = "https://api.borderlesscoding.com/api/auth"
 REDIRECT_URI = "https://labs.borderlesscoding.com/career-forge/auth/borderless/callback"
 SCOPES = "openid profile email offline_access"
@@ -47,6 +49,9 @@ _COOKIE_NONCE = "cf_borderless_oauth_nonce"
 _COOKIE_VERIFIER = "cf_borderless_oauth_verifier"
 _COOKIE_TTL_SECONDS = 600
 _HTTP_TIMEOUT = 5.0
+# Borderless publishes an Ed25519 key and signs with EdDSA. RS256 stays
+# accepted for a JWKS key that declares it.
+_ALLOWED_ALGS = frozenset({"EdDSA", "RS256"})
 
 
 @dataclass(frozen=True)
@@ -209,18 +214,21 @@ def verify_id_token(id_token: str, *, nonce: str | None) -> dict:
     try:
         header = jwt.get_unverified_header(id_token)
     except jwt.PyJWTError as exc:
-        raise BorderlessOAuthFailedError() from exc
-    key = _jwk_for(header.get("kid"), get_borderless_oauth_client().jwks())
+        _reject_id_token(exc)
+    algorithm = header.get("alg")
+    if not isinstance(algorithm, str) or algorithm not in _ALLOWED_ALGS:
+        raise BorderlessOAuthFailedError()
+    key = _jwk_for(header.get("kid"), algorithm, get_borderless_oauth_client().jwks())
     try:
         claims = jwt.decode(
             id_token,
             key,
-            algorithms=["RS256"],
+            algorithms=[algorithm],
             audience=settings.borderless_oauth_client_id.strip(),
             issuer=ISSUER,
         )
     except jwt.PyJWTError as exc:
-        raise BorderlessOAuthFailedError() from exc
+        _reject_id_token(exc)
     if nonce is not None and claims.get("nonce") != nonce:
         raise BorderlessOAuthFailedError()
     if not isinstance(claims, dict):
@@ -228,15 +236,30 @@ def verify_id_token(id_token: str, *, nonce: str | None) -> dict:
     return claims
 
 
-def _jwk_for(kid: object, document: dict):
+def _reject_id_token(exc: BaseException) -> NoReturn:
+    logger.warning("borderless id token was rejected (%s)", type(exc).__name__)
+    raise BorderlessOAuthFailedError() from exc
+
+
+def _jwk_for(kid: object, algorithm: str, document: dict):
     keys = document.get("keys") if isinstance(document, dict) else None
     if not isinstance(keys, list):
         raise BorderlessOAuthFailedError()
     for jwk in keys:
         if not isinstance(jwk, dict):
             continue
-        if kid is None or jwk.get("kid") == kid:
-            return RSAAlgorithm.from_jwk(json.dumps(jwk))
+        if kid is not None and jwk.get("kid") != kid:
+            continue
+        declared = jwk.get("alg")
+        if declared not in (None, algorithm):
+            continue
+        try:
+            parsed = jwt.PyJWK.from_dict(jwk)
+        except (jwt.PyJWTError, ValueError, TypeError):
+            continue
+        if parsed.algorithm_name != algorithm:
+            continue
+        return parsed.key
     raise BorderlessOAuthFailedError()
 
 

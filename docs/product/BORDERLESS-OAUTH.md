@@ -33,7 +33,7 @@ The token response carries `access_token` (1 hour), `id_token` (10 hours), and `
 | `borderless_membership` | `FREE`, `STARTER`, `BASE`, or `PSP`. |
 | `picture`, `preferred_username` | Ignore. |
 
-Verify the `id_token` with the issuer JWKS: signature, `iss`, `aud` equal to the client id, `exp`, and `nonce`.
+Verify the `id_token` with the issuer JWKS: signature, `iss`, `aud` equal to the client id, `exp`, and `nonce`. The issuer signs with EdDSA (Ed25519). RS256 is still accepted when the token header and the matching JWKS key both say so.
 
 ## Sign-in flow
 
