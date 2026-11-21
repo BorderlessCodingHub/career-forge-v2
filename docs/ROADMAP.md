@@ -34,6 +34,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Done:** [LABS01-170](https://linear.app/borderless-coding/issue/LABS01-170) — PR #125 (`d099f42`), recorded 2026-11-05. A signed-in learner with an account email leaves a product note at `/feedback`. The page says a reply comes soon from careerforgelabs@gmail.com. Run Alembic `032_learner_feedback_notes`. An empty `FEEDBACK_NOTIFY_EMAIL` sends no notice. Access operators mark Replied.
 
+**Done:** [LABS01-218](https://linear.app/borderless-coding/issue/LABS01-218) — PR #130 (`365cbc7`), recorded 2026-11-21. A new forge saves a Reference only when that run's search returned it and it is free to use. The timeline still shows the raw search. Roadmaps already saved are not rewritten. No migration.
+
 ---
 
 ## Phase 3a (Rebrand + landing + pilots) — ✅ Completed
