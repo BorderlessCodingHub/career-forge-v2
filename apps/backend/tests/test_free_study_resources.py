@@ -134,6 +134,24 @@ def test_removes_only_the_sentence_that_names_a_paid_platform() -> None:
     assert cleaned.nodes[0].tasks
 
 
+def test_keeps_a_dotted_name_when_the_sentence_only_mentions_a_platform() -> None:
+    whole = _plan(why_now="Evite a Udemy no Node.js.")
+    split = _plan(why_now="Leia Node.js. Faça o curso da Udemy para praticar.")
+
+    assert restrict_plan_to_free_sources(whole, set()).nodes[0].why_now == (
+        "Evite a no Node.js."
+    )
+    assert restrict_plan_to_free_sources(split, set()).nodes[0].why_now == "Leia Node.js."
+
+
+def test_drops_every_sentence_that_names_a_platform_and_keeps_the_field() -> None:
+    plan = _plan(why_now="Curso da Udemy. Assinatura da Alura.")
+
+    cleaned = restrict_plan_to_free_sources(plan, set(), locale="pt-BR")
+
+    assert cleaned.nodes[0].why_now == "Segue a trilha."
+
+
 def test_strips_the_platform_name_when_it_is_the_whole_field() -> None:
     plan = _plan(why_now="Faça o curso da Udemy.")
     plan.nodes[0].tasks[0].outcome = "Publicar o exercício da Coursera."

@@ -116,7 +116,9 @@ def evaluator_system(research_urls: list[str] | None = None) -> str:
         "Critique study plans for tech career transitions. "
         "Mark revise if sequence, practice, evidence, sources, or context fit is missing. "
         "Also mark revise when a resource URL is not in the researched URL list, "
-        "when a resource points at a paid platform, or when the plan names a paid platform. "
+        "when a resource host is a paid platform, or when the plan names a paid platform. "
+        "A paid host includes its subdomains. linkedin.com counts only when the path "
+        "is /learning. "
         f"Paid platforms: {_platform_list()}. "
         f"Researched URLs:\n{listed}"
     )
@@ -213,6 +215,7 @@ def _clean_prose(text: str, fallback: str) -> str:
         joined = _tidy(" ".join(kept))
         if _has_words(joined):
             return joined
+        return fallback
     stripped = _tidy(_BRAND.sub("", text))
     if _has_words(stripped):
         return stripped
@@ -220,7 +223,9 @@ def _clean_prose(text: str, fallback: str) -> str:
 
 
 def _sentences(text: str) -> list[str]:
-    return [part.strip() for part in re.findall(r"[^.!?\n]+[.!?]?", text) if part.strip()]
+    """Split on sentence ends. A dot inside Node.js or 3.11 stays in the sentence."""
+    parts = re.split(r"(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ])", text)
+    return [part.strip() for part in parts if part.strip()]
 
 
 def _has_words(text: str) -> bool:
