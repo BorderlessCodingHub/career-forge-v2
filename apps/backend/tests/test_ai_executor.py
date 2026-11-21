@@ -60,7 +60,13 @@ class FakeSearchClient:
 
 
 class FakeEvaluator:
-    async def evaluate(self, plan: StudyPlan, trace=None) -> StudyPlanEvaluation:
+    async def evaluate(
+        self,
+        plan: StudyPlan,
+        trace=None,
+        research_urls=None,
+    ) -> StudyPlanEvaluation:
+        del research_urls
         return StudyPlanEvaluation(
             verdict="ship",
             strengths=["plano testável"],

@@ -166,8 +166,13 @@ def _executor() -> GraphExecutor:
 
 
 class _Evaluator:
-    async def evaluate(self, plan: StudyPlan, trace: Any = None) -> StudyPlanEvaluation:
-        del plan, trace
+    async def evaluate(
+        self,
+        plan: StudyPlan,
+        trace: Any = None,
+        research_urls: list[str] | None = None,
+    ) -> StudyPlanEvaluation:
+        del plan, trace, research_urls
         return StudyPlanEvaluation(verdict="ship", strengths=["clear sequence"])
 
 

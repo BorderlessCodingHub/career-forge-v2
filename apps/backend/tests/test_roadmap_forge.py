@@ -20,6 +20,7 @@ from career_forge.schemas.study_plan import (
     StudyPlanEvaluation,
     StudyPlanNode,
     StudyPlanTask,
+    StudyResource,
 )
 from career_forge.schemas.diagnosis import DiagnosisRequest
 
@@ -90,7 +91,13 @@ class FakeSearchClient:
 
 
 class FakeEvaluator:
-    async def evaluate(self, plan: StudyPlan, trace=None) -> StudyPlanEvaluation:
+    async def evaluate(
+        self,
+        plan: StudyPlan,
+        trace=None,
+        research_urls=None,
+    ) -> StudyPlanEvaluation:
+        del research_urls
         return StudyPlanEvaluation(
             verdict="ship",
             strengths=["sequência inicial clara"],
@@ -246,11 +253,119 @@ class CountingPlanner(FakePlanner):
         return _fake_plan(strategy="Plano revisado")
 
 
+@pytest.mark.asyncio
+async def test_timeline_keeps_paid_search_hit_and_saved_roadmap_drops_it(
+    diagnosis_dict: dict,
+) -> None:
+    paid = "https://www.udemy.com/course/fastapi/"
+    free = "https://fastapi.tiangolo.com/"
+    factory = AgentFactory()
+    factory.register(
+        "roadmap_forge",
+        lambda: RoadmapForgeGraphRunnable(
+            search_client=_PaidSearch(paid=paid, free=free),
+            planner=_PaidPlanner(paid=paid, free=free),
+            evaluator=FakeEvaluator(),
+        ),
+    )
+    executor = GraphExecutor(factory=factory, store=InMemoryGraphRunStore())
+    result = await executor.execute(
+        GraphRun(
+            graph_name="roadmap_forge",
+            user_id="test-user",
+            input={"diagnosis": diagnosis_dict},
+        ),
+        stream=False,
+    )
+
+    assert isinstance(result, GraphRunResult)
+    cited = [
+        source["url"]
+        for event in result.events
+        if event["type"] == "artifact_found"
+        for source in event.get("sources") or []
+    ]
+    assert paid in cited
+    graph = result.events[-1]["graph"]
+    node = next(item for item in graph if item["node_id"] == "python-ai")
+    assert [reference["url"] for reference in node["references"]] == [free]
+    assert node["rationale"] == "Leia a doc."
+    assert "udemy" not in node["rationale"].lower()
+
+
+class _PaidSearch:
+    def __init__(self, *, paid: str, free: str) -> None:
+        self._paid = paid
+        self._free = free
+
+    async def search(self, prompt: str) -> WebSearchResult:
+        del prompt
+        return WebSearchResult(
+            query="FastAPI",
+            summary="Doc oficial e um curso pago.",
+            sources=[
+                WebSearchSource(title="FastAPI", url=self._free, snippet="docs"),
+                WebSearchSource(title="Curso pago", url=self._paid, snippet="pago"),
+            ],
+        )
+
+
+class _PaidPlanner:
+    def __init__(self, *, paid: str, free: str) -> None:
+        self._paid = paid
+        self._free = free
+
+    async def create_plan(
+        self,
+        *,
+        context,
+        research_events: list[dict],
+        trace=None,
+    ) -> StudyPlan:
+        del context, research_events, trace
+        return StudyPlan(
+            goal="backend",
+            learner_context_summary="summary",
+            strategy="Começar pela documentação.",
+            nodes=[
+                StudyPlanNode(
+                    node_id="python-ai",
+                    title="Python para IA",
+                    why_now="Leia a doc. Faça o curso da Udemy para praticar.",
+                    tasks=[
+                        StudyPlanTask(
+                            title="Ler a documentação",
+                            outcome="Explicar o conceito.",
+                            evidence_prompt="Mostrar um exemplo.",
+                        ),
+                    ],
+                    resources=[
+                        StudyResource(title="FastAPI", url=self._free, snippet="docs"),
+                        StudyResource(title="Curso", url=self._paid, snippet="pago"),
+                    ],
+                ),
+            ],
+        )
+
+    async def revise_plan(self, **kwargs) -> StudyPlan:
+        return await self.create_plan(
+            context=kwargs["context"],
+            research_events=kwargs["research_events"],
+            trace=kwargs.get("trace"),
+        )
+
+
 class RevisingEvaluator:
     def __init__(self) -> None:
         self.calls = 0
 
-    async def evaluate(self, plan: StudyPlan, trace=None) -> StudyPlanEvaluation:
+    async def evaluate(
+        self,
+        plan: StudyPlan,
+        trace=None,
+        research_urls=None,
+    ) -> StudyPlanEvaluation:
+        del research_urls
         self.calls += 1
         if self.calls == 1:
             return StudyPlanEvaluation(
