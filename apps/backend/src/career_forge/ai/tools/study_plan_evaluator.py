@@ -8,6 +8,7 @@ from typing import Protocol
 from career_forge.ai.llm.client import StructuredToolClient
 from career_forge.ai.tracing import LlmTraceContext
 from career_forge.schemas.study_plan import StudyPlan, StudyPlanEvaluation
+from career_forge.services.free_study_resources import evaluator_system
 
 
 class StudyPlanEvaluator(Protocol):
@@ -15,6 +16,7 @@ class StudyPlanEvaluator(Protocol):
         self,
         plan: StudyPlan,
         trace: LlmTraceContext | None = None,
+        research_urls: list[str] | None = None,
     ) -> StudyPlanEvaluation:
         """Return a quality verdict for a draft study plan."""
 
@@ -37,19 +39,17 @@ class OpenAiStudyPlanEvaluator:
         self,
         plan: StudyPlan,
         trace: LlmTraceContext | None = None,
+        research_urls: list[str] | None = None,
     ) -> StudyPlanEvaluation:
-        return await asyncio.to_thread(self._evaluate_sync, plan, trace)
+        return await asyncio.to_thread(self._evaluate_sync, plan, trace, research_urls)
 
     def _evaluate_sync(
         self,
         plan: StudyPlan,
         trace: LlmTraceContext | None = None,
+        research_urls: list[str] | None = None,
     ) -> StudyPlanEvaluation:
-        system = (
-            "You are the Career Forge quality evaluator. "
-            "Critique study plans for tech career transitions. "
-            "Mark revise if sequence, practice, evidence, sources, or context fit is missing."
-        )
+        system = evaluator_system(research_urls)
         user = (
             "Evaluate this StudyPlan and return structured JSON:\n"
             f"{plan.model_dump_json(indent=2)}"

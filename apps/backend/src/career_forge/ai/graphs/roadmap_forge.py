@@ -36,6 +36,11 @@ from career_forge.services.forge_planning import (
     evaluation_artifact,
     study_plan_to_graph,
 )
+from career_forge.services.free_study_resources import (
+    free_search_rule,
+    research_urls_from_events,
+    restrict_plan_to_free_sources,
+)
 from career_forge.services.forge_context import (
     LearnerForgeContext,
     build_forge_context_from_input,
@@ -242,7 +247,8 @@ def build_research_prompts(context: LearnerForgeContext) -> list[str]:
             focus="official roadmap and prerequisites",
             instruction=(
                 "Find official sources to structure the learner's goal journey. "
-                "Prefer roadmap.sh, official language/framework docs, and fundamentals."
+                "Prefer roadmap.sh, official language/framework docs, and fundamentals. "
+                f"{free_search_rule()}"
             ),
             summary=summary,
         ),
@@ -251,7 +257,8 @@ def build_research_prompts(context: LearnerForgeContext) -> list[str]:
             focus="hands-on projects and practical evidence",
             instruction=(
                 "Find official sources or canonical examples that help the learner go "
-                "from zero practice to demonstrable projects."
+                "from zero practice to demonstrable projects. "
+                f"{free_search_rule()}"
             ),
             summary=summary,
         ),
@@ -260,7 +267,8 @@ def build_research_prompts(context: LearnerForgeContext) -> list[str]:
             focus="APIs and real AI products",
             instruction=(
                 "Find official documentation for building APIs/products with AI, "
-                "including the OpenAI API when relevant."
+                "including the OpenAI API when relevant. "
+                f"{free_search_rule()}"
             ),
             summary=summary,
         ),
@@ -428,6 +436,7 @@ class RoadmapForgeGraphRunnable:
         planner = self._planner or build_study_plan_planner_from_env()
         evaluator = self._evaluator or build_study_plan_evaluator_from_env()
         trace = require_trace_from_input(input_data, graph_name=self.graph_name)
+        researched = research_urls_from_events(research_events)
         graph = build_accumulated_graph(diagnosis, allowed_node_ids=allowed_node_ids)
         plan = build_draft_study_plan(
             context=context,
@@ -449,7 +458,11 @@ class RoadmapForgeGraphRunnable:
                 {"forge_event": _planner_artifact(iteration)},
             )
 
-            evaluation = await evaluator.evaluate(plan, trace=trace)
+            evaluation = await evaluator.evaluate(
+                plan,
+                trace=trace,
+                research_urls=researched,
+            )
             yield emit_chain_stream(
                 "evaluate_plan",
                 run_id,
@@ -477,6 +490,11 @@ class RoadmapForgeGraphRunnable:
                     trace=trace,
                 )
 
+        plan = restrict_plan_to_free_sources(
+            plan,
+            researched,
+            locale=context.output_locale,
+        )
         final_graph = study_plan_to_graph(plan)
         if allowed_node_ids is not None:
             filtered = [n for n in final_graph if n.node_id in allowed_node_ids]
