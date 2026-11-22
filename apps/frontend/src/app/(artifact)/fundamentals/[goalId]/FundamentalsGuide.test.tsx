@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
 
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { useEffect, useState, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { ReactNode } from "react";
 
+import { ArtifactShell } from "@/components/layout/ArtifactShell";
 import { getFundamentalsGuide, openForge } from "@/lib/api-client";
+import type { Locale } from "@/lib/locale";
 import { getSelectedGoal, setSelectedGoal } from "@/lib/onboarding-session";
 
 import FundamentalsGuide from "./FundamentalsGuide";
@@ -14,12 +16,13 @@ const navigation = vi.hoisted(() => ({
   push: vi.fn((href: string) => {
     navigation.goalId = href.split("/").filter(Boolean).pop() ?? navigation.goalId;
   }),
+  refresh: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
   useParams: () => ({ goalId: navigation.goalId }),
   usePathname: () => `/fundamentals/${navigation.goalId}`,
-  useRouter: () => ({ push: navigation.push, refresh: vi.fn() }),
+  useRouter: () => ({ push: navigation.push, refresh: navigation.refresh }),
 }));
 
 vi.mock("next/link", () => ({
@@ -55,6 +58,8 @@ vi.mock("@/lib/api-client", () => ({
   })),
   openForge: vi.fn(),
   syncRoadmap: vi.fn(),
+  updateMyLocale: vi.fn(),
+  getMyProfile: vi.fn(async () => ({ email: "ana@example.com" })),
 }));
 
 const GUIDE = [
@@ -78,11 +83,51 @@ const TUNE_GUIDE = [
   "",
 ].join("\n");
 
+const PORTUGUESE = [
+  "Um sistema de RAG em produção recupera passagens primeiro e só então pede ao modelo que responda a partir dessas passagens.",
+  "",
+  "## Recupere antes de o modelo escrever",
+  "",
+  "A pergunta chega ao acervo primeiro.",
+  "",
+  "## Observe o ciclo de recuperação",
+  "",
+  "https://www.youtube.com/watch?v=PtBrRagVid1",
+  "",
+].join("\n");
+
+function localeCookie(): string | undefined {
+  return document.cookie
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith("cf_locale="))
+    ?.slice("cf_locale=".length);
+}
+
+/** The signed-in page: the shell's locale control refreshes, and that refresh is the locale. */
+function SignedInGuide() {
+  const [locale, setLocale] = useState<Locale>("pt-BR");
+  (globalThis as { __cfLocale?: string }).__cfLocale = locale;
+  useEffect(() => {
+    navigation.refresh.mockImplementation(() => {
+      setLocale(localeCookie() === "pt-BR" ? "pt-BR" : "en");
+    });
+  }, []);
+  return (
+    <ArtifactShell>
+      <FundamentalsGuide />
+    </ArtifactShell>
+  );
+}
+
 afterEach(() => {
   cleanup();
   navigation.goalId = "rag-engineer";
   navigation.push.mockClear();
+  navigation.refresh.mockReset();
   vi.mocked(openForge).mockClear();
+  delete (globalThis as { __cfLocale?: string }).__cfLocale;
+  document.cookie = "cf_locale=; Path=/; Max-Age=0";
 });
 
 describe("Fundamentals guide", () => {
@@ -180,5 +225,66 @@ describe("Fundamentals guide", () => {
     expect(screen.getByTestId("fundamentals-goal").textContent).toBe("Agent Engineering");
     expect(getSelectedGoal()).toBe("fine-tuning");
     expect(openForge).not.toHaveBeenCalled();
+  });
+
+  it("opens the Portuguese edition for the same Goal and follows the locale control back to English", async () => {
+    vi.mocked(getFundamentalsGuide).mockImplementation(async (goalId, locale) => {
+      if (goalId !== "rag-engineer") throw new Error(`opened ${goalId}`);
+      if (locale === "pt-BR") {
+        return {
+          goal_id: "rag-engineer",
+          locale: "pt-BR",
+          body_markdown: PORTUGUESE,
+        };
+      }
+      if (locale === "en") {
+        return {
+          goal_id: "rag-engineer",
+          locale: "en",
+          body_markdown: GUIDE,
+        };
+      }
+      throw new Error(`unexpected locale ${locale}`);
+    });
+    vi.mocked(getFundamentalsGuide).mockClear();
+
+    render(<SignedInGuide />);
+
+    expect((await screen.findByTestId("fundamentals-goal")).textContent).toBe(
+      "RAG de produção e recuperação avançada",
+    );
+    const guide = screen.getByTestId("fundamentals-guide");
+    expect(guide.textContent).toContain("A pergunta chega ao acervo primeiro.");
+    expect(guide.querySelector("h2")?.textContent).toBe(
+      "Recupere antes de o modelo escrever",
+    );
+    expect(screen.getByTitle("YouTube video").getAttribute("src")).toBe(
+      "https://www.youtube.com/embed/PtBrRagVid1",
+    );
+    expect(screen.getByTestId("fundamentals").querySelector("[data-testid='locale-switch']")).toBeNull();
+    const control = screen.getByTestId("locale-switch");
+    expect(screen.getByTestId("artifact-topbar").contains(control)).toBe(true);
+    expect(screen.getAllByTestId("locale-switch")).toHaveLength(1);
+
+    fireEvent.click(screen.getByTestId("locale-switch-en"));
+
+    expect(localeCookie()).toBe("en");
+    expect((await screen.findByTestId("fundamentals-goal")).textContent).toBe(
+      "Production RAG & Advanced Retrieval",
+    );
+    const english = screen.getByTestId("fundamentals-guide");
+    expect(english.textContent).toContain("The question hits the store first.");
+    expect(english.textContent).not.toContain("A pergunta chega ao acervo primeiro.");
+    expect(screen.getByTitle("YouTube video").getAttribute("src")).toBe(
+      "https://www.youtube.com/embed/T-D1OfcDW1M",
+    );
+    expect(screen.getByTestId("fundamentals").querySelector("[data-testid='locale-switch']")).toBeNull();
+    expect(
+      vi.mocked(getFundamentalsGuide).mock.calls.every(([goalId]) => goalId === "rag-engineer"),
+    ).toBe(true);
+    expect(vi.mocked(getFundamentalsGuide).mock.calls.map(([, locale]) => locale)).toEqual([
+      "pt-BR",
+      "en",
+    ]);
   });
 });

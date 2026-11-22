@@ -254,17 +254,13 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
-## 6c. Canonical skill content (`/learn/{skill_id}`) — MUST match (CAR-94)
+## 6c. Old skill lesson (`/learn/{skill_id}`) — absent (LABS01-222)
 
 | Constraint | Detail |
 |------------|--------|
-| Identity | ProductEntryGate; in-app, not a public blog |
-| Address | `/learn/{skill_id}` — one piece per catalog skill (ADR-004) |
-| Attach | Drawer link only when the trail DTO has `canonical` (focus + published body). No placeholder |
-| Body | Git-owned markdown; title/URL resolved live from the Content sidecar. Additive blocks: `![alt](/path)` figure (same-origin `/` only), `>` callout, fenced `quiz` (client MCQ). Heading / paragraph / `-` / code unchanged |
-| Invalid | Unpublished or missing body → `/roadmap`; no empty viewer |
-| Forbidden | Generating posts from forge; unifying with `/reference`; indexing per-run URLs |
-| Hooks | `canonical-learn`, `open-canonical-learn`, `learn-return-to-roadmap` |
+| Node | Does not offer the skill lesson. Validate mastery stays |
+| Address | Opening `/learn/{skill_id}` does not present that lesson. It leaves for the Roadmap |
+| Reading | Fundamentals, from the signed-in top bar |
 
 ---
 
@@ -275,9 +271,9 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Identity | Email identity. ProductEntryGate. A subscription is not required |
 | Address | Inside a Roadmap, that Roadmap's Goal. On the forges list, and on any signed-in screen that is not a Roadmap, the first published guide. Welcome has no entry |
 | Layout | Published Goals on the left, in catalog order; the open guide in the center; that guide's sections on the right. Opening another Goal does not change the Roadmap |
-| Body | Git-owned edition for the locale she already chose. A YouTube URL in the body plays in the page. A missing edition is the other language |
+| Body | Git-owned English or pt-BR edition. A YouTube URL in the body plays in the page. A missing edition is the other language |
 | Absent | A Goal with no edition is not in the list and is not readable |
-| Out | pt-BR edition, removing `/learn` |
+| Out | A public page, a Node link |
 
 ---
 

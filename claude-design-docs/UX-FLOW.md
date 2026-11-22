@@ -11,7 +11,7 @@
 [/welcome marketing — optional] → Goal → Onboarding pill rounds → Editable diagnosis → [Generate roadmap] → Forge stream (timeline only) → Animation reveal → Vertical roadmap (artifact mode)
 
 Return visit (CAR-27/29): if ≥1 forge artifact → Continue last / View all (/forges) / New forge; if saved diagnosis → Forge again from last diagnosis
-Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner) · /reference?node=&item= (one Node Reference) · /learn/{skill_id} (Canonical skill content when attached)
+Deep-links: /share/{token} (read-only) · /resume/{token} (adopt owner session, single-use; conflict chooser when local forges ≠ owner) · /reference?node=&item= (one Node Reference) · /learn/{skill_id} (old skill lesson; does not present it)
 Marketing: /welcome (CAR-56 Premium B, CAR-92 honesty) — CTA Start diagnosis → `/` product; BASE/PSP included + External USD $7/mo copy (no Stripe/email on Welcome); no apply/strategy/syllabus modals; no auto-redirect from `/`. Welcome footer opens `/legal/privacy`, `/legal/terms`, and `/legal/security` (public, `cf_locale`). Exploration (direct URL only): `/welcome/plg`. Bake-off A (CAR-41, `noindex`): `/welcome/premium-a`. Legacy `/welcome/premium-b` redirects → `/welcome`.
 
 Operator (separate identity): /operator → Operator OTP → Access | Content desk rooms. Desks outside the seat grant are hidden; no learner or Mentor chrome.
@@ -220,7 +220,6 @@ After the animation → navigates to steady state (`/roadmap`).
 - **Description** callout in the drawer when there are no knowledge gaps; a gaps block replaces the callout after a failed validation
 - Collapsible sections — **Expected outcomes**, **Practical tasks**, and **References** open by default (user can collapse); fixed validate CTA in the footer
 - **Practical tasks** section when the graph comes from `StudyPlan` — checkbox per item (optional, does not block mastery)
-- **Canonical skill content** — only when the trail attached a live ref (focus node + published canônico). Opens `/learn/{skill_id}`. Missing content is silence (no placeholder).
 - **References** section (real links when they come from web search) — opens `/reference?node=&item=` inside Career Forge; mark as studied remains a separate act
 - **Study progress** bar (`x/y` completed) when there are items; copy makes clear this does not replace AI validation
 - **Chapter tutor** (`open-tutor-drawer`) — optional technical Q&A; no inline mentor chat in the drawer
@@ -245,17 +244,14 @@ Opening a Reference never marks it done. The viewer uses the existing checklist 
 
 ---
 
-### 6c. Canonical skill content (`/learn/{skill_id}`) — CAR-94
+### 6c. Old skill lesson (`/learn/{skill_id}`) — LABS01-222
 
-**User job:** Read the one Borderless deep-dive for this catalog skill.
+**User job:** She does not read a per-skill lesson. Fundamentals is the reading.
 
 | | |
 |---|---|
-| **Address** | `/learn/{skill_id}` — catalog skill, not forge run |
-| **When** | Node is focus (must-have or diagnosis gap) **and** a published git body exists |
-| **Chrome** | Live sidecar title, git markdown body, CTA back to Roadmap |
-| **Missing** | Silence in the Node drawer; unknown/unpublished URL returns to `/roadmap` |
-| **Out** | Per-forge posts, LLM attach, mixing with `/reference`, public blog index |
+| **Node** | Does not offer the skill lesson. Validate mastery stays |
+| **Address** | Opening `/learn/{skill_id}` does not present that lesson. It leaves for the Roadmap |
 
 ---
 
@@ -268,8 +264,8 @@ Opening a Reference never marks it done. The viewer uses the existing checklist 
 | **Address** | `/fundamentals/{goal_id}` · `data-screen="fundamentals"` |
 | **Entry** | Inside a Roadmap, that Roadmap's Goal. On the forges list and any other signed-in screen, the first published guide. Not Welcome |
 | **Chrome** | Published Goals on the left, in catalog order; the open guide in the center; that guide's sections on the right. Opening another Goal does not change the Roadmap. A YouTube URL in the body plays in the page |
-| **Locale** | The locale she already chose. A missing edition shows the other language. A Goal with no edition is absent |
-| **Out** | Paywall, a public page, a Node link, the pt-BR edition |
+| **Locale** | English or pt-BR, the locale she already chose. A missing edition shows the other language. A Goal with no edition is absent |
+| **Out** | Paywall, a public page, a Node link |
 
 ---
 

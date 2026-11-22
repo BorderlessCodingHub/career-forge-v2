@@ -195,11 +195,6 @@ def test_shipped_rag_engineer_guide_is_english_with_a_video(client: TestClient) 
     assert body.count("https://www.youtube.com/watch?v=T-D1OfcDW1M") == 1
     assert "goal_id:" not in body
 
-    fallback = client.get("/fundamentals/rag-engineer", params={"locale": "pt-BR"})
-    assert fallback.status_code == 200, fallback.text
-    assert fallback.json()["locale"] == "en"
-    assert fallback.json()["body_markdown"] == body
-
     absent = client.get("/fundamentals/llm-evals", params={"locale": "en"})
     assert absent.status_code == 404
     assert absent.json()["detail"] == "fundamentals guide not found"
@@ -216,3 +211,47 @@ def test_shipped_published_goals_follow_catalog_order(client: TestClient) -> Non
             {"goal_id": "fine-tuning"},
         ]
     }
+
+
+ENGLISH_SECTIONS = (
+    "Retrieve before the model writes",
+    "Chunks the retriever can find",
+    "Answer from the passages",
+    "Watch the retrieval loop",
+    "Know when the answer is unsupported",
+)
+PORTUGUESE_SECTIONS = (
+    "Recupere antes de o modelo escrever",
+    "Trechos que o recuperador encontra",
+    "Responda a partir das passagens",
+    "Observe o ciclo de recuperação",
+    "Saiba quando a resposta não se sustenta",
+)
+PORTUGUESE_LEDE = (
+    "Um sistema de RAG em produção recupera passagens primeiro e só então "
+    "pede ao modelo que responda a partir dessas passagens.\n"
+)
+
+
+def _sections(body: str) -> list[str]:
+    return [line.removeprefix("## ") for line in body.splitlines() if line.startswith("## ")]
+
+
+def test_shipped_rag_engineer_guide_has_a_portuguese_edition(client: TestClient) -> None:
+    portuguese = client.get("/fundamentals/rag-engineer", params={"locale": "pt-BR"})
+    english = client.get("/fundamentals/rag-engineer", params={"locale": "en"})
+
+    assert portuguese.status_code == 200, portuguese.text
+    assert english.status_code == 200, english.text
+    pt = portuguese.json()
+    en = english.json()
+    assert pt["goal_id"] == "rag-engineer"
+    assert en["goal_id"] == "rag-engineer"
+    assert pt["locale"] == "pt-BR"
+    assert en["locale"] == "en"
+    assert pt["body_markdown"].startswith(PORTUGUESE_LEDE)
+    assert "goal_id:" not in pt["body_markdown"]
+    assert _sections(pt["body_markdown"]) == list(PORTUGUESE_SECTIONS)
+    assert _sections(en["body_markdown"]) == list(ENGLISH_SECTIONS)
+    assert pt["body_markdown"].count("https://www.youtube.com/watch?v=T-D1OfcDW1M") == 1
+    assert en["body_markdown"].count("https://www.youtube.com/watch?v=T-D1OfcDW1M") == 1
