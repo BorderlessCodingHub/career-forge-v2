@@ -7,12 +7,13 @@ Immutable **business + architecture decisions** for Career Forge. Agents must re
 | [ADR-001](./ADR-001-adaptive-diagnosis-ctrr.md) | **Accepted · binding in v2** | Adaptive diagnosis (CTRR loop brand + Interviewer/Judge) |
 | [ADR-002](./ADR-002-universal-profile-framework.md) | **Keys live in prod** | 5 profile dims (`motivation_goal` … `constraints`); no F2 schema migration |
 | [ADR-003](./ADR-003-forge-recovery-auth-scaffold.md) | **Accepted** (timing / free forge → ADR-005) | Forge recovery + auth scaffold (pre-Borderless) |
-| [ADR-004](./ADR-004-canonical-skill-content.md) | **Accepted** | Canonical skill content — forge refs N:1, not per-run posts |
+| [ADR-004](./ADR-004-canonical-skill-content.md) | **Superseded in part** by ADR-010 | Canonical skill content — N:1 still stands; unit and node attach do not |
 | [ADR-005](./ADR-005-identity-gate-product-entry.md) | **Accepted** | Identity gate at product entry · paywall before diagnosis (CAR-57) |
 | [ADR-006](./ADR-006-sign-out-jti-revocation.md) | **Accepted** | Sign out + JWT jti revocation |
 | [ADR-007](./ADR-007-reference-viewer.md) | **Accepted** | Reference viewer `/reference` — not overlay, not `/learn` |
 | [ADR-008](./ADR-008-borderless-password-credential-check.md) | **Accepted** | Borderless password = credential check; Career Forge stays IdP |
 | [ADR-009](./ADR-009-provider-switch-openrouter.md) | **Accepted** | Provider switch — OpenRouter behind one Access desk control |
+| [ADR-010](./ADR-010-fundamentals.md) | **Accepted** | Fundamentals — one reading per Goal, off the Roadmap |
 
 v2 execution decisions (cost pool, auth platform, goals): [V2-PLAN.md](../V2-PLAN.md) decision log.
 
