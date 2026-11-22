@@ -42,6 +42,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Done:** PR #133 (`701b3c5`), recorded 2026-11-22. No Linear issue. The trail name is the title on the left of the artifact header. Mentor report is the only filled button. The other header variants stay on the local branch `prototype/artifact-header`. No migration. Recreate the frontend.
 
+**Done:** PR #134 (`1b80cf4`), recorded 2026-11-22. No Linear issue. Setup, sign-in, and the artifact header share `LearnerTopbarActions`. Fundamentals, Feedback, and sign out are quiet text. Mentor report stays the only filled button, on the artifact header only. No migration. Recreate the frontend.
+
 ---
 
 ## Phase 3a (Rebrand + landing + pilots) — ✅ Completed
