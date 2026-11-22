@@ -153,3 +153,31 @@ def test_paywall_does_not_block_the_guide(
     )
     assert found.status_code == 200, found.text
     assert found.json()["body_markdown"] == ENGLISH_BODY
+
+
+def test_shipped_rag_engineer_guide_is_english_with_a_video(client: TestClient) -> None:
+    found = client.get("/fundamentals/rag-engineer", params={"locale": "en"})
+
+    assert found.status_code == 200, found.text
+    payload = found.json()
+    assert payload["goal_id"] == "rag-engineer"
+    assert payload["locale"] == "en"
+    body = payload["body_markdown"]
+    assert body.startswith(
+        "A production RAG system retrieves passages first, then asks the model to answer from those passages.\n"
+    )
+    assert "## Retrieve before the model writes\n" in body
+    assert "## Chunks the retriever can find\n" in body
+    assert "## Answer from the passages\n" in body
+    assert "## Watch the retrieval loop\n" in body
+    assert body.count("https://www.youtube.com/watch?v=T-D1OfcDW1M") == 1
+    assert "goal_id:" not in body
+
+    fallback = client.get("/fundamentals/rag-engineer", params={"locale": "pt-BR"})
+    assert fallback.status_code == 200, fallback.text
+    assert fallback.json()["locale"] == "en"
+    assert fallback.json()["body_markdown"] == body
+
+    absent = client.get("/fundamentals/agent-engineer", params={"locale": "en"})
+    assert absent.status_code == 404
+    assert absent.json()["detail"] == "fundamentals guide not found"

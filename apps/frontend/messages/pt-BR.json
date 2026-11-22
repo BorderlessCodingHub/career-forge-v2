@@ -7,6 +7,9 @@
     "language": "Idioma",
     "backToWelcome": "Voltar para o Welcome"
   },
+  "fundamentals": {
+    "sections": "Seções"
+  },
   "feedback": {
     "link": "Feedback",
     "title": "Feedback",
