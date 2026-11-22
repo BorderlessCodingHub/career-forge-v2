@@ -110,7 +110,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 |------------|--------|
 | Surface | `ProductEntryGate` overlay — **no** `/sign-in` route; Welcome public |
 | Password layout | Career Forge email, password, Sign in, Forgot, Don’t have an account? Sign up. Divider, then outlined **Continue with Borderless** (BrandMark + label) opens the Borderless password form. CF tokens. No GitHub/Google OAuth. No EN/PT radio. English |
-| Chrome | Product topbar (same chrome as `/roadmap` artifact bar): `BrandLockup` once + Back to Welcome → `/welcome`. Logo not in the card. Backdrop = Welcome hero (`bg-slate-950` + indigo dots + soft blobs). Shared by OTP/pilot and password |
+| Chrome | Same product topbar bar as the artifact and setup headers: `BrandLockup` (28px) once, then locale and Back to Welcome as quiet text after a divider. No trail title, no mentor report. Logo not in the card. Backdrop = Welcome hero (`bg-slate-950` + indigo dots + soft blobs). Shared by OTP/pilot and password |
 | Forgot | Career Forge forgot stays on the card. Borderless `forgot_password_url` from identity-mode, new tab; hide if empty |
 | Sign up | Career Forge sign-up stays on the card. Borderless sign-up is a modal (does not navigate immediately); primary opens Borderless signup `_blank`; secondary closes modal |
 | API | Career Forge password: `POST /auth/account/signin`. Borderless password: `POST /auth/signin` |

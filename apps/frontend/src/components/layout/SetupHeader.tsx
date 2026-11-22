@@ -3,13 +3,11 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { SignOutButton } from "@/components/auth/SignOutButton";
-import { FeedbackLink } from "@/components/feedback/FeedbackLink";
-import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
-import { FundamentalsLink } from "@/components/layout/FundamentalsLink";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 import { shouldShowSetupHeader } from "@/lib/product-chrome";
 import { hasEmailIdentity } from "@/lib/user-session";
+
+import { learnerTopbarClass, LearnerTopbarActions } from "./LearnerTopbarActions";
 
 export function SetupHeader() {
   const pathname = usePathname();
@@ -22,17 +20,9 @@ export function SetupHeader() {
   if (!shouldShowSetupHeader(pathname, signedIn)) return null;
 
   return (
-    <header
-      className="flex items-center justify-between border-b border-border bg-bg-sidebar px-6 py-3"
-      data-testid="setup-topbar"
-    >
-      <BrandLockup />
-      <div className="flex items-center gap-2">
-        <FundamentalsLink />
-        <LocaleSwitch />
-        <FeedbackLink />
-        <SignOutButton />
-      </div>
+    <header className={learnerTopbarClass} data-testid="setup-topbar">
+      <BrandLockup markSize={28} className="shrink-0" />
+      <LearnerTopbarActions fundamentals feedback signOut />
     </header>
   );
 }
