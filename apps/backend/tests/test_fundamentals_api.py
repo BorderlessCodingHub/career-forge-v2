@@ -195,10 +195,6 @@ def test_shipped_rag_engineer_guide_is_english_with_a_video(client: TestClient) 
     assert body.count("https://www.youtube.com/watch?v=T-D1OfcDW1M") == 1
     assert "goal_id:" not in body
 
-    absent = client.get("/fundamentals/llm-evals", params={"locale": "en"})
-    assert absent.status_code == 404
-    assert absent.json()["detail"] == "fundamentals guide not found"
-
 
 def test_shipped_published_goals_follow_catalog_order(client: TestClient) -> None:
     found = client.get("/fundamentals")
@@ -208,9 +204,17 @@ def test_shipped_published_goals_follow_catalog_order(client: TestClient) -> Non
         "goals": [
             {"goal_id": "rag-engineer"},
             {"goal_id": "agent-engineer"},
+            {"goal_id": "llm-evals"},
             {"goal_id": "fine-tuning"},
         ]
     }
+
+    evals = client.get("/fundamentals/llm-evals", params={"locale": "en"})
+    assert evals.status_code == 200, evals.text
+    assert evals.json()["goal_id"] == "llm-evals"
+    assert evals.json()["body_markdown"].startswith(
+        "An eval checks a behavior you can fail."
+    )
 
 
 ENGLISH_SECTIONS = (
