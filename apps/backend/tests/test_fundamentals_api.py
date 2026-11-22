@@ -1,7 +1,7 @@
 """LABS01-219 — a signed-in learner reads one Fundamentals guide.
 LABS01-221 — published Goals come back in catalog order.
 
-Seam: GET /fundamentals/{goal_id}?locale=
+Seam: GET /fundamentals/{goal_id}/guide?locale=
 Seam: GET /fundamentals
 """
 
@@ -46,7 +46,7 @@ def test_signed_in_read_returns_the_requested_edition(
     )
     monkeypatch.setenv("FUNDAMENTALS_CONTENT_DIR", str(root))
 
-    found = client.get("/fundamentals/rag-engineer", params={"locale": "en"})
+    found = client.get("/fundamentals/rag-engineer/guide", params={"locale": "en"})
 
     assert found.status_code == 200, found.text
     assert found.json() == {
@@ -63,7 +63,7 @@ def test_missing_edition_falls_back_to_the_other_locale(
     _write_edition(root, "rag-engineer", "en", ENGLISH_BODY)
     monkeypatch.setenv("FUNDAMENTALS_CONTENT_DIR", str(root))
 
-    fallback = client.get("/fundamentals/rag-engineer", params={"locale": "pt-BR"})
+    fallback = client.get("/fundamentals/rag-engineer/guide", params={"locale": "pt-BR"})
     assert fallback.status_code == 200, fallback.text
     assert fallback.json() == {
         "goal_id": "rag-engineer",
@@ -72,7 +72,7 @@ def test_missing_edition_falls_back_to_the_other_locale(
     }
 
     _write_edition(root, "agent-engineer", "pt-BR", PORTUGUESE_BODY)
-    other_way = client.get("/fundamentals/agent-engineer", params={"locale": "en"})
+    other_way = client.get("/fundamentals/agent-engineer/guide", params={"locale": "en"})
     assert other_way.status_code == 200, other_way.text
     assert other_way.json() == {
         "goal_id": "agent-engineer",
@@ -81,10 +81,22 @@ def test_missing_edition_falls_back_to_the_other_locale(
     }
 
     _write_edition(root, "rag-engineer", "pt-BR", PORTUGUESE_BODY)
-    requested = client.get("/fundamentals/rag-engineer", params={"locale": "pt-BR"})
+    requested = client.get("/fundamentals/rag-engineer/guide", params={"locale": "pt-BR"})
     assert requested.status_code == 200, requested.text
     assert requested.json()["locale"] == "pt-BR"
     assert requested.json()["body_markdown"] == PORTUGUESE_BODY
+
+
+def test_page_path_is_not_the_json_route(
+    client: TestClient, monkeypatch, tmp_path
+) -> None:
+    root = tmp_path / "fundamentals"
+    _write_edition(root, "rag-engineer", "en", ENGLISH_BODY)
+    monkeypatch.setenv("FUNDAMENTALS_CONTENT_DIR", str(root))
+
+    page_path = client.get("/fundamentals/rag-engineer", params={"locale": "en"})
+
+    assert page_path.status_code == 404
 
 
 def test_goal_with_no_edition_is_absent(
@@ -94,11 +106,11 @@ def test_goal_with_no_edition_is_absent(
     _write_edition(root, "rag-engineer", "en", "---\ntitle: blank\n---\n\n")
     monkeypatch.setenv("FUNDAMENTALS_CONTENT_DIR", str(root))
 
-    blank = client.get("/fundamentals/rag-engineer", params={"locale": "en"})
+    blank = client.get("/fundamentals/rag-engineer/guide", params={"locale": "en"})
     assert blank.status_code == 404
     assert blank.json()["detail"] == "fundamentals guide not found"
 
-    missing = client.get("/fundamentals/llm-evals", params={"locale": "pt-BR"})
+    missing = client.get("/fundamentals/llm-evals/guide", params={"locale": "pt-BR"})
     assert missing.status_code == 404
     assert missing.json()["detail"] == "fundamentals guide not found"
 
@@ -110,7 +122,7 @@ def test_unauthenticated_read_is_rejected(
     _write_edition(root, "rag-engineer", "en", ENGLISH_BODY)
     monkeypatch.setenv("FUNDAMENTALS_CONTENT_DIR", str(root))
 
-    denied = raw_client.get("/fundamentals/rag-engineer", params={"locale": "en"})
+    denied = raw_client.get("/fundamentals/rag-engineer/guide", params={"locale": "en"})
 
     assert denied.status_code == 401
     assert denied.json()["detail"] == "Missing or invalid Authorization Bearer token"
@@ -149,7 +161,7 @@ def test_paywall_does_not_block_the_guide(
     assert blocked.json()["detail"]["code"] == "paywall"
 
     found = raw_client.get(
-        "/fundamentals/rag-engineer",
+        "/fundamentals/rag-engineer/guide",
         params={"locale": "en"},
         headers=headers,
     )
@@ -178,7 +190,7 @@ def test_published_goals_come_back_in_catalog_order_and_a_goal_with_no_edition_i
 
 
 def test_shipped_rag_engineer_guide_is_english_with_a_video(client: TestClient) -> None:
-    found = client.get("/fundamentals/rag-engineer", params={"locale": "en"})
+    found = client.get("/fundamentals/rag-engineer/guide", params={"locale": "en"})
 
     assert found.status_code == 200, found.text
     payload = found.json()
@@ -209,7 +221,7 @@ def test_shipped_published_goals_follow_catalog_order(client: TestClient) -> Non
         ]
     }
 
-    evals = client.get("/fundamentals/llm-evals", params={"locale": "en"})
+    evals = client.get("/fundamentals/llm-evals/guide", params={"locale": "en"})
     assert evals.status_code == 200, evals.text
     assert evals.json()["goal_id"] == "llm-evals"
     assert evals.json()["body_markdown"].startswith(
@@ -242,8 +254,8 @@ def _sections(body: str) -> list[str]:
 
 
 def test_shipped_rag_engineer_guide_has_a_portuguese_edition(client: TestClient) -> None:
-    portuguese = client.get("/fundamentals/rag-engineer", params={"locale": "pt-BR"})
-    english = client.get("/fundamentals/rag-engineer", params={"locale": "en"})
+    portuguese = client.get("/fundamentals/rag-engineer/guide", params={"locale": "pt-BR"})
+    english = client.get("/fundamentals/rag-engineer/guide", params={"locale": "en"})
 
     assert portuguese.status_code == 200, portuguese.text
     assert english.status_code == 200, english.text

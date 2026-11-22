@@ -28,7 +28,7 @@ def list_fundamentals(
     )
 
 
-@router.get("/{goal_id}", response_model=FundamentalsGuide)
+@router.get("/{goal_id}/guide", response_model=FundamentalsGuide)
 def read_fundamentals(
     goal_id: str,
     response: Response,

@@ -277,3 +277,41 @@ describe("streamDiagnosisInterviewStart", () => {
     }
   });
 });
+
+describe("getFundamentalsGuide", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    const localStorage = createMemoryStorage();
+    const sessionStorage = createMemoryStorage();
+    vi.stubGlobal("window", { localStorage, sessionStorage });
+    vi.stubGlobal("localStorage", localStorage);
+    vi.stubGlobal("sessionStorage", sessionStorage);
+    localStorage.setItem(
+      "career-forge.access-token",
+      `h.${btoa(JSON.stringify({ provider: "email", exp: 4_000_000_000 }))}.s`,
+    );
+  });
+
+  it("asks for the guide beside the page path", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          goal_id: "rag-engineer",
+          locale: "en",
+          body_markdown: "A guide.",
+        }),
+      }),
+    );
+
+    const { getFundamentalsGuide } = await import("./api-client");
+    await getFundamentalsGuide("rag-engineer", "en");
+
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/fundamentals/rag-engineer/guide?locale=en"),
+      expect.anything(),
+    );
+  });
+});
