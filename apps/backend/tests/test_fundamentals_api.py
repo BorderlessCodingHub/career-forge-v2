@@ -1,6 +1,8 @@
 """LABS01-219 — a signed-in learner reads one Fundamentals guide.
+LABS01-221 — published Goals come back in catalog order.
 
 Seam: GET /fundamentals/{goal_id}?locale=
+Seam: GET /fundamentals
 """
 
 from __future__ import annotations
@@ -153,6 +155,26 @@ def test_paywall_does_not_block_the_guide(
     )
     assert found.status_code == 200, found.text
     assert found.json()["body_markdown"] == ENGLISH_BODY
+
+
+def test_published_goals_come_back_in_catalog_order_and_a_goal_with_no_edition_is_absent(
+    client: TestClient, monkeypatch, tmp_path
+) -> None:
+    root = tmp_path / "fundamentals"
+    _write_edition(root, "fine-tuning", "en", "A short fine-tuning guide.\n")
+    _write_edition(root, "rag-engineer", "pt-BR", PORTUGUESE_BODY)
+    _write_edition(root, "llm-evals", "en", "---\ntitle: blank\n---\n\n")
+    monkeypatch.setenv("FUNDAMENTALS_CONTENT_DIR", str(root))
+
+    found = client.get("/fundamentals")
+
+    assert found.status_code == 200, found.text
+    assert found.json() == {
+        "goals": [
+            {"goal_id": "rag-engineer"},
+            {"goal_id": "fine-tuning"},
+        ]
+    }
 
 
 def test_shipped_rag_engineer_guide_is_english_with_a_video(client: TestClient) -> None:
