@@ -215,7 +215,7 @@ At the start of a session involving implementation work, read in order:
 | `/validation/questions`, `/validation` | Mastery validation |
 | `/mentor/context`, `/mentor` | Contextual mentor |
 | `/mentor-report` | Evidence report |
-| `/learn/{skill_id}` | Canonical skill content (ADR-004); unpublished → 404 silence |
+| `/learn/{skill_id}` | Old skill-lesson address; does not present the lesson (404) |
 | `/reference/embed-hosts` | Learner embed allowlist GET |
 | `/mock-interview/questions`, `/mock-interview` | Mock interview + recalibration |
 
@@ -235,7 +235,7 @@ At the start of a session involving implementation work, read in order:
 | `(setup)/forges` | Forge list. Destination after Checkout return. |
 | `(setup)/forge/complete` | Post-forge transition |
 | `(artifact)/roadmap` | Vertical roadmap |
-| `(artifact)/learn/[skillId]` | CAR-94 Canonical skill content (ADR-004) |
+| `(artifact)/learn/[skillId]` | Old skill-lesson address; does not present the lesson |
 | `(artifact)/reference` | CAR-85 in-product Node Reference viewer |
 | `(artifact)/validate` | Mastery validation |
 | `(artifact)/report` | Mentor report |
