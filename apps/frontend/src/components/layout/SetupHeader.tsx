@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { FeedbackLink } from "@/components/feedback/FeedbackLink";
 import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
+import { FundamentalsLink } from "@/components/layout/FundamentalsLink";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 import { shouldShowSetupHeader } from "@/lib/product-chrome";
 import { hasEmailIdentity } from "@/lib/user-session";
@@ -27,6 +28,7 @@ export function SetupHeader() {
     >
       <BrandLockup />
       <div className="flex items-center gap-2">
+        <FundamentalsLink />
         <LocaleSwitch />
         <FeedbackLink />
         <SignOutButton />

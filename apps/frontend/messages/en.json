@@ -5,7 +5,12 @@
     "yourTrail": "Your trail",
     "loadingTrail": "Loading trail…",
     "language": "Language",
+    "fundamentals": "Fundamentals",
     "backToWelcome": "Back to Welcome"
+  },
+  "fundamentals": {
+    "goals": "Goals",
+    "sections": "Sections"
   },
   "feedback": {
     "link": "Feedback",

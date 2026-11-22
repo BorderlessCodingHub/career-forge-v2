@@ -59,16 +59,16 @@ A practice item on a Node. Completing it is a checklist act, not opening a URL.
 _Avoid_: homework, assignment, reference
 
 **Reference**:
-A pointed study source on a Node (title + URL). It is a checklist item. Opening it is not the same act as marking it done. It is not Canonical skill content and not a Forge source.
+A pointed study source on a Node (title + URL). It is a checklist item. Opening it is not the same act as marking it done. It is not Fundamentals and not a Forge source.
 _Avoid_: resource (forge-internal), link, bookmark, blog post, learn page, forge timeline source
 
 **Video Reference**:
-One English video Reference on a Node, 4 to 20 minutes, attached after the Roadmap exists by a single search per forge. Any channel may supply it. Official docs References still win when equal. Not Canonical skill content.
+One English video Reference on a Node, 4 to 20 minutes, attached after the Roadmap exists by a single search per forge. Any channel may supply it. Official docs References still win when equal. Not Fundamentals.
 _Avoid_: YouTube (mechanism), Short, a second video on the same Node, Live Forge timeline card
 
 **Reference viewer**:
 The dedicated in-product page (`/reference`) that shows **one** Reference, addressed by Node + Reference item — never by the raw external URL. Entry: NodeDrawer or that URL. Not tutor, mentor, or Live Forge timeline. Chrome: Node title, this item's `done` control, and the Node's other References (switching replaces the slot). A CTA returns to that Node on the Roadmap. Opening is not `done`. Embed is best-effort; refused hosts get an Escape hatch. Bad or missing address returns the learner to the Roadmap — no empty viewer.
-_Avoid_: iframe (mechanism), in-app browser, overlay as the primary surface, `/learn` (Canonical skill content), `?url=` (generic browser)
+_Avoid_: iframe (mechanism), in-app browser, overlay as the primary surface, Fundamentals, `?url=` (generic browser)
 
 **Escape hatch**:
 The control that opens the host in a new tab when embed is refused or the learner wants the real site. It does not mark the Reference done and does not replace Career Forge.
@@ -78,9 +78,9 @@ _Avoid_: top-level navigate to the host, “open in app browser”
 A research hit on the Live Roadmap Forge timeline: a title, a URL, and a snippet. Forge search that returns no URL fails that forge. Not a Reference until it is attached to a Node.
 _Avoid_: reference, citation, a summary with no URL
 
-**Canonical skill content**:
-The one published deep-dive per catalog skill (N learners → 1 piece). Not a per-forge article and not a Node Reference.
-_Avoid_: reference, forge post, blog (until a public mirror exists)
+**Fundamentals**:
+The published reading for one LLM track / goal, the same text for every learner of that goal, shown in the locale she already chose, with matching English and pt-BR editions. Email identity opens every published goal's Fundamentals before a Roadmap exists, and it is not a Node, not a Roadmap, and not a Reference.
+_Avoid_: Canonical skill content, skill lesson, course, Node Reference, forge post, a second language switch, a Goal switch
 
 ### Identity
 
@@ -191,7 +191,7 @@ The Operator console desk that writes pilot access (Membership stub and billing 
 _Avoid_: user admin, impersonation, live kill-switch of Entitlement
 
 **Content desk**:
-The Operator console desk for canonical skill metadata (published, title, URL) in Postgres. Markdown body stays in git. Not a CMS.
+The Operator console desk for Fundamentals metadata (published, title, URL) in Postgres. Markdown body stays in git. Not a CMS.
 _Avoid_: admin editor, NocoDB, Postgres CMS
 
 **Access card**:

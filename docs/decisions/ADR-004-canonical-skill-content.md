@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | **Accepted** — grill 2026-08-07 (Founder Engineer); reply to Yuri on reuse / SEO |
+| **Status** | **Superseded in part** by [ADR-010](./ADR-010-fundamentals.md) — the content unit is a Goal, and the reading is not attached to a Node. N:1 reuse, editorial authoring, and “not a post per forge” still stand. Grill 2026-08-07. |
 | **Date** | 2026-08-07 |
 | **Deciders** | Pedro Alano |
 | **Linear (v2)** | Product decision — implement when scheduled (not F2 blocker) |

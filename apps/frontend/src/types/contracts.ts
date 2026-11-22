@@ -122,6 +122,20 @@ export type CanonicalPage = {
   body_markdown: string;
 };
 
+export type FundamentalsGuide = {
+  goal_id: string;
+  locale: "en" | "pt-BR";
+  body_markdown: string;
+};
+
+export type PublishedGoal = {
+  goal_id: string;
+};
+
+export type FundamentalsCatalog = {
+  goals: PublishedGoal[];
+};
+
 export type ChecklistToggleRequest = {
   user_id?: string;
   item_type: "task" | "reference";

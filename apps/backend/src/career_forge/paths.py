@@ -83,6 +83,14 @@ def canonical_content_dir() -> Path:
     return catalog_dir().parent / "canonical"
 
 
+def fundamentals_content_dir() -> Path:
+    """Resolve git-owned Fundamentals editions (`data/fundamentals/{goal}/{locale}.md`)."""
+    env_path = os.environ.get("FUNDAMENTALS_CONTENT_DIR")
+    if env_path:
+        return Path(env_path)
+    return catalog_dir().parent / "fundamentals"
+
+
 def must_haves_dir() -> Path:
     """Resolve machine-readable must-have id lists (`data/must-haves/`, CAR-15)."""
     env_path = os.environ.get("MUST_HAVES_DIR")

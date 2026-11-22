@@ -49,7 +49,8 @@ Career Forge v2 — Borderless Labs (`labs.borderlesscoding.com/career-forge`). 
 | [ADR-001 adaptive diagnosis](./decisions/ADR-001-adaptive-diagnosis-ctrr.md) | CTRR loop brand · Interviewer/Judge · CV policy (**binding in v2**) |
 | [ADR-002 universal profile](./decisions/ADR-002-universal-profile-framework.md) | 5 profile dims — **keys live in prod**; no F2 schema migration |
 | [ADR-003 forge recovery](./decisions/ADR-003-forge-recovery-auth-scaffold.md) | Auth scaffold + forge artifacts (timing → ADR-005) |
-| [ADR-004 canonical skill content](./decisions/ADR-004-canonical-skill-content.md) | Canônico por skill; forge só referencia (N:1) |
+| [ADR-004 canonical skill content](./decisions/ADR-004-canonical-skill-content.md) | N:1 still stands; unit and node attach superseded by ADR-010 |
+| [ADR-010 Fundamentals](./decisions/ADR-010-fundamentals.md) | One reading per Goal, off the Roadmap |
 | [ADR-005 identity gate](./decisions/ADR-005-identity-gate-product-entry.md) | Email identity at product entry · paywall before diagnosis |
 | [product/DIAGNOSIS-INTERVIEW.md](./product/DIAGNOSIS-INTERVIEW.md) | Engineering spec · API · sequence |
 | [product/learner-mail-absolute-links.md](./product/learner-mail-absolute-links.md) | Learner letters carry an absolute URL · grill lock 2026-10-18 |

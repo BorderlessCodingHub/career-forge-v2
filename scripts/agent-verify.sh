@@ -83,7 +83,7 @@ check test -f apps/backend/src/career_forge/services/canonical_content.py
 check test -f apps/backend/src/career_forge/api/learn.py
 check test -f apps/frontend/src/app/\(artifact\)/learn/\[skillId\]/page.tsx
 check grep -q '"/{skill_id}/content"' apps/backend/src/career_forge/api/learn.py
-check grep -q 'open-canonical-learn' apps/frontend/src/components/roadmap/NodeDrawer.tsx
+check file_lacks 'open-canonical-learn|canonical-skill-content' apps/frontend/src/components/roadmap/NodeDrawer.tsx
 check grep -q '/learn/:skillId/content' apps/frontend/next.config.mjs
 check test -d data/canonical
 check test -f apps/backend/src/career_forge/services/embed_allowlist.py
