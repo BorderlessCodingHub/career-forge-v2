@@ -37,3 +37,18 @@ export function apiPrefixRewrites(internal) {
     },
   ]);
 }
+
+/** JSON only. `/fundamentals/:goalId` is the App Router page, so it stays out of this list. */
+export function fundamentalsJsonRewrites(internal) {
+  const base = String(internal).replace(/\/$/, "");
+  return [
+    {
+      source: "/fundamentals",
+      destination: `${base}/fundamentals`,
+    },
+    {
+      source: "/fundamentals/:goalId/guide",
+      destination: `${base}/fundamentals/:goalId/guide`,
+    },
+  ];
+}

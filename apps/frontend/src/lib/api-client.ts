@@ -356,7 +356,7 @@ export async function getFundamentalsGuide(
 ): Promise<FundamentalsGuide> {
   const params = new URLSearchParams({ locale });
   return apiFetch<FundamentalsGuide>(
-    `/fundamentals/${encodeURIComponent(goalId)}?${params.toString()}`,
+    `/fundamentals/${encodeURIComponent(goalId)}/guide?${params.toString()}`,
   );
 }
 

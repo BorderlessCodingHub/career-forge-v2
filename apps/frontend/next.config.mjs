@@ -1,7 +1,7 @@
 import { createRequire } from "node:module";
 import createNextIntlPlugin from "next-intl/plugin";
 
-import { apiPrefixRewrites } from "./api-proxy-rewrites.mjs";
+import { apiPrefixRewrites, fundamentalsJsonRewrites } from "./api-proxy-rewrites.mjs";
 
 const { withSentryConfig } = createRequire(import.meta.url)("@sentry/nextjs/config");
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
@@ -70,6 +70,8 @@ const nextConfig = {
           source: "/learn/:skillId/content",
           destination: `${internal}/learn/:skillId/content`,
         },
+        // `/fundamentals/[goalId]` is the page. Proxy the catalog and the guide JSON only.
+        ...fundamentalsJsonRewrites(internal),
         // Exact prefix roots first — POST /forge, POST /validation, etc. do not match /:path*
         ...apiPrefixRewrites(internal),
         // Exact health check (footer badge).
