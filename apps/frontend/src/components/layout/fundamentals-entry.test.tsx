@@ -35,6 +35,21 @@ vi.mock("@/lib/user-session", () => ({
 vi.mock("@/lib/api-client", () => ({
   getMyProfile: vi.fn(async () => ({ email: "ana@example.com" })),
   updateMyLocale: vi.fn(),
+  listForges: vi.fn(async () => ({
+    items: [
+      {
+        public_id: "forge-fine-tuning",
+        goal_id: "fine-tuning",
+        title: "Roadmap · fine-tuning",
+        is_active: true,
+        created_at: "2026-11-22T00:00:00Z",
+        graph_run_id: "run-fine-tuning",
+      },
+    ],
+  })),
+  listFundamentals: vi.fn(async () => ({
+    goals: [{ goal_id: "rag-engineer" }, { goal_id: "agent-engineer" }],
+  })),
 }));
 
 function renderWithLocale(node: ReactNode) {
@@ -47,19 +62,31 @@ afterEach(() => {
 });
 
 describe("Fundamentals entry", () => {
-  it("links from the signed-in setup and artifact bars, and Welcome does not", async () => {
+  it("opens the Roadmap's Goal from a Roadmap and the first published guide elsewhere", async () => {
+    navigation.pathname = "/roadmap";
+    renderWithLocale(<ArtifactShell>trail</ArtifactShell>);
+    const roadmap = await screen.findByTestId("fundamentals-link");
+    expect(roadmap.getAttribute("href")).toBe("/fundamentals/fine-tuning");
+    expect(screen.getByTestId("artifact-topbar").contains(roadmap)).toBe(true);
+    cleanup();
+
+    navigation.pathname = "/forges";
+    renderWithLocale(<SetupHeader />);
+    const forges = await screen.findByTestId("fundamentals-link");
+    expect(forges.getAttribute("href")).toBe("/fundamentals/rag-engineer");
+    expect(screen.getByTestId("setup-topbar").contains(forges)).toBe(true);
+    cleanup();
+
     navigation.pathname = "/onboarding";
     renderWithLocale(<SetupHeader />);
     const setup = await screen.findByTestId("fundamentals-link");
     expect(setup.getAttribute("href")).toBe("/fundamentals/rag-engineer");
-    expect(screen.getByTestId("setup-topbar").contains(setup)).toBe(true);
     cleanup();
 
-    navigation.pathname = "/roadmap";
-    renderWithLocale(<ArtifactShell>trail</ArtifactShell>);
-    const artifact = await screen.findByTestId("fundamentals-link");
-    expect(artifact.getAttribute("href")).toBe("/fundamentals/rag-engineer");
-    expect(screen.getByTestId("artifact-topbar").contains(artifact)).toBe(true);
+    navigation.pathname = "/validate";
+    renderWithLocale(<ArtifactShell>check</ArtifactShell>);
+    const validate = await screen.findByTestId("fundamentals-link");
+    expect(validate.getAttribute("href")).toBe("/fundamentals/rag-engineer");
     cleanup();
 
     renderWithLocale(<Navbar />);

@@ -36,6 +36,7 @@ import type {
   RoadmapForgeEvent,
   RoadmapSyncNode,
   CanonicalPage,
+  FundamentalsCatalog,
   FundamentalsGuide,
   ValidationQuestionsResponse,
   ValidationRequest,
@@ -343,6 +344,10 @@ export async function getCanonicalContent(skillId: string): Promise<CanonicalPag
   return apiFetch<CanonicalPage>(
     `/learn/${encodeURIComponent(skillId)}/content`,
   );
+}
+
+export async function listFundamentals(): Promise<FundamentalsCatalog> {
+  return apiFetch<FundamentalsCatalog>("/fundamentals");
 }
 
 export async function getFundamentalsGuide(
