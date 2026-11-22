@@ -40,13 +40,18 @@ def _edition(goal_id: str, locale: str) -> str | None:
 
 
 def load_fundamentals(goal_id: str, locale: FundamentalsLocale) -> FundamentalsGuide | None:
-    """Return the requested edition, or None when this Goal has nothing to read."""
+    """Return the requested edition, or the other language when that edition is missing.
+
+    None when the Goal has no edition at all.
+    """
     if goal_id not in GOAL_IDS:
         return None
-    body = _edition(goal_id, locale)
-    if body is None:
-        return None
-    return FundamentalsGuide(goal_id=goal_id, locale=locale, body_markdown=body)
+    other: FundamentalsLocale = "en" if locale == "pt-BR" else "pt-BR"
+    for served in (locale, other):
+        body = _edition(goal_id, served)
+        if body is not None:
+            return FundamentalsGuide(goal_id=goal_id, locale=served, body_markdown=body)
+    return None
 
 
 def require_fundamentals(goal_id: str, locale: FundamentalsLocale) -> FundamentalsGuide:
