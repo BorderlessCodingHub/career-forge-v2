@@ -195,8 +195,9 @@ check grep -q '"/locale"' apps/backend/src/career_forge/api/me_profile.py
 check grep -q 'cf_locale' apps/frontend/src/lib/locale.ts
 check grep -q 'next-intl' apps/frontend/package.json
 check grep -q 'LocaleSwitch' apps/frontend/src/components/marketing/welcome/Navbar.tsx
-check grep -q 'LocaleSwitch' apps/frontend/src/components/layout/SetupHeader.tsx
-check grep -q 'LocaleSwitch' apps/frontend/src/components/layout/ArtifactShell.tsx
+check grep -q 'LocaleSwitch' apps/frontend/src/components/layout/LearnerTopbarActions.tsx
+check grep -q 'LearnerTopbarActions' apps/frontend/src/components/layout/SetupHeader.tsx
+check grep -q 'LearnerTopbarActions' apps/frontend/src/components/layout/ArtifactShell.tsx
 check grep -q 'locale="en"' apps/frontend/src/app/operator/layout.tsx
 check grep -q 'updateMyLocale' apps/frontend/src/lib/api-client.ts
 check test -f apps/backend/alembic/versions/032_learner_feedback_notes.py
