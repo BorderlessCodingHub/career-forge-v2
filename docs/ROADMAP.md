@@ -40,6 +40,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Done:** [LABS01-223](https://linear.app/borderless-coding/issue/LABS01-223) — PR #132 (`5c440ac`), recorded 2026-11-22. The page stays `/fundamentals/{goal_id}`. Next rewrites `GET /fundamentals` and `GET /fundamentals/{goal_id}/guide` to the API. No migration. Recreate the backend and the frontend together.
 
+**Done:** PR #133 (`701b3c5`), recorded 2026-11-22. No Linear issue. The trail name is the title on the left of the artifact header. Mentor report is the only filled button. The other header variants stay on the local branch `prototype/artifact-header`. No migration. Recreate the frontend.
+
 ---
 
 ## Phase 3a (Rebrand + landing + pilots) — ✅ Completed
