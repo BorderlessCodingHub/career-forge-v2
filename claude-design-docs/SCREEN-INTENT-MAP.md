@@ -7,7 +7,7 @@
 ## Demo flow (canonical — HAC-21)
 
 ```
-/ → /onboarding → /onboarding/edit → /forge → /forge/complete → /roadmap → [/reference?node=&item=] → [/learn/{skill_id}] → /validate/:topic → /roadmap (adaptive)
+/ → /onboarding → /onboarding/edit → /forge → /forge/complete → /roadmap → [/reference?node=&item=] → /validate/:topic → /roadmap (adaptive)
 
 Recovery (CAR-27/29): / (Continue|View all|New|Forge again) · /forges · /share/:token · /resume/:token (conflict chooser)
 ```
@@ -38,7 +38,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 | 4b | `/forge/complete` | (inline reveal) ⚠️ | `forge-reveal` | **P0** | Items fly into vertical layout; resume copy-once; optional email store | Animation library |
 | 5 | `/roadmap` | `roadmap` ⚠️ | `vertical-roadmap` | **P0** | Vertical spine; cards show compact study `x/y` + mint bar when checklist items exist; drawer has full checklist + progress | Node detail panel, sidebar UX |
 | 5b | `/reference?node=&item=` | — | `reference-viewer` | — | One Node Reference; live allowlist controls preview vs source card; revoke applies without deploy; same checklist command; return restores Node drawer | Host-specific adapters after proof |
-| 5c | `/learn/[skillId]` | — | `canonical-learn` | — | Canonical skill content (ADR-004); drawer link only when attached; unpublished → Roadmap | Editorial inventory |
+| 5c | `/learn/[skillId]` | — | — | — | LABS01-222: does not present the skill lesson; leaves for the Roadmap. A Node does not link here | — |
 | 5d | `/fundamentals/[goalId]` | — | `fundamentals` | — | LABS01-219 one published Goal; setup and artifact top bars; Welcome has no entry; YouTube in the body plays in the page | pt-BR edition and the multi-goal list |
 | 6 | `/validate/:topic` | `validate` | `validation` | **P0** | Interview headline, Q progress, ScoreRing result | Question count (3±) |
 | 7 | `/roadmap` | `adaptive` | `adaptive-state` | **P0** | Roadmap diff after fail, mentor/AI context | Drawer vs sidebar |

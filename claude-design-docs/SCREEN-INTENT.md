@@ -254,17 +254,13 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
-## 6c. Canonical skill content (`/learn/{skill_id}`) — MUST match (CAR-94)
+## 6c. Old skill lesson (`/learn/{skill_id}`) — absent (LABS01-222)
 
 | Constraint | Detail |
 |------------|--------|
-| Identity | ProductEntryGate; in-app, not a public blog |
-| Address | `/learn/{skill_id}` — one piece per catalog skill (ADR-004) |
-| Attach | Drawer link only when the trail DTO has `canonical` (focus + published body). No placeholder |
-| Body | Git-owned markdown; title/URL resolved live from the Content sidecar. Additive blocks: `![alt](/path)` figure (same-origin `/` only), `>` callout, fenced `quiz` (client MCQ). Heading / paragraph / `-` / code unchanged |
-| Invalid | Unpublished or missing body → `/roadmap`; no empty viewer |
-| Forbidden | Generating posts from forge; unifying with `/reference`; indexing per-run URLs |
-| Hooks | `canonical-learn`, `open-canonical-learn`, `learn-return-to-roadmap` |
+| Node | Does not offer the skill lesson. Validate mastery stays |
+| Address | Opening `/learn/{skill_id}` does not present that lesson. It leaves for the Roadmap |
+| Reading | Fundamentals, from the signed-in top bar |
 
 ---
 
@@ -277,7 +273,7 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 | Layout | That Goal on the left, the guide in the center, that guide's sections on the right |
 | Body | Git-owned English edition. A YouTube URL in the body plays in the page. The locale she already chose asks for that edition; a missing edition is the other language |
 | Absent | A Goal with no edition is not readable |
-| Out | pt-BR edition, the list of every published Goal, removing `/learn` |
+| Out | pt-BR edition, the list of every published Goal |
 
 ---
 

@@ -56,18 +56,8 @@ describe("NodeDrawer References", () => {
     expect(link.getAttribute("target")).toBeNull();
   });
 
-  it("links Canonical skill content only when a live ref is attached", () => {
-    const { rerender } = render(
-      <NodeDrawer
-        node={node}
-        onClose={() => undefined}
-        onOpenMentor={() => undefined}
-      />,
-    );
-
-    expect(screen.queryByTestId("canonical-skill-content")).toBeNull();
-
-    rerender(
+  it("does not offer the skill lesson", () => {
+    render(
       <NodeDrawer
         node={{
           ...node,
@@ -78,8 +68,14 @@ describe("NodeDrawer References", () => {
       />,
     );
 
-    const learn = screen.getByTestId("open-canonical-learn");
-    expect(learn.getAttribute("href")).toBe("/learn/http-basics");
-    expect(learn.textContent).toBe("HTTP deep-dive");
+    expect(screen.queryByTestId("canonical-skill-content")).toBeNull();
+    expect(screen.queryByTestId("open-canonical-learn")).toBeNull();
+    expect(screen.queryByRole("link", { name: "HTTP deep-dive" })).toBeNull();
+    expect(screen.queryByText("HTTP deep-dive")).toBeNull();
+
+    const validate = screen.getByTestId("validate-node-cta");
+    expect(validate.closest("a")?.getAttribute("href")).toBe(
+      "/validate?node=http-basics&mode=loop",
+    );
   });
 });
