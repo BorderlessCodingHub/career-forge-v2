@@ -26,13 +26,25 @@ export default function FundamentalsGuide() {
 
   useEffect(() => {
     let cancelled = false;
-    void getFundamentalsGuide(goalId, locale)
-      .then((guide) => {
+    void (async () => {
+      try {
+        const guide = await getFundamentalsGuide(goalId, locale);
         if (!cancelled) setPage(guide);
-      })
-      .catch(() => {
-        if (!cancelled) setPage(null);
-      });
+      } catch {
+        try {
+          const index = await listFundamentals();
+          const first = index.goals[0]?.goal_id;
+          if (!first || first === goalId) {
+            if (!cancelled) setPage(null);
+            return;
+          }
+          const guide = await getFundamentalsGuide(first, locale);
+          if (!cancelled) setPage(guide);
+        } catch {
+          if (!cancelled) setPage(null);
+        }
+      }
+    })();
     return () => {
       cancelled = true;
     };

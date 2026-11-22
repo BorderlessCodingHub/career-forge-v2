@@ -287,4 +287,58 @@ describe("Fundamentals guide", () => {
       "en",
     ]);
   });
+
+  it("shows the first published guide when the address names a Goal with no edition", async () => {
+    navigation.goalId = "llm-evals";
+    vi.mocked(getFundamentalsGuide).mockImplementation(async (goalId, locale) => {
+      if (goalId === "llm-evals") throw new Error("fundamentals guide not found");
+      expect(goalId).toBe("rag-engineer");
+      expect(locale).toBe("en");
+      return {
+        goal_id: "rag-engineer",
+        locale: "en",
+        body_markdown: GUIDE,
+      };
+    });
+
+    render(<FundamentalsGuide />);
+
+    const goals = await screen.findByTestId("fundamentals-goals");
+    expect(
+      [...goals.querySelectorAll("a")].map((link) => ({
+        text: link.textContent,
+        href: link.getAttribute("href"),
+      })),
+    ).toEqual([
+      {
+        text: "Production RAG & Advanced Retrieval",
+        href: "/fundamentals/rag-engineer",
+      },
+      { text: "Agent Engineering", href: "/fundamentals/agent-engineer" },
+      { text: "Fine-Tuning & Alignment", href: "/fundamentals/fine-tuning" },
+    ]);
+    expect(goals.textContent).not.toContain("LLM Evaluation");
+    expect(screen.getByTestId("fundamentals-goal").textContent).toBe(
+      "Production RAG & Advanced Retrieval",
+    );
+    const guide = screen.getByTestId("fundamentals-guide");
+    expect(guide.textContent).toContain("The question hits the store first.");
+    const sections = screen.getByTestId("fundamentals-sections");
+    expect(
+      [...sections.querySelectorAll("a")].map((link) => ({
+        text: link.textContent,
+        href: link.getAttribute("href"),
+      })),
+    ).toEqual([
+      {
+        text: "Retrieve before the model writes",
+        href: "#retrieve-before-the-model-writes",
+      },
+      {
+        text: "Watch the retrieval loop",
+        href: "#watch-the-retrieval-loop",
+      },
+    ]);
+    expect(screen.getByTestId("fundamentals").textContent?.trim().length).toBeGreaterThan(0);
+  });
 });
