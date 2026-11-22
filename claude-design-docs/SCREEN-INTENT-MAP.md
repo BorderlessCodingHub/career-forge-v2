@@ -39,6 +39,7 @@ Breadcrumb: **Goal → Diagnosis → Review → Forge → Explore → Validate**
 | 5 | `/roadmap` | `roadmap` ⚠️ | `vertical-roadmap` | **P0** | Vertical spine; cards show compact study `x/y` + mint bar when checklist items exist; drawer has full checklist + progress | Node detail panel, sidebar UX |
 | 5b | `/reference?node=&item=` | — | `reference-viewer` | — | One Node Reference; live allowlist controls preview vs source card; revoke applies without deploy; same checklist command; return restores Node drawer | Host-specific adapters after proof |
 | 5c | `/learn/[skillId]` | — | `canonical-learn` | — | Canonical skill content (ADR-004); drawer link only when attached; unpublished → Roadmap | Editorial inventory |
+| 5d | `/fundamentals/[goalId]` | — | `fundamentals` | — | LABS01-219 one published Goal; setup and artifact top bars; Welcome has no entry; YouTube in the body plays in the page | pt-BR edition and the multi-goal list |
 | 6 | `/validate/:topic` | `validate` | `validation` | **P0** | Interview headline, Q progress, ScoreRing result | Question count (3±) |
 | 7 | `/roadmap` | `adaptive` | `adaptive-state` | **P0** | Roadmap diff after fail, mentor/AI context | Drawer vs sidebar |
 

@@ -45,6 +45,7 @@ export default function FundamentalsGuide() {
   return (
     <div
       className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-10 px-6 py-8 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-start"
+      data-screen="fundamentals"
       data-testid="fundamentals"
     >
       <aside className="md:sticky md:top-8">

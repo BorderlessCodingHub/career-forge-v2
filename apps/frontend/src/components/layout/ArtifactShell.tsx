@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { FeedbackLink } from "@/components/feedback/FeedbackLink";
 import { LocaleSwitch } from "@/components/i18n/LocaleSwitch";
+import { FundamentalsLink } from "@/components/layout/FundamentalsLink";
 import { BrandLockup } from "@/components/ui/BrandLockup";
 
 const topbarActionClass =
@@ -37,6 +38,7 @@ export function ArtifactShell({
         <BrandLockup />
 
         <div className="flex flex-wrap items-end justify-end gap-2 sm:gap-3">
+          <FundamentalsLink />
           <LocaleSwitch />
           <FeedbackLink />
           <SignOutButton />

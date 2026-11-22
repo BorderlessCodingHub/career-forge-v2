@@ -268,6 +268,19 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
+## 6d. Fundamentals (`/fundamentals/{goal_id}`) — MUST match (LABS01-219)
+
+| Constraint | Detail |
+|------------|--------|
+| Identity | Email identity. ProductEntryGate. A subscription is not required |
+| Address | `/fundamentals/rag-engineer` from the signed-in setup top bar and the artifact top bar. Welcome has no entry |
+| Layout | That Goal on the left, the guide in the center, that guide's sections on the right |
+| Body | Git-owned English edition. A YouTube URL in the body plays in the page. The locale she already chose asks for that edition; a missing edition is the other language |
+| Absent | A Goal with no edition is not readable |
+| Out | pt-BR edition, the list of every published Goal, removing `/learn` |
+
+---
+
 ## 7. Mastery validation — MUST match
 
 | Constraint | Detail |
