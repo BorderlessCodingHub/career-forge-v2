@@ -36,6 +36,8 @@ Classify work as **[P]** parallel · **[S]** sequential · **[B]** blocker. Para
 
 **Done:** [LABS01-218](https://linear.app/borderless-coding/issue/LABS01-218) — PR #130 (`365cbc7`), recorded 2026-11-21. A new forge saves a Reference only when that run's search returned it and it is free to use. The timeline still shows the raw search. Roadmaps already saved are not rewritten. No migration.
 
+**Done:** [LABS01-219](https://linear.app/borderless-coding/issue/LABS01-219) — PR #131 (`27b62a0`), recorded 2026-11-22, with [LABS01-220](https://linear.app/borderless-coding/issue/LABS01-220), [LABS01-221](https://linear.app/borderless-coding/issue/LABS01-221), and [LABS01-222](https://linear.app/borderless-coding/issue/LABS01-222). Fundamentals is one reading per Goal ([ADR-010](./decisions/ADR-010-fundamentals.md)). A signed-in learner opens it from the top bar. RAG has English and pt-BR. Agents, evals, and fine-tuning have English. A Node does not offer the skill lesson. No migration.
+
 ---
 
 ## Phase 3a (Rebrand + landing + pilots) — ✅ Completed
