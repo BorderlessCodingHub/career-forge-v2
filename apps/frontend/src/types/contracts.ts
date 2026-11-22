@@ -128,6 +128,14 @@ export type FundamentalsGuide = {
   body_markdown: string;
 };
 
+export type PublishedGoal = {
+  goal_id: string;
+};
+
+export type FundamentalsCatalog = {
+  goals: PublishedGoal[];
+};
+
 export type ChecklistToggleRequest = {
   user_id?: string;
   item_type: "task" | "reference";

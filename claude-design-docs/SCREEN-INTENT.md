@@ -264,16 +264,16 @@ Direct URL only. **Do not** link from `/welcome` / `/welcome/plg`. Premium B pre
 
 ---
 
-## 6d. Fundamentals (`/fundamentals/{goal_id}`) — MUST match (LABS01-219)
+## 6d. Fundamentals (`/fundamentals/{goal_id}`) — MUST match (LABS01-221)
 
 | Constraint | Detail |
 |------------|--------|
 | Identity | Email identity. ProductEntryGate. A subscription is not required |
-| Address | `/fundamentals/rag-engineer` from the signed-in setup top bar and the artifact top bar. Welcome has no entry |
-| Layout | That Goal on the left, the guide in the center, that guide's sections on the right |
-| Body | Git-owned English edition. A YouTube URL in the body plays in the page. The locale she already chose asks for that edition; a missing edition is the other language |
-| Absent | A Goal with no edition is not readable |
-| Out | pt-BR edition, the list of every published Goal |
+| Address | Inside a Roadmap, that Roadmap's Goal. On the forges list, and on any signed-in screen that is not a Roadmap, the first published guide. Welcome has no entry |
+| Layout | Published Goals on the left, in catalog order; the open guide in the center; that guide's sections on the right. Opening another Goal does not change the Roadmap |
+| Body | Git-owned English or pt-BR edition. A YouTube URL in the body plays in the page. A missing edition is the other language |
+| Absent | A Goal with no edition is not in the list and is not readable |
+| Out | A public page, a Node link |
 
 ---
 

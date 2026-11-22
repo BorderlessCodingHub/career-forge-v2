@@ -15,3 +15,15 @@ class FundamentalsGuide(BaseModel):
     goal_id: str
     locale: FundamentalsLocale
     body_markdown: str = Field(min_length=1)
+
+
+class PublishedGoal(BaseModel):
+    """One Goal that has an edition a learner can open."""
+
+    goal_id: str
+
+
+class FundamentalsCatalog(BaseModel):
+    """Published Goals in catalog order. A Goal with no edition is absent."""
+
+    goals: list[PublishedGoal]

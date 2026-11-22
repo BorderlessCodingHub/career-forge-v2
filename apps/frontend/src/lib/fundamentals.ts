@@ -1,2 +1,8 @@
-/** The one published guide a signed-in learner opens from the top bar. */
-export const FUNDAMENTALS_ENTRY_HREF = "/fundamentals/rag-engineer";
+/** A screen is a Roadmap only at the roadmap trail. Everywhere else opens the first published guide. */
+export function isRoadmapScreen(pathname: string): boolean {
+  return pathname === "/roadmap" || pathname.startsWith("/roadmap/");
+}
+
+export function fundamentalsPath(goalId: string): string {
+  return `/fundamentals/${encodeURIComponent(goalId)}`;
+}

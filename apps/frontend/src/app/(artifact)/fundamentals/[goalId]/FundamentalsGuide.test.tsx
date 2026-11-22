@@ -1,29 +1,47 @@
 // @vitest-environment jsdom
 
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ArtifactShell } from "@/components/layout/ArtifactShell";
-import { getFundamentalsGuide } from "@/lib/api-client";
+import { getFundamentalsGuide, openForge } from "@/lib/api-client";
 import type { Locale } from "@/lib/locale";
+import { getSelectedGoal, setSelectedGoal } from "@/lib/onboarding-session";
 
 import FundamentalsGuide from "./FundamentalsGuide";
 
 const navigation = vi.hoisted(() => ({
+  goalId: "rag-engineer",
+  push: vi.fn((href: string) => {
+    navigation.goalId = href.split("/").filter(Boolean).pop() ?? navigation.goalId;
+  }),
   refresh: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
-  useParams: () => ({ goalId: "rag-engineer" }),
-  usePathname: () => "/fundamentals/rag-engineer",
-  useRouter: () => ({ push: vi.fn(), refresh: navigation.refresh }),
+  useParams: () => ({ goalId: navigation.goalId }),
+  usePathname: () => `/fundamentals/${navigation.goalId}`,
+  useRouter: () => ({ push: navigation.push, refresh: navigation.refresh }),
 }));
 
 vi.mock("next/link", () => ({
-  default: ({ children, href, ...rest }: { children: ReactNode; href: string }) => (
-    <a href={href} {...rest}>
+  default: ({
+    children,
+    href,
+    ...rest
+  }: {
+    children: ReactNode;
+    href: string;
+  }) => (
+    <a
+      href={href}
+      {...rest}
+      onClick={(event) => {
+        event.preventDefault();
+        navigation.push(href);
+      }}
+    >
       {children}
     </a>
   ),
@@ -31,6 +49,17 @@ vi.mock("next/link", () => ({
 
 vi.mock("@/lib/api-client", () => ({
   getFundamentalsGuide: vi.fn(),
+  listFundamentals: vi.fn(async () => ({
+    goals: [
+      { goal_id: "rag-engineer" },
+      { goal_id: "agent-engineer" },
+      { goal_id: "fine-tuning" },
+    ],
+  })),
+  openForge: vi.fn(),
+  syncRoadmap: vi.fn(),
+  updateMyLocale: vi.fn(),
+  getMyProfile: vi.fn(async () => ({ email: "ana@example.com" })),
 }));
 
 const GUIDE = [
@@ -43,6 +72,14 @@ const GUIDE = [
   "## Watch the retrieval loop",
   "",
   "https://www.youtube.com/watch?v=T-D1OfcDW1M",
+  "",
+].join("\n");
+
+const AGENT_GUIDE = ["## Choose the next tool", "", "An agent chooses a tool.", ""].join("\n");
+const TUNE_GUIDE = [
+  "## Tune only what the prompt cannot hold",
+  "",
+  "A weight update does not put a new fact in the prompt.",
   "",
 ].join("\n");
 
@@ -85,7 +122,10 @@ function SignedInGuide() {
 
 afterEach(() => {
   cleanup();
+  navigation.goalId = "rag-engineer";
+  navigation.push.mockClear();
   navigation.refresh.mockReset();
+  vi.mocked(openForge).mockClear();
   delete (globalThis as { __cfLocale?: string }).__cfLocale;
   document.cookie = "cf_locale=; Path=/; Max-Age=0";
 });
@@ -136,6 +176,55 @@ describe("Fundamentals guide", () => {
       "https://www.youtube.com/embed/T-D1OfcDW1M",
     );
     expect(guide.contains(video)).toBe(true);
+  });
+
+  it("lists published Goals in catalog order and opening another leaves the Roadmap Goal", async () => {
+    navigation.goalId = "fine-tuning";
+    setSelectedGoal("fine-tuning");
+    vi.mocked(getFundamentalsGuide).mockImplementation(async (goalId, locale) => {
+      expect(locale).toBe("en");
+      const bodies: Record<string, string> = {
+        "rag-engineer": GUIDE,
+        "agent-engineer": AGENT_GUIDE,
+        "fine-tuning": TUNE_GUIDE,
+      };
+      return {
+        goal_id: goalId,
+        locale: "en",
+        body_markdown: bodies[goalId] ?? GUIDE,
+      };
+    });
+
+    const view = render(<FundamentalsGuide />);
+
+    const goals = await screen.findByTestId("fundamentals-goals");
+    expect(
+      [...goals.querySelectorAll("a")].map((link) => ({
+        text: link.textContent,
+        href: link.getAttribute("href"),
+      })),
+    ).toEqual([
+      {
+        text: "Production RAG & Advanced Retrieval",
+        href: "/fundamentals/rag-engineer",
+      },
+      { text: "Agent Engineering", href: "/fundamentals/agent-engineer" },
+      { text: "Fine-Tuning & Alignment", href: "/fundamentals/fine-tuning" },
+    ]);
+    expect(goals.textContent).not.toContain("LLM Evaluation");
+    expect((await screen.findByTestId("fundamentals-guide")).textContent).toContain(
+      "A weight update does not put a new fact in the prompt.",
+    );
+
+    fireEvent.click(screen.getByRole("link", { name: "Agent Engineering" }));
+    view.rerender(<FundamentalsGuide />);
+
+    expect((await screen.findByTestId("fundamentals-guide")).textContent).toContain(
+      "An agent chooses a tool.",
+    );
+    expect(screen.getByTestId("fundamentals-goal").textContent).toBe("Agent Engineering");
+    expect(getSelectedGoal()).toBe("fine-tuning");
+    expect(openForge).not.toHaveBeenCalled();
   });
 
   it("opens the Portuguese edition for the same Goal and follows the locale control back to English", async () => {

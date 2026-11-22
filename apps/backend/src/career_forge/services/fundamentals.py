@@ -54,6 +54,15 @@ def load_fundamentals(goal_id: str, locale: FundamentalsLocale) -> FundamentalsG
     return None
 
 
+def list_published_goal_ids() -> list[str]:
+    """Catalog order. A Goal is published when either locale has an edition."""
+    published: list[str] = []
+    for goal_id in GOAL_IDS:
+        if load_fundamentals(goal_id, "en") is not None:
+            published.append(goal_id)
+    return published
+
+
 def require_fundamentals(goal_id: str, locale: FundamentalsLocale) -> FundamentalsGuide:
     guide = load_fundamentals(goal_id, locale)
     if guide is None:
