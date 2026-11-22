@@ -103,7 +103,7 @@ Steady state — roadmap.sh-style vertical layout + optional AI sidebar. Referen
 
 **Canvas cards:** When `checklist_total > 0`, `SkillNode` shows compact `ChecklistProgress` (`roadmap-node-{id}-checklist-progress`) — `x/y` + thin mint bar only.
 
-**Artifact topbar:** `artifact-topbar` — track name; right cluster `items-end`; single `h-9` action `mentor-report-link` + `FileText` (no progress ring).
+**Artifact topbar:** `artifact-topbar` — track name on the left, beside the logo; `mentor-report-link` is the only filled action (`FileText`); Fundamentals and Feedback are text; locale and sign out follow a divider (no progress ring).
 
 **Page intro:** centered subtitle + optional `trail-progress-ring` below (`getTrailChecklistProgressPct`, item-pooled) + **Study progress** label.
 

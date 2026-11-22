@@ -135,7 +135,7 @@ Reuse names from [`prototype/components.jsx`](./prototype/components.jsx):
 | `DeployBadge` | Global fixed footer (`z-auto`) — deploy SHA/time + API health dot; stays **below** drawers (`z-40`/`z-50`); `local dev` when build env unset |
 | `ChecklistProgress` | Shared study progress UI — `compact` (canvas card: `x/y` + thin mint bar) or `full` (drawer: label, bar, disclaimer); stats from `checklist-progress-stats.ts` |
 | `checklist-progress-stats` | Pure helpers: `getChecklistProgress` (per topic) + `getTrailChecklistProgressPct` (item-pooled across topics via `sum completed / sum total`) |
-| `ArtifactShell` topbar | Right cluster `items-end` (actions baseline with track title); single `mentor-report-link` ghost action (`topbarActionClass`, `h-9`); track name right — **no** progress ring |
+| `ArtifactShell` topbar | Trail name is the title on the left, beside the logo. `mentor-report-link` is the only filled button. Fundamentals and Feedback are quiet text. Locale and sign out follow a divider. **No** progress ring |
 | `TrailProgressRing` | Compact ~44px SVG ring in **page intro** (below subtitle) — item-pooled checklist % (`accent-mint` stroke); **Study progress** label; hidden when no checklist items |
 | `MentorAvatar` | Brand gradient `from-accent-mint to-accent` — `MentorDrawer` header only |
 | `VerticalSpineSkeleton` | Loading placeholder for artifact spine (`vertical-spine-skeleton`) — connector stubs match loaded layout |
@@ -161,7 +161,7 @@ When adding a **new** shared pattern (e.g. drawer shell, SSE row variant), docum
 | Editable diagnosis | Structured lists, full-width, single CTA "Generate roadmap" |
 | Forge (during stream) | **Timeline only** — centered or full-width column, numbered steps 1–N |
 | Forge reveal | Animation overlay → vertical roadmap materializes; after done, resume copy-once (`forge-resume-copy`) + optional email store (`forge-email-store`) beside roadmap CTA |
-| Roadmap steady state | `ArtifactShell` topbar: track name, `mentor-report-link` only; page intro = subtitle + optional centered `trail-progress-ring`; spine + uniform nodes + solid card↔dot connectors; **click node** → accordion drawer + sticky validate CTA; optional tutor row in drawer |
+| Roadmap steady state | `ArtifactShell` topbar: trail title on the left, filled `mentor-report-link` on the right; page intro = subtitle + optional centered `trail-progress-ring`; spine + uniform nodes + solid card↔dot connectors; **click node** → accordion drawer + sticky validate CTA; optional tutor row in drawer |
 | Mentor report | `/report` — learner header grid + validation cards; human **Goal** + topic titles; structured summary per entry; **Back to roadmap** CTA |
 | Validation | Focus mode — question card dominant, minimal chrome |
 | Mentor | Report via topbar `mentor-report-link` → `/report` structured evidence cards; no contextual chat drawer on artifact canvas |

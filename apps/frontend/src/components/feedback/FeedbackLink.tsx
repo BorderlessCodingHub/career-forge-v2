@@ -9,10 +9,17 @@ import { useEffect, useState } from "react";
 import { getMyProfile } from "@/lib/api-client";
 import { hasEmailIdentity } from "@/lib/user-session";
 
-const linkClass =
+const buttonClass =
   "inline-flex h-9 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium text-text-secondary transition hover:border-accent/40 hover:bg-surface hover:text-text-primary";
 
-export function FeedbackLink() {
+const quietClass =
+  "inline-flex items-center gap-1.5 text-sm font-medium text-text-secondary transition hover:text-text-primary";
+
+type FeedbackLinkProps = {
+  appearance?: "button" | "quiet";
+};
+
+export function FeedbackLink({ appearance = "button" }: FeedbackLinkProps) {
   const t = useTranslations("feedback");
   const pathname = usePathname();
   const [email, setEmail] = useState<string | null>(null);
@@ -40,7 +47,11 @@ export function FeedbackLink() {
       : "";
 
   return (
-    <Link href={`/feedback${from}`} className={linkClass} data-testid="feedback-link">
+    <Link
+      href={`/feedback${from}`}
+      className={appearance === "quiet" ? quietClass : buttonClass}
+      data-testid="feedback-link"
+    >
       <MessageSquare className="h-4 w-4" aria-hidden />
       <span>{t("link")}</span>
     </Link>

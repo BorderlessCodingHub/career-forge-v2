@@ -9,11 +9,15 @@ import { hasEmailIdentity, signOut } from "@/lib/user-session";
 const buttonClass =
   "inline-flex h-9 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium text-text-secondary transition hover:border-accent/40 hover:bg-surface hover:text-text-primary disabled:opacity-50";
 
+const quietClass =
+  "inline-flex items-center gap-1.5 text-sm font-medium text-text-secondary transition hover:text-text-primary disabled:opacity-50";
+
 type SignOutButtonProps = {
   className?: string;
+  appearance?: "button" | "quiet";
 };
 
-export function SignOutButton({ className = "" }: SignOutButtonProps) {
+export function SignOutButton({ className = "", appearance = "button" }: SignOutButtonProps) {
   const t = useTranslations("chrome");
   const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -27,7 +31,7 @@ export function SignOutButton({ className = "" }: SignOutButtonProps) {
   return (
     <button
       type="button"
-      className={`${buttonClass} ${className}`.trim()}
+      className={`${appearance === "quiet" ? quietClass : buttonClass} ${className}`.trim()}
       data-testid="sign-out-button"
       disabled={busy}
       onClick={async () => {
