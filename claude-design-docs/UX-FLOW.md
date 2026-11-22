@@ -259,16 +259,16 @@ Opening a Reference never marks it done. The viewer uses the existing checklist 
 
 ---
 
-### 6d. Fundamentals (`/fundamentals/{goal_id}`) — LABS01-219
+### 6d. Fundamentals (`/fundamentals/{goal_id}`) — LABS01-221
 
-**User job:** Read the published guide for one Goal, with or without a Roadmap.
+**User job:** Read the published guide for a Goal, with or without a Roadmap.
 
 | | |
 |---|---|
-| **Address** | `/fundamentals/rag-engineer` · `data-screen="fundamentals"` |
-| **Entry** | Signed-in setup top bar and artifact top bar. Not Welcome |
-| **Chrome** | Goal on the left, guide in the center, that guide's sections on the right. A YouTube URL in the body plays in the page |
-| **Locale** | The locale she already chose. A missing edition shows the other language |
+| **Address** | `/fundamentals/{goal_id}` · `data-screen="fundamentals"` |
+| **Entry** | Inside a Roadmap, that Roadmap's Goal. On the forges list and any other signed-in screen, the first published guide. Not Welcome |
+| **Chrome** | Published Goals on the left, in catalog order; the open guide in the center; that guide's sections on the right. Opening another Goal does not change the Roadmap. A YouTube URL in the body plays in the page |
+| **Locale** | The locale she already chose. A missing edition shows the other language. A Goal with no edition is absent |
 | **Out** | Paywall, a public page, a Node link, the pt-BR edition |
 
 ---

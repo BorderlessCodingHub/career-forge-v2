@@ -200,6 +200,19 @@ def test_shipped_rag_engineer_guide_is_english_with_a_video(client: TestClient) 
     assert fallback.json()["locale"] == "en"
     assert fallback.json()["body_markdown"] == body
 
-    absent = client.get("/fundamentals/agent-engineer", params={"locale": "en"})
+    absent = client.get("/fundamentals/llm-evals", params={"locale": "en"})
     assert absent.status_code == 404
     assert absent.json()["detail"] == "fundamentals guide not found"
+
+
+def test_shipped_published_goals_follow_catalog_order(client: TestClient) -> None:
+    found = client.get("/fundamentals")
+
+    assert found.status_code == 200, found.text
+    assert found.json() == {
+        "goals": [
+            {"goal_id": "rag-engineer"},
+            {"goal_id": "agent-engineer"},
+            {"goal_id": "fine-tuning"},
+        ]
+    }
