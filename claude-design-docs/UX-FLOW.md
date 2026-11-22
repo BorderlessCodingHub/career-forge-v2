@@ -205,8 +205,8 @@ After the animation → navigates to steady state (`/roadmap`).
 **Spine connectors:** a solid horizontal line (`roadmap-connector-{id}`) links each card to the central dot — `border` by default, `warning` when revisar, `accent-mint` when selected.
 
 **Artifact topbar (`/roadmap`):**
-- Roadmap name only in the topbar (`Sua trilha`) — page without a duplicate `<h1>`
-- **`mentor-report-link`** in the topbar (`FileText` + label) — no progress ring in the topbar
+- Roadmap name is the title on the left of the topbar (`Sua trilha`), beside the logo — page without a duplicate `<h1>`
+- **`mentor-report-link`** is the only filled topbar button (`FileText` + label). Fundamentals and Feedback are text. Locale and sign out sit after a divider. No progress ring in the topbar
 
 **Roadmap intro (canvas, below the subtitle):**
 - Compact **`trail-progress-ring`** centered — % of checklist items completed (not mastery %); hidden when there are no items

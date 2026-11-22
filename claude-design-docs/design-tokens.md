@@ -55,13 +55,14 @@ Prototype still uses muted `.slideover-close` — intentional drift; see [PRODUC
 
 Aligns with [BORDERLESS-THEMING](./BORDERLESS-THEMING.md) logo-derived ribbon; replaces legacy `sky-400` / `indigo-500` mentor chips.
 
-### Artifact topbar ghost actions (Next.js)
+### Artifact topbar (Next.js)
 
 | Role | Classes | Use |
 |------|---------|-----|
-| Control shell | `h-9`, `topbarActionClass` | `mentor-report-link` in artifact topbar |
-| Leading slot | `h-7 w-7` | Icon box with centered `FileText` (`h-4 w-4`) |
-| Brand mark | `BrandMark` size 36 | Replaces Lucide `Axe` placeholder |
+| Primary action | `h-9`, `bg-accent`, white text | `mentor-report-link` — the only filled control |
+| Quiet links | text `text-sm`, no border | Fundamentals, Feedback, sign out |
+| Trail title | `text-lg` `font-semibold`, truncates | Left of the bar, beside the logo |
+| Brand mark | `BrandMark` size 28 | Artifact topbar lockup |
 
 ### Spine branch connectors (artifact canvas — Next.js)
 
