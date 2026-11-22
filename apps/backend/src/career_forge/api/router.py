@@ -11,6 +11,7 @@ from career_forge.api import (
     feedback,
     forge,
     forge_links,
+    fundamentals,
     health,
     knowledge_gaps,
     learn,
@@ -45,6 +46,7 @@ api_router.include_router(feedback.router, prefix="/me", tags=["me"])
 api_router.include_router(forge_links.router, tags=["forge-links"])
 api_router.include_router(reference.router, prefix="/reference", tags=["reference"])
 api_router.include_router(learn.router, prefix="/learn", tags=["learn"])
+api_router.include_router(fundamentals.router, prefix="/fundamentals", tags=["fundamentals"])
 api_router.include_router(roadmap.router, prefix="/roadmap", tags=["roadmap"])
 api_router.include_router(validation.router, prefix="/validation", tags=["validation"])
 api_router.include_router(mentor.router, prefix="/mentor", tags=["mentor"])

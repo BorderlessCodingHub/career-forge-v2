@@ -259,6 +259,20 @@ Opening a Reference never marks it done. The viewer uses the existing checklist 
 
 ---
 
+### 6d. Fundamentals (`/fundamentals/{goal_id}`) — LABS01-219
+
+**User job:** Read the published guide for one Goal, with or without a Roadmap.
+
+| | |
+|---|---|
+| **Address** | `/fundamentals/rag-engineer` · `data-screen="fundamentals"` |
+| **Entry** | Signed-in setup top bar and artifact top bar. Not Welcome |
+| **Chrome** | Goal on the left, guide in the center, that guide's sections on the right. A YouTube URL in the body plays in the page |
+| **Locale** | The locale she already chose. A missing edition shows the other language |
+| **Out** | Paywall, a public page, a Node link, the pt-BR edition |
+
+---
+
 ### 7. Mastery validation (`/validate/:topic`)
 
 **Unchanged** in flow position. Emotional peak #2.

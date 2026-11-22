@@ -36,6 +36,7 @@ import type {
   RoadmapForgeEvent,
   RoadmapSyncNode,
   CanonicalPage,
+  FundamentalsGuide,
   ValidationQuestionsResponse,
   ValidationRequest,
   ValidationRunResponse,
@@ -341,6 +342,16 @@ export async function getReferenceEmbedHosts(): Promise<string[]> {
 export async function getCanonicalContent(skillId: string): Promise<CanonicalPage> {
   return apiFetch<CanonicalPage>(
     `/learn/${encodeURIComponent(skillId)}/content`,
+  );
+}
+
+export async function getFundamentalsGuide(
+  goalId: string,
+  locale: "en" | "pt-BR",
+): Promise<FundamentalsGuide> {
+  const params = new URLSearchParams({ locale });
+  return apiFetch<FundamentalsGuide>(
+    `/fundamentals/${encodeURIComponent(goalId)}?${params.toString()}`,
   );
 }
 
