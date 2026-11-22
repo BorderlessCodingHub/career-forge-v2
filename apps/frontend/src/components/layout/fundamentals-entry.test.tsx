@@ -9,6 +9,7 @@ import { ArtifactShell } from "@/components/layout/ArtifactShell";
 import { SetupHeader } from "@/components/layout/SetupHeader";
 import { Navbar } from "@/components/marketing/welcome/Navbar";
 import { WelcomeShell } from "@/components/marketing/welcome/WelcomeShell";
+import { listForges } from "@/lib/api-client";
 
 const navigation = vi.hoisted(() => ({
   pathname: "/onboarding",
@@ -48,7 +49,11 @@ vi.mock("@/lib/api-client", () => ({
     ],
   })),
   listFundamentals: vi.fn(async () => ({
-    goals: [{ goal_id: "rag-engineer" }, { goal_id: "agent-engineer" }],
+    goals: [
+      { goal_id: "rag-engineer" },
+      { goal_id: "agent-engineer" },
+      { goal_id: "fine-tuning" },
+    ],
   })),
 }));
 
@@ -97,5 +102,25 @@ describe("Fundamentals entry", () => {
     renderWithLocale(<WelcomeShell />);
     expect(screen.queryByTestId("fundamentals-link")).toBeNull();
     expect(document.querySelector('a[href^="/fundamentals"]')).toBeNull();
+  });
+
+  it("opens the first published guide when the Roadmap Goal has no edition", async () => {
+    vi.mocked(listForges).mockResolvedValueOnce({
+      items: [
+        {
+          public_id: "forge-llm-evals",
+          goal_id: "llm-evals",
+          title: "Roadmap · llm-evals",
+          is_active: true,
+          created_at: "2026-11-22T00:00:00Z",
+          graph_run_id: "run-llm-evals",
+        },
+      ],
+    });
+    navigation.pathname = "/roadmap";
+    renderWithLocale(<ArtifactShell>trail</ArtifactShell>);
+
+    const roadmap = await screen.findByTestId("fundamentals-link");
+    expect(roadmap.getAttribute("href")).toBe("/fundamentals/rag-engineer");
   });
 });

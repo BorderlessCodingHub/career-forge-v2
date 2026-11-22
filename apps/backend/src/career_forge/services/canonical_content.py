@@ -125,3 +125,8 @@ def require_published_canonical(session: Session, skill_id: str) -> CanonicalPag
     if page is None:
         raise CanonicalNotFoundError("canonical skill content not found")
     return page
+
+
+def read_skill_lesson(_skill_id: str) -> CanonicalPage:
+    """The old skill-lesson address is not a page a learner can open."""
+    raise NotFoundError("skill lesson not found")

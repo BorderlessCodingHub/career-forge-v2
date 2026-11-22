@@ -46,13 +46,16 @@ def test_learn_address_does_not_present_the_skill_lesson(
 
     found = client.get(f"/learn/{skill_id}")
     assert found.status_code == 404
+    assert found.json()["detail"] == "skill lesson not found"
+    assert "canonical skill content" not in found.text
     assert "Deep dive" not in found.text
     assert "Live title" not in found.text
 
     via_content = client.get(f"/learn/{skill_id}/content")
     assert via_content.status_code == 404
+    assert via_content.json()["detail"] == "skill lesson not found"
+    assert "canonical skill content" not in via_content.text
     assert "Deep dive" not in via_content.text
-    assert via_content.json()["detail"] == "canonical skill content not found"
 
 
 def test_roadmap_node_does_not_carry_the_skill_lesson(
